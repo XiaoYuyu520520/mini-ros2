@@ -168,6 +168,25 @@ jobs:
           python tools/find_scratch_refs.py --check
           python nav2/patches/verify_patch.py
 
+      # The visualiser's Go front end. package.py puts viz/viz.exe next to
+      # viz_feed.exe, and this is the step that produces it; without it the
+      # Windows archive silently loses the GUI (add_file only records what
+      # exists). The cross-platform workflow already proves the same tree on
+      # both runner families.
+      - uses: actions/setup-go@v5
+        if: matrix.platform == 'windows'
+        with:
+          go-version: "1.25.4"
+          cache-dependency-path: viz/go.sum
+
+      - name: build viz.exe
+        if: matrix.platform == 'windows'
+        run: |
+          cd viz
+          go vet ./...
+          go test ./...
+          go build -ldflags "-H windowsgui" -o viz.exe .
+
       # The release archive. The name is decided here and nowhere else.
       - name: package
         run: python package.py --platform ${{ matrix.platform }} --version "$CPU_VERSION" --force
