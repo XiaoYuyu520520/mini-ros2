@@ -40,6 +40,68 @@
 #include <utility>
 #include <vector>
 
+// `std::atomic<std::shared_ptr<T>>` is C++20's P0718R2. libstdc++ only
+// implements it from GCC 12 on, and Ubuntu 22.04 ships libstdc++ 11 - so the
+// instantiation
+//
+//   std::atomic<std::shared_ptr<std::vector<geometry_msgs::msg::Point>>> footprint_;
+//
+// in nav2_costmap_2d's layered_costmap.hpp fails there with "std::atomic
+// requires a trivially copyable type". Upstream nav2 uses it, and upstream
+// nav2 is not modified.
+//
+// The specialisation below gives those two members the two operations
+// upstream actually calls - `store()` and `load()` - with the same semantics
+// (a shared_ptr read or written atomically). The mutex is what a
+// pre-P0718R2 implementation had to use anyway.
+//
+// The feature-test macro is the standard's own answer to "does my library
+// have this?", so the specialisation is only compiled where it is needed.
+#if defined(__cpp_lib_atomic_shared_ptr)
+#  define ROS2_SHIM_HAS_ATOMIC_SHARED_PTR 1
+#else
+#  define ROS2_SHIM_HAS_ATOMIC_SHARED_PTR 0
+#endif
+
+#if !ROS2_SHIM_HAS_ATOMIC_SHARED_PTR
+#  include <atomic>
+#  include <mutex>
+namespace std
+{
+template<class T>
+struct atomic<std::shared_ptr<T>>
+{
+  using value_type = std::shared_ptr<T>;
+
+  void store(value_type desired, std::memory_order = std::memory_order_seq_cst)
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    data_ = std::move(desired);
+  }
+
+  value_type load(std::memory_order = std::memory_order_seq_cst) const
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return data_;
+  }
+
+  value_type exchange(value_type desired, std::memory_order = std::memory_order_seq_cst)
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    value_type previous = data_;
+    data_ = std::move(desired);
+    return previous;
+  }
+
+  operator value_type() const {return load();}
+
+private:
+  mutable std::mutex mutex_;
+  value_type data_;
+};
+}  // namespace std
+#endif  // !ROS2_SHIM_HAS_ATOMIC_SHARED_PTR
+
 // The shim's graph header pulls in <windows.h>, whose macro soup collides with
 // identifiers that ROS2 messages, upstream nav2 and the rclcpp shim use:
 //   wingdi.h (ERROR/TRANSPARENT) -> CallbackReturn::ERROR, ...
