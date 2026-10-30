@@ -89,6 +89,13 @@ jobs:
       - name: shim ctest
         run: python tools/run_ctest.py shim
 
+      # `run_ctest.py shm` runs ctest in nav2/shm_transport/build, which only
+      # exists once that tree has been configured on its own - the shim build
+      # carries it as a subdirectory of nav2/ros2_shim/build instead. Without
+      # this step the ctest step fails with "no such directory".
+      - name: shm build entry point
+        run: python nav2/shm_transport/build.py --no-test --jobs 2
+
       - name: shm ctest
         run: python tools/run_ctest.py shm
 
