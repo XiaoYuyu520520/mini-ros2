@@ -124,6 +124,18 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass             # 只这�
 `Get-ChildItem ... -Filter *.ps1 | Unblock-File`。
 **别推荐 `Unrestricted`**（连网上下载的未签名脚本也放行）。故障排查页同步加了这条症状。
 
+**验证改成两个终端（2026-10-30）**：用户说「验证部分应该是两个终端，一个发话题，
+一个订阅话题并展示」。原来的 1.6.3 只读了一下环境变量和
+`ros2 bridge status`，**证明不了发布/订阅通路**。现在是：
+
+* 终端 1：`ros2 topic pub /demo/chatter std_msgs/msg/String "{data: hello from Windows}" -r 1`
+* 终端 2：`ros2 topic echo /demo/chatter`，展示实际输出
+* 再看 `topic list -t` / `topic info` / `topic hz`（~1 Hz）
+
+两个窗口都要各自点源一次；这条走**本机共享内存**（`ros2shim/demo/chatter`），
+不经 gRPC，所以不需要机器人；`ros2 topic pub` 不带 `--once` 会一直发，
+单写者模型下记得 Ctrl+C。
+
 ### 布局是自己写的 HTML
 
 GitHub Pages 认 `docs/_layouts/`，但**认不出来就退化成无样式纯 Markdown**。
