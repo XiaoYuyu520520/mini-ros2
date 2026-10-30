@@ -56,10 +56,20 @@ find_program(gRPC_CPP_PLUGIN
     /usr/lib/x86_64-linux-gnu
   PATH_SUFFIXES bin sbin libexec lib lib64)
 
+if(NOT gRPC_CPP_PLUGIN)
+  # `PATH_SUFFIXES` above are appended to every HINT, so a hint of /usr/bin
+  # searched /usr/bin/bin and friends, never /usr/bin itself. This second
+  # lookup is the one that finds the Debian package's /usr/bin/grpc_cpp_plugin.
+  find_program(gRPC_CPP_PLUGIN
+    NAMES grpc_cpp_plugin
+    PATHS /usr/bin /usr/local/bin /usr/sbin)
+endif()
+
 # The plugin may also be a versioned file (grpc_cpp_plugin-1.30) with the
 # unversioned name only in a -dev symlink that some architectures do not get.
 if(NOT gRPC_CPP_PLUGIN)
   file(GLOB _gRPC_PLUGIN_CANDIDATES
+    /usr/bin/grpc_cpp_plugin*
     /usr/lib/*/grpc_cpp_plugin*
     /usr/lib/*/libexec/grpc_cpp_plugin*
     /usr/local/bin/grpc_cpp_plugin*
