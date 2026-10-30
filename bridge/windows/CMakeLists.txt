@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+﻿cmake_minimum_required(VERSION 3.16)
 project(ros2_bridge CXX)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -48,7 +48,16 @@ find_package(Protobuf QUIET CONFIG)
 if(NOT Protobuf_FOUND)
   find_package(Protobuf MODULE REQUIRED)
 endif()
-find_package(gRPC CONFIG REQUIRED)
+# gRPC is looked up in CONFIG mode first (MSYS2 and the Debian/Ubuntu dev
+# package both install gRPCConfig.cmake). Ubuntu 22.04's arm64 archive does
+# not ship that file, so there the lookup falls back to the FindgRPC module
+# next to this file, which finds the same libraries and defines the same
+# imported targets.
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(gRPC CONFIG QUIET)
+if(NOT gRPC_FOUND)
+  find_package(gRPC MODULE REQUIRED)
+endif()
 
 # ---------------------------------------------------------------------------
 # shared-memory transport (Windows implementation lives in the shim tree)

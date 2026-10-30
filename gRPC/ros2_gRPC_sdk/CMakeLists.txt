@@ -36,7 +36,14 @@ find_package(Protobuf QUIET CONFIG)
 if(NOT Protobuf_FOUND)
   find_package(Protobuf MODULE REQUIRED)
 endif()
-find_package(gRPC CONFIG REQUIRED)
+# Same lookup as the bridge (see bridge/windows/CMakeLists.txt): CONFIG mode
+# first, and the FindgRPC module next to it as the fallback for a Linux
+# distribution that ships the libraries without the CMake package.
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(gRPC CONFIG QUIET)
+if(NOT gRPC_FOUND)
+  find_package(gRPC MODULE REQUIRED)
+endif()
 
 # ---------------------------------------------------------------------------
 # Generated protobuf / gRPC sources
