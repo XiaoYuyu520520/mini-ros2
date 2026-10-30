@@ -36,7 +36,6 @@ jobs:
       run:
         shell: pwsh
     env:
-      CPU_MSYS2_ROOT: C:/msys64
       PYTHONUTF8: "1"
     steps:
       - uses: actions/checkout@v4
@@ -59,6 +58,7 @@ jobs:
       # The UCRT64 prefix, because that is the one carrying gRPC/protobuf/abseil
       # -- the same packages the bridge links against on the development machine.
       - uses: msys2/setup-msys2@v2
+        id: msys2
         with:
           msystem: UCRT64
           update: false
@@ -71,6 +71,13 @@ jobs:
             mingw-w64-ucrt-x86_64-yaml-cpp
             mingw-w64-ucrt-x86_64-boost
             mingw-w64-ucrt-x86_64-eigen3
+
+      # The action knows where it installed MSYS2; a hardcoded `C:/msys64`
+      # does not (the runner image and the action disagree). Export the real
+      # location for every later step.
+      - name: point the build at the runner's MSYS2
+        run: |
+          "CPU_MSYS2_ROOT=${{ steps.msys2.outputs.msys2-location }}" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: toolchain resolution
         run: python tools/_toolchain.py

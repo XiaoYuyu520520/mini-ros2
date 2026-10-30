@@ -74,6 +74,7 @@ jobs:
       # packages the bridge links against on a development machine.
       - name: windows toolchain
         if: matrix.platform == 'windows'
+        id: msys2
         uses: msys2/setup-msys2@v2
         with:
           msystem: UCRT64
@@ -101,6 +102,13 @@ jobs:
             libboost-chrono-dev libboost-date-time-dev \
             libgrpc++-dev libprotobuf-dev protobuf-compiler \
             protobuf-compiler-grpc libyaml-cpp-dev
+
+      # The action knows where it installed MSYS2; a hardcoded `C:/msys64`
+      # does not. Export the real location before anything builds.
+      - name: point the build at the runner's MSYS2
+        if: matrix.platform == 'windows'
+        run: |
+          "CPU_MSYS2_ROOT=${{ steps.msys2.outputs.msys2-location }}" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: toolchain resolution
         run: python tools/_toolchain.py
