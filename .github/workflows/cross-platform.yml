@@ -29,6 +29,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# The ARM64 job runs on a native Ubuntu 22.04 arm runner. Those runners are
+# free for public repositories; on a private one they cost money, and the job
+# would sit in the queue waiting for a runner instead of failing fast.
+
 jobs:
   windows:
     runs-on: windows-latest
@@ -136,8 +140,20 @@ jobs:
           python tools/find_scratch_refs.py --check
           python nav2/patches/verify_patch.py
 
+  # One job per Linux architecture, same steps. ARM64 is built natively on an
+  # Ubuntu 22.04 arm runner: the shim and its tests have to *run* on the
+  # target, and a cross build could only be checked under emulation.
   linux:
-    runs-on: ubuntu-latest
+    name: linux (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-22.04-arm
+    runs-on: ${{ matrix.runner }}
     defaults:
       run:
         shell: bash

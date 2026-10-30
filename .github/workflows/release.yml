@@ -45,10 +45,16 @@ jobs:
         include:
           - platform: windows
             runner: windows-latest
-            sdk_key: windows-x86_64
           - platform: linux
             runner: ubuntu-latest
-            sdk_key: linux-x86_64
+          # ARM64 is built **natively** on an Ubuntu 22.04 arm runner rather
+          # than cross-compiled: the shim, the SDK and the test suites all
+          # have to *run* on the target, and a cross build could only be
+          # checked by emulating it. Ubuntu 22.04 is the baseline because it
+          # is the oldest LTS the tree is expected to run on, so a binary
+          # built there also runs on 24.04.
+          - platform: linux-arm64
+            runner: ubuntu-22.04-arm
     runs-on: ${{ matrix.runner }}
     defaults:
       run:
@@ -97,8 +103,10 @@ jobs:
 
       # Linux: Eigen and Boost for the shim, gRPC/protobuf/yaml-cpp for the
       # bridge. Nothing here is ROS2 - the compatibility layer replaces it.
+      # The ARM64 job needs the same set; `matrix.platform == 'linux'` would
+      # skip it, so the condition covers both Linux flavours.
       - name: linux dependencies
-        if: matrix.platform == 'linux'
+        if: startsWith(matrix.platform, 'linux')
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
@@ -209,7 +217,9 @@ jobs:
             * `mini-ros2-windows-x86_64-*.zip` - the Windows build; unpack it and
               run `start/加载模拟ROS环境变量.ps1` (PowerShell) or
               `start/connector.sh` (Linux). No MSYS2 and no ROS2 needed.
-            * `mini-ros2-linux-x86_64-*.tar.gz` - the Linux build.
+            * `mini-ros2-linux-x86_64-*.tar.gz` - the Linux build (x86_64).
+            * `mini-ros2-ubuntu22-arm64-*.tar.gz` - the ARM64 build, made
+              natively on Ubuntu 22.04; it also runs on 24.04.
 
             `SHA256SUMS.txt` holds the checksums. See `GETTING_STARTED.md` for
             what this does and does not do, and `bridge/docs/04-gaps.md` for the

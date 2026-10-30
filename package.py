@@ -44,9 +44,18 @@ DIST = REPO / "dist"
 PROJECT = "mini-ros2"
 
 #: Per platform: the binary suffix, the SDK build key and the archive format.
+#:
+#: `label` is what the file name says. The ARM64 build is made on
+#: Ubuntu 22.04, so its packages say so: a tarball built there needs glibc
+#: 2.35, and a user on Ubuntu 22.04 should be able to tell that from one
+#: built on a newer distribution.
 PLATFORMS = {
-    "windows": {"exe": ".exe", "sdk": "windows-x86_64", "archive": "zip"},
-    "linux": {"exe": "", "sdk": "linux-x86_64", "archive": "tar.gz"},
+    "windows": {"exe": ".exe", "sdk": "windows-x86_64", "archive": "zip",
+                "label": "windows-x86_64"},
+    "linux": {"exe": "", "sdk": "linux-x86_64", "archive": "tar.gz",
+              "label": "linux-x86_64"},
+    "linux-arm64": {"exe": "", "sdk": "linux-aarch64", "archive": "tar.gz",
+                    "label": "ubuntu22-arm64"},
 }
 
 # ---------------------------------------------------------------------------
@@ -343,7 +352,7 @@ def main(argv: list[str] | None = None) -> int:
     version = _clean_version(args.version or os.environ.get("CPU_VERSION")
                              or _dt.date.today().strftime("%Y%m%d"))
     suffix = PLATFORMS[platform]["archive"]
-    default_name = f"{PROJECT}-{platform}-x86_64-{version}.{suffix}"
+    default_name = f"{PROJECT}-{PLATFORMS[platform]['label']}-{version}.{suffix}"
 
     entries = collect(platform, args)
     if not entries:
