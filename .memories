@@ -62,6 +62,104 @@ cmd /v:on /c 'call start\sim_env.bat >nul & echo !ROS2_BRIDGE_AGENT!'
 
 ---
 
+## 2026-10-30 · 文档站：GitHub Pages（**不是 wiki**）
+
+用户先要求写 GitHub wiki，后来改成 **GitHub Pages**，
+并且要求「仓库 README 页面提高跳转」。
+
+### Pages 站点是怎么建的
+
+**GitHub 的 REST API 能建 Pages 站点**，一条就够：
+
+```powershell
+POST https://api.github.com/repos/XiaoYuyu520520/mini-ros2/pages
+{"source": {"branch": "main", "path": "/docs"}, "build_type": "legacy"}
+```
+
+结果：`https://xiaoyuyu520520.github.io/mini-ros2/`，状态 `built`。
+
+**踩坑**：用 PowerShell 的 `ConvertTo-Json` 拼 body 会得到
+`"@{source=@{branch=...}}"` 这种**字符串**而不是对象，GitHub 回 422
+「is not of type `object`」。解法：**把 JSON 写进文件**，
+用 `Get-Content -Raw` 读出来当 body 发。
+
+**对比 wiki**：wiki 的 git 仓库（`mini-ros2.wiki.git`）**必须先在网页上创建首个页面**
+才存在 —— `git push` 报 `Repository not found`，API 也建不了
+（`/repos/.../pages/wiki` 404）。所以 **Pages 是 API 能建的，wiki 不是**。
+
+### 站点结构
+
+`docs/` 是 Pages 的源（Jekyll，`build_type: legacy`）：
+
+```
+docs/
+├─ _layouts/default.html    布局：顶部标题 + 左侧导航 + 内容 + 页脚
+├─ index.md                 首页
+├─ getting-started.md       快速开始
+├─ architecture.md          架构
+├─ build-and-run.md         构建与运行
+├─ cli.md                   ros2 命令行
+├─ capabilities.md          能力清单
+├─ limitations.md           限制与缺口
+├─ validation.md            验收与证据
+├─ development.md           开发指南
+└─ troubleshooting.md       排错
+```
+
+**每页中英双语**：中文在前、`# English` 一节在后，锚点互跳
+（`[中文](#中文) · [English](#english)`）。
+
+**布局是自己写的 HTML**，没用主题：GitHub Pages 认 `docs/_layouts/`，
+但**认不出来就会退化成无样式的纯 Markdown**。所以布局里自带
+CSS 变量（亮色 + `prefers-color-scheme: dark`）、表格样式、
+`pre`/`code` 样式。验证方法：`Invoke-WebRequest` 拿 HTML，
+看有没有 `footer class` 和导航块。
+
+**站内链接用相对路径 + `.html`**（`architecture.html`），
+不是 `.md` —— Pages 渲染完是静态 HTML，`.md` 链接会 404。
+
+### README 的跳转
+
+根 `README.md` 加了**两处**：
+
+1. **顶部 badge 区**：一个「🌐 在线文档站」大链接 + 一行十页的导航链接 +
+   release / license / platform / C++17 四个 badge（shields.io）。
+2. **「## 文档」一节**：拆成「在线文档站（推荐，中英双语，GitHub Pages）」
+   和「仓库内文档」两张表，并在上面注明
+   「文档站的源文件在 `docs/` 下……改文档就改 `docs/*.md`，不要只改这里」。
+
+### 门禁
+
+`tools/check_docs.py` 对 `docs/*.md` 也生效：抓 CR、缺 BOM、围栏不配对。
+缺 BOM **只是 warning**，但仓库惯例是 `.md` 带 UTF-8 BOM，
+所以写完统一补了一遍（`path.read_bytes()` → 前置 `\xef\xbb\xbf`）。
+`tools/check_structure.py` 也过（`structure ok: 18 README(s), 33 entry point(s)`）。
+
+### 推送到 GitHub 的姿势（这台机器）
+
+* **git 在 MSYS2 里**：`D:\WindowsServer2025_1\software\MSYS2\usr\bin\git.exe`（2.55.0）。
+  **直接调 `git.exe` 跑 https 会挂**（`remote helper 'https' aborted session`），
+  必须在 `D:\WindowsServer2025_1\software\MSYS2\usr\bin\bash.exe -lc` 里跑。
+* **代理**：`http://127.0.0.1:10090`，用 `git config --local` 写，别污染全局。
+* **令牌不落盘**：`git -c credential.helper='!f() { echo username=x-access-token; echo "password=$GITHUB_TOKEN"; }; f' push`，
+  令牌只作为**环境变量**给这个 helper。
+* **命令行转义的坑**：从 PowerShell 经 bash 再进 bash 三层转义，
+  `\$` / `"` 会被打散。**解法：把命令写成 `.sh` 文件再
+  `bash -lc "bash '/c/.../xxx.sh'"`**。令牌在那个 `.sh` 里用
+  `head -n 1` 从 token 文件读，不进 argv。
+* **仓库里有 `我的Github令牌-千万不要上传.txt`** —— 读它可以，
+  **绝不能把它提交上去**（`.gitignore` 已经挡了 `*令牌*`）。
+
+### 一个观察
+
+这次提交时仓库里有**另一个会话**在同时改 `nav2/ros2_shim/CMakeLists.txt`，
+我 `git add docs README.md` 之后被对方 `git commit -a` 一起提交了，
+commit message 写的是 cmake 那件事 —— **文档和 cmake 改动混在同一个 commit 里**。
+教训：仓库有并行会话时，**提交前先 `git status` 看有没有别人的暂存内容**，
+必要时用 `git commit -- <路径>` 限定范围。
+
+---
+
 ## 2026-10-30 · `package.py`：把运行产物 + 启动脚本打成 zip
 
 仓库根的 `package.py`（`python package.py`）产出 `dist/cpu-nav2-<日期>.zip`。
@@ -216,6 +314,33 @@ CI 上 `--jobs 2`（runner 两核，再多只会 thrash 页文件）。
 **踩坑**：workflow 里写死 `CPU_MSYS2_ROOT: C:/msys64` 会挂 ——
 setup-msys2 装在别处。改用它的输出：
 `id: msys2` + `steps.msys2.outputs.msys2-location` 写进 `$GITHUB_ENV`。
+
+### 第一次真正在 runner 上跑，修了 6 个问题
+
+README 早就写着「workflow 从未在任何 runner 上跑过」。第一次跑，暴露的都不是
+workflow 语法问题，而是「本地有、干净 checkout 没有」：
+
+| # | 现象 | 根因 / 修法 |
+| --- | --- | --- |
+| 1 | `fetch` 步骤：文件不存在 | `nav2/third_party/dl/` 整体被 gitignore，**下载脚本自己也没推上去**。改成忽略内容、保留 `*.py` |
+| 2 | `yaml-cpp` 全线 404 | 上游 tag 是 `0.8.0`，不是 `yaml-cpp-0.8.0`（那是本地目录名） |
+| 3 | Windows `toolchain resolution` 失败 | 写死 `CPU_MSYS2_ROOT=C:/msys64`；改用 `steps.msys2.outputs.msys2-location` |
+| 4 | Linux `shm ctest`：目录不存在 | `run_ctest.py shm` 用 `nav2/shm_transport/build`，但没有任何步骤单独 configure 它（shim 只是把它当子目录）。两个 job 都补 `build.py --no-test` |
+| 5 | Linux `gRPC SDK`：`No module named yaml` | `platform_utils.py` 在模块加载时 `import yaml`；补 `pip install pyyaml` |
+| 6 | Linux 门禁：`_before\...exe` / `attic` 不 resolve | `attic/` 被 gitignore、`_before/` 是生成物，本机有、CI 没有。`find_scratch_refs.py` 加 `UNTRACKED_PREFIXES = ("attic", "_before")`，只跳过存在性检查，不动引用 |
+| 7 | Linux 编译 `waitpid` 未声明 | `bench_real_path.cpp` 的 POSIX 分支缺 `<sys/wait.h>`（Windows 分支编不到，所以本机没暴露） |
+
+**教训**：凡是「本地能过、CI 不能过」，先问「这个文件/目录在干净 checkout 里存在吗」。
+本地构建产物、被 ignore 的归档、Windows-only 的分支，都是这类问题的来源。
+
+绿的那一轮：`run 41032300836 / ac947634`，**linux + windows 都 success**。
+
+### 发布 tag
+
+`git tag -a v0.1.0` → `release.yml` 会构建两个平台、跑完测试、
+用 `package.py --platform <p> --version 0.1.0` 打包装进 GitHub Release
+（文件名 `mini-ros2-windows-x86_64-0.1.0.zip` / `mini-ros2-linux-x86_64-0.1.0.tar.gz`），
+并附 `SHA256SUMS.txt`。
 
 ### 新手 README
 
