@@ -214,7 +214,7 @@ jobs:
       - name: dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends             build-essential cmake ninja-build zlib1g-dev             libeigen3-dev libboost-dev libboost-serialization-dev             libboost-thread-dev libboost-system-dev libboost-atomic-dev             libboost-chrono-dev libboost-date-time-dev             libgrpc++-dev libprotobuf-dev protobuf-compiler             protobuf-compiler-grpc libyaml-cpp-dev             libgl1-mesa-dev libxkbcommon-dev xorg-dev
+          sudo apt-get install -y --no-install-recommends             build-essential cmake ninja-build zlib1g-dev             libeigen3-dev libboost-dev libboost-serialization-dev             libboost-thread-dev libboost-system-dev libboost-atomic-dev             libboost-chrono-dev libboost-date-time-dev             libgrpc++-dev libprotobuf-dev protobuf-compiler             protobuf-compiler-grpc libyaml-cpp-dev             libgl1-mesa-dev libxkbcommon-dev xorg-dev             libwayland-dev libwayland-egl-backend-dev wayland-protocols
           if [ "${{ matrix.arch }}" = "arm64" ]; then
             # Ubuntu 22.04 arm64 ships libgrpc++-dev without the CMake config
             # the bridge asks for. Say what is on disk instead of guessing:
