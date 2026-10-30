@@ -70,6 +70,12 @@ jobs:
       - name: fetch the vendored build dependencies
         run: python nav2/third_party/dl/fetch_deps.py
 
+      # `gRPC/ros2_gRPC_sdk/scripts/platform_utils.py` reads its recorded
+      # platform list with PyYAML; the SDK's own build entry point imports it
+      # before it does anything else.
+      - name: python packages the build scripts need
+        run: python -m pip install --disable-pip-version-check pyyaml
+
       # Windows: the UCRT64 prefix carries gRPC/protobuf/abseil, the same
       # packages the bridge links against on a development machine.
       - name: windows toolchain
