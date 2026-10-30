@@ -544,8 +544,14 @@ void ServerGoalHandle<ActionT>::publish_feedback(std::shared_ptr<Feedback> feedb
 template<class ActionT>
 class Client;
 
+// The template is injected into the class scope below under the name
+// `WrappedResultTemplate`, because a member alias named `WrappedResult`
+// would redeclare the injected name. GCC 13 (Ubuntu 22.04) rejects that
+// redeclaration; GCC 15 (24.04) only warns about it. Upstream nav2 spells
+// the member `ClientGoalHandle<A>::WrappedResult`, so the *member* keeps that
+// name and the *template* is the one that moves.
 template<class ActionT>
-struct WrappedResult;
+struct WrappedResultTemplate;
 
 template<class ActionT>
 class ClientGoalHandle
@@ -554,7 +560,7 @@ public:
   using SharedPtr = std::shared_ptr<ClientGoalHandle<ActionT>>;
   using Goal = typename ActionT::Goal;
   using Result = typename ActionT::Result;
-  using WrappedResult = WrappedResult<ActionT>;
+  using WrappedResult = WrappedResultTemplate<ActionT>;
 
   ClientGoalHandle() = default;
   ClientGoalHandle(uint64_t id, GoalUUID uuid, std::shared_ptr<const Goal> goal)
@@ -590,7 +596,7 @@ private:
 };
 
 template<class ActionT>
-struct WrappedResult
+struct WrappedResultTemplate
 {
   using Result = typename ActionT::Result;
   ResultCode code = ResultCode::UNKNOWN;
@@ -599,10 +605,10 @@ struct WrappedResult
 };
 
 template<class ActionT>
-struct SendGoalOptions
+struct SendGoalOptionsTemplate
 {
   std::function<void(std::shared_ptr<ClientGoalHandle<ActionT>>)> goal_response_callback;
-  std::function<void(const WrappedResult<ActionT> &)> result_callback;
+  std::function<void(const WrappedResultTemplate<ActionT> &)> result_callback;
   std::function<void(
     std::shared_ptr<ClientGoalHandle<ActionT>>,
     std::shared_ptr<const typename ActionT::Feedback>)> feedback_callback;
@@ -618,10 +624,8 @@ public:
   using Feedback = typename ActionT::Feedback;
   using Result = typename ActionT::Result;
   using GoalHandleSharedPtr = std::shared_ptr<GoalHandle>;
-  using WrappedResultT = WrappedResult<ActionT>;
-  using SendGoalOptionsT = SendGoalOptions<ActionT>;
-  using WrappedResult = WrappedResult<ActionT>;
-  using SendGoalOptions = SendGoalOptions<ActionT>;
+  using WrappedResult = WrappedResultTemplate<ActionT>;
+  using SendGoalOptions = SendGoalOptionsTemplate<ActionT>;
   using GoalResponseCallback =
     std::function<void(std::shared_ptr<typename ActionT::Goal>)>;
 
@@ -707,7 +711,8 @@ public:
   bool wait_for_action_server() {return action_server_is_ready();}
 
   std::shared_future<GoalHandleSharedPtr> async_send_goal(
-    const Goal & goal, const SendGoalOptionsT & options = SendGoalOptionsT())
+    const Goal & goal,
+    const SendGoalOptionsTemplate<ActionT> & options = SendGoalOptionsTemplate<ActionT>())
   {
     // The counter is shared by every client in the process, not one per client:
     // goal ids have to be unique against the *channel*, and the channel belongs
@@ -735,18 +740,18 @@ public:
     return promise->get_future().share();
   }
 
-  std::shared_future<WrappedResultT> async_get_result(GoalHandleSharedPtr handle)
+  std::shared_future<WrappedResult> async_get_result(GoalHandleSharedPtr handle)
   {
-    auto promise = std::make_shared<std::promise<WrappedResultT>>();
+    auto promise = std::make_shared<std::promise<WrappedResult>>();
     if (!handle) {
-      promise->set_value(WrappedResultT{});
+      promise->set_value(WrappedResult{});
       return promise->get_future().share();
     }
     // A result may already have arrived while the caller was waiting for the
     // goal response, so hand out the buffered one instead of waiting for a
     // second message that will never come.
     bool completed = false;
-    WrappedResultT wrapped;
+    WrappedResult wrapped;
     {
       std::lock_guard<std::mutex> lock(mutex_);
       auto it = completed_.find(handle->id());
@@ -955,7 +960,7 @@ public:
       if (!detail::read_id(result_buffer_, size, id)) {
         continue;
       }
-      WrappedResultT wrapped;
+      WrappedResult wrapped;
       wrapped.goal_id = detail::make_uuid(id);
       if (size > sizeof(id)) {
         wrapped.code = static_cast<ResultCode>(result_buffer_[sizeof(id)]);
@@ -993,11 +998,11 @@ public:
   /// Hand one finished goal to whoever is waiting for it: the promise behind
   /// `async_get_result`, the caller's own result callback, and the buffer that
   /// holds a result for a caller that has not asked yet.
-  void deliver_result(uint64_t id, const WrappedResultT & wrapped)
+  void deliver_result(uint64_t id, const WrappedResult & wrapped)
   {
-    std::function<void(const WrappedResultT &)> callback;
+    std::function<void(const WrappedResult &)> callback;
     GoalHandleSharedPtr handle;
-    std::shared_ptr<std::promise<WrappedResultT>> promise;
+    std::shared_ptr<std::promise<WrappedResult>> promise;
     {
       std::lock_guard<std::mutex> lock(mutex_);
       auto it = goals_.find(id);
@@ -1070,7 +1075,7 @@ private:
   struct Pending
   {
     GoalHandleSharedPtr handle;
-    SendGoalOptionsT options;
+    SendGoalOptions options;
     std::shared_ptr<std::promise<GoalHandleSharedPtr>> promise;
     // Shared by the copies `poll()` makes, and set the moment the promise is
     // answered. A second answer for one goal - a stale ack the ring kept from
@@ -1147,11 +1152,11 @@ private:
   std::mutex mutex_;
   std::map<uint64_t, Pending> goals_;
   std::map<uint64_t, std::function<void(CancelResponse)>> cancel_pending_;
-  std::map<uint64_t, std::shared_ptr<std::promise<WrappedResultT>>> results_;
-  std::map<uint64_t, WrappedResultT> completed_;
+  std::map<uint64_t, std::shared_ptr<std::promise<WrappedResult>>> results_;
+  std::map<uint64_t, WrappedResult> completed_;
   // Results that were read in the same `poll()` call as their own ack.
   // See the result loop at the end of `poll()` for why they wait.
-  std::vector<std::pair<uint64_t, WrappedResultT>> deferred_results_;
+  std::vector<std::pair<uint64_t, WrappedResult>> deferred_results_;
 };
 
 // ----------------------------------------------------------------- factories
