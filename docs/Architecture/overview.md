@@ -18,6 +18,8 @@ title: 4 架构说明 · 总体架构
 </ul>
 </div>
 
+<a id="tree"></a>
+
 ## 4.1.1 三个子项目
 
 | 子项目 | 路径 | 角色 |
@@ -33,6 +35,8 @@ title: 4 架构说明 · 总体架构
 | 共享内存传输 | `nav2/shm_transport/` | 单写者多读者的环形缓冲 + 反射注册表 |
 | slam_toolbox 移植 | `nav2/slam_toolbox_port/` | 上游 slam_toolbox 2.8.5 的 Windows 移植 |
 
+<a id="flow"></a>
+
 ## 4.1.2 整体数据流
 
 ```
@@ -44,6 +48,8 @@ Ubuntu（真 ROS2 + 仿真）                          Windows
                                                                                                │
   小车移动  <────────────────────gRPC───────────────────  <───────────────共享内存─────────────┘
 ```
+
+<a id="grpc"></a>
 
 ## 4.1.3 第一层：gRPC 跨机传输
 
@@ -68,6 +74,8 @@ Ubuntu（真 ROS2 + 仿真）                          Windows
 <p>服务端侧用可插拔的 <code>IRos2Backend</code>：<code>RclcppBackend</code>（真 ROS2 图）、
 <code>MockBackend</code>（内存模拟，CI 用）。</p>
 </div>
+
+<a id="daemon"></a>
 
 ## 4.1.4 第二层：桥守护进程
 
@@ -105,6 +113,8 @@ Ubuntu（真 ROS2 + 仿真）                          Windows
 
 见下面「发现机制」。
 
+<a id="shim"></a>
+
 ## 4.1.5 第三层：ROS2 兼容层
 
 `include/` 里把 ROS2 的 C++ 接口造出来：
@@ -135,6 +145,8 @@ Ubuntu（真 ROS2 + 仿真）                          Windows
 <code>value_to_string()</code>。这处改动由 <code>nav2/patches/</code> 里的 patch +
 <code>verify_patch.py</code> 表达，构建期校验 —— 换上游版本时不会悄悄丢掉。</p>
 </div>
+
+<a id="discovery"></a>
 
 ## 4.1.6 发现机制：图注册表
 

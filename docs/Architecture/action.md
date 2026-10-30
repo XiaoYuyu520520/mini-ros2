@@ -17,6 +17,8 @@ title: 4 架构说明 · Action 实现
 </ul>
 </div>
 
+<a id="channels"></a>
+
 ## 4.3.1 六条通道
 
 | 通道 | 写者 | 读者 | 载荷 |
@@ -27,6 +29,8 @@ title: 4 架构说明 · Action 实现
 | `<action>/_cancel_ack` | 服务端 | 所有客户端 | id + 1 字节（0 = REJECT，1 = ACCEPT） |
 | `<action>/_feedback` | 服务端 | 所有客户端 | id + 反馈体 |
 | `<action>/_result` | 服务端 | 所有客户端 | id + 1 字节 `ResultCode`（0 UNKNOWN / 1 SUCCEEDED / 2 ABORTED / 3 CANCELED）+ 结果体 |
+
+<a id="rules"></a>
 
 ## 4.3.2 必须守住的约定
 
@@ -85,6 +89,8 @@ title: 4 架构说明 · Action 实现
 <p><code>Server::publish_result()</code> 写完通道就把 handle 从表里摘掉；
 取消也要回一个结果（上游同样如此），不然调用方要等满整个超时。</p>
 </div>
+
+<a id="trace"></a>
 
 ## 4.3.3 可观测性
 

@@ -17,6 +17,8 @@ title: 3 基础应用开发 · 地图存取
 </ul>
 </div>
 
+<a id="format"></a>
+
 ## 3.4.1 支持的图像格式
 
 地图图像有**两个自己实现的 coder**（`include/Magick++.h` 替掉上游对 GraphicsMagick 的依赖）：
@@ -34,6 +36,8 @@ title: 3 基础应用开发 · 地图存取
 会以一条点出格式名的错误失败。所以 <code>map_saver</code> / <code>map_saver_cli</code> 的
 <code>--fmt</code> 实际可用的值是 <code>pgm</code> 和 <code>png</code>。</p>
 </div>
+
+<a id="save"></a>
 
 ## 3.4.2 存图
 
@@ -64,6 +68,8 @@ free_thresh: 0.196
 要存图就直接用 <code>map_saver_cli.exe</code>。</p>
 </div>
 
+<a id="load"></a>
+
 ## 3.4.3 读图
 
 ```bat
@@ -85,6 +91,8 @@ python bridge\scripts\run_nav2_stack.py --map code\Desktop\racecar\map\ai_map001
 <code>nav2_shim_overrides.yaml</code> 里的 <code>map_server.yaml_filename: ''</code>
 先说话就会赢。</p>
 </div>
+
+<a id="server"></a>
 
 ## 3.4.4 map_server 参数
 

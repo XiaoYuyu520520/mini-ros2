@@ -19,6 +19,8 @@ title: 3 基础应用开发 · 运行 nav2 导航栈
 </ul>
 </div>
 
+<a id="prereq"></a>
+
 ## 3.2.1 前置条件
 
 <div class="callout warn">
@@ -32,6 +34,8 @@ bridge\windows\ros2.bat service call /sim/reset std_srvs/srv/Trigger
 
 AMCL 拿 `/odom` 当初始位姿。车停在别处时，每一次规划都会报
 `Start Coordinates ... was outside bounds`，**不重启栈不会自愈**。
+
+<a id="start"></a>
 
 ## 3.2.2 启动
 
@@ -99,6 +103,8 @@ python3 bridge/scripts/run_nav2_stack.py --goal auto --report /tmp/goal.json
 
 栈里没有 AMCL 时，两个 costmap 会在 `on_activate()` 里等 `base_link -> map` 等到超时。
 
+<a id="params"></a>
+
 ## 3.2.3 参数从哪来
 
 | 谁 | 加载什么 | 文件 |
@@ -112,6 +118,8 @@ python3 bridge/scripts/run_nav2_stack.py --goal auto --report /tmp/goal.json
 <strong>不要去改上游的 <code>nav2_params.yaml</code></strong> —— 那是原样保留的副本，
 <code>nav2/patches/verify_patch.py</code> 和文档都以「上游只有一处例外」为前提。</p>
 </div>
+
+<a id="safety"></a>
 
 ## 3.2.4 把安全链接进链
 
@@ -135,6 +143,8 @@ ros2 topic echo /collision_monitor_state
 ::   action_type: 2 (slowdown)
 ::   polygon_name: "StopPolygon"
 ```
+
+<a id="switch"></a>
 
 ## 3.2.5 运行期换控制器
 
@@ -162,6 +172,8 @@ ros2 topic pub /controller_selector std_msgs/msg/String data=MPPIFollowPath --on
 <p>还有 <code>nav2_rotation_shim_controller</code>（先原地转向再交给内部的 RPP）也编好了，
 但它占的就是 <code>FollowPath</code> 这个 id，要用自己那份参数文件起栈（<code>--no-overrides</code>）。</p>
 </div>
+
+<a id="stop"></a>
 
 ## 3.2.6 停止
 

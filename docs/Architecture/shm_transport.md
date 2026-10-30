@@ -17,6 +17,8 @@ title: 4 架构说明 · 共享内存传输
 </ul>
 </div>
 
+<a id="ring"></a>
+
 ## 4.2.1 环形缓冲与游标
 
 | 特性 | 说明 |
@@ -27,6 +29,8 @@ title: 4 架构说明 · 共享内存传输
 | 槽几何 | 由 `NAV2_SHM_*` 决定，发布 / 订阅双方必须一致 |
 
 「单写者」是硬约定，不是性能取舍：守护进程镜像 `/scan` 时，本机就不能再有另一个进程发 `/scan`。
+
+<a id="platform"></a>
 
 ## 4.2.2 两套后端的对照
 
@@ -40,6 +44,8 @@ title: 4 架构说明 · 共享内存传输
 POSIX 侧那两个同步对象就住在共享段里（`ShmSync`，紧跟 layout 头），所以 `kHeaderSize` 在两个平台上
 不一样：Windows 是「layout 头对齐到 64」，POSIX 还要加上 `ShmSync`。
 `header_size` 写进头部，`open` 用同一个值算槽位偏移。
+
+<a id="traps"></a>
 
 ## 4.2.3 两条踩过的坑
 
@@ -96,6 +102,8 @@ python nav2/shm_transport/build.py --no-test --jobs 6
 <p>那个 Alpine 根的 <code>/dev/shm</code> 是<strong>普通 ext4 目录、不是 tmpfs</strong>，
 所以「<code>MAP_SHARED</code> 落在 tmpfs 之外的文件系统上」顺带也验了。</p>
 </div>
+
+<a id="bench"></a>
 
 ## 4.2.6 性能基线
 

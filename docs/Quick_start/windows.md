@@ -12,12 +12,14 @@ title: 1 快速开始 · Windows 上手
 <strong>连上机器人并验证</strong>。</p>
 <ul>
   <li><a href="#download">下载与解压</a></li>
-  <li><a href="#env">加载环境变量（PowerShell）</a></li>
+  <li><a href="#env">加载环境变量（PowerShell）</a> —— 含解除脚本执行限制</li>
   <li><a href="#verify">验证安装</a></li>
   <li><a href="#connect">连上机器人</a></li>
   <li><a href="#mission">跑通第一个导航任务</a></li>
 </ul>
 </div>
+
+<a id="download"></a>
 
 ## 1.6.1 下载与解压
 
@@ -46,12 +48,69 @@ mini-ros2/
 
 Windows 包**不需要 MSYS2、不需要 ROS2** —— 运行时的 88 个 DLL 已经跟在 exe 旁边了。
 
+<a id="env"></a>
+
 ## 1.6.2 加载环境变量（PowerShell）
 
 <div class="callout warn">
 <span class="label">重要</span>
 <p>这是 Windows 上最容易踩的一步：<strong>必须「点源」，不能「执行」。</strong></p>
 </div>
+
+### 第一步：解除脚本执行限制（首次才需要）
+
+<div class="callout warn">
+<span class="label">重要</span>
+<p>大多数人的 PowerShell 默认执行策略是 <code>Restricted</code> ——
+<strong>任何 <code>.ps1</code> 都不让跑</strong>，点源时会报：</p>
+<pre><code>无法加载文件 ...\加载模拟ROS环境变量.ps1，因为在此系统上禁止运行脚本。
+有关详细信息，请参阅 about_Execution_Policies。</code></pre>
+<p>这不是脚本的问题，是 Windows 的默认安全策略。先解除再点源。</p>
+</div>
+
+先看当前策略：
+
+```powershell
+Get-ExecutionPolicy -List
+```
+
+**推荐：只对当前用户解除（不需要管理员，重启后依然有效）**
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+`RemoteSigned` 的含义是：本地写的脚本可以直接跑，从网上下载的脚本必须有签名。
+本项目从 zip 解压出来的脚本属于后者时要配合下面的 `Unblock-File`。
+
+**想「全局解除」（所有用户，需要管理员权限）**
+
+```powershell
+# 以管理员身份打开 PowerShell，然后：
+Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy RemoteSigned
+```
+
+<div class="callout note">
+<span class="label">注意</span>
+<p>不建议用 <code>Unrestricted</code>：它连从网上下载的未签名脚本也放行。
+<code>RemoteSigned</code> 已经足够跑本项目的脚本，风险更小。</p>
+</div>
+
+**如果 zip 是从浏览器下载的**，文件会带「来自 Internet」的标记（Mark-of-the-Web），
+`RemoteSigned` 下仍可能被拦。解压后对脚本解除锁定：
+
+```powershell
+Get-ChildItem -Path .\start, .\bridge -Recurse -Filter *.ps1 -ErrorAction SilentlyContinue |
+  Unblock-File
+```
+
+**只想这次临时绕过**（关窗口即失效，不改系统设置）：
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+### 第二步：点源
 
 打开 **PowerShell**，进到解压后的目录，执行：
 
@@ -113,6 +172,8 @@ SDK 配置、日志级别。关掉窗口或 <code>endlocal</code> 就恢复原�
 不写注册表、不改系统 <code>PATH</code>。</p>
 </div>
 
+<a id="verify"></a>
+
 ## 1.6.3 验证安装
 
 点源之后，依次检查这三件事：
@@ -131,6 +192,8 @@ $env:ROS2_BRIDGE_AGENT
 
 `ros2 bridge status` 只读图、不触发等待，所以没有机器人时也能跑，
 用来确认「Windows 侧这一半是好的」。
+
+<a id="connect"></a>
 
 ## 1.6.4 连上机器人
 
@@ -179,6 +242,8 @@ ros2 topic list -t
 $env:ROS2_BRIDGE_AUTOSTART = '0'
 $env:ROS2_BRIDGE_WAIT_MS = '1500'
 ```
+
+<a id="mission"></a>
 
 ## 1.6.5 跑通第一个导航任务
 

@@ -20,6 +20,8 @@ title: 3 基础应用开发 · ros2 命令行
 </ul>
 </div>
 
+<a id="entry"></a>
+
 ## 3.1.1 怎么敲
 
 ### [Windows] 每个新窗口点源一次
@@ -47,6 +49,8 @@ ros2 topic list -t
 ```bash
 bash bridge/linux/ros2.sh topic list -t
 ```
+
+<a id="topic"></a>
 
 ## 3.1.2 话题 topic
 
@@ -89,6 +93,8 @@ ros2 topic pub /scan sensor_msgs/msg/LaserScan "{ranges: [1.0, 2.0, 3.0]}" -1 -p
 <strong>等着</strong>，发布者一出现就开始测 —— 这与标准 ROS2 一致，不会立刻退出。</p>
 </div>
 
+<a id="service"></a>
+
 ## 3.1.3 服务 service
 
 ```bat
@@ -108,6 +114,8 @@ ros2 service call /sim/enable nav2_msgs/srv/Toggle enable=true
 <p><code>service call</code> 只认<strong>编解码表里</strong>的类型；表外的类型跨不了机
 （本机 shm 上没这个限制）。</p>
 </div>
+
+<a id="action"></a>
 
 ## 3.1.4 动作 action
 
@@ -129,6 +137,8 @@ ros2 action cancel /sim/drive 7         :: 取消一个还在跑的目标（id �
 跨机 <code>build_goal</code> 会明确拒绝，发不出去；<strong>本机 shm 上已经端到端跑通</strong>。</p>
 </div>
 
+<a id="param"></a>
+
 ## 3.1.5 参数 param
 
 参数服务是**本机**的，不经过桥：
@@ -148,6 +158,8 @@ ros2 param dump /bt_navigator             :: 导成能直接喂回 --params-file
 <p><code>set</code> 会走 nav2 自己的校验回调，<strong>非法值被拒且节点日志留痕</strong>。</p>
 </div>
 
+<a id="other"></a>
+
 ## 3.1.6 节点 / 接口 / 桥状态
 
 ```bat
@@ -164,6 +176,8 @@ ros2 topic pub /controller_selector std_msgs/msg/String data=MPPIFollowPath --on
 
 取值：`FollowPath`（RPP，默认）/ `DWBFollowPath` / `MPPIFollowPath` / `GracefulFollowPath`。
 栈不必重启。
+
+<a id="absent"></a>
 
 ## 3.1.8 没有提供的命令
 

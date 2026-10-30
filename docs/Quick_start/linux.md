@@ -40,6 +40,8 @@ source .venv/bin/activate
 pip install -r bridge/ubuntu/ros2_bridge_sim/requirements.txt
 ```
 
+<a id="sim"></a>
+
 ## 1.7.2 起仿真小车
 
 本仓库自带一个纯 Python 的仿真小车（24 m × 24 m 静态地图 + 360 线雷达 + 差速运动学），
@@ -73,6 +75,8 @@ PYTHONPATH=. ../.venv/bin/python -m ros2_bridge_sim.run_sim --seed 7 --goal 6,-4
 仿真会发布 `/odom` `/scan` `/tf` `/tf_static` `/map` `/clock`，订阅 `/cmd_vel`。
 它<strong>没有动力学与传感器噪声模型</strong> —— 确定性，同种子同命令可复现。
 
+<a id="real"></a>
+
 ## 1.7.3 用真装的 ROS2 当对端
 
 Ubuntu 上如果已经装了 ROS2 Jazzy，可以让<strong>真的 ROS2 图</strong>当对端：
@@ -95,6 +99,8 @@ bash bridge/scripts/ubuntu_ros2_peer.sh status
 <p>真 ROS2 agent 监听 <code>50111</code>，仿真 agent 监听 <code>50051</code>。
 两个都起的话，用下面的中继把它们合并。</p>
 </div>
+
+<a id="relay"></a>
 
 ## 1.7.4 起中继（合并两张图）
 
@@ -131,6 +137,8 @@ bash start/connector.sh down       # 停
 export ROS2_LINK_COLLISION=prefer-sim    # 默认：仿真保住 /scan，真 ROS2 的变 /real/scan
 export ROS2_LINK_COLLISION=prefer-real   # 反过来
 ```
+
+<a id="env"></a>
 
 ## 1.7.5 加载环境变量
 

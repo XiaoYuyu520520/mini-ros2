@@ -16,6 +16,8 @@ title: 5 能力清单 · 验收与实测数据
 </ul>
 </div>
 
+<a id="verdict"></a>
+
 ## 5.2.1 验收结论
 
 | # | 验收标注 | 判定 | 结论 |
@@ -26,6 +28,8 @@ title: 5 能力清单 · 验收与实测数据
 | 4 | 移植 `nav2_amcl` + `slam_toolbox` 到 Windows：静态编译、运行时不依赖 MSYS | `objdump -p` 里只剩 `KERNEL32.dll` + `api-ms-win-crt-*`；`PATH` 只留 `C:\Windows\System32;C:\Windows`、`ROS2_BRIDGE_MSYS2` 指向不存在的目录时，守护进程照常起 | **通过** |
 | 5 | 规划器插件层：`nav2_smac_planner`（Hybrid-A*）接入，规划器从 NavFn 换成 Smac 后整栈照常建图、规划、闭环 | 连跑三次全部 `SUCCEEDED`：行驶 **2.36 / 2.79 / 2.44 m**，`/plan` 2 / 17 / 6 条，`/cmd_vel` 118 / 590 / 133 条 | **通过** |
 | 6 | 共享内存通道的几何是有代价的：`map`/`costmap` 类话题不再按 64 MB × 8 槽预留 | `planner_server` 常驻 **6191 MB → 231 MB**、`bt_navigator` 1277 MB → 319 MB，空闲内存 0.29 GB → 3.18 GB | **通过** |
+
+<a id="reproduce"></a>
 
 ## 5.2.2 一键复现
 
@@ -62,6 +66,8 @@ python bridge\scripts\acceptance_check.py
 
 9/9 checks passed; report: bridge\docs\validation\acceptance-report.json
 ```
+
+<a id="evidence"></a>
 
 ## 5.2.3 实测证据
 
@@ -164,6 +170,8 @@ python bridge\scripts\run_nav2_demo.py --goal auto --report run.json
 <strong>节点自己的定时器</strong>最高仍约 64 Hz。nav2 的 20–50 Hz 不受影响，但要跑 kHz 级节点
 定时器的话，这是下一个要改的地方。</p>
 </div>
+
+<a id="tests"></a>
 
 ## 5.2.4 五棵测试树
 

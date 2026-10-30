@@ -15,6 +15,8 @@ title: 2 系统配置 · 环境变量配置
 </ul>
 </div>
 
+<a id="load"></a>
+
 ## 2.1.1 加载环境变量
 
 Windows 与 Linux 各有一套入口，作用相同：**设置 PATH、共享内存几何、SDK 配置、日志级别**。
@@ -37,6 +39,8 @@ call bridge\windows\bridge_env.bat
 ```bash
 source ~/code/CPU/bridge/linux/bridge_env.sh
 ```
+
+<a id="vars"></a>
 
 ## 2.1.2 变量清单
 
@@ -61,6 +65,8 @@ source ~/code/CPU/bridge/linux/bridge_env.sh
 | `ROS2_LINK_REAL_PORT` | 真 ROS2 agent 端口 | `50111` |
 | `ROS2_LINK_PORT` | 中继对外端口 | `50060` |
 | `ROS2_LINK_COLLISION` | 同名话题谁保住原名 | `prefer-sim` |
+
+<a id="modify"></a>
 
 ## 2.1.3 修改与覆盖
 

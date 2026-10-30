@@ -16,6 +16,8 @@ title: 3 基础应用开发 · SLAM 建图
 </ul>
 </div>
 
+<a id="start"></a>
+
 ## 3.3.1 启动建图
 
 ### [Windows]
@@ -67,6 +69,8 @@ python code\Desktop\racecar\tools\racecar_ctl.py nav --map ai_map001 --goal auto
 <code>image_format</code> 也是 <code>png</code>。</p>
 </div>
 
+<a id="drive"></a>
+
 ## 3.3.2 怎么走出能建出图的轨迹
 
 <div class="callout warn">
@@ -97,6 +101,8 @@ minimum_time_interval: 0.1
 12 m 量程之外。</p>
 </div>
 
+<a id="params"></a>
+
 ## 3.3.3 参数
 
 ```bat
@@ -116,6 +122,8 @@ bridge\windows\slam_demo.bat --params-file my_slam.yaml
 | `map_saver_cli.exe --fmt png` | 8 位 PNG + YAML |
 
 经 `map_server` 往返与源文件 **0 处不同**。
+
+<a id="archive"></a>
 
 ## 3.3.4 位姿图存档
 

@@ -18,6 +18,8 @@ title: 2 系统配置 · 共享内存几何配置
 </ul>
 </div>
 
+<a id="what"></a>
+
 ## 2.3.1 通道与几何
 
 | 项 | 值 |
@@ -28,6 +30,8 @@ title: 2 系统配置 · 共享内存几何配置
 | 槽大小选择 | 名字含 `map`/`costmap`/`voxel` 的用大槽；含 `info` 的按小尺寸算 |
 
 「单写者」是硬约定，不是性能取舍：守护进程镜像 `/scan` 时，本机就不能再有另一个进程发 `/scan`。
+
+<a id="defaults"></a>
 
 ## 2.3.2 默认值与代价
 
@@ -70,6 +74,8 @@ title: 2 系统配置 · 共享内存几何配置
 
 它们不受上面那条「按名字判断大小」的规则影响 —— 走默认小槽会把消息截断。
 
+<a id="restart"></a>
+
 ## 2.3.3 为什么改完必须一起重启
 
 <div class="callout warn">
@@ -84,6 +90,8 @@ python .\bridge\scripts\run_nav2_stack.py stop
 bridge\windows\ros2_bridge.bat stop
 . .\start\加载模拟ROS环境变量.ps1
 ```
+
+<a id="namespace"></a>
 
 ## 2.3.4 用命名空间隔离两套栈
 

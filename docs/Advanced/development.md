@@ -18,6 +18,8 @@ title: 7 进阶开发 · 开发指南
 </ul>
 </div>
 
+<a id="layout"></a>
+
 ## 7.1.1 目录结构
 
 ```
@@ -37,6 +39,8 @@ CPU/
 ```
 
 三个 ★ 子项目的骨架见 <a href="../Architecture/overview">4.1 总体架构</a>。
+
+<a id="rules"></a>
 
 ## 7.1.2 三条铁律
 
@@ -87,6 +91,8 @@ $env:BIG6_NO_PIN = "1"                  # 只检测不绑定（按需）
 <code>value_to_string()</code>。</p>
 </div>
 
+<a id="message"></a>
+
 ## 7.1.3 走一遍：加一个跨机消息类型
 
 以「Ubuntu 发得出来、Windows 上也认这个类型」为目标，一共六步：
@@ -136,6 +142,8 @@ python tools\run_ctest.py bridge
 python -m pytest bridge\ubuntu\ros2_bridge_sim\tests -q
 ```
 
+<a id="ctest"></a>
+
 ## 7.1.4 走一遍：加一条 ctest
 
 1. 把测试写进 `nav2\ros2_shim\tests\xxx.cpp`（用 `ros2_shim` 提供的接口，断言风格照抄邻近文件）。
@@ -145,6 +153,8 @@ python -m pytest bridge\ubuntu\ros2_bridge_sim\tests -q
    `set_tests_properties(... PROPERTIES ENVIRONMENT "NAV2_SHM_LOG_LEVEL=info")`。
 4. `python nav2\ros2_shim\build.py && python tools\run_ctest.py shim -R xxx`。
 5. 改测试断言时先确认它**会**失败：把断言改坏、看它红，再改回来 —— 这叫「变异验证」。
+
+<a id="where"></a>
 
 ## 7.1.5 改哪里
 
@@ -191,6 +201,8 @@ python -m pytest bridge\ubuntu\ros2_bridge_sim\tests -q
 * 收尾体检：`python tools\check_docs.py --quiet`。它抓 CR、缺 BOM、``` 围栏不配对、
   控制字符。错误返回码为 1；缺 BOM 只算警告。
 * 动了 `.scratch/` 之前先跑 `python tools\find_scratch_refs.py --check`。
+
+<a id="checklist"></a>
 
 ## 7.1.8 收尾清单
 

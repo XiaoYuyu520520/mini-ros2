@@ -15,6 +15,8 @@ title: 6 常见问题 · 故障排查
 </ul>
 </div>
 
+<a id="status"></a>
+
 ## 6.2.1 先看状态
 
 ```powershell
@@ -35,7 +37,34 @@ $env:ROS2_BRIDGE_AUTOSTART = '0'    # 不要顺手拉守护进程
 $env:ROS2_BRIDGE_WAIT_MS = '1500'   # 真要等就给个小的
 ```
 
+<a id="symptoms"></a>
+
 ## 6.2.2 按症状查
+
+### 「无法加载文件 …，因为在此系统上禁止运行脚本」
+
+PowerShell 的默认执行策略是 `Restricted`，**任何 `.ps1` 都不让跑**。这不是脚本的问题，
+是 Windows 的默认安全策略。解除方法：
+
+```powershell
+# 推荐：只对当前用户（不需要管理员，长期有效）
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+
+# 或全局（需要管理员）
+Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy RemoteSigned
+
+# 或只这一次（关窗口即失效）
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+如果 zip 是从浏览器下载的，脚本还带「来自 Internet」的标记，`RemoteSigned` 下仍可能被拦：
+
+```powershell
+Get-ChildItem -Path .\start, .\bridge -Recurse -Filter *.ps1 -ErrorAction SilentlyContinue |
+  Unblock-File
+```
+
+详见 <a href="../Quick_start/windows">1.6.2 加载环境变量（PowerShell）</a>。
 
 ### 「`ros2` 不是内部或外部命令」
 
@@ -215,6 +244,8 @@ Windows 默认定时器粒度 15.6 ms，所以按 `sleep_for(1000/rate)` **毫�
 | 守护进程断线重连 | **没有测试碰过**；长时间跑会不会漏内存也没数据 |
 | `slam_toolbox` 的 `map_saver.cpp` | 走 `system("ros2 run ...")`，Windows 上必失败 —— 用 `map_saver_cli.exe` |
 | 窄道 / 回环 / 长时间漂移 | 没测 |
+
+<a id="scripts"></a>
 
 ## 6.2.3 验证脚本的写法
 

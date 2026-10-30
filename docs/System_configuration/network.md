@@ -17,6 +17,8 @@ title: 2 系统配置 · 网络与端口配置
 </ul>
 </div>
 
+<a id="roles"></a>
+
 ## 2.2.1 端口与角色
 
 | 角色 | 在哪台机器 | 默认端口 | 环境变量 / 配置 |
@@ -34,6 +36,8 @@ title: 2 系统配置 · 网络与端口配置
 只连最近的那一个 agent。所以不能让 Windows 分别连两个 agent，必须有一个合并入口 ——
 这就是中继存在的原因。</p>
 </div>
+
+<a id="discovery"></a>
 
 ## 2.2.2 自动发现的工作方式
 
@@ -66,6 +70,8 @@ title: 2 系统配置 · 网络与端口配置
 | `include_self` / `include_loopback` | `false` / `false` | 要不要连本机 / 回环 |
 | `max_results` | `32` | 最多列多少个 |
 
+<a id="cross"></a>
+
 ## 2.2.3 跨网段与防火墙
 
 <div class="callout note">
@@ -85,6 +91,8 @@ sudo ufw allow 50060/tcp
 ```
 
 Windows 侧客户端不需要放行入站 —— 它只是往外连。
+
+<a id="yaml"></a>
 
 ## 2.2.4 配置文件
 

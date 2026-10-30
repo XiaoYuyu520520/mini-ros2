@@ -16,6 +16,8 @@ title: 1 快速开始 · 连接机器人
 </ul>
 </div>
 
+<a id="order"></a>
+
 ## 1.8.1 启动顺序
 
 <div class="callout warn">
@@ -34,6 +36,8 @@ title: 1 快速开始 · 连接机器人
 守护进程不用手工起：<code>ros2</code> 的第一条命令会自己拉起它并等第一次同步完成
 （等的是就绪文件，不是固定 sleep）。冷启动实测 **1.3–2.8 s**。
 
+<a id="addr"></a>
+
 ## 1.8.2 地址与端口在哪配
 
 | 要改什么 | 在哪 | 怎么改 |
@@ -46,6 +50,8 @@ title: 1 快速开始 · 连接机器人
 
 本机约定：设备 `wang@192.168.0.153`，agent 端口 50051，密钥
 `C:\Users\Administrator\Desktop\app\ssh_key\id_ed25519`。
+
+<a id="check"></a>
 
 ## 1.8.3 连上之后看什么
 
@@ -79,6 +85,8 @@ ros2 topic info /scan      # Source: remote (bridged over gRPC)
 ros2 topic hz /scan        # average 9.446 Hz over 55 samples
 ros2 bridge status         # 7 topics (7 remote, 0 local), known types: 40
 ```
+
+<a id="fail"></a>
 
 ## 1.8.4 连不上怎么查
 
