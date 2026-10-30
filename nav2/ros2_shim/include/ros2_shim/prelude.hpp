@@ -40,6 +40,40 @@
 #include <utility>
 #include <vector>
 
+// Standard headers the real ROS2 toolchain pulls in transitively, which the
+// shim's include set does not. Each one is a header upstream nav2 uses
+// without including it, because the genuine rclcpp headers happen to reach it
+// first:
+//
+//   <optional>  nav2_graceful_controller's header has a
+//               `std::optional<double> safe_approach_angle_` member
+//               (graceful_controller.hpp:241) and includes no <optional>;
+//   <atomic>    same story for the atomic members;
+//   <mutex>     for the atomic<shared_ptr> stand-in below.
+//
+// These are compiler-version independent: the real ROS2 headers reach them on
+// every compiler, and so does the shim now.
+//
+// The set is the result of scanning the upstream sources the shim compiles for
+// standard types used without their header. They are cheap (a header include)
+// and force-included, so one line here covers every translation unit:
+//
+//   <optional>     graceful_controller.hpp, critic_data.hpp, docking's
+//                  parameter_handler.hpp
+//   <array>        mppi's optimizer.hpp/utils.hpp, denoise_layer.cpp, RPP
+//   <tuple>        mppi's optimizer.cpp
+//   <any>          collision_monitor/src/source.cpp, route's geojson loaders
+//   <set>          system_tests' behavior tree node
+//   <filesystem>   bt_action_server_impl.hpp, node_utils.hpp, photo_at_waypoint
+#include <any>
+#include <array>
+#include <atomic>
+#include <filesystem>
+#include <mutex>
+#include <optional>
+#include <set>
+#include <tuple>
+
 // `std::atomic<std::shared_ptr<T>>` is C++20's P0718R2. libstdc++ only
 // implements it from GCC 12 on, and Ubuntu 22.04 ships libstdc++ 11 - so the
 // instantiation
@@ -64,8 +98,6 @@
 #endif
 
 #if !ROS2_SHIM_HAS_ATOMIC_SHARED_PTR
-#  include <atomic>
-#  include <mutex>
 namespace std
 {
 template<class T>
