@@ -45,6 +45,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #else
+#include <sys/wait.h>
 #include <unistd.h>
 #endif
 
