@@ -62,6 +62,7 @@
 | costmap | static / obstacle / voxel / inflation / keepout_filter / speed_filter 全部激活成功 |
 | 时间 | `use_sim_time` + `/clock`（四个节点都跟机器人的仿真时钟，证据 19） |
 | 自主回充 / 路网 | `docking_server`（`opennav_docking::SimpleChargingDock`）与 `route_server`（GeoJSON 图加载器 + `DistanceScorer` / `CostmapScorer` / `AdjustSpeedLimit` / `ReroutingService` / `CollisionMonitor`）都能被 `nav2_docking_route.bat` 拉到 ACTIVE；**没有 dock 实例、也没有图文件**，所以只到「装得起来」（证据 28） |
+| 可视化 | `viz.exe` + `viz_feed.exe`：地图 / 扫描 / 路径 / 位姿，2D Goal 与 2D Pose Estimate；环境加载后命令名就是 `rviz2`。端到端验过（见 [`03-validation.md`](03-validation.md) 的 viz 一节） |
 | 跨机 | 话题（双向）、**38 种 service 类型**（远端在跑 7 个；`slam_toolbox` 的全部 11 个 srv 与 `nav_msgs/srv/GetMap` 是本机方向；nav2 自己的 20 个 `nav2_msgs` srv 见证据 52 / 53）、**20 个 action codec**（nav2 的 19 个全在；远端在跑 5 个）、`/clock`、`/tf` / `/tf_static`（证据 24） |
 
 ---
@@ -80,7 +81,7 @@
 | `nav2_following`（`opennav_following`） | 没有移植 | 「跟人 / 跟车」整个功能不可用（对本项目目标优先级最低） |
 | `nav2_loopback_sim` | 没有移植 | 没有「上游自带的仿真机器人」这个替代品；本项目的仿真在 Ubuntu 侧（见 D 节） |
 | `nav2_system_tests` | 没有移植 | 上游那套系统集成测试跑不了；本项目的回归是自己那三套（22 + 4 + 52） |
-| `nav2_rviz_plugins` | 没有移植，Windows 上也没有 RViz | 看不到建图/规划过程；现在只能靠 `map_saver_cli.exe` 存 PGM / PNG 再看，或看离线渲染的 `bridge\docs\validation\slam-map.png` |
+| `nav2_rviz_plugins` | 没有移植；Windows 上的可视化由 `viz` 顶上（**不是**这个插件） | rviz 插件里的调参 / 交互面板没有；日常看地图 / 扫描 / 规划 / 位姿、发目标点与初始位姿已经由 `viz` 覆盖 |
 | `nav2_simple_commander` | 没有移植（纯 Python，要 rclpy） | 没有 Python API；发目标只能用 C++（`nav2_goal.exe` / `nav2_waypoints.exe`）或 CLI |
 
 不需要单独移植的（**不是缺口**）：`nav2_core` 与 `opennav_docking_core` 只有头文件，
@@ -91,6 +92,23 @@ CMake 用 `GLOB ${NAV2_SRC}/*/include` 全部挂上了；`nav2_util` 的源码�
 第一个 `--params-file` 传给每个节点；没被用的是 `launch/`，那一套语法本兼容层没有。
 Windows 侧只是在这个文件之上再叠一层自己的覆写：
 `nav2\ros2_shim\config\nav2_shim_overrides.yaml`）。
+
+### Windows 可视化（`viz`）：不是 rviz2 的移植
+
+`viz` 是按「看得见 + 点目标」做的工具，不是把 rviz2 搬过来：没有 Qt / OGRE / 插件体系。
+数据面 `viz_feed.exe` 是一个普通的 shim `rclcpp::Node`，带 `tf2_ros::Buffer` 与
+`TransformListener`，每条消息在边车里变换到视口的固定坐标系后再交给 Go/Fyne 界面。
+它注册成订阅者，所以 nav2 才会发 `/plan`、`/cmd_vel`；它自己持有 `/goal_pose` 与
+`/initialpose` 的写端（**一个通道一个写者**）。
+
+仍然开着的边：
+
+| 边 | 现状 |
+| --- | --- |
+| 真 ROS2 的 QoS | **已量（含负对照）**：Jazzy 对端 best_effort 的 `/qos_probe/scan` 与 transient_local 的 `/qos_probe/map` 都收到；把 sensor 改回 reliable 之后扫描一条都不到。见 `03-validation.md` 第三节 |
+| 图层 | 只有地图 / 扫描 / 路径 / 位姿；代价地图叠加、点云、Marker、URDF 都没有 |
+| 发目标 | v1 只发 `/goal_pose`，不走 `NavigateToPose` action，所以没有进度反馈与中途取消 |
+| 逐话题 QoS | proto 里预留了 `QosProfile`，daemon 还没透传 |
 
 ### `nav2_graceful_controller`：已经从「选不到」改成「能选、跑过」
 

@@ -84,9 +84,14 @@ func TestConfigCommentsAndOverrides(t *testing.T) {
 	if scan.QOS.Reliability != "best_effort" || scan.QOS.Depth != 5 {
 		t.Fatalf("qos lost: %+v", scan.QOS)
 	}
-	// Absent from the file, so the defaults must still be there.
-	if _, ok := cfg.Topics["/map"]; !ok {
-		t.Fatal("default /map was dropped by the merge")
+	// `topics` is a section the file names, so it replaces the defaults rather
+	// than merging with them: /map is not silently shown when the user listed
+	// only /scan.
+	if len(cfg.Topics) != 1 {
+		t.Fatalf("topics should be exactly the file's list, got %v", cfg.Topics)
+	}
+	if _, ok := cfg.Topics["/map"]; ok {
+		t.Fatal("default /map leaked into a file that named its own topics")
 	}
 }
 

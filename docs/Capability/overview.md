@@ -26,6 +26,7 @@ title: 5 能力清单 · 已实现能力
 | 参数事件流 `/parameter_events` | ✅ 节点自己发，另一个进程读得到 |
 | 运行期调参：参数服务 + `ros2 param` | ✅ 对着正在跑的节点读写 |
 | `vector_object_server` | ✅ 被推到 ACTIVE、发出 `/vo_map` 之后干净退出 |
+| Windows 可视化（`viz`，命令名 `rviz2`） | ✅ 地图 / 扫描 / 路径 / 位姿端到端画出来；发目标点与初始位姿真窗口验过 |
 | 自主回充 / 路网（docking / route） | ⚠️ 能拉到 ACTIVE，**没有 dock 实例、没有图文件** |
 
 ## 5.1.2 建图 SLAM

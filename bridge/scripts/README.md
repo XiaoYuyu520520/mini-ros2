@@ -32,6 +32,8 @@
 | `acceptance_check.py` | 四条验收标准一次跑完（9 条检查，含 SLAM；`--skip-slam` 跳过） |
 | `ubuntu_ssh.py` | 跨机执行的底座：`ubuntu_ssh.py [--file x.sh] [--timeout N] "<cmd>"` |
 | `ubuntu_sim_ctl.sh`、`ubuntu_ros2_peer.sh`、`ubuntu_ros2_setup.sh` | 在 **Ubuntu 上**跑的辅助脚本（本地放着便于 `--file` 推过去） |
+| `qos_probe.py` | **Ubuntu 上**跑：发 best_effort 的 `/qos_probe/scan` 与 transient_local 的 `/qos_probe/map`，给 viz / agent 的 QoS 做真机验证（含负对照） |
+| `check_ubuntu_real_ros.py` | 在真 ROS2 对端起 demo 节点 + `rclcpp` agent，再回报图与端口 |
 | `fsedit.py` | 精确文本替换小工具，改这个仓库的文件默认用它 |
 
 本机路径、`.exe` 拼写这类东西在过去是写死在这里的，现在工具链解析统一走

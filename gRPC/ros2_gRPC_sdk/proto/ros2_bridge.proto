@@ -77,6 +77,27 @@ message GetTopicInfoRequest {
   string name = 1;
 }
 
+// Per-request override reserved for a later version. The agent currently
+// chooses a default from the topic and type (see `qosFor` in the rclcpp
+// backend), which is what fixes a best_effort /scan and a transient_local
+// /map. These fields are deliberately not interpreted yet; adding them now
+// keeps the wire format forward compatible, and an old daemon ignores them.
+message QosProfile {
+  enum Reliability {
+    RELIABILITY_UNSPECIFIED = 0;
+    RELIABLE = 1;
+    BEST_EFFORT = 2;
+  }
+  enum Durability {
+    DURABILITY_UNSPECIFIED = 0;
+    VOLATILE = 1;
+    TRANSIENT_LOCAL = 2;
+  }
+  Reliability reliability = 1;
+  Durability durability = 2;
+  int32 depth = 3;
+}
+
 message SubscribeRequest {
   string topic = 1;
   // Optional. When empty the agent resolves the type from the graph.
@@ -84,6 +105,8 @@ message SubscribeRequest {
   // Optional. When > 0 the agent drops every message that arrives faster
   // than this period (milliseconds). 0 means "no throttling".
   int32 throttle_ms = 3;
+  // Reserved; see QosProfile. The agent's default table is used when unset.
+  QosProfile qos = 4;
 }
 
 message Message {
@@ -103,6 +126,8 @@ message PublishRequest {
   string type = 2;
   bytes data = 3;
   string encoding = 4;
+  // Reserved; see QosProfile. The agent's default table is used when unset.
+  QosProfile qos = 5;
 }
 
 message PublishResponse {

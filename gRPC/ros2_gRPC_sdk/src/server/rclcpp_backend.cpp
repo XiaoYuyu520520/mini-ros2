@@ -54,6 +54,51 @@ Bytes toBytes(const rclcpp::SerializedMessage& message) {
   return Bytes(raw.buffer, raw.buffer + raw.buffer_length);
 }
 
+// The QoS a topic gets when the caller did not ask for one. The shared-memory
+// side has no QoS at all, so this is the only place reliability and durability
+// decide whether a real ROS2 publisher will match us.
+//
+// The rules are the ones rviz2 uses by default: a sensor stream is
+// best_effort (a reliable reader would not match a best_effort publisher at
+// all), a latched state topic is transient_local, and everything else is the
+// ordinary reliable/volatile queue of ten. `QosProfile` in the proto reserves
+// the per-request override; until the daemon carries it, this table is it.
+bool endsWith(const std::string& value, const std::string& suffix) {
+  return value.size() >= suffix.size() &&
+         value.compare(value.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
+bool isSensorData(const std::string& type) {
+  static const char* const kTypes[] = {
+      "sensor_msgs/msg/LaserScan",       "sensor_msgs/msg/MultiEchoLaserScan",
+      "sensor_msgs/msg/PointCloud",      "sensor_msgs/msg/PointCloud2",
+      "sensor_msgs/msg/Image",           "sensor_msgs/msg/CompressedImage",
+      "sensor_msgs/msg/Imu",             "sensor_msgs/msg/Range",
+  };
+  for (const char* known : kTypes) {
+    if (type == known) {
+      return true;
+    }
+  }
+  return false;
+}
+
+rclcpp::QoS qosFor(const std::string& topic, const std::string& type) {
+  if (topic == "/map" || topic == "/map_updates" || topic == "/tf_static" ||
+      topic == "/robot_description" || endsWith(topic, "/map") ||
+      endsWith(topic, "/map_updates") || endsWith(topic, "/costmap") ||
+      endsWith(topic, "/costmap_updates")) {
+    return rclcpp::QoS(rclcpp::KeepLast(1)).reliable().transient_local();
+  }
+  if (topic == "/clock") {
+    return rclcpp::QoS(rclcpp::KeepLast(1)).best_effort();
+  }
+  if (isSensorData(type)) {
+    return rclcpp::QoS(rclcpp::KeepLast(5)).best_effort();
+  }
+  return rclcpp::QoS(10);
+}
+
 rclcpp::SerializedMessage toSerialized(const Bytes& data) {
   rclcpp::SerializedMessage serialized(data.size());
   rcl_serialized_message_t& raw = serialized.get_rcl_serialized_message();
@@ -1149,7 +1194,7 @@ Status RclcppBackend::publish(const std::string& topic,
         // library for `type` by name. Throws when the package is missing from
         // AMENT_PREFIX_PATH, which is what the catch below reports.
         publisher = impl_->node->create_generic_publisher(
-            topic, type, rclcpp::QoS(10));
+            topic, type, qosFor(topic, type));
         if (!publisher) {
           return Status::error(StatusCode::NotFound,
                               "no type support available for " + type);
@@ -1206,7 +1251,7 @@ Status RclcppBackend::subscribe(const std::string& topic,
     };
 
     auto subscription = impl_->node->create_generic_subscription(
-        topic, type, rclcpp::QoS(10), std::move(callback));
+        topic, type, qosFor(topic, type), std::move(callback));
     if (!subscription) {
       return Status::error(StatusCode::NotFound,
                           "no type support available for " + type);

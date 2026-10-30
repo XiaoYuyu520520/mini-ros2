@@ -102,6 +102,9 @@ NAV2_TOOLS = (
 BRIDGE_BINARIES = (
     "ros2",
     "ros2_bridge_daemon",
+    # The visualiser's data plane: a shim node that transforms every message
+    # into the view's fixed frame and hands it to viz.exe over stdio.
+    "viz_feed",
 )
 
 #: The `.bat` / `.ps1` entry points. Missing one is a broken archive, so they
@@ -119,6 +122,8 @@ BRIDGE_SCRIPTS = (
     "nav2_docking_route.bat",
     "slam_demo.bat",
     "amcl_demo.bat",
+    # `rviz2` by name: the visualiser replaces rviz2 on this platform.
+    "rviz2.bat",
 )
 
 #: The Linux entry points, which are the same four as the Windows ones.
@@ -248,6 +253,16 @@ def collect(platform: str, args: argparse.Namespace) -> list[tuple[Path, str]]:
         linux_dir = REPO / "bridge" / "linux"
         for name in LINUX_SCRIPTS:
             add_file(linux_dir / name, "bridge/linux/" + name)
+
+    # -- the visualiser ------------------------------------------------------
+    # viz.exe is the Go/Fyne front end; it starts viz_feed.exe (above) as a
+    # child process and talks to it over stdio. Its config sits next to it, so
+    # the archive's layout is what the GUI expects.
+    viz_dir = REPO / "viz"
+    if platform == "windows":
+        add_file(viz_dir / "viz.exe", "viz/viz.exe")
+    add_file(viz_dir / "config.json", "viz/config.json")
+    add_file(viz_dir / "README.md", "viz/README.md")
 
     # -- config the stack reads --------------------------------------------
     add_tree(REPO / "nav2" / "ros2_shim" / "config", "nav2/ros2_shim/config")

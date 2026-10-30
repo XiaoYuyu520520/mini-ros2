@@ -9139,3 +9139,96 @@ GATEEXIT=0  54.3s
   而那个消息恰好也有个叫 `goals` 的字段，这个分支就会选错（现在两边都是固定的、
   `.action` 里写死的定义，所以这只是一种将来会踩的可能，不是现在的问题）。
 
+
+
+## 可视化（`viz`）：Windows 上看得见、点得到
+
+这一节是 `viz.exe`（Go/Fyne 界面）与 `viz_feed.exe`（C++ 边车）的验收记录。
+界面与协议在 `viz/README.md`，用户视角的说明在
+[`docs/Basic_application/viz.md`](../../docs/Basic_application/viz.md)。
+
+### 一、数据面（`viz_feed.exe`）
+
+边车是 `bridge/windows/tools/viz_feed.cpp`，编进 `bridge/windows` 的 CMake
+（`add_executable(viz_feed ...)`），随 `package.py` 一起分发。
+
+**【跑】** `viz_feed --selftest`（同时是 ctest `bridge_viz_feed_selftest`）：
+合成消息走一遍 JSON 契约，输出 `{"ok":true,...}`。
+
+**【跑】** 真共享内存（独立 namespace，无 GUI）：
+
+| 量 | 结果 |
+| --- | --- |
+| `map -> laser (x=10)` 的 `/tf_static` + laser 系位姿 `(1,2)` | 边车输出 `map` 系 `(11,2)` —— **TF 在边车里算** |
+| `/tf_static` 发完后 `frames` | `["laser"]` |
+| `LaserScan` 三点（laser 系） | `map` 系 `[11,0, 11.755,0.959, 11.621,2.524]` |
+| `OccupancyGrid` 4 格 `[0,100,-1,0]` | base64 解回 `[0,100,-1,0]`，origin `(5,6)` |
+| `Path` 两个位姿 | `[(1,1,0), (2,2,0)]` |
+| `set_fixed_frame` 从 `map` 改成 `laser` | latched 地图**立刻**重发，origin `(5,6)` → `(-5,6)`，不等下一次发布 |
+| `publish_pose` 发 `/goal_pose` | 独立的 `ros2 topic echo /goal_pose` 收到，`frame_id` / `x` / `y` / 四元数都对 |
+
+### 二、界面（`viz.exe`）
+
+**【跑】** 真窗口 + 真共享内存（`PrintWindow` 抓图后按颜色数像素）：
+
+| 量 | 结果 |
+| --- | --- |
+| 地图占用边框 | 32861 个 `32,32,32` 像素 |
+| 扫描点 | 27 个 `0,255,136` 像素 |
+| 路径 | 520 个 `255,68,68` 像素 |
+| 机器人位姿 | 6316 个 `255,204,0` 像素 |
+
+**【跑】** 真点工具栏图标：点「目标」→ 点视口 → `/goal_pose` 被 `ros2 topic echo`
+收到；点「初始位姿」→ 点视口 → `/initialpose` 收到（`PoseWithCovarianceStamped`，
+位置 `(0.884, -0.738)`）。关窗后 `viz_feed` 残留 **0** 个进程。
+
+**【跑】** `go test`（11 条，不需要显示器）：帧格式往返、超长帧被拒、真边车的
+hello / topics（独立 namespace）、地图调色板、协方差椭圆半径、地图画在原点、
+折线落在中线、工具的点击 / 拖拽朝向、逐话题颜色覆盖、`Scene.Remove`、
+配置注释保留 / BOM 容错 / 保存写当前布局 / 读取应用布局。
+
+### 三、真 ROS2 上的 QoS（已量，含负对照）
+
+对端是 `wang@192.168.0.153` 上的 **ROS2 Jazzy**（真 rclcpp / 真 DDS），agent 在那边
+重新编译并重启（`ros2_grpc_sdk_agent 0.0.0.0:50111 --backend rclcpp`）。
+Windows 端直接连它：`set ROS2_BRIDGE_AGENT=192.168.0.153:50111`。
+
+对端发消息的脚本是 `bridge/scripts/qos_probe.py`（新加，纯 rclpy）：
+
+| 话题 | 类型 | QoS |
+| --- | --- | --- |
+| `/qos_probe/scan` | `sensor_msgs/msg/LaserScan` | best_effort / volatile / depth 5，10 Hz |
+| `/qos_probe/map` | `nav_msgs/msg/OccupancyGrid` | reliable / transient_local / depth 1，0.5 m 一格，20×20 |
+
+它还广播了一个静态 `map → laser` 变换，扫描点因此能画进地图坐标系。
+话题名加了 `/qos_probe/` 前缀，这样它可以跟真机器人同时跑；agent 的表里
+「传感器按类型认、地图按名字后缀认」（`endsWith(topic, "/map")`），所以这两个名字
+走的是和 `/scan`、`/map` 完全一样的两条规则。
+
+**【跑】** 修好的 agent（`qosFor()` 里 sensor → `best_effort`）：
+
+| 量 | 结果 |
+| --- | --- |
+| Windows `ros2 topic echo /qos_probe/scan --count 3 --timeout 15` | **收到 3 条**，`ranges` 21 个值，`min 1.50192 / max 2.49875` |
+| Windows `ros2 topic echo /qos_probe/map --once --timeout 15` | **收到 1 条**，`data: [400 cells, 76 occupied]` |
+| agent 端日志 | `streaming subscriber attached to '/qos_probe/scan'` / `'/qos_probe/map'`，**没有** incompatible 警告 |
+
+**【跑】** 负对照：把 `qosFor()` 的 sensor 分支临时改成 reliable（`rclcpp::QoS(KeepLast(5))`），
+重新编译、重启 agent，其余一概不动：
+
+| 量 | 结果 |
+| --- | --- |
+| agent 端日志 | `New publisher discovered on topic '/qos_probe/scan', offering incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY_QOS_POLICY` |
+| Windows `ros2 topic echo /qos_probe/scan --count 1 --timeout 6` | **0 字节**（一条都没到） |
+| Windows `ros2 topic echo /qos_probe/map --once --timeout 6` | 照常收到（地图那一档没动） |
+
+改回 best_effort、重编译、重启之后，扫描立刻恢复 —— 也就是说
+「真 ROS2 上 best_effort 的传感器话题收不到」不是猜测，是被这个对照**钉死**的，
+而 `qosFor()` 那张表就是修复本身。
+
+顺带量到的：`/particle_cloud`（`sensor_msgs/msg/PointCloud2`）在负对照里也被判
+incompatible —— 它和 `/qos_probe/scan` 走同一条 sensor 规则，所以修好之后也一起通了。
+
+### 四、还没量的
+
+* **整条 nav2 栈**：这一节量的是合成话题，不是 `nav2_stack.bat` 起来的真栈。

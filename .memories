@@ -6,6 +6,31 @@
 约定与根 `README.md` 一致：`.md` 用 **LF** 换行 + **UTF-8 BOM**；
 `.bat` 用 **CRLF**；`.sh` 用 **LF**。
 
+### `viz`（Windows 可视化）与 `viz_feed`（C++ 边车）—— 2026-10-31
+
+* **边车是 shim 的一个普通 `rclcpp::Node`**（`bridge/windows/tools/viz_feed.cpp`），
+  带 `tf2_ros::Buffer` + `TransformListener`：**TF 在边车里算**，GUI 只拿固定坐标系的
+  几何（`frame_id` 变了就重新取 latched 消息重算）。
+* **IPC 是子进程 stdio**：4 字节小端长度 + 1 字节 kind + payload。子进程由 `viz.exe`
+  拉起，窗口关掉它自己退出。
+* **`/goal_pose` 与 `/initialpose` 由边车独占写端** —— 一个通道一个写者，
+  同时跑 `ros2 topic pub` 会打架。`viz` v1 只发 `/goal_pose`，不走 action。
+* **`viz_feed` 注册成订阅者**，所以 nav2 才会发 `/plan`、`/cmd_vel`。
+* **`qosFor()` 是 agent 侧的 QoS 表**（`gRPC/ros2_gRPC_sdk/src/server/rclcpp_backend.cpp`）：
+  sensor 类型 → best_effort/depth 5；`/map`、`/tf_static`、代价地图、名字以 `/map` 结尾的
+  → reliable/transient_local/depth 1；`/clock` → best_effort。
+* **真 ROS2 上的 QoS 已经量过**（2026-10-31，对端 `wang@192.168.0.153` 的 Jazzy）：
+  对端脚本 `bridge/scripts/qos_probe.py` 发 best_effort 的 `/qos_probe/scan` 与
+  transient_local 的 `/qos_probe/map`；修好后两条都收到，把 sensor 分支临时改回
+  reliable 就一条都收不到（agent 报 `offering incompatible QoS`）。
+  **Windows 连真机时用 `set ROS2_BRIDGE_AGENT=192.168.0.153:50111`**（50111 是
+  rclcpp agent；50060 是另一个 python 进程）。
+* **真机 SSH 是 `wang@192.168.0.153`**（`ubuntu_ssh.py` 里的默认目标
+  `ubuntu@192.168.1.113` 已过时，那台不在线）。密钥
+  `C:/Users/Administrator/Desktop/app/ssh_key/id_ed25519`。
+* `ubuntu_ssh.py` 传文件时**别把源码当 `bash -s` 的脚本喂进去**（会被当 shell 跑）；
+  正确做法是 `ssh host "cat > path" < file`，并且先去掉 BOM、把 CRLF 换成 LF。
+
 ### 本机环境（用户口述，随时可能变）
 
 | 项 | 位置 / 命令 |

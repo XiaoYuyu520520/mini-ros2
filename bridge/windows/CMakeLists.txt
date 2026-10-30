@@ -175,12 +175,24 @@ ros2_bridge_bundle_runtime(ros2_bridge_daemon)
 add_executable(ros2 tools/ros2_cli.cpp)
 target_link_libraries(ros2 PRIVATE ros2_bridge)
 
+# The visualiser's data plane. It is an ordinary shim node (so the graph sees
+# its subscriptions and nav2 keeps publishing /plan and /cmd_vel), plus a
+# tf2_ros buffer that transforms every message into the view's fixed frame.
+# `nlohmann/json` is the copy the shim already vendors for its own tools.
+add_executable(viz_feed tools/viz_feed.cpp)
+target_link_libraries(viz_feed PRIVATE ros2_bridge)
+target_include_directories(viz_feed PRIVATE
+  ${ROS2_BRIDGE_SHIM_ROOT}/../third_party/include)
+
 # The CLI reads the shim graph directly; none of the gRPC half of ros2_bridge
 # is reachable from it, so the linker drops that side entirely and the result
 # is a fully static executable: `ros2 topic list` runs with no MSYS2 directory
 # on PATH and no DLLs beside it.
 if(WIN32 AND NOT MSVC)
   target_link_options(ros2 PRIVATE -static -static-libgcc -static-libstdc++)
+  # Same reasoning for the sidecar: it is started by a GUI that may not have
+  # MSYS2 on PATH, so it must carry its runtime with it.
+  target_link_options(viz_feed PRIVATE -static -static-libgcc -static-libstdc++)
 endif()
 
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/bridge_grpc_agent.cpp)
@@ -232,6 +244,13 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tests/shm_roundtrip.cpp)
   target_link_libraries(bridge_shm_roundtrip PRIVATE ros2_bridge)
   add_test(NAME bridge_shm_roundtrip COMMAND bridge_shm_roundtrip)
 endif()
+
+# The sidecar's JSON contract, against synthetic messages and no shared memory:
+# a map's base64 payload, a scan's point list, and the quaternion-to-yaw path
+# must all survive a build with no GUI and no running stack.
+add_test(NAME bridge_viz_feed_selftest COMMAND viz_feed --selftest)
+set_tests_properties(bridge_viz_feed_selftest PROPERTIES
+  PASS_REGULAR_EXPRESSION "\"ok\":true" TIMEOUT 30)
 
 # Every test in this tree that talks to the shim writes into the same graph and
 # the same shared-memory channels the bridge daemon uses, and a channel has a

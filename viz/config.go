@@ -6,6 +6,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -15,11 +16,64 @@ import (
 // Config is one `config.json`. Everything is optional; the zero value is
 // replaced by defaults in `loadConfig`.
 type Config struct {
-	Window WindowConfig           `json:"window"`
-	Layout LayoutConfig           `json:"layout"`
-	Views  map[string]ViewConfig  `json:"views"`
-	Topics map[string]TopicConfig `json:"topics"`
-	Tools  map[string]ToolConfig  `json:"tools"`
+	Window    WindowConfig           `json:"window"`
+	Layout    LayoutConfig           `json:"layout"`
+	Views     map[string]ViewConfig  `json:"views"`
+	Topics    map[string]TopicConfig `json:"topics"`
+	Tools     map[string]ToolConfig  `json:"tools"`
+	Display   DisplayConfig          `json:"display"`
+	Transport TransportConfig        `json:"transport"`
+}
+
+// DisplayConfig is how a topic *type* is drawn. It is kept out of TopicConfig
+// so the topic list stays a list of topics: a new /scan entry picks up the
+// LaserScan style without anybody repeating the colour.
+type DisplayConfig struct {
+	OccupancyGrid OccupancyGridStyle `json:"occupancy_grid"`
+	LaserScan     LaserScanStyle     `json:"laser_scan"`
+	Path          PathStyle          `json:"path"`
+	Pose          PoseStyle          `json:"pose"`
+	TF            TFStyle            `json:"tf"`
+}
+
+type OccupancyGridStyle struct {
+	FreeColor    string  `json:"free_color"`
+	Occupied     string  `json:"occupied_color"`
+	UnknownColor string  `json:"unknown_color"`
+	Alpha        float64 `json:"alpha"`
+}
+
+type LaserScanStyle struct {
+	Color string  `json:"color"`
+	Size  float64 `json:"size"`
+}
+
+type PathStyle struct {
+	Color string  `json:"color"`
+	Width float64 `json:"width"`
+}
+
+type PoseStyle struct {
+	Color      string  `json:"color"`
+	Size       float64 `json:"size"`
+	Covariance bool    `json:"covariance"`
+}
+
+// TFStyle is the one thing drawn on the /tf topic: it is a live transform
+// stream, not something you plot.
+type TFStyle struct {
+	ShowAxes bool `json:"show_axes"`
+}
+
+// TransportConfig says how the sidecar is reached. It is a child process over
+// stdin/stdout, not a TCP port or a named pipe: the lifetime is tied to the
+// viewer, there is nothing to firewall, and a crash cannot leave a listener
+// behind. `cmd` names the executable when it is not next to viz.exe.
+// `namespace` is exported as NAV2_SHM_NAMESPACE to the child; leave it empty
+// to inherit the shell's environment.
+type TransportConfig struct {
+	Cmd       string `json:"cmd"`
+	Namespace string `json:"namespace"`
 }
 
 type WindowConfig struct {
@@ -52,29 +106,36 @@ type ViewConfig struct {
 	Pan        bool       `json:"pan"`
 }
 
-// TopicConfig is one display. `qos` is what the sidecar will hand the agent:
-// it is the only place reliability and durability matter, because the shared
-// memory channel itself has no QoS.
+// TopicConfig is one topic entry. `qos` is what the sidecar will hand the
+// agent: it is the only place reliability and durability matter, because the
+// shared memory channel itself has no QoS. The colour/size/alpha fields are
+// per-topic overrides of the type style in DisplayConfig; leaving them out
+// means "use the type style", which is why a new /scan entry needs no
+// decoration.
 type TopicConfig struct {
 	Type      string    `json:"type"`
-	QOS       QOSConfig `json:"qos"`
-	Color     string    `json:"color"`
-	PointSize float64   `json:"point_size"`
-	Width     float64   `json:"width"`
-	Alpha     float64   `json:"alpha"`
-	Enabled   *bool     `json:"enabled"`
+	QOS       QOSConfig `json:"qos,omitzero"`
+	Color     string    `json:"color,omitempty"`
+	PointSize float64   `json:"point_size,omitempty"`
+	Width     float64   `json:"width,omitempty"`
+	Alpha     float64   `json:"alpha,omitempty"`
+	Enabled   *bool     `json:"enabled,omitempty"`
 }
 
 type QOSConfig struct {
-	Reliability string `json:"reliability"`
-	Durability  string `json:"durability"`
-	Depth       int    `json:"depth"`
+	Reliability string `json:"reliability,omitempty"`
+	Durability  string `json:"durability,omitempty"`
+	Depth       int    `json:"depth,omitempty"`
 }
 
 type ToolConfig struct {
 	Topic  string `json:"topic"`
 	Action string `json:"action"`
 	Type   string `json:"type"`
+	// Frame is the frame the tool publishes in. It is deliberately not the
+	// view's fixed frame: a goal is a map-frame pose even when the user is
+	// looking at the robot in odom.
+	Frame string `json:"frame"`
 }
 
 // defaultConfig is what the shell shows when there is no config.json yet.
@@ -99,14 +160,29 @@ func defaultConfig() Config {
 			},
 		},
 		Topics: map[string]TopicConfig{
-			"/map":  {Type: "nav_msgs/msg/OccupancyGrid", Color: "#dddddd", Alpha: 0.7},
-			"/scan": {Type: "sensor_msgs/msg/LaserScan", Color: "#00ff88", PointSize: 2},
-			"/plan": {Type: "nav_msgs/msg/Path", Color: "#ff4444", Width: 2},
+			"/map":       {Type: "nav_msgs/msg/OccupancyGrid"},
+			"/scan":      {Type: "sensor_msgs/msg/LaserScan"},
+			"/plan":      {Type: "nav_msgs/msg/Path"},
+			"/amcl_pose": {Type: "geometry_msgs/msg/PoseWithCovarianceStamped"},
 		},
+		Display: DisplayConfig{
+			OccupancyGrid: OccupancyGridStyle{
+				FreeColor: "#f2f2f2", Occupied: "#202020",
+				UnknownColor: "#7a7a7a", Alpha: 0.85,
+			},
+			LaserScan: LaserScanStyle{Color: "#00ff88", Size: 2.5},
+			Path:      PathStyle{Color: "#ff4444", Width: 2.5},
+			Pose:      PoseStyle{Color: "#ffcc00", Size: 14, Covariance: true},
+			TF:        TFStyle{ShowAxes: true},
+		},
+		Transport: TransportConfig{},
 		Tools: map[string]ToolConfig{
-			"goal":         {Action: "navigate_to_pose", Type: "nav2_msgs/action/NavigateToPose"},
-			"goal_topic":   {Topic: "/goal_pose", Type: "geometry_msgs/msg/PoseStamped"},
-			"initial_pose": {Topic: "/initialpose", Type: "geometry_msgs/msg/PoseWithCovarianceStamped"},
+			"goal": {Action: "navigate_to_pose", Type: "nav2_msgs/action/NavigateToPose",
+				Frame: "map"},
+			"goal_topic": {Topic: "/goal_pose", Type: "geometry_msgs/msg/PoseStamped",
+				Frame: "map"},
+			"initial_pose": {Topic: "/initialpose",
+				Type: "geometry_msgs/msg/PoseWithCovarianceStamped", Frame: "map"},
 		},
 	}
 	return cfg
@@ -126,10 +202,150 @@ func loadConfig(path string) (Config, string, error) {
 	if err != nil {
 		return cfg, path, err
 	}
-	if err := json.Unmarshal(raw, &cfg); err != nil {
+	parsed, _, err := parseConfig(raw)
+	if err != nil {
 		return cfg, path, fmt.Errorf("%s: %w", path, err)
 	}
-	return cfg, path, nil
+	return parsed, path, nil
+}
+
+// utf8BOM is the three bytes a Windows editor may put in front of a JSON
+// file. Written as bytes rather than a string so the source carries no BOM
+// of its own.
+var utf8BOM = []byte{0xEF, 0xBB, 0xBF}
+
+// parseConfig turns one document into the typed configuration plus the generic
+// tree it came from. The generic tree is what makes Save able to keep the
+// `_comment` keys: see deepMerge.
+func parseConfig(raw []byte) (Config, any, error) {
+	// Start from zero, not from the defaults: unmarshalling into a map that is
+	// already populated *adds* to it, so a file listing only /scan used to end
+	// up with the default /map, /scan and /plan. A section the file names is
+	// authoritative; only sections it leaves out fall back to the defaults
+	// (see withDefaults).
+	var cfg Config
+	// Windows editors (and PowerShell's `Set-Content -Encoding UTF8`) like to
+	// put a UTF-8 BOM in front. `encoding/json` treats it as an invalid
+	// character, which used to make a hand-edited config silently fall back to
+	// the defaults.
+	raw = bytes.TrimPrefix(raw, utf8BOM)
+	var doc any
+	if err := json.Unmarshal(raw, &doc); err != nil {
+		return defaultConfig(), nil, err
+	}
+	if err := json.Unmarshal(raw, &cfg); err != nil {
+		return defaultConfig(), doc, err
+	}
+	return withDefaults(cfg, doc), doc, nil
+}
+
+// withDefaults completes a parsed document. It never *adds* to a section the
+// file provided: `"topics": {}` means an empty topic list, not the defaults.
+func withDefaults(cfg Config, doc any) Config {
+	def := defaultConfig()
+
+	if cfg.Window.Width <= 0 {
+		cfg.Window.Width = def.Window.Width
+	}
+	if cfg.Window.Height <= 0 {
+		cfg.Window.Height = def.Window.Height
+	}
+	// `center` defaults to true; unlike the numbers, false is a real value, so
+	// look at the document to tell "absent" from "false".
+	cfg.Window.Center = true
+	if root, ok := doc.(map[string]any); ok {
+		if win, ok := root["window"].(map[string]any); ok {
+			if v, ok := win["center"].(bool); ok {
+				cfg.Window.Center = v
+			}
+		}
+	}
+
+	if cfg.Layout.Grid == nil {
+		cfg.Layout.Grid = def.Layout.Grid
+	}
+	if len(cfg.Layout.Sizes) == 0 {
+		cfg.Layout.Sizes = def.Layout.Sizes
+	}
+	if cfg.Layout.PanelOffset <= 0 || cfg.Layout.PanelOffset >= 1 {
+		cfg.Layout.PanelOffset = def.Layout.PanelOffset
+	}
+
+	if cfg.Views == nil {
+		cfg.Views = def.Views
+	} else if _, ok := cfg.Views["view"]; !ok {
+		cfg.Views["view"] = def.Views["view"]
+	}
+
+	if cfg.Topics == nil {
+		cfg.Topics = def.Topics
+	}
+
+	if cfg.Tools == nil {
+		cfg.Tools = def.Tools
+	} else {
+		for name, tool := range def.Tools {
+			if _, ok := cfg.Tools[name]; !ok {
+				cfg.Tools[name] = tool
+			}
+		}
+	}
+	for name, tool := range cfg.Tools {
+		if tool.Frame == "" {
+			tool.Frame = "map"
+			cfg.Tools[name] = tool
+		}
+	}
+
+	// Display styles merge field by field, so a file that changes only the
+	// laser colour keeps the default map colours.
+	if cfg.Display.OccupancyGrid.FreeColor == "" {
+		cfg.Display.OccupancyGrid.FreeColor = def.Display.OccupancyGrid.FreeColor
+	}
+	if cfg.Display.OccupancyGrid.Occupied == "" {
+		cfg.Display.OccupancyGrid.Occupied = def.Display.OccupancyGrid.Occupied
+	}
+	if cfg.Display.OccupancyGrid.UnknownColor == "" {
+		cfg.Display.OccupancyGrid.UnknownColor = def.Display.OccupancyGrid.UnknownColor
+	}
+	if cfg.Display.OccupancyGrid.Alpha == 0 {
+		cfg.Display.OccupancyGrid.Alpha = def.Display.OccupancyGrid.Alpha
+	}
+	if cfg.Display.LaserScan.Color == "" {
+		cfg.Display.LaserScan.Color = def.Display.LaserScan.Color
+	}
+	if cfg.Display.LaserScan.Size == 0 {
+		cfg.Display.LaserScan.Size = def.Display.LaserScan.Size
+	}
+	if cfg.Display.Path.Color == "" {
+		cfg.Display.Path.Color = def.Display.Path.Color
+	}
+	if cfg.Display.Path.Width == 0 {
+		cfg.Display.Path.Width = def.Display.Path.Width
+	}
+	if cfg.Display.Pose.Color == "" {
+		cfg.Display.Pose.Color = def.Display.Pose.Color
+	}
+	if cfg.Display.Pose.Size == 0 {
+		cfg.Display.Pose.Size = def.Display.Pose.Size
+	}
+	// `show_axes` defaults to true; false is a real value, so read the
+	// document rather than the zero value.
+	cfg.Display.TF.ShowAxes = true
+	if root, ok := doc.(map[string]any); ok {
+		if display, ok := root["display"].(map[string]any); ok {
+			if tf, ok := display["tf"].(map[string]any); ok {
+				if v, ok := tf["show_axes"].(bool); ok {
+					cfg.Display.TF.ShowAxes = v
+				}
+			}
+		}
+	}
+
+	if cfg.Transport.Cmd == "" {
+		cfg.Transport.Cmd = def.Transport.Cmd
+	}
+	return cfg
 }
 
 // defaultConfigPath looks next to the executable first, then in the working
@@ -146,3 +362,72 @@ func defaultConfigPath() string {
 
 // enabled reports whether a display is on. Absent means on.
 func (t TopicConfig) enabled() bool { return t.Enabled == nil || *t.Enabled }
+
+// writeConfig saves `cfg` over `path` **without losing the file's comments**.
+//
+// A struct round-trip cannot do that: `_comment` keys are not fields, so
+// marshalling the struct would drop every one of them the first time the user
+// pressed Save. Instead the old document is read back as a generic value and
+// the new configuration is deep-merged into it - keys the new value does not
+// mention (the `_comment*` entries, including the ones nested inside a topic)
+// survive, keys it does mention are replaced.
+func writeConfig(path string, cfg Config) error {
+	var previous any
+	if raw, err := os.ReadFile(path); err == nil {
+		// The file may carry a BOM, exactly like parseConfig allows; without
+		// this trim the old document would not decode and Save would silently
+		// drop every `_comment` key in it.
+		_ = json.Unmarshal(bytes.TrimPrefix(raw, utf8BOM), &previous)
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+
+	current, err := toGeneric(cfg)
+	if err != nil {
+		return err
+	}
+	merged := deepMerge(previous, current)
+
+	body, err := json.MarshalIndent(merged, "", "  ")
+	if err != nil {
+		return err
+	}
+	body = append(body, '\n')
+	return os.WriteFile(path, body, 0o644)
+}
+
+// toGeneric turns a typed value into the `any` tree encoding/json produces.
+func toGeneric(v any) (any, error) {
+	raw, err := json.Marshal(v)
+	if err != nil {
+		return nil, err
+	}
+	var out any
+	if err := json.Unmarshal(raw, &out); err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// deepMerge overlays `new` on `old`. Maps merge key by key, so a comment that
+// only exists in `old` stays; everything else is replaced by `new` (arrays and
+// scalars included).
+func deepMerge(old, new any) any {
+	oldMap, oldOK := old.(map[string]any)
+	newMap, newOK := new.(map[string]any)
+	if !oldOK || !newOK {
+		return new
+	}
+	out := make(map[string]any, len(oldMap)+len(newMap))
+	for k, v := range oldMap {
+		out[k] = v
+	}
+	for k, v := range newMap {
+		if prev, exists := out[k]; exists {
+			out[k] = deepMerge(prev, v)
+		} else {
+			out[k] = v
+		}
+	}
+	return out
+}

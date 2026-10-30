@@ -18,6 +18,14 @@ rem ---------------------------------------------------------------------------
 set "ROS2_BRIDGE_WINDOWS=%~dp0"
 for %%I in ("%~dp0..\..") do set "ROS2_BRIDGE_CPU_ROOT=%%~fI"
 
+rem Make `ros2`, `rviz2` and the demo .bat files reachable by name from this
+rem window. The marker keeps a second `call bridge_env.bat` from growing PATH a
+rem second time.
+if not defined ROS2_BRIDGE_PATH_READY (
+  set "PATH=%ROS2_BRIDGE_WINDOWS%;%PATH%"
+  set "ROS2_BRIDGE_PATH_READY=1"
+)
+
 if not defined ROS2_BRIDGE_BUILD set "ROS2_BRIDGE_BUILD=%ROS2_BRIDGE_WINDOWS%build"
 
 rem The daemon's MinGW and gRPC/protobuf DLLs are copied next to it by the

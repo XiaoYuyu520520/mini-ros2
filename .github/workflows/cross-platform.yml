@@ -133,6 +133,16 @@ jobs:
           python -m pip install --disable-pip-version-check pytest rosbags -r bridge/ubuntu/ros2_bridge_sim/requirements.txt
           python tools/run_ctest.py sim
 
+      # The visualiser's Go front end. It is a separate tree with its own
+      # toolchain, and `go vet` plus `go test` is the gate that keeps the
+      # sidecar protocol and the renderer honest.
+      - name: viz go build + test
+        run: |
+          go version
+          cd viz
+          go vet ./...
+          go test ./...
+
       - name: docs, structure, scratch references and vendored patches
         run: |
           python tools/check_docs.py
@@ -229,6 +239,16 @@ jobs:
         run: |
           python3 -m pip install --disable-pip-version-check pytest rosbags -r bridge/ubuntu/ros2_bridge_sim/requirements.txt
           python3 tools/run_ctest.py sim
+
+      # The visualiser's Go front end. Same reason as in the Windows job: it is
+      # a separate tree with its own toolchain, and the two platforms must not
+      # disagree about it.
+      - name: viz go build + test
+        run: |
+          go version
+          cd viz
+          go vet ./...
+          go test ./...
 
       - name: docs, structure, scratch references and vendored patches
         run: |

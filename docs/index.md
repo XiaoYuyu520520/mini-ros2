@@ -46,6 +46,7 @@ Windows 上的 nav2 建图、规划，再把 <code>/cmd_vel</code> 送回 Ubuntu
 | [3.2 运行 nav2 导航栈](Basic_application/nav2_stack) | 起栈、参数来源、把安全链接进链、运行期换控制器 |
 | [3.3 SLAM 建图](Basic_application/slam) | 建图、存图、位姿图存档、运动门槛怎么调 |
 | [3.4 地图存取](Basic_application/map) | PGM / 8 位 PNG、`map_saver_cli`、`map_server` |
+| [3.5 Windows 可视化](Basic_application/viz) | `rviz2` 命令：看地图 / 扫描 / 路径 / 位姿，发目标点与初始位姿 |
 
 ### 4 架构说明
 

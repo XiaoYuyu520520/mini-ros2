@@ -253,6 +253,41 @@ Windows 默认定时器粒度 15.6 ms，所以按 `sleep_for(1000/rate)` **毫�
 **能不改就不改**（加在 `prelude.hpp` / `include\ros2_shim\`）；非改不可的，写成
 `nav2/patches/` 里的 patch 让 `verify_patch.py` 能验。
 
+### 输入 `rviz2` 没有窗口
+
+`rviz2.bat` 找的是 `viz\viz.exe`。没编译过就什么都没有：
+
+```powershell
+cd viz
+$env:PATH = "D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin;$env:PATH"
+go build -ldflags "-H windowsgui" -o viz.exe .
+```
+
+`rviz2` 这个命令本身要靠 `call bridge\windows\bridge_env.bat` 把它所在的目录加进 PATH；
+没加载过环境就直接敲 `rviz2`，cmd 会说「不是内部或外部命令」。
+
+### 可视化窗口里只有网格，没有地图
+
+状态栏左边的 `sidecar:` 那段是诊断入口：
+
+| 状态栏写的 | 意思 | 怎么办 |
+| --- | --- | --- |
+| `sidecar: viz_feed not found` | 数据面没编出来 | `python bridge\scripts\build_bridge.py --jobs 1` |
+| `sidecar: 0 topic(s) waiting for data` | 边车起来了，但没有话题 | 确认 nav2 栈在跑，且 **namespace 与边车一致**（`echo %NAV2_SHM_NAMESPACE%`） |
+| `sidecar: /scan: no type known for '/scan' yet` | 那个话题还没有发布者 | 起栈，或者在 Displays 面板里重新 Add 一次 |
+
+另一个常见原因是 **namespace 不一致**：边车和 nav2 必须共享同一个
+`NAV2_SHM_NAMESPACE`，否则两边各看各的图。窗口与边车的 namespace 可以在
+`config.json` 的 `transport.namespace` 里改。
+
+### 发了目标点，车不动
+
+1. `ros2 topic echo /goal_pose --count 1` —— 有没有消息？没有就是 viewer 与边车
+   的问题（有消息说明已经发出去了）；
+2. 有消息但车不动：`nav2` 栈没起，或者目标点在地图外。`bt_navigator` 订阅的是
+   `goal_pose` 话题，**不是** `NavigateToPose` action；
+3. 别同时对 `/goal_pose` 跑 `ros2 topic pub` —— 一个通道只能有一个写者。
+
 ### 还没定位 / 没有证据的
 
 | 现象 | 状态 |
