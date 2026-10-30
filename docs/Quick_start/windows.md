@@ -9,11 +9,11 @@ title: 1 快速开始 · Windows 上手
 <div class="label">本页总览</div>
 <p>本节介绍在 Windows 上把 mini-ros2 跑起来的三件事：<strong>下载并解压</strong>、
 <strong>加载环境变量</strong>（<code>start/加载模拟ROS环境变量.ps1</code>）、
-<strong>连上机器人并验证</strong>。</p>
+<strong>用两个终端一头发、一头收来验证</strong>，最后才是连上机器人。</p>
 <ul>
   <li><a href="#download">下载与解压</a></li>
   <li><a href="#env">加载环境变量（PowerShell）</a> —— 含解除脚本执行限制</li>
-  <li><a href="#verify">验证安装</a></li>
+  <li><a href="#verify">验证：两个终端发 / 收话题</a></li>
   <li><a href="#connect">连上机器人</a></li>
   <li><a href="#mission">跑通第一个导航任务</a></li>
 </ul>
@@ -174,24 +174,69 @@ SDK 配置、日志级别。关掉窗口或 <code>endlocal</code> 就恢复原�
 
 <a id="verify"></a>
 
-## 1.6.3 验证安装
+## 1.6.3 验证：两个终端，一个发、一个收
 
-点源之后，依次检查这三件事：
+环境加载好之后，最快的验证不是看变量，而是**自己发一条话题、自己收一条**。
+两个 PowerShell 窗口各点源一次即可 —— 不需要机器人，也不需要 Ubuntu。
+
+### [终端 1] 发布话题
 
 ```powershell
-# 1) 兼容层能起（不需要机器人）
-ros2 bridge status
-
-# 2) ros2 命令本身可用
-ros2 --help
-
-# 3) 共享内存和 SDK 的路径对
-$env:NAV2_SHIM_NAMESPACE
-$env:ROS2_BRIDGE_AGENT
+. .\start\加载模拟ROS环境变量.ps1
+ros2 topic pub /demo/chatter std_msgs/msg/String "{data: hello from Windows}" -r 1
 ```
 
-`ros2 bridge status` 只读图、不触发等待，所以没有机器人时也能跑，
-用来确认「Windows 侧这一半是好的」。
+* `-r 1` 表示每秒 1 条；不带 `--once` 就会一直发，验证完按 **Ctrl+C** 停。
+* 这个窗口每秒打印一行类似
+  `publishing #12: std_msgs.msg.String(data='hello from Windows')`。
+
+### [终端 2] 订阅并展示
+
+```powershell
+. .\start\加载模拟ROS环境变量.ps1
+ros2 topic echo /demo/chatter
+```
+
+应该持续看到：
+
+```
+data: hello from Windows
+---
+data: hello from Windows
+---
+```
+
+### 再看话题与频率
+
+```powershell
+ros2 topic list -t           # 列表里应该有 /demo/chatter [std_msgs/msg/String]
+ros2 topic info /demo/chatter
+ros2 topic hz /demo/chatter  # 平均约 1 Hz
+```
+
+`ros2 topic info` 里 **`Publisher count: 1`** 与 **`Subscription count: 1`** 同时出现，
+说明发布窗口和订阅窗口都在这台机器的共享内存图里。
+
+<div class="callout note">
+<span class="label">提示</span>
+<p>这条验证走的是<strong>本机共享内存</strong>（通道 <code>ros2shim/demo/chatter</code>），
+不经过 gRPC，所以不需要 Ubuntu、不需要 agent。它证明的是：
+环境变量加载成功、<code>ros2</code> 命令可用、兼容层的发布 / 订阅通路是通的。</p>
+<p>想再确认守护进程那一半，另开一个窗口跑 <code>ros2 bridge status</code>（只读图，不触发等待）。</p>
+</div>
+
+<div class="callout warn">
+<span class="label">注意</span>
+<p><strong>两个窗口都要各自点源一次。</strong>点源只作用于当前这个窗口，
+新开的窗口里 <code>ros2</code> 又变回「不认识这个命令」。</p>
+</div>
+
+<div class="callout warn">
+<span class="label">注意</span>
+<p><code>ros2 topic pub</code> 不带 <code>--once</code> 会一直发。共享内存是
+<strong>单写者</strong>模型，忘了关掉会一直占着 <code>/demo/chatter</code> 的写者，
+后面的验证就会觉得「消息怪怪的」。验证完在终端 1 按 <strong>Ctrl+C</strong>。</p>
+</div>
 
 <a id="connect"></a>
 
