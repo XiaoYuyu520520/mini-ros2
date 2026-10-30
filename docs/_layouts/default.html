@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mini-ros2 · 在 Windows 上跑 ROS2 与 nav2</title>
+<meta name="description" content="在 Windows 上像在 Linux 一样使用 ROS2 和 nav2 —— 不用装 ROS2，不用 DDS。Run ROS2 and nav2 on Windows as if you were on Linux.">
+<style>
+  :root {
+    --fg: #1f2328;
+    --muted: #59636e;
+    --border: #d1d9e0;
+    --bg: #ffffff;
+    --code-bg: #f6f8fa;
+    --accent: #0969da;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fg: #e6edf3; --muted: #9198a1; --border: #3d444d; --bg: #0d1117;
+      --code-bg: #151b23; --accent: #4493f8;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 1.25rem 4rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+                 "PingFang SC", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+    line-height: 1.65; color: var(--fg); background: var(--bg);
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 60rem; margin: 0 auto; }
+  header.site {
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 0 1rem; margin-bottom: 2rem;
+  }
+  header.site h1 { margin: 0 0 .35rem; font-size: 1.6rem; letter-spacing: -.01em; }
+  header.site p { margin: 0; color: var(--muted); font-size: .95rem; }
+  nav.toc {
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem 1.25rem; margin: 0 0 2.5rem; background: var(--code-bg);
+  }
+  nav.toc h2 {
+    margin: 0 0 .6rem; font-size: .78rem; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--muted);
+  }
+  nav.toc ul { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 2rem; }
+  nav.toc li { margin: .2rem 0; break-inside: avoid; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+  main { max-width: 60rem; margin: 0 auto; }
+  h1, h2, h3 { line-height: 1.3; }
+  h2 { margin-top: 2.75rem; padding-bottom: .3rem; border-bottom: 1px solid var(--border); }
+  h3 { margin-top: 2rem; }
+  a { color: var(--accent); }
+  code { background: var(--code-bg); padding: .15em .35em; border-radius: 5px; font-size: .88em; }
+  pre {
+    background: var(--code-bg); padding: 1rem; border-radius: 8px;
+    overflow-x: auto; border: 1px solid var(--border); line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; font-size: .85rem; }
+  table { border-collapse: collapse; width: 100%; margin: 1.25rem 0; display: block; overflow-x: auto; }
+  th, td { border: 1px solid var(--border); padding: .5rem .75rem; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); font-weight: 600; }
+  blockquote {
+    margin: 1.25rem 0; padding: .1rem 1.25rem;
+    border-left: 4px solid var(--border); color: var(--muted);
+  }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 3rem 0; }
+  footer.site {
+    margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+    color: var(--muted); font-size: .88rem;
+  }
+  footer.site a { color: var(--muted); }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <h1>mini-ros2</h1>
+    <p>在 Windows 上跑 ROS2 与 nav2 —— 不用装 ROS2，不用 DDS。<br>
+       Run ROS2 and nav2 on Windows — no ROS2 install, no DDS.</p>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc">
+  <h2>文档导航 / Documentation</h2>
+  <ul>
+    <li><a href="index.html">首页 / Home</a></li>
+    <li><a href="getting-started.html">快速开始 / Getting Started</a></li>
+    <li><a href="architecture.html">架构 / Architecture</a></li>
+    <li><a href="build-and-run.html">构建与运行 / Build &amp; Run</a></li>
+    <li><a href="cli.html">ros2 命令行 / CLI</a></li>
+    <li><a href="capabilities.html">能力清单 / Capabilities</a></li>
+    <li><a href="limitations.html">限制与缺口 / Limitations</a></li>
+    <li><a href="validation.html">验收与证据 / Validation</a></li>
+    <li><a href="development.html">开发指南 / Development</a></li>
+    <li><a href="troubleshooting.html">排错 / Troubleshooting</a></li>
+  </ul>
+</nav>
+</div>
+
+<main>
+{{ content }}
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>
+      <a href="https://github.com/XiaoYuyu520520/mini-ros2">Repository</a> ·
+      <a href="https://github.com/XiaoYuyu520520/mini-ros2/releases">Releases</a> ·
+      <a href="https://github.com/XiaoYuyu520520/mini-ros2/issues">Issues</a> ·
+      MIT License
+    </p>
+  </div>
+</footer>
+</body>
+</html>

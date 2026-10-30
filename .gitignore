@@ -67,3 +67,7 @@ bridge/windows/*.log
 
 # `python package.py` output: build products, re-made from the source tree.
 dist/
+
+# Downloaded ROS2 rviz sources: another tree that is fetched, not built by the
+# shim. Nothing in this repository references it.
+rviz2/

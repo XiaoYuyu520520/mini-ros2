@@ -1,5 +1,30 @@
 ﻿# CPU · 在 Windows 上跑 nav2（gRPC 桥接 + 共享内存 ROS2 兼容层）
 
+<p align="center">
+  <b>🌐 在线文档站 / Documentation site：</b>
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/">https://xiaoyuyu520520.github.io/mini-ros2/</a>
+</p>
+
+<p align="center">
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/">首页</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/getting-started.html">快速开始</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/architecture.html">架构</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/build-and-run.html">构建与运行</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/cli.html">ros2 命令行</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/capabilities.html">能力</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/limitations.html">限制与缺口</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/validation.html">验收</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/development.html">开发</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/troubleshooting.html">排错</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/XiaoYuyu520520/mini-ros2/releases"><img src="https://img.shields.io/github/v/release/XiaoYuyu520520/mini-ros2?label=release" alt="release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/XiaoYuyu520520/mini-ros2" alt="license"></a>
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Ubuntu-blue" alt="platform">
+  <img src="https://img.shields.io/badge/C%2B%2B-17-blue" alt="c++17">
+</p>
+
 目标：Ubuntu 上的机器人（本仓库自带一个 Python 仿真小车 + 雷达）通过 gRPC 把话题送到
 Windows，Windows 上的 **魔改 nav2** 建图、规划，再把 `/cmd_vel` 送回 Ubuntu，小车动起来 ——
 也就是说，**在 Windows 上像在 Linux 上一样使用 ROS2**，不需要 DDS，也不需要安装 ROS2。
@@ -48,8 +73,11 @@ Windows，Windows 上的 **魔改 nav2** 建图、规划，再把 `/cmd_vel` 送
 ```
 CPU/
 ├─ README.md                本文件：目标、结构、怎么用、怎么开发
+├─ GETTING_STARTED.md       新手入口：五分钟说清能干什么、能在哪跑、怎么跑起来、不做什么
 ├─ BUILD.md                 编译 / 启动 / 停止速查：Windows 与 Linux 各一块，逐项目写清
 │                           进哪个目录、敲什么命令、怎么算编过了、怎么加载环境、怎么停
+├─ docs/                    ★ 文档站（GitHub Pages 的源）：中英双语的架构 / 构建 / 能力 /
+│                           缺口 / 验收 / 开发 / 排错；改完推送 main 即自动发布
 ├─ bridge/                  ★ 胶水层：Windows 守护进程 + ros2 CLI + Ubuntu 仿真 + 文档与验收
 ├─ gRPC/ros2_gRPC_sdk/      ★ 通信 SDK：proto、客户端/服务端库、示例、自带 ctest
 ├─ code/Desktop/racecar/    小车的建图（SLAM）+ 导航（nav2）工作区：参数、launch、
@@ -546,6 +574,27 @@ python nav2/shm_transport/build.py --no-test --jobs 6
 6. 把新证据（日志、地图、报告）放进 `.scratch/`，把能复用的工具放进 `tools/`。
 
 ## 文档
+
+### 在线文档站（推荐，中英双语，GitHub Pages）
+
+**https://xiaoyuyu520520.github.io/mini-ros2/**
+
+| 页面 | 内容 |
+| --- | --- |
+| [快速开始](https://xiaoyuyu520520.github.io/mini-ros2/getting-started.html) | 三分钟跑起来，能干什么 / 不能干什么 |
+| [架构](https://xiaoyuyu520520.github.io/mini-ros2/architecture.html) | 三个子项目怎么拼起来，数据怎么流 |
+| [构建与运行](https://xiaoyuyu520520.github.io/mini-ros2/build-and-run.html) | 逐项目编译 / 启动 / 停止速查（Windows 与 Linux 对照） |
+| [ros2 命令行](https://xiaoyuyu520520.github.io/mini-ros2/cli.html) | `topic` / `service` / `action` / `param` / `node` 全部用法 |
+| [能力清单](https://xiaoyuyu520520.github.io/mini-ros2/capabilities.html) | 建图 / 定位 / 规划 / 控制 / 行为树 / 安全链，逐条实测数据 |
+| [限制与缺口](https://xiaoyuyu520520.github.io/mini-ros2/limitations.html) | 还差什么、代价多少、按什么优先级补 |
+| [验收与证据](https://xiaoyuyu520520.github.io/mini-ros2/validation.html) | 验收标准、实测数字、怎么复现 |
+| [开发指南](https://xiaoyuyu520520.github.io/mini-ros2/development.html) | 目录结构、改上游的规矩、加消息类型 / 加测试的步骤 |
+| [排错](https://xiaoyuyu520520.github.io/mini-ros2/troubleshooting.html) | 常见故障与定位手段 |
+
+> 文档站的源文件在 [`docs/`](docs/) 下（Jekyll），推送 `main` 后 GitHub Pages 自动构建发布。
+> 改文档就改 `docs/*.md`，不要只改这里。
+
+### 仓库内文档
 
 | 文档 | 内容 |
 | --- | --- |

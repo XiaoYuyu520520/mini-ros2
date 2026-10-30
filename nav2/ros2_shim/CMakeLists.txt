@@ -245,8 +245,21 @@ target_link_libraries(btcpp_groot_stub PUBLIC btcpp_headers)
 target_compile_options(btcpp_groot_stub PRIVATE
   -include ${CMAKE_CURRENT_SOURCE_DIR}/include/ros2_shim/prelude.hpp)
 
+# The stub has to sit *before* the BT.CPP archive on the link line: it is the
+# stub that first mentions StatusChangeLogger's destructor and Tree::rootNode(),
+# and GNU ld only looks forward - an archive passed earlier is not searched
+# again for symbols that appear later. With the stub behind the library the
+# link fails on ARM64 with "undefined reference to
+# BT::StatusChangeLogger::~StatusChangeLogger()"; the Windows linker is
+# order-tolerant, which is why it went unnoticed there.
+#
+# So the stub is *not* in behaviortree_cpp's interface here: a consumer that
+# links behaviortree_cpp gets the stub appended after the archive, which is
+# the order that breaks. The consumers that need it list it first (see the
+# nav2_server calls further down), and the one that does not - the shim's own
+# libraries - links it explicitly.
 target_link_libraries(behaviortree_cpp INTERFACE
-  btcpp_headers btcpp_minitrace btcpp_tinyxml2 btcpp_groot_stub)
+  btcpp_headers btcpp_minitrace btcpp_tinyxml2)
 
 # generate_nav2_tree_nodes_xml.cpp is a build-time tool that writes the list of
 # built-in BT nodes; nav2_package_sources drops it along with the other `main`s.
@@ -330,8 +343,11 @@ target_include_directories(nav2_behavior_tree PUBLIC
   ${NAV2_TP})
 target_compile_options(nav2_behavior_tree PRIVATE
   -include ${CMAKE_CURRENT_SOURCE_DIR}/include/ros2_shim/prelude.hpp)
+# btcpp_groot_stub first: see the note where it is defined. Anything that
+# links this library inherits the order, so the stub ends up ahead of the
+# BT.CPP archive no matter which server is being linked.
 target_link_libraries(nav2_behavior_tree PUBLIC
-  behaviortree_cpp nav2_util_core nav2_costmap_2d)
+  btcpp_groot_stub behaviortree_cpp nav2_util_core nav2_costmap_2d)
 
 nav2_port_package(nav2_navfn_planner nav2_navfn_planner)
 target_link_libraries(nav2_navfn_planner PUBLIC
@@ -569,11 +585,12 @@ target_link_libraries(opennav_docking PUBLIC
   nav2_util_core nav2_costmap_2d nav2_graceful_controller yaml-cpp)
 
 nav2_port_package(opennav_docking_bt nav2_docking/opennav_docking_bt)
-target_link_libraries(opennav_docking_bt PUBLIC nav2_behavior_tree opennav_docking)
+target_link_libraries(opennav_docking_bt PUBLIC
+  btcpp_groot_stub nav2_behavior_tree opennav_docking)
 
 nav2_port_package(nav2_route nav2_route)
 target_link_libraries(nav2_route PUBLIC
-  nav2_util_core nav2_costmap_2d nav2_behavior_tree)
+  btcpp_groot_stub nav2_util_core nav2_costmap_2d nav2_behavior_tree)
 
 # ---- the nav2 servers, and the manager that brings them up -----------------
 # Upstream's `planner_server`, `controller_server`, `bt_navigator` and
@@ -702,9 +719,9 @@ nav2_server(lifecycle_manager lifecycle_manager_node.cpp nav2_lifecycle_manager)
 # plugin hosts do: every dock plugin and every edge scorer reaches the process
 # through a plugin name in a parameters file.
 nav2_server(docking_server docking_server_node.cpp opennav_docking
-  opennav_docking opennav_docking_bt nav2_graceful_controller)
+  opennav_docking opennav_docking_bt nav2_graceful_controller btcpp_groot_stub)
 nav2_server(route_server route_server_node.cpp nav2_route
-  nav2_route nav2_costmap_2d)
+  nav2_route nav2_costmap_2d btcpp_groot_stub)
 
 # Diagnostic (not a ctest): loads a behavior tree the way bt_navigator does, with
 # a breadcrumb per step, to pin down where that path crashes.
