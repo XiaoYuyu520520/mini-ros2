@@ -75,6 +75,32 @@ curl -sSL --max-time 180 -H "Authorization: token $GITHUB_TOKEN" -H "User-Agent:
   `gRPC/ros2_gRPC_sdk/build` 和 `nav2/third_party/dl` 加 `actions/cache`
   （key 用源码哈希，workflow 改动不影响命中）
 
+## 三个目标：Windows x86_64 / Linux x86_64 / ARM64 (Ubuntu 22.04)
+
+ARM64 是**原生编**的（runner `ubuntu-22.04-arm`，公开仓库免费），不是交叉编：
+兼容层、SDK 和五棵测试树都要在目标机上**跑**，交叉编只能靠模拟器验。
+22.04 是最老的 LTS，在它上面编的二进制也能在 24.04 上跑。
+
+包名由 `package.py` 统一决定，CI 只调用它：
+
+```
+mini-ros2-windows-x86_64-<ver>.zip
+mini-ros2-linux-x86_64-<ver>.tar.gz
+mini-ros2-ubuntu22-arm64-<ver>.tar.gz
+```
+
+**在旧的标准库上跑，会暴露一类本地永远看不到的 bug**。ARM64 那一轮改了六处，
+没有一处跟架构有关：
+
+* **编译器更严格**：GCC 15 只警告的 redeclaration，GCC 13 直接报错；
+* **标准库更旧**：`atomic<shared_ptr>`（C++20 P0718R2）libstdc++ 12 才有，
+  Ubuntu 22.04 是 11；上游用了 `std::optional` 却没 include（真 ROS2 工具链
+  会传递性地带上，兼容层不会）；
+* **链接顺序**：GNU ld 只向前找符号，一个 archive 排在 stub 之后就再也找不到了。
+  **同一个 bug 在 Windows 上是绿的** —— Windows 链接器对顺序宽容。
+
+所以「在目标平台上真机跑一次」不是形式，是唯一能看见这类问题的办法。
+
 ## 打包
 
 `package.py` 是**唯一**决定包内容的东西，CI 只调用它：

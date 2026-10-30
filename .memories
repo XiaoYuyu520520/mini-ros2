@@ -438,6 +438,34 @@ codec 本身：48 B 0.1 us / 709 B 0.3 us / 5813 B 2.3 us。
 
 ---
 
+## 2026-10-30 · 加 ARM64 (Ubuntu 22.04) 目标与发布包
+
+**为什么原生编而不是交叉编**：兼容层、SDK 和五棵测试树都**要在目标机上跑**，
+交叉编只能靠模拟器验。runner 用 `ubuntu-22.04-arm`（公开仓库免费）。
+22.04 是最老的 LTS，所以在它上面编的二进制也能在 24.04 上跑。
+
+**包名**（`package.py` 统一决定，CI 只调用它）：
+`mini-ros2-windows-x86_64-<ver>.zip` /
+`mini-ros2-linux-x86_64-<ver>.tar.gz` /
+`mini-ros2-ubuntu22-arm64-<ver>.tar.gz`
+（SDK 自己的 platform key 仍是 `linux-aarch64`，那是它 `platforms.yaml` 里的名字）。
+
+### ARM64 暴露的 6 个问题（**都不是架构问题**，是更旧的标准库/编译器）
+
+| # | 现象 | 根因 | 修法 |
+| --- | --- | --- | --- |
+| 1 | `WrappedResult` redeclaration | shim 把模板注入类作用域，成员又叫同名；GCC 15 只警告，**GCC 13 报错** | 改**模板**名（`WrappedResultTemplate`），成员保留上游的 `::WrappedResult` 拼法（上游 nav2 就这么用） |
+| 2 | `std::atomic requires a trivially copyable type` | `atomic<shared_ptr>` 是 C++20 P0718R2，**libstdc++ 12 才有**；22.04 是 libstdc++ 11 | prelude 里给老 libstdc++ 一个 `store()/load()` 特化（上游只用到这两个） |
+| 3 | `std::optional` 未定义 | 上游 `graceful_controller.hpp` 用了 `std::optional` 却没 include | prelude 补齐（`<optional> <array> <tuple> <any> <set> <filesystem>`），一次扫全上游 |
+| 4 | 特化缺构造函数 | `layered_costmap.cpp` 在初始化列表里构造 `footprint_` | 特化加 `explicit atomic(value_type)` |
+| 5 | `undefined reference to StatusChangeLogger::~…` | BT.CPP master 把 `StatusChangeLogger` 挪到 `abstract_logger.h`、`Tree` 挪到 `bt_factory.h`，stub 只 include 了 groot2 头 | stub 补两个 include |
+| 6 | 还是 undefined reference | **GNU ld 只向前找符号**：stub 在 `libbehaviortree_cpp.a` **之后**，定义它们的 archive 已被走过 | stub 从 `behaviortree_cpp` 的 INTERFACE 拿出来，显式排在 archive **前面**；Windows 链接器对顺序宽容，所以本地一直没暴露 |
+
+第 6 条最值得记住：**同一个 bug 在 Windows 上是绿的**。链接顺序这类问题只有
+GNU ld 才会挑出来 —— 这也是「在目标平台上有真机跑一次」的价值。
+
+---
+
 ## 2026-10-30 · 合并 services / actions + 同名话题拆分（真机全 PASS）
 
 在上一条「接线器只合并话题」之上，把**服务、动作、同名话题冲突**一起处理了。
