@@ -53,7 +53,13 @@ service-account*.json
 # the archives and the download cache do not (they are re-obtainable).
 nav2/navigation2-1.5.1.zip
 nav2/third_party/**/*.zip
-nav2/third_party/dl/
+# `dl/` holds two very different things: the fetched third-party source trees
+# (large, re-obtainable, ignored) and the scripts that fetch them (small, and
+# the only way a clean checkout - CI - can get those trees). Ignore the
+# contents but keep the scripts, or the CI job has nothing to run.
+nav2/third_party/dl/*
+!nav2/third_party/dl/*.py
+!nav2/third_party/dl/README.md
 
 # Local run artifacts. Deliberately narrow: the .pgm / .posegraph maps under
 # .scratch/ are cited evidence (bridge/docs/04-gaps.md), so they stay tracked.
