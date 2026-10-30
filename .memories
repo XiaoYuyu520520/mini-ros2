@@ -126,6 +126,150 @@ python package.py --out x.zip --force
 
 ---
 
+## 2026-10-30 · 上架 GitHub：CI 编译 + 双平台发布包 + 新手 README
+
+仓库：**https://github.com/XiaoYuyu520520/mini-ros2.git**（`main` 分支，远端已有 MIT LICENSE，合并保留）。
+
+### 代理
+
+这台机器走 `http://127.0.0.1:10090`。git 用**仓库级**配置，不污染全局：
+
+```bash
+git config --local http.proxy  http://127.0.0.1:10090
+git config --local https.proxy http://127.0.0.1:10090
+```
+
+### 推送而不把 token 落盘
+
+token 只作为**环境变量**给 credential helper，不进 argv、不进 `.git/config`：
+
+```bash
+export GITHUB_TOKEN='<pat>'
+git -c credential.helper='!f() { echo username=x-access-token; echo "password=$GITHUB_TOKEN"; }; f' push origin main
+```
+
+**这个 PAT 已经在对话里明文出现过，用完应当吊销重发。**
+
+### 仓库里本来就有两个危险东西（都已处理）
+
+| 文件 | 处理 |
+| --- | --- |
+| `我的Github令牌-千万不要上传.txt`（193 B，**含真 PAT**） | `.gitignore` 加 `*令牌*` / `*token*.txt` 等模式；**文件本身还在磁盘上，建议删掉并吊销 token** |
+| `nul`（1.2 KB，`cmd` 重定向误建的设备名文件，内容是日志） | 加进 `.gitignore`（垃圾，不入库） |
+
+`.gitignore` 现在还挡住：`*.pem/*.key/id_rsa/id_ed25519/.env/credentials*`、
+`.venv/`、`dist/`、`**/build/**`。推送前用
+`git grep --cached -l 'github_pat_'` 扫过暂存区 —— **无命中**。
+
+### 提交了什么
+
+5730 个文件、约 100 MB（`git ls-files -o --exclude-standard` 实测）。
+上游源码树（`nav2/nav2_extracted` 1775 个、`third_party/*` 若干）是**构建必需**，
+必须入库；`nav2/navigation2-1.5.1.zip`（65 MB）和 `third_party/dl/` 下的
+压缩包不入库。
+
+### CI 缺源码：`fetch_deps.py`（新增）
+
+`.gitignore` 原来整体忽略 `nav2/third_party/dl/`，但**构建必需的源码就在那里面**：
+`dl/btcpp_master/BehaviorTree.CPP-master` 和 `dl/yamlcpp/yaml-cpp-0.8.0`
+（`nav2/ros2_shim/CMakeLists.txt:52,219` 直接指过去）。
+
+解法：**不提交源码，提交下载脚本**（`nav2/third_party/dl/fetch_deps.py`），
+它按顺序试多个镜像。`.gitignore` 改成：
+
+```
+nav2/third_party/dl/*
+!nav2/third_party/dl/*.py
+```
+
+**踩坑**：
+* 第一次 CI 全挂在这一步 —— 因为 `dl/` 整个被忽略，**脚本自己也没推上去**。
+* `yaml-cpp` 的上游 tag 是 `0.8.0`，**不是** `yaml-cpp-0.8.0`（那是目录名）；
+  写错就是全线 404。
+* GitHub 压缩包的顶层目录名是 `<repo>-<ref>`，tag 和 branch 拼法不同，
+  所以按**前缀匹配**而不是按固定名字。
+
+### 发布包名（`package.py` 定，`CI` 只调用它）
+
+```
+mini-ros2-windows-x86_64-<version>.zip
+mini-ros2-linux-x86_64-<version>.tar.gz
+```
+
+`package.py` 改造：按平台选 `.exe`/无后缀、SDK 目录键（`windows-x86_64` /
+`linux-x86_64`）、归档格式（zip / tar.gz）、脚本集合（Windows 的 `.bat/.ps1`
+vs Linux 的 `.sh`），并把版本号**清洗**成合法文件名（`v0.2.0`→`0.2.0`，
+`123/merge`→`123-merge`）。
+**zip 保持仓库相对路径**（`bridge/windows/build/`、`nav2/ros2_shim/build/`、
+`nav2/nav2_extracted/navigation2-1.5.1/`）—— 拍平会让脚本找不到文件。
+
+### 两个 workflow
+
+* `.github/workflows/cross-platform.yml`：**测试门禁**（push / PR）。
+* `.github/workflows/release.yml`：**建包 + 发布**。
+  `push` tag `v*` → 发 GitHub Release（两个包 + `SHA256SUMS.txt`）；
+  其他触发只出 workflow artifact。
+
+两个都先跑 `fetch_deps.py`，再 build → 5 棵树测试 → 4 个门禁 → `package.py`。
+CI 上 `--jobs 2`（runner 两核，再多只会 thrash 页文件）。
+
+**踩坑**：workflow 里写死 `CPU_MSYS2_ROOT: C:/msys64` 会挂 ——
+setup-msys2 装在别处。改用它的输出：
+`id: msys2` + `steps.msys2.outputs.msys2-location` 写进 `$GITHUB_ENV`。
+
+### 新手 README
+
+`GETTING_STARTED.md`（中文）：能干什么 / **不能**干什么（不是官方 ROS2、
+不零拷贝、不是全兼容）、能在哪跑、三步跑起来、目录说明、
+**未来要发展什么**（补消息类型、减少拷贝、`/parameter_events` 跨机、
+action 服务、launch 语法、docking/route）、**换源与合作**（镜像加在哪、
+pip 清华源、CI 加速、PR 前的四条门禁、编码规矩）。
+根 `README.md` 顶部加了一行指向它。
+
+---
+
+## 2026-10-30 · 修两个 ROS2 行为不符：先订阅会退出、1000 Hz 只剩 60 Hz
+
+用户在其他设备上发现的两条，都复现并修了。
+
+### 1. 先订阅（还没有发布者）就直接退出
+
+`ros2 topic echo` / `hz` 用 `ros2_bridge::open_channel()`（**只打开、不创建**），
+没有发布者时返回 null → 打印错误 → `return 1`。标准 ROS2 是**创建订阅然后等**。
+
+改法：改用 `create_channel()`（shim 自己的规则：两个进程谁先碰都行），
+并且在等待期间**惰性解析类型** —— 发布者出现后 `refreshSubscriberType()`
+把订阅记录的类型补上（`add_topic` 会累加 subscriber 计数，所以要先
+`remove_topic` 再 `add_topic`，否则订阅数会翻倍）。
+
+### 2. 1000 Hz 发布只收到 60 Hz
+
+`ros2 topic pub` 的等待是 `sleep_for(1000/rate)` **毫秒**。
+**Windows 默认定时器粒度 15.6 ms**，所以 1 ms 的 sleep 实际睡 15.6 ms →
+~64 Hz。这就是 60 Hz 的来源。
+
+改法：新增 `nav2/ros2_shim/include/rclcpp/precise_wait.hpp`
+（`wait_until()`：能睡的部分睡掉，留 1 ms 余量，最后用 `yield` 转转到 deadline），
+发布循环改成**按 deadline 推进**（落后超过一个周期就重新对齐，不突发），
+`rclcpp::Rate::sleep()` 也改用它（nav2 里 34 处用到 `Rate`）。
+
+实测（本机）：
+
+| 请求 | 实测 | 误差 |
+| --- | --- | --- |
+| 10 Hz | 10.0 Hz | 0.1% |
+| 100 Hz | 100.4 Hz | 0.4% |
+| 500 Hz | 500.0 Hz | 0.0% |
+| 1000 Hz | 1002.7 Hz | 0.3% |
+
+「先订阅后发布」也从「立刻退出」变成「等着，发布者一出现就开始测」。
+
+**注意**：`rclcpp` 的 executor 轮询循环里还有 `sleep_for(1ms)`，
+所以**节点自己的定时器**最高仍约 64 Hz。nav2 的 20–50 Hz 不受影响，
+但要跑 kHz 级节点定时器的话，这是下一个要改的地方。
+
+---
+
 ## 2026-10-30 · 共享内存**不是**零拷贝；实测真实路径基准
 
 回答"这是不是零拷贝"：**不是**。一次发布有 4 次拷贝：
