@@ -39,6 +39,10 @@ jobs:
   # tree that passed its own test suite.
   # ---------------------------------------------------------------------------
   build:
+    # ARM64 is kept in the matrix so its failure remains visible, but it is
+    # not allowed to block the Windows and x86_64 archives: the 22.04 arm
+    # runner's gRPC 1.30 headers reject the SDK's channel code.
+    continue-on-error: ${{ matrix.platform == 'linux-arm64' }}
     strategy:
       fail-fast: false
       matrix:
@@ -218,8 +222,11 @@ jobs:
               run `start/加载模拟ROS环境变量.ps1` (PowerShell) or
               `start/connector.sh` (Linux). No MSYS2 and no ROS2 needed.
             * `mini-ros2-linux-x86_64-*.tar.gz` - the Linux build (x86_64).
-            * `mini-ros2-ubuntu22-arm64-*.tar.gz` - the ARM64 build, made
-              natively on Ubuntu 22.04; it also runs on 24.04.
+
+            ARM64 is not in this archive set yet: the Ubuntu 22.04 arm runner
+            ships gRPC 1.30, whose headers reject the SDK's channel code
+            (`grpc_impl::Channel` vs `grpc::Channel`). The arm64 CI job still
+            runs and is still red; fixing it is a separate change.
 
             `SHA256SUMS.txt` holds the checksums. See `GETTING_STARTED.md` for
             what this does and does not do, and `bridge/docs/04-gaps.md` for the
