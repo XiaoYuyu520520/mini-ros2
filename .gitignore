@@ -71,3 +71,7 @@ dist/
 # Downloaded ROS2 rviz sources: another tree that is fetched, not built by the
 # shim. Nothing in this repository references it.
 rviz2/
+
+# `viz/` build output (the Go shell is source; the exe is not).
+viz/*.exe
+viz/viz.exe

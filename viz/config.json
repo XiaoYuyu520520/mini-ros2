@@ -1,0 +1,61 @@
+{
+  "_comment": "JSON 没有注释语法，所以以 _comment 开头的键就是注释；程序只读它认识的键。",
+  "_comment_window": "拖动窗口边框改大小，布局要跟着伸缩；center 只在启动时用。",
+
+  "window": {
+    "width": 1440,
+    "height": 900,
+    "center": true
+  },
+
+  "_comment_layout": "grid 是 行 x 列 的面板 id；sizes 是每列的相对宽度；panel_offset 是分隔条位置（占宽度比例）。",
+  "layout": {
+    "grid": [["view", "panel"]],
+    "sizes": [3, 1],
+    "panel_offset": 0.74
+  },
+
+  "views": {
+    "view": {
+      "_comment": "fixed_frame 是坐标基准；zoom 是缩放上下限；grid_cell_m 是一格多少米。",
+      "kind": "grid",
+      "fixed_frame": "map",
+      "background": "#1e1e1e",
+      "grid_cell_m": 1.0,
+      "zoom": { "min": 0.02, "max": 40 },
+      "pan": true
+    }
+  },
+
+  "_comment_topics": "每个话题一个显示。qos 是给 Ubuntu 侧 agent 用的——共享内存本身没有 QoS。",
+  "topics": {
+    "/map": {
+      "type": "nav_msgs/msg/OccupancyGrid",
+      "qos": { "reliability": "reliable", "durability": "transient_local", "depth": 1 },
+      "color": "#dddddd",
+      "alpha": 0.7,
+      "enabled": true
+    },
+    "/scan": {
+      "_comment": "真雷达是 best_effort；写成 reliable 一条也收不到。",
+      "type": "sensor_msgs/msg/LaserScan",
+      "qos": { "reliability": "best_effort", "durability": "volatile", "depth": 5 },
+      "color": "#00ff88",
+      "point_size": 2,
+      "enabled": true
+    },
+    "/plan": {
+      "type": "nav_msgs/msg/Path",
+      "color": "#ff4444",
+      "width": 2,
+      "enabled": true
+    }
+  },
+
+  "_comment_tools": "对应 rviz 的 2D Nav Goal / 2D Pose Estimate。",
+  "tools": {
+    "goal": { "action": "navigate_to_pose", "type": "nav2_msgs/action/NavigateToPose" },
+    "goal_topic": { "topic": "/goal_pose", "type": "geometry_msgs/msg/PoseStamped" },
+    "initial_pose": { "topic": "/initialpose", "type": "geometry_msgs/msg/PoseWithCovarianceStamped" }
+  }
+}
