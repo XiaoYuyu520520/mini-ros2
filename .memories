@@ -62,6 +62,87 @@ cmd /v:on /c 'call start\sim_env.bat >nul & echo !ROS2_BRIDGE_AGENT!'
 
 ---
 
+## 2026-10-30 · 文档站改成「产品文档」结构（参考 RDK 那套）
+
+用户给了参考站 `developer.d-robotics.cc/rdk_x_doc/...`，要求
+**「pages 页面结构要类似它」**，并明确「例如快速上手就是告诉用户提供 ps1 脚本加载环境变量
+（Windows 部分）」。
+
+### 参考站的特征（照着抄的）
+
+1. **章节编号**：1 快速开始 / 2 系统配置 / 3 基础应用开发 / 4 … / 8 常见问题 / 9 附录，
+   左侧导航按章节分组，每章下面列 `2.1`、`2.2` 这样的子页。
+2. **每页开头一个「本页总览」**（英文站是 "On this page"）：一句话说明本章讲什么 +
+   本页小节的有序列表（带锚点）。
+3. **标题带章节号**：`## 2.1 网络与端口配置`、`### 2.1.1 …`。
+4. **按操作方式分节**：`[shell] 修改静态 IP 配置` / `[桌面] 修改静态 IP 配置` ——
+   同一件事按 shell 和图形界面分成两节。本项目对应的是 `[Windows]` / `[Linux]`。
+5. **步骤编号 + 命令输出**：1. 2. 3. 每步一条命令，附上真实的输出。
+6. **提示框**：`提示` / `注意`。
+7. **上下页导航**：页面底部「上一页 / 下一页」。
+8. **站内链接用相对路径**（`../FAQ/limitations`）。
+
+### 本项目的落地
+
+```
+docs/
+├─ _layouts/default.html       布局：顶栏 + 左侧章节导航 + 内容 + 上下页 + 页脚
+├─ index.md                    首页（章节目录 + 一分钟版）
+├─ Quick_start/                overview / windows / linux / connect
+├─ System_configuration/       environment / network / shm
+├─ Basic_application/          ros2_cli / nav2_stack / slam / map
+├─ Architecture/               overview / shm_transport / action
+├─ Capability/                 overview / validation
+├─ FAQ/                        limitations / troubleshooting
+└─ Advanced/                   development
+```
+
+URL 形如 `https://xiaoyuyu520520.github.io/mini-ros2/Quick_start/windows` ——
+**GitHub Pages 同时接受带不带 `.html` 的形式**（实测两种都是 200）。
+
+**快速上手的主线改成「加载环境变量」**（`Quick_start/windows`）：
+1. 下载与解压（强调保持路径原样）
+2. **加载环境变量（PowerShell）** —— 主体。明确「**必须点源，不能执行**」，
+   解释为什么（`.bat`/脚本在子进程里跑，变量跟着子进程走），
+   给出 PowerShell 7 与 5.1 的写法差别、cmd 的 `call` 写法、
+   `ros2_shell.bat` 这条「不想点源」的路
+3. 验证安装（三条只读命令，不需要机器人）
+4. 连上机器人（情况 A 跨机 / B 回环 / C 纯本机，三种各给配置）
+5. 跑通第一个导航任务（`/sim/reset` → `run_nav2_stack.py` → stop）
+
+### 布局是自己写的 HTML
+
+GitHub Pages 认 `docs/_layouts/`，但**认不出来就退化成无样式纯 Markdown**。
+所以布局里自带：CSS 变量 + `prefers-color-scheme: dark`、左侧固定导航、
+「本页总览」与「提示框」的样式、上下页导航。
+
+CSS 类名（写页面时用）：
+`.overview`（总览框，含 `.label`）、`.callout.note` / `.callout.warn`（提示框，含 `.label`）、
+`.pagenav`（含 `.prev` / `.next` / `.dir` / `.ttl`）。
+
+### 一个坑：站内链接的相对基准
+
+页面 URL 是 `/mini-ros2/Quick_start/windows`（**没有尾斜杠**），所以在
+`Quick_start/windows.md` 里写 `href="linux"` 会被解析成
+`/mini-ros2/Quick_start/linux`（同级）—— 但如果浏览器把当前 URL 规范化成
+`/Quick_start/windows/`（带尾斜杠），`href="linux"` 就会变成
+`/Quick_start/windows/linux`（错）。
+
+**解法：链接一律写成从站点根算的路径**（`{{ site.baseurl }}/Quick_start/linux`），
+或者用 `../` 明确上行。**实测 19 页 428 条链接 0 条断链**。
+
+（写作时踩过一次：先写成 `href="linux"`，后来统一改成 `{{ site.baseurl }}/…`。）
+
+### 验证链站的做法
+
+1. `python tools/check_docs.py --quiet`（0 error；`.md` 要 UTF-8 BOM）
+2. `python tools/check_structure.py`（structure ok）
+3. 推送后等 Pages build 变 `built`
+4. **用脚本把每页的 href 全抓出来逐条请求**（注意 `site.baseurl` 已经是
+   `/mini-ros2`，别再重复拼一次前缀 —— 我第一次就是这么得到一堆假 404）
+
+---
+
 ## 2026-10-30 · 文档站：GitHub Pages（**不是 wiki**）
 
 用户先要求写 GitHub wiki，后来改成 **GitHub Pages**，
