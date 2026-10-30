@@ -36,9 +36,40 @@ find_library(gRPC_REFLECTION_LIBRARY
   NAMES grpc++_reflection
   PATH_SUFFIXES lib lib64)
 
-find_library(gRPC_CPP_PLUGIN
+# The protoc plugin ships in its own package on Debian/Ubuntu
+# (protobuf-compiler-grpc) and the file is named grpc_cpp_plugin, so the
+# plain name is enough - but only in the directory the package installs it
+# into, which is not always a `lib` suffix of the prefix.
+find_program(gRPC_CPP_PLUGIN
   NAMES grpc_cpp_plugin
-  PATH_SUFFIXES lib lib64)
+  HINTS
+    ${gRPC_LIBRARY}/..
+    ${gRPC_LIBRARY}/../bin
+    ${gRPC_LIBRARY}/../libexec
+    /usr/lib
+    /usr/local/lib
+    /usr/lib/aarch64-linux-gnu
+    /usr/lib/arm64-linux-gnu
+    /usr/lib/x86_64-linux-gnu
+  PATH_SUFFIXES bin libexec sbin lib lib64)
+
+# The plugin may also be a versioned file (grpc_cpp_plugin-1.30) with the
+# unversioned name only in a -dev symlink that some architectures do not get.
+if(NOT gRPC_CPP_PLUGIN)
+  file(GLOB _gRPC_PLUGIN_CANDIDATES
+    /usr/lib/*/grpc_cpp_plugin*
+    /usr/lib/*/libexec/grpc_cpp_plugin*
+    /usr/local/bin/grpc_cpp_plugin*
+    /usr/local/lib/*/grpc_cpp_plugin*)
+  list(SORT _gRPC_PLUGIN_CANDIDATES)
+  list(REVERSE _gRPC_PLUGIN_CANDIDATES)
+  foreach(_candidate IN LISTS _gRPC_PLUGIN_CANDIDATES)
+    if(EXISTS "${_candidate}")
+      set(gRPC_CPP_PLUGIN "${_candidate}")
+      break()
+    endif()
+  endforeach()
+endif()
 
 find_package_handle_standard_args(gRPC
   REQUIRED_VARS gRPC_INCLUDE_DIR gRPC_LIBRARY gRPC_CPP_PLUGIN)
