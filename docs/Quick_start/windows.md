@@ -195,8 +195,10 @@ ros2 topic pub /demo/chatter std_msgs/msg/String "{data: hello from Windows}" -r
 ```
 
 * `-r 1` 表示每秒 1 条；不带 `--once` 就会一直发，验证完按 **Ctrl+C** 停。
-* 这个窗口每秒打印一行类似
-  `publishing #12: std_msgs.msg.String(data='hello from Windows')`。
+* 输出只有一行 `publisher: beginning loop` —— **它不会逐条打印发出去的消息**。
+* 如果这时终端 2 还没起来，可能多一行警告：
+  `[ros2] warning: nobody was holding '/demo/chatter' yet, ...`。
+  这是正常的（共享内存通道还没人持有），起上订阅后继续发就能收到。
 
 ### [终端 2] 订阅并展示
 
@@ -205,21 +207,31 @@ ros2 topic pub /demo/chatter std_msgs/msg/String "{data: hello from Windows}" -r
 ros2 topic echo /demo/chatter
 ```
 
-应该持续看到：
+应该持续看到（**字符串带引号**，这是本 CLI 的打印格式）：
 
 ```
-data: hello from Windows
+data: "hello from Windows"
 ---
-data: hello from Windows
+data: "hello from Windows"
 ---
 ```
 
-### 再看话题与频率
+<div class="callout note">
+<span class="label">顺序</span>
+<p>先起终端 1 再起终端 2 最省事。反过来（先订阅、后发布）也能用，只是类型要等发布者出现后
+<strong>最多 1 秒</strong>才解析出来，这期间可能先打几行
+<code>(N bytes of unknown type)</code>（实测是 4 行），随后恢复正常解码。</p>
+</div>
+
+### [终端 3，可选] 看话题、计数与频率
+
+**在终端 1、2 都还开着的时候**另开一个窗口：
 
 ```powershell
-ros2 topic list -t           # 列表里应该有 /demo/chatter [std_msgs/msg/String]
+. .\start\加载模拟ROS环境变量.ps1
+ros2 topic list -t           # 应有 /demo/chatter [std_msgs/msg/String]
 ros2 topic info /demo/chatter
-ros2 topic hz /demo/chatter  # 平均约 1 Hz
+ros2 topic hz /demo/chatter  # 约 1 Hz，持续打印，Ctrl+C 停
 ```
 
 `ros2 topic info` 里 **`Publisher count: 1`** 与 **`Subscription count: 1`** 同时出现，
@@ -235,7 +247,7 @@ ros2 topic hz /demo/chatter  # 平均约 1 Hz
 
 <div class="callout warn">
 <span class="label">注意</span>
-<p><strong>两个窗口都要各自点源一次。</strong>点源只作用于当前这个窗口，
+<p><strong>每个窗口都要各自点源一次。</strong>点源只作用于当前这个窗口，
 新开的窗口里 <code>ros2</code> 又变回「不认识这个命令」。</p>
 </div>
 
@@ -244,6 +256,9 @@ ros2 topic hz /demo/chatter  # 平均约 1 Hz
 <p><code>ros2 topic pub</code> 不带 <code>--once</code> 会一直发。共享内存是
 <strong>单写者</strong>模型，忘了关掉会一直占着 <code>/demo/chatter</code> 的写者，
 后面的验证就会觉得「消息怪怪的」。验证完在终端 1 按 <strong>Ctrl+C</strong>。</p>
+<p>发布停掉之后，<code>/demo/chatter</code> 会从 <code>topic list</code> 里消失
+（共享内存不会保留一个没有发布者的话题），这时 <code>topic info</code> 报
+<code>Unknown topic</code> 也是正常的 —— 再发一次就回来。</p>
 </div>
 
 <a id="connect"></a>
