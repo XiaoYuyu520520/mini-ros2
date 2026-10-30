@@ -195,16 +195,26 @@ jobs:
 
       # Eigen and Boost are what the shim needs; gRPC/protobuf/yaml-cpp are what
       # the bridge needs. Nothing here is ROS2 -- the shim replaces it.
+      #
+      # The bridge looks gRPC up in CONFIG mode (`find_package(gRPC CONFIG
+      # REQUIRED)`): that is the MSYS2 build on Windows, and on Debian/Ubuntu
+      # the dev package installs `gRPCConfig.cmake` next to the libraries.
+      # Ubuntu 22.04's arm64 archive does not carry that file, so the arm64 job
+      # has to fetch the CMake package itself - otherwise the configure step
+      # stops with "Could not find a package configuration file provided by
+      # gRPC" and the job dies before a single line is compiled.
       - name: dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            build-essential cmake ninja-build zlib1g-dev \
-            libeigen3-dev libboost-dev libboost-serialization-dev \
-            libboost-thread-dev libboost-system-dev libboost-atomic-dev \
-            libboost-chrono-dev libboost-date-time-dev \
-            libgrpc++-dev libprotobuf-dev protobuf-compiler \
-            protobuf-compiler-grpc libyaml-cpp-dev
+          sudo apt-get install -y --no-install-recommends             build-essential cmake ninja-build zlib1g-dev             libeigen3-dev libboost-dev libboost-serialization-dev             libboost-thread-dev libboost-system-dev libboost-atomic-dev             libboost-chrono-dev libboost-date-time-dev             libgrpc++-dev libprotobuf-dev protobuf-compiler             protobuf-compiler-grpc libyaml-cpp-dev
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            # Ubuntu 22.04 arm64 ships libgrpc++-dev without the CMake config
+            # the bridge asks for. Say what is on disk instead of guessing:
+            # the next run's log then answers whether the package or the path
+            # is what changed.
+            ls -1 /usr/lib/*/cmake/ 2>/dev/null | grep -i grpc || true
+            apt-cache policy libgrpc++-dev 2>/dev/null | head -6 || true
+          fi
 
       - name: toolchain resolution
         run: python3 tools/_toolchain.py
