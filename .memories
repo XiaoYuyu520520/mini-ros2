@@ -110,6 +110,20 @@ URL 形如 `https://xiaoyuyu520520.github.io/mini-ros2/Quick_start/windows` —�
 4. 连上机器人（情况 A 跨机 / B 回环 / C 纯本机，三种各给配置）
 5. 跑通第一个导航任务（`/sim/reset` → `run_nav2_stack.py` → stop）
 
+**用户反馈补的第 0 步（2026-10-30）**：大多数人的 PowerShell 默认执行策略是 `Restricted`，
+**任何 `.ps1` 都跑不了**，点源直接报「因为在此系统上禁止运行脚本」。所以正文里先讲：
+
+```powershell
+Get-ExecutionPolicy -List
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned   # 推荐，不需管理员
+Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy RemoteSigned  # 全局，需管理员
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass             # 只这一次
+```
+
+浏览器下载的 zip 还带 Mark-of-the-Web，`RemoteSigned` 下仍可能被拦 →
+`Get-ChildItem ... -Filter *.ps1 | Unblock-File`。
+**别推荐 `Unrestricted`**（连网上下载的未签名脚本也放行）。故障排查页同步加了这条症状。
+
 ### 布局是自己写的 HTML
 
 GitHub Pages 认 `docs/_layouts/`，但**认不出来就退化成无样式纯 Markdown**。
@@ -119,6 +133,29 @@ GitHub Pages 认 `docs/_layouts/`，但**认不出来就退化成无样式纯 Ma
 CSS 类名（写页面时用）：
 `.overview`（总览框，含 `.label`）、`.callout.note` / `.callout.warn`（提示框，含 `.label`）、
 `.pagenav`（含 `.prev` / `.next` / `.dir` / `.ttl`）。
+
+### 坑：`#anchor` 跳转全部失效（2026-10-30 修）
+
+「本页总览」里的 `<a href="#env">加载环境变量</a>` 点了没反应。
+
+**根因**：标题是 `## 1.6.2 加载环境变量（PowerShell）`，kramdown 自动生成的 id 是
+`162-加载环境变量powershell`（小写、去标点、保留数字），**不是 `env`**。
+`#download` / `#verify` / `#connect` / `#mission` 一样，全对不上。
+
+**解法**：在目标标题**正上方**插一行显式锚点：
+
+```html
+<a id="env"></a>
+
+## 1.6.2 加载环境变量（PowerShell）
+```
+
+**不要指望「在 Markdown 里加 `{#env}`」** —— kramdown 默认不认这个语法（那是
+Pandoc / MkDocs 的）。显式 `<a id>` 是唯一在所有渲染器上都成立的做法。
+
+**改了 16 个文件**：用脚本按「(锚点名, 标题号前缀)」对批量插入，
+插完断言每个锚点都命中，再用脚本抓每一页的 `href="#..."` 与 `id="..."` 做差集验证
+（远端实测 16 页全部 `missing=[]`）。
 
 ### 一个坑：站内链接的相对基准
 
