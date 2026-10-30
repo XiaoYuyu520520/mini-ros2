@@ -110,9 +110,12 @@ function Import-Ros2Env {
 }
 
 function ros2 {
-    [CmdletBinding()]
-    param([Parameter(ValueFromRemainingArguments = $true)] [string[]] $Ros2Args)
-
+    # Deliberately NOT an advanced function and deliberately without a param()
+    # block: PowerShell matches -r against the *name* of the only parameter as
+    # an abbreviation, so a parameter called $Ros2Args swallowed "-r 10" and left
+    # "topic pub ..." unbound ("cannot find a positional parameter that accepts
+    # argument 'topic'"). A plain function puts every token -- including -r, -t,
+    # -1 and --once -- into $args untouched, which is what a wrapper needs.
     Import-Ros2Env
 
     if (-not (Get-Process -Name ros2_bridge_daemon -ErrorAction SilentlyContinue)) {
@@ -128,7 +131,7 @@ function ros2 {
     }
 
     if (-not $env:ROS2_BRIDGE_BUILD) { throw "ros2: ROS2_BRIDGE_BUILD is not set" }
-    & (Join-Path $env:ROS2_BRIDGE_BUILD 'ros2.exe') @Ros2Args
+    & (Join-Path $env:ROS2_BRIDGE_BUILD 'ros2.exe') @args
 }
 
 # Dot-sourcing should leave the window ready, so the variables are imported right

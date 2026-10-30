@@ -112,11 +112,19 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 ### 第二步：点源
 
-打开 **PowerShell**，进到解压后的目录，执行：
+打开 **PowerShell**，进到**项目根目录**（也就是能看到 `start`、`bridge`、`nav2` 这一层），执行：
 
 ```powershell
 . .\start\加载模拟ROS环境变量.ps1
 ```
+
+<div class="callout warn">
+<span class="label">重要</span>
+<p><code>.\start\加载模拟ROS环境变量.ps1</code> 是相对<strong>项目根目录</strong>的路径。
+不要先 <code>cd start</code>，否则会去找 <code>start\start\加载模拟ROS环境变量.ps1</code>，报：</p>
+<pre><code>.: 术语 '.\start\加载模拟ROS环境变量.ps1' 不会被识别为 cmdlet、函数、脚本文件或可执行程序的名称。</code></pre>
+<p>已经在 <code>start</code> 目录里的话，先 <code>cd ..</code> 回到根目录再点源。</p>
+</div>
 
 然后验证：
 

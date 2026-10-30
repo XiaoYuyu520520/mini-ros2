@@ -66,6 +66,23 @@ Get-ChildItem -Path .\start, .\bridge -Recurse -Filter *.ps1 -ErrorAction Silent
 
 详见 <a href="../Quick_start/windows">1.6.2 加载环境变量（PowerShell）</a>。
 
+### 「ros2: 找不到接受自变量 'topic' 的位置参数」
+
+这是旧版 `bridge/windows/ros2.ps1` 的一个 bug，**已修**：包装函数里那个接收剩余参数的
+参数叫 `$Ros2Args`，而 PowerShell 允许用参数名的前缀来指定参数 —— `-r` 正好是
+`Ros2Args` 的唯一前缀，于是 `ros2 topic pub ... -r 10` 里的 `-r 10` 被当成给这个参数赋值，
+前面的 `topic pub ...` 反而没有位置可绑。
+
+现在的 `ros2` 函数**不是** advanced function、也**没有** `param()` 块，
+所有 token（包括 `-r`、`-t`、`-1`、`--once`）原样进 `$args` 转给 `ros2.exe`。
+
+修好之后**当前窗口里的旧函数还在**，重新点源一次（或重开窗口）即可：
+
+```powershell
+. .\start\加载模拟ROS环境变量.ps1
+ros2 topic pub /demo/chatter std_msgs/msg/String "{data: hello}" -r 1
+```
+
 ### 「`ros2` 不是内部或外部命令」
 
 **`.bat` 改不了 PowerShell 会话。** `.bat` 跑在 cmd.exe 子进程里，`set` 只影响那个子进程，
