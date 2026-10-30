@@ -179,6 +179,12 @@ jobs:
       - name: shim ctest
         run: ctest --test-dir nav2/ros2_shim/build --output-on-failure
 
+      # Same reason as in the Windows job: nothing configured
+      # nav2/shm_transport/build on its own, so ctest had no directory to run
+      # in.
+      - name: shm build entry point
+        run: python3 nav2/shm_transport/build.py --no-test --jobs 2
+
       - name: shm ctest
         run: ctest --test-dir nav2/shm_transport/build --output-on-failure
 
