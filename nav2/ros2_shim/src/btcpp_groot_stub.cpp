@@ -17,6 +17,23 @@
 // nothing, which is what "monitoring disabled" means anyway.
 #include "behaviortree_cpp/loggers/groot2_publisher.h"
 
+// The two declarations the stub needs, which the header above does not pull
+// in on its own:
+//
+//   BT::StatusChangeLogger  - in BehaviorTree.CPP master it lives in
+//                             loggers/abstract_logger.h (it used to be in
+//                             loggers/bt_logger.h);
+//   BT::Tree::rootNode()    - master moved `Tree` into bt_factory.h (it used
+//                             to be in tree.h).
+//
+// Without them the stub's own base-class call and constructor argument name
+// types that are only forward-declared, and the link fails with undefined
+// references to their destructors. The Windows build happened to link because
+// it used a different BehaviorTree.CPP; this stub is compiled against master
+// on every platform.
+#include "behaviortree_cpp/bt_factory.h"
+#include "behaviortree_cpp/loggers/abstract_logger.h"
+
 #include <chrono>
 
 namespace BT
