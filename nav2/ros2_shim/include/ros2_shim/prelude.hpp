@@ -73,6 +73,9 @@ struct atomic<std::shared_ptr<T>>
 {
   using value_type = std::shared_ptr<T>;
 
+  atomic() = default;
+  explicit atomic(value_type initial) {data_ = std::move(initial);}
+
   void store(value_type desired, std::memory_order = std::memory_order_seq_cst)
   {
     std::lock_guard<std::mutex> lock(mutex_);
