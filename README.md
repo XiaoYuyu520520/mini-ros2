@@ -6,16 +6,19 @@
 </p>
 
 <p align="center">
-  <a href="https://xiaoyuyu520520.github.io/mini-ros2/">首页</a> ·
-  <a href="https://xiaoyuyu520520.github.io/mini-ros2/getting-started.html">快速开始</a> ·
-  <a href="https://xiaoyuyu520520.github.io/mini-ros2/architecture.html">架构</a> ·
-  <a href="https://xiaoyuyu520520.github.io/mini-ros2/build-and-run.html">构建与运行</a> ·
-  <a href="https://xiaoyuyu520520.github.io/mini-ros2/cli.html">ros2 命令行</a> ·
-  <a href="https://xiaoyuyu520520.github.io/mini-ros2/capabilities.html">能力</a> ·
-  <a href="https://xiaoyuyu520520.github.io/mini-ros2/limitations.html">限制与缺口</a> ·
-  <a href="https://xiaoyuyu520520.github.io/mini-ros2/validation.html">验收</a> ·
-  <a href="https://xiaoyuyu520520.github.io/mini-ros2/development.html">开发</a> ·
-  <a href="https://xiaoyuyu520520.github.io/mini-ros2/troubleshooting.html">排错</a>
+  <b>📖 在线文档 / Documentation：</b>
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/">https://xiaoyuyu520520.github.io/mini-ros2/</a>
+</p>
+
+<p align="center">
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/Quick_start/overview">1 快速开始</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/Quick_start/windows">Windows 上手</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/System_configuration/environment">2 系统配置</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/Basic_application/ros2_cli">3 基础应用</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/Architecture/overview">4 架构说明</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/Capability/overview">5 能力清单</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/FAQ/limitations">6 常见问题</a> ·
+  <a href="https://xiaoyuyu520520.github.io/mini-ros2/Advanced/development">7 进阶开发</a>
 </p>
 
 <p align="center">
@@ -76,8 +79,9 @@ CPU/
 ├─ GETTING_STARTED.md       新手入口：五分钟说清能干什么、能在哪跑、怎么跑起来、不做什么
 ├─ BUILD.md                 编译 / 启动 / 停止速查：Windows 与 Linux 各一块，逐项目写清
 │                           进哪个目录、敲什么命令、怎么算编过了、怎么加载环境、怎么停
-├─ docs/                    ★ 文档站（GitHub Pages 的源）：中英双语的架构 / 构建 / 能力 /
-│                           缺口 / 验收 / 开发 / 排错；改完推送 main 即自动发布
+├─ docs/                    ★ 文档站（GitHub Pages 的源）：按章节组织的中英双语文档
+│                           Quick_start / System_configuration / Basic_application /
+│                           Architecture / Capability / FAQ / Advanced
 ├─ bridge/                  ★ 胶水层：Windows 守护进程 + ros2 CLI + Ubuntu 仿真 + 文档与验收
 ├─ gRPC/ros2_gRPC_sdk/      ★ 通信 SDK：proto、客户端/服务端库、示例、自带 ctest
 ├─ code/Desktop/racecar/    小车的建图（SLAM）+ 导航（nav2）工作区：参数、launch、
@@ -579,20 +583,18 @@ python nav2/shm_transport/build.py --no-test --jobs 6
 
 **https://xiaoyuyu520520.github.io/mini-ros2/**
 
-| 页面 | 内容 |
+| 章节 | 页面 |
 | --- | --- |
-| [快速开始](https://xiaoyuyu520520.github.io/mini-ros2/getting-started.html) | 三分钟跑起来，能干什么 / 不能干什么 |
-| [架构](https://xiaoyuyu520520.github.io/mini-ros2/architecture.html) | 三个子项目怎么拼起来，数据怎么流 |
-| [构建与运行](https://xiaoyuyu520520.github.io/mini-ros2/build-and-run.html) | 逐项目编译 / 启动 / 停止速查（Windows 与 Linux 对照） |
-| [ros2 命令行](https://xiaoyuyu520520.github.io/mini-ros2/cli.html) | `topic` / `service` / `action` / `param` / `node` 全部用法 |
-| [能力清单](https://xiaoyuyu520520.github.io/mini-ros2/capabilities.html) | 建图 / 定位 / 规划 / 控制 / 行为树 / 安全链，逐条实测数据 |
-| [限制与缺口](https://xiaoyuyu520520.github.io/mini-ros2/limitations.html) | 还差什么、代价多少、按什么优先级补 |
-| [验收与证据](https://xiaoyuyu520520.github.io/mini-ros2/validation.html) | 验收标准、实测数字、怎么复现 |
-| [开发指南](https://xiaoyuyu520520.github.io/mini-ros2/development.html) | 目录结构、改上游的规矩、加消息类型 / 加测试的步骤 |
-| [排错](https://xiaoyuyu520520.github.io/mini-ros2/troubleshooting.html) | 常见故障与定位手段 |
+| **1 快速开始** | [概述](https://xiaoyuyu520520.github.io/mini-ros2/Quick_start/overview) · [Windows 上手](https://xiaoyuyu520520.github.io/mini-ros2/Quick_start/windows) · [Ubuntu 上手](https://xiaoyuyu520520.github.io/mini-ros2/Quick_start/linux) · [连接机器人](https://xiaoyuyu520520.github.io/mini-ros2/Quick_start/connect) |
+| **2 系统配置** | [环境变量配置](https://xiaoyuyu520520.github.io/mini-ros2/System_configuration/environment) · [网络与端口配置](https://xiaoyuyu520520.github.io/mini-ros2/System_configuration/network) · [共享内存几何配置](https://xiaoyuyu520520.github.io/mini-ros2/System_configuration/shm) |
+| **3 基础应用开发** | [ros2 命令行](https://xiaoyuyu520520.github.io/mini-ros2/Basic_application/ros2_cli) · [运行 nav2 导航栈](https://xiaoyuyu520520.github.io/mini-ros2/Basic_application/nav2_stack) · [SLAM 建图](https://xiaoyuyu520520.github.io/mini-ros2/Basic_application/slam) · [地图存取](https://xiaoyuyu520520.github.io/mini-ros2/Basic_application/map) |
+| **4 架构说明** | [总体架构](https://xiaoyuyu520520.github.io/mini-ros2/Architecture/overview) · [共享内存传输](https://xiaoyuyu520520.github.io/mini-ros2/Architecture/shm_transport) · [Action 实现](https://xiaoyuyu520520.github.io/mini-ros2/Architecture/action) |
+| **5 能力清单** | [已实现能力](https://xiaoyuyu520520.github.io/mini-ros2/Capability/overview) · [验收与实测数据](https://xiaoyuyu520520.github.io/mini-ros2/Capability/validation) |
+| **6 常见问题** | [功能限制与缺口](https://xiaoyuyu520520.github.io/mini-ros2/FAQ/limitations) · [故障排查](https://xiaoyuyu520520.github.io/mini-ros2/FAQ/troubleshooting) |
+| **7 进阶开发** | [开发指南](https://xiaoyuyu520520.github.io/mini-ros2/Advanced/development) |
 
 > 文档站的源文件在 [`docs/`](docs/) 下（Jekyll），推送 `main` 后 GitHub Pages 自动构建发布。
-> 改文档就改 `docs/*.md`，不要只改这里。
+> 改文档就改 `docs/**/*.md`，不要只改这里。
 
 ### 仓库内文档
 
