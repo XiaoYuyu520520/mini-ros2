@@ -1,0 +1,118 @@
+========================= waypoint_file.py MISSING
+========================= waypoint_file.out 1682
+loaded 17/17 scripts under the shim
+
+script                           default            argv csv         abs csv
+ai_第一个点后回终点.py                   ai_test.csv        sim_room12.csv   ai_test1.csv
+detct.py                         ai_test2.csv       sim_room12.csv   ai_test1.csv
+end_3_12.py                      ai_test.csv        sim_room12.csv   ai_test1.csv
+get.py                           (no waypoint_file; reads a fixed csv)
+go copy.py                       ai_test.csv        sim_room12.csv   ai_test1.csv
+go copy_多点需要切换.py                (no waypoint_file; reads a fixed csv)
+go.py                            ai_test.csv        sim_room12.csv   ai_test1.csv
+go_2c.py                         (no waypoint_file; reads a fixed csv)
+goal_l.py                        ai_test2.csv       sim_room12.csv   ai_test1.csv
+go一条路径.py                        (no waypoint_file; reads a fixed csv)
+一条路径+csv.py                      ai_test.csv        sim_room12.csv   ai_test1.csv
+人工智能赛道初始版本代码.py                  ai_test.csv        sim_room12.csv   ai_test1.csv
+会跳过几个点.py                        ai_test.csv        sim_room12.csv   ai_test1.csv
+第二个点nav2打断，然后转圈圈.py              ai_test.csv        sim_room12.csv   ai_test1.csv
+终点不停.py                          ai_test.csv        sim_room12.csv   ai_test1.csv
+跑一圈以内.py                         ai_test.csv        sim_room12.csv   ai_test1.csv
+重复载入完成圈数.py                      ai_test.csv        sim_room12.csv   ai_test1.csv
+
+all waypoint_file() answers exist, and the named one is the one that was named
+
+========================= list_scripts.txt 1850
+ 0  ai_第一个点后回终点.py                    -               csv=ai_test.csv             NavThroughPosesClient
+ 1  detct.py                          -               csv=ai_test2.csv            NavThroughPosesClient
+ 2  end_3_12.py                       waypoint_file   csv=ai_test.csv,test.csv    NavThroughPosesClient
+ 3  get.py                            -               csv=out_test.csv            GoalPoseSubscriber
+ 4  go copy.py                        waypoint_file   csv=ai_test.csv,test.csv    MultiGoals
+ 5  go copy_多点需要切换.py                 -               csv=                        
+ 6  go.py                             waypoint_file   csv=ai_test.csv             NavThroughPosesClient
+ 7  go_2c.py                          -               csv=                        
+ 8  goal_l.py                         -               csv=ai_test2.csv            NavThroughPosesClient
+ 9  go一条路径.py                         -               csv=                        NavThroughPosesClient
+10  一条路径+csv.py                       waypoint_file   csv=ai_test.csv,test.csv    NavThroughPosesClient
+11  人工智能赛道初始版本代码.py                   -               csv=ai_test.csv             NavThroughPosesClient
+12  会跳过几个点.py                         waypoint_file   csv=ai_test.csv,test.csv    NavThroughPosesClient
+13  第二个点nav2打断，然后转圈圈.py               -               csv=ai_test.csv             NavThroughPosesClient
+14  终点不停.py                           waypoint_file   csv=ai_test.csv,test.csv    NavThroughPosesClient
+15  跑一圈以内.py                          waypoint_file   csv=ai_test.csv,test.csv    NavThroughPosesClient
+16  重复载入完成圈数.py                       waypoint_file   csv=ai_test.csv,test.csv    NavThroughPosesClient
+
+========================= waypoint_file_src.txt 3736
+==================== go.py
+      3 import os
+      4 import sys
+      6 import rclpy
+      7 from rclpy.action import ActionClient
+      8 from rclpy.node import Node
+      9 from nav2_msgs.action import NavigateThroughPoses
+     10 from geometry_msgs.msg import PoseStamped, Twist
+     11 import csv
+     12 from std_srvs.srv import Trigger  # 导入 Trigger 服务
+     89 def waypoint_file():
+    118     waypoints = read_waypoints_from_csv(waypoint_file())
+     89 def waypoint_file():
+     90     # 这一趟跑哪条航线：`run go.py sim_room12.csv` 会给一个文件名，不给就用脚本
+     91     # 自带的那条赛道航线。名字相对脚本目录解析，和车上、机器上都一致。
+     92     script_dir = os.path.dirname(os.path.abspath(__file__))
+     93     named = [a for a in sys.argv[1:] if a.lower().endswith('.csv')]
+     94     if not named:
+     95         return os.path.join(script_dir, 'ai_test.csv')
+     96     return named[0] if os.path.isabs(named[0]) else os.path.join(script_dir, named[0])
+     97 
+     98 
+     99 def rclpy_argv():
+    100     # 这个脚本的航点文件是个裸参数，rclpy 不认识它（真车上 `ros2 run racecar go.py FILE`
+    101     # 会把 FILE 当成解析不了的全局参数），所以裸参数不进 rclpy；带 `-` 的照旧传进去。
+    102     # 但 `-p use_sim_time:=true` 是「选项 + 它的值」，只留带 `-` 的那半会剩下一个没值的
+    103     # `-p`（兼容层的 rclpy 会安静地丢掉它，于是脚本留在墙上时间上）。所以 `--ros-args`
+    104     # 往后原样透传，让 -p/-r 的取值跟着走。
+    105     argv = sys.argv
+    106     tail = []
+    107     if '--ros-args' in argv:
+    108         cut = argv.index('--ros-args')
+    109         tail, argv = argv[cut:], argv[:cut]
+    110     return [argv[0]] + [a for a in argv[1:] if a.startswith('-')] + tail
+    111 
+    112 
+==================== end_3_12.py
+      3 import rclpy
+      4 from rclpy.action import ActionClient
+      5 from rclpy.node import Node
+      6 from nav2_msgs.action import NavigateThroughPoses
+      7 from geometry_msgs.msg import PoseStamped, Twist
+      8 import csv
+      9 import os
+     10 import sys
+     11 from std_srvs.srv import Trigger  # 导入 Trigger 服务
+     89 def waypoint_file():
+    110     waypoints = read_waypoints_from_csv(waypoint_file())
+     89 def waypoint_file():
+     90     # 这一趟跑哪条航线：`run <这个脚本> sim_room12.csv` 会给一个文件名，不给就用脚本目录里的
+     91     # test.csv（车上原本那份），车上没放、仓库里也没有才退回随包的 ai_test.csv。名字一律相对
+     92     # 脚本目录解析，于是车上、这台机器上、仓库里的任何位置跑都指同一个文件。
+     93     script_dir = os.path.dirname(os.path.abspath(__file__))
+     94     named = [a for a in sys.argv[1:] if a.lower().endswith('.csv')]
+     95     if named:
+     96         return named[0] if os.path.isabs(named[0]) else os.path.join(script_dir, named[0])
+     97     for fallback in ('test.csv', 'ai_test.csv'):
+     98         candidate = os.path.join(script_dir, fallback)
+     99         if os.path.exists(candidate):
+    100             return candidate
+    101     return os.path.join(script_dir, 'ai_test.csv')
+    102 
+    103 
+    104 def main(args=None):
+    105     rclpy.init(args=args)
+    106 
+    107     client = NavThroughPosesClient()
+    108 
+    109     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+    110     waypoints = read_waypoints_from_csv(waypoint_file())
+    111 
+    112 
+

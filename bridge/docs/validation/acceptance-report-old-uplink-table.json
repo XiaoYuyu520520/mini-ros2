@@ -1,0 +1,121 @@
+{
+  "generated_at": "2026-09-17T15:45:54+0800",
+  "host": "WIN-UB1HRT8QI4S",
+  "passed": 5,
+  "failed": 1,
+  "checks": [
+    {
+      "check": "topic_list",
+      "title": "Windows lists the Ubuntu topics (cold start)",
+      "ok": true,
+      "seconds": 0.27,
+      "detail": "7 topics with types in 0.3 s",
+      "data": {
+        "cold_start": false,
+        "seconds": 0.27,
+        "topics": {
+          "/clock": "rosgraph_msgs/msg/Clock",
+          "/cmd_vel": "geometry_msgs/msg/Twist",
+          "/map": "nav_msgs/msg/OccupancyGrid",
+          "/odom": "nav_msgs/msg/Odometry",
+          "/scan": "sensor_msgs/msg/LaserScan",
+          "/tf": "tf2_msgs/msg/TFMessage",
+          "/tf_static": "tf2_msgs/msg/TFMessage"
+        },
+        "missing": [],
+        "wrong_type": {}
+      }
+    },
+    {
+      "check": "topic_info",
+      "title": "Windows resolves /scan to the gRPC peer",
+      "ok": true,
+      "seconds": 0.25,
+      "detail": "reported as remote (bridged over gRPC)",
+      "data": {
+        "remote": true,
+        "type_ok": true
+      }
+    },
+    {
+      "check": "scan_rate",
+      "title": "Mirrored /scan keeps its 10 Hz",
+      "ok": true,
+      "seconds": 6.25,
+      "detail": "9.50 Hz average over 54 samples",
+      "data": {
+        "samples": 54,
+        "average_hz": 9.495,
+        "min_hz": 9.12,
+        "max_hz": 10.013
+      }
+    },
+    {
+      "check": "uplink",
+      "title": "Windows /cmd_vel moves the Ubuntu robot",
+      "ok": true,
+      "seconds": 4.66,
+      "detail": "moved 0.81 m, /odom twist.linear.x=0.250 while commanded",
+      "data": {
+        "before": [
+          0.7883,
+          1.8755
+        ],
+        "after": [
+          0.122,
+          2.3348
+        ],
+        "moved_m": 0.8093,
+        "odom_twist_while_commanded": 0.25
+      }
+    },
+    {
+      "check": "uplink_nav2",
+      "title": "the plan nav2 publishes reaches the robot (default uplink table)",
+      "ok": false,
+      "seconds": 69.2,
+      "detail": "the daemon never armed {'/plan': (None, 'nav_msgs/msg/Path'), '/behavior_tree_log': (None, 'nav2_msgs/msg/BehaviorTreeLog')}, so the default uplink table does not carry it (the table should be /cmd_vel, /goal_pose, /initialpose, /plan, /behavior_tree_log)",
+      "data": {
+        "armed_table": {
+          "/cmd_vel": [
+            "geometry_msgs/msg/Twist",
+            30,
+            0
+          ]
+        },
+        "documented_table": {
+          "/cmd_vel": "geometry_msgs/msg/Twist",
+          "/goal_pose": "geometry_msgs/msg/PoseStamped",
+          "/initialpose": "geometry_msgs/msg/PoseWithCovarianceStamped",
+          "/plan": "nav_msgs/msg/Path",
+          "/behavior_tree_log": "nav2_msgs/msg/BehaviorTreeLog"
+        },
+        "warmup_exit": {
+          "/plan": 0,
+          "/behavior_tree_log": 0
+        },
+        "plan_before": [
+          null,
+          0,
+          0
+        ],
+        "plan_after": null,
+        "publisher_exit": 0
+      }
+    },
+    {
+      "check": "cmd_vel_watchdog",
+      "title": "a /cmd_vel that stops arriving stops the robot",
+      "ok": true,
+      "seconds": 4.61,
+      "detail": "drove 0.38 m on a 1 s command, then 0.000 m in the next second, /odom twist.linear.x=0",
+      "data": {
+        "published_for_s": 1.0,
+        "drove_m": 0.385,
+        "coasted_m_after_1s": 0.0,
+        "linear_x_settled": 0.0,
+        "linear_x_a_second_later": 0.0
+      }
+    }
+  ]
+}

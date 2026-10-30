@@ -1,0 +1,13 @@
+set pagination off
+set confirm off
+set width 0
+set height 0
+info functions ^malloc$
+break malloc if $rcx > 200000000
+continue
+printf "=== huge malloc ===\n"
+p/d $rcx
+p/x $rcx
+bt 40
+detach
+quit

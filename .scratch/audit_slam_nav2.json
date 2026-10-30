@@ -1,0 +1,23 @@
+{
+  "succeeded": false,
+  "reason": "no direction out of the robot is clear for 0.5 m; is /map the map the robot is actually in?",
+  "action": "navigate_to_pose",
+  "goal": [0, 0, 0],
+  "goal_source": "auto",
+  "frame": "map",
+  "result": "UNKNOWN",
+  "error_code": 0,
+  "error_msg": "",
+  "elapsed_s": 1.73441,
+  "start_pose": [0, 0],
+  "final_pose": [0, 0, 0],
+  "travelled_m": 0,
+  "remaining_m": 0,
+  "feedback_messages": 0,
+  "number_of_recoveries": 0,
+  "last_distance_remaining_m": 0,
+  "max_linear_velocity": 0,
+  "ack_latency_s": 0,
+  "result_latency_s": 0,
+  "messages": {"cmd_vel": 0, "cmd_vel_type": "(none)", "cmd_vel_moving": 0, "plan": 0, "plan_poses": 0, "odom": 77}
+}

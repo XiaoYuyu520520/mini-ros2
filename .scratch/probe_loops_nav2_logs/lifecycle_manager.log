@@ -1,0 +1,20 @@
+[lifecycle_manager] E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\nav.yaml: 10 parameter(s) for node 'lifecycle_manager'
+[INFO] [lifecycle_manager] Creating
+[lifecycle_manager] 'lifecycle_manager' started with 10 parameter override(s)
+[INFO] [lifecycle_manager] [34m[1mCreating and initializing lifecycle publishers[0m[0m
+[INFO] [lifecycle_manager] [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[INFO] [lifecycle_manager] [34m[1mCreating and initializing lifecycle service servers[0m[0m
+[INFO] [lifecycle_manager] [34m[1mStarting managed nodes bringup...[0m[0m
+[INFO] [lifecycle_manager] [34m[1mConfiguring controller_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mConfiguring planner_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mConfiguring bt_navigator[0m[0m
+[INFO] [lifecycle_manager] [34m[1mConfiguring behavior_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mConfiguring smoother_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mConfiguring waypoint_follower[0m[0m
+[INFO] [lifecycle_manager] [34m[1mActivating controller_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mActivating planner_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mActivating bt_navigator[0m[0m
+[INFO] [lifecycle_manager] [34m[1mActivating behavior_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mActivating smoother_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mActivating waypoint_follower[0m[0m
+[INFO] [lifecycle_manager] [34m[1mManaged nodes are active[0m[0m

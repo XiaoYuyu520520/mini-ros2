@@ -1,0 +1,12 @@
+result line at [2481]
+   2483 Traceback (most recent call last):
+   2510 AttributeError: 'Result' object has no attribute 'navigation_time'
+--- last 8 lines ---
+    callback(future)
+  File "E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\scripts\ai_��һ�������յ�.py", line 57, in get_result_callback
+    if result.navigation_time.sec > 0:
+       ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Result' object has no attribute 'navigation_time'
+
+-- exit 1 after 76.3 s
+

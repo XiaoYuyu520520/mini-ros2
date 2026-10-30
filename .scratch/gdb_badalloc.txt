@@ -1,0 +1,11 @@
+set pagination off
+set confirm off
+set width 0
+set height 0
+set print pretty off
+break std::__throw_bad_alloc
+continue
+printf "=== stopped ===\n"
+bt 45
+detach
+quit

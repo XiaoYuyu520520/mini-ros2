@@ -1,0 +1,45 @@
+[INFO] [slam_toolbox] Configuring
+[INFO] [slam_toolbox] Using solver plugin solver_plugins::CeresSolver
+[INFO] [slam_toolbox] EigenPoseGraphSolver: configured with 50 max iterations.
+[INFO] [slam_toolbox] Activating
+[slam_bridge_node] sync active: /scan -> /map
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[ERROR] [slam_toolbox] Failed to compute laser pose, aborting initialization (frame 'laser' does not exist)
+[WARN] [slam_toolbox] SynchronousSlamToolbox: Failed to create laser device for laser; discarding scan
+[WARN] [slam_toolbox] maximum laser range setting (25.0 m) exceeds the capabilities of the used Lidar (12.0 m)
+Registering sensor: [Custom Described Lidar]

@@ -1,0 +1,10 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: find / -name 'sensorlog.h' -not -path '*/proc/*' 2>/dev/null | head -20; echo ---; ls ~/code/CPU/code/Desktop/racecar/src 2>/dev/null; echo ---; find ~ -maxdepth 4 -name 'openslam_gmapping' -type d 2>/dev/null
+---
+lslidar_driver
+lslidar_msgs
+nav2_waypoint_cycle
+openslam_gmapping
+racecar
+README.md
+slam_gmapping
+---

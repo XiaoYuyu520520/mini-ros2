@@ -1,0 +1,12 @@
+src\racecar\map\ai_map.pgm                                    245775 bytes  b'P5'
+map\ai_map001.pgm                                             147471 bytes  b'P5'
+map\ai_map001.yaml                                               123 bytes  b'image: ai_map001.pgm'
+src\racecar\map\ai_map.yaml                                      120 bytes  b'image: ai_map.pgm'
+src\racecar\maps\ceshi1.yaml                                     161 bytes  b'image: /racecar/src/racecar/map/ceshi1.p'
+
+--- installed via CMake? ---
+  config   install(DIRECTORY) present: True
+  map      install(DIRECTORY) present: True
+  maps     install(DIRECTORY) present: True
+  launch   install(DIRECTORY) present: True
+  rviz     install(DIRECTORY) present: False

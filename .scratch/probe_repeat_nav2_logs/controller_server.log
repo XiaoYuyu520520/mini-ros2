@@ -1,0 +1,80 @@
+[controller_server] E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\nav.yaml: 88 parameter(s) for node 'controller_server'
+[INFO] [controller_server] 
+	controller_server lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [controller_server] Creating controller server
+[INFO] [local_costmap] 
+	local_costmap lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [local_costmap] Creating Costmap
+[controller_server] 'controller_server' started with 88 parameter override(s)
+[controller_server] waiting for external lifecycle transitions on /controller_server/change_state
+[INFO] [controller_server] Configuring controller interface
+[INFO] [local_costmap] Configuring
+[INFO] [local_costmap] Using plugin "voxel_layer"
+[INFO] [local_costmap] Subscribed to Topics: scan
+[INFO] [local_costmap] Initialized plugin "voxel_layer"
+[INFO] [local_costmap] Using plugin "inflation_layer"
+[INFO] [local_costmap] Initialized plugin "inflation_layer"
+[INFO] [controller_server] Controller frequency set to 10.0000Hz
+[INFO] [controller_server] getting progress checker plugins..
+[INFO] [controller_server] getting goal checker plugins..
+[INFO] [controller_server] getting controller plugins..
+[INFO] [controller_server] getting path handler plugins..
+[INFO] [controller_server] Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[INFO] [controller_server] Controller Server has progress_checker  progress checkers available.
+[INFO] [controller_server] Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[INFO] [controller_server] Controller Server has goal_checker  goal checkers available.
+[INFO] [controller_server] Created path handler : PathHandler of type nav2_controller::FeasiblePathHandler
+[INFO] [controller_server] Controller Server has PathHandler  path handlers available.
+[INFO] [controller_server] Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[WARN] [controller_server] Parameter 'FollowPath.desired_linear_vel' is deprecated. Use 'FollowPath.max_linear_vel' instead.
+[INFO] [controller_server] Controller Server has FollowPath  controllers available.
+[INFO] [controller_server] Activating
+[INFO] [local_costmap] Activating
+[INFO] [local_costmap] Checking transform
+[INFO] [local_costmap] start
+[INFO] [controller_server] Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[INFO] [controller_server] Creating bond (controller_server) to lifecycle manager.
+[WARN] [controller_server] No goal checker was specified in parameter 'current_goal_checker'. Server will use only plugin loaded goal_checker . This warning will appear once.
+[WARN] [controller_server] No progress checker was specified in parameter 'current_progress_checker'. Server will use only plugin loaded progress_checker . This warning will appear once.
+[WARN] [controller_server] No path handler was specified in parameter 'current_path_handler'. Server will use only plugin loaded PathHandler . This warning will appear once.
+[INFO] [controller_server] Received a goal, begin computing control effort.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Reached the goal!
+[INFO] [controller_server] Received a goal, begin computing control effort.
+[INFO] [controller_server] Reached the goal!
+[INFO] [controller_server] Received a goal, begin computing control effort.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Passing new path to controller.
+[INFO] [controller_server] Reached the goal!
+[INFO] [controller_server] Received a goal, begin computing control effort.
+[INFO] [controller_server] Reached the goal!

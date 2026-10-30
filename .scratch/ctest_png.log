@@ -1,0 +1,68 @@
+Test project E:/DesktopData/app/code/CPU/nav2/ros2_shim/build
+      Start 20: ros2_shim_parameter_service
+      Start 16: ros2_shim_graph_rewrite
+      Start 22: slam_toolbox_mapping
+      Start 19: ros2_shim_remap
+      Start 13: nav2_smac_ompl_spaces
+      Start 14: ros2_shim_parameter_event_handler
+ 1/24 Test #20: ros2_shim_parameter_service ............   Passed    1.19 sec
+      Start  7: ros2_shim_lifecycle_services
+ 2/24 Test #14: ros2_shim_parameter_event_handler ......   Passed    1.31 sec
+      Start  3: ros2_shim_node
+ 3/24 Test #19: ros2_shim_remap ........................   Passed    1.36 sec
+      Start 24: shm_transport
+ 4/24 Test #13: nav2_smac_ompl_spaces ..................   Passed    1.40 sec
+      Start 11: nav2_e2e_pipeline
+ 5/24 Test  #3: ros2_shim_node .........................   Passed    0.18 sec
+      Start 17: ros2_shim_clock
+ 6/24 Test #11: nav2_e2e_pipeline ......................   Passed    0.11 sec
+      Start  4: ros2_shim_compile
+ 7/24 Test  #4: ros2_shim_compile ......................   Passed    0.03 sec
+      Start 15: ros2_shim_plugin_names
+ 8/24 Test #15: ros2_shim_plugin_names .................   Passed    0.01 sec
+      Start 12: nav2_map_server_map_io
+ 9/24 Test #17: ros2_shim_clock ........................   Passed    0.08 sec
+      Start 18: ros2_shim_uuid
+10/24 Test #12: nav2_map_server_map_io .................   Passed    0.03 sec
+      Start  6: ros2_shim_params_file
+11/24 Test #18: ros2_shim_uuid .........................   Passed    0.01 sec
+      Start  1: ros2_shim_messages
+12/24 Test  #6: ros2_shim_params_file ..................   Passed    0.02 sec
+      Start 21: slam_toolbox_eigen_pose_graph_solver
+13/24 Test  #1: ros2_shim_messages .....................   Passed    0.03 sec
+      Start 23: slam_toolbox_laser_points
+14/24 Test #21: slam_toolbox_eigen_pose_graph_solver ...   Passed    0.03 sec
+      Start 10: ros2_shim_tf_buffer_lookup
+15/24 Test #23: slam_toolbox_laser_points ..............   Passed    0.02 sec
+      Start  9: ros2_shim_tf_convert
+16/24 Test #10: ros2_shim_tf_buffer_lookup .............   Passed    0.01 sec
+      Start  8: ros2_shim_tf_time
+17/24 Test  #9: ros2_shim_tf_convert ...................   Passed    0.01 sec
+      Start  2: ros2_shim_compile_check
+18/24 Test  #8: ros2_shim_tf_time ......................   Passed    0.01 sec
+      Start  5: nav2_navfn_planning
+19/24 Test  #2: ros2_shim_compile_check ................   Passed    0.01 sec
+20/24 Test  #5: nav2_navfn_planning ....................   Passed    0.01 sec
+21/24 Test #24: shm_transport ..........................   Passed    0.96 sec
+22/24 Test  #7: ros2_shim_lifecycle_services ...........   Passed    2.41 sec
+23/24 Test #16: ros2_shim_graph_rewrite ................   Passed    7.28 sec
+24/24 Test #22: slam_toolbox_mapping ...................***Failed   13.41 sec
+[INFO] [slam_toolbox] Configuring
+[INFO] [slam_toolbox] Using solver plugin solver_plugins::CeresSolver
+[INFO] [slam_toolbox] EigenPoseGraphSolver: configured with 50 max iterations.
+[INFO] [slam_toolbox] Activating
+  FAIL: scan_pub->get_subscription_count() > 0 (E:/DesktopData/app/code/CPU/nav2/slam_toolbox_port/tests/test_slam_mapping.cpp:177)
+Registering sensor: [Custom Described Lidar]
+  45 /pose messages, 45 matched to a driven pose; worst drift 0.000 m / 0.0 deg
+  219 map messages in 12.0s; grid 160x120 @ 0.050m, 19200 known, 279 occupied
+  wall bounding box: 8.00 m x 6.00 m
+Unregistering sensor: Custom Described Lidar
+
+
+96% tests passed, 1 tests failed out of 24
+
+Total Test time (real) =  13.44 sec
+
+The following tests FAILED:
+	 22 - slam_toolbox_mapping (Failed)
+Errors while running CTest

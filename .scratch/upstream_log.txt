@@ -1,0 +1,263 @@
+============================== include/gmapping/log/sensorlog.h  (925 bytes)
+#ifndef SENSORLOG_H
+#define SENSORLOG_H
+
+#include <list>
+#include <istream>
+#include <gmapping/sensor/sensor_base/sensorreading.h>
+#include <gmapping/sensor/sensor_odometry/odometrysensor.h>
+#include <gmapping/sensor/sensor_range/rangesensor.h>
+#include <gmapping/sensor/sensor_odometry/odometryreading.h>
+#include <gmapping/sensor/sensor_range/rangereading.h>
+#include "gmapping/log/configuration.h"
+#include <gmapping/log/log_export.h>
+
+namespace GMapping {
+
+class LOG_EXPORT SensorLog : public std::list<SensorReading*>{
+	public:
+		SensorLog(const SensorMap&);
+		~SensorLog();
+		std::istream& load(std::istream& is);
+		OrientedPoint boundingBox(double& xmin, double& ymin, double& xmax, double& ymax) const;
+	protected:
+		const SensorMap& m_sensorMap;
+		OdometryReading* parseOdometry(std::istream& is, const OdometrySensor* ) const;
+		RangeReading* parseRange(std::istream& is, const RangeSensor* ) const;
+};
+
+};
+
+#endif
+
+============================== include/gmapping/log/configuration.h  (308 bytes)
+#ifndef CONFIGURATION_H
+#define CONFIGURATION_H
+
+#include <istream>
+#include <gmapping/sensor/sensor_base/sensor.h>
+#include <gmapping/log/log_export.h>
+
+namespace GMapping {
+
+class LOG_EXPORT Configuration{
+	public:
+		virtual ~Configuration();
+		virtual SensorMap computeSensorMap() const=0;
+};
+
+};
+#endif
+
+
+============================== include/gmapping/log/sensorstream.h  (1453 bytes)
+#ifndef SENSORSTREAM_H
+#define SENSORSTREAM_H
+
+#include <istream>
+#include "gmapping/log/sensorlog.h"
+#include <gmapping/log/log_export.h>
+
+namespace GMapping {
+class LOG_EXPORT SensorStream{
+	public:
+		SensorStream(const SensorMap& sensorMap);
+		virtual ~SensorStream();
+		virtual operator bool() const=0;
+		virtual bool rewind() = 0 ;
+		virtual SensorStream& operator >>(const SensorReading*&) = 0;
+		inline const SensorMap& getSensorMap() const {return m_sensorMap; }
+	protected:
+		const SensorMap& m_sensorMap;
+		static SensorReading* parseReading(std::istream& is, const SensorMap& smap);
+		static OdometryReading* parseOdometry(std::istream& is, const OdometrySensor* );
+		static RangeReading* parseRange(std::istream& is, const RangeSensor* );
+};
+
+class LOG_EXPORT InputSensorStream: public SensorStream{
+	public:
+		InputSensorStream(const SensorMap& sensorMap, std::istream& is);
+		virtual operator bool() const;
+		virtual bool rewind();
+		virtual SensorStream& operator >>(const SensorReading*&);
+		
+		//virtual SensorStream& operator >>(SensorLog*& log);
+	protected:
+		std::istream& m_inputStream;
+};
+
+class LOG_EXPORT LogSensorStream: public SensorStream{
+	public:
+		LogSensorStream(const SensorMap& sensorMap, const SensorLog* log);
+		virtual operator bool() const;
+		virtual bool rewind();
+		virtual SensorStream& operator >>(const SensorReading*&);
+	protected:
+		const SensorLog* m_log;
+		SensorLog::const_iterator m_cursor;
+};
+
+};
+#endif
+
+============================== include/gmapping/log/carmenconfiguration.h  (515 bytes)
+#ifndef CARMENCONFIGURATION_H
+#define CARMENCONFIGURATION_H
+
+#include <string>
+#include <map>
+#include <vector>
+#include <istream>
+#include <gmapping/sensor/sensor_base/sensor.h>
+#include "gmapping/log/configuration.h"
+#include <gmapping/log/log_export.h>
+
+namespace GMapping {
+
+class LOG_EXPORT CarmenConfiguration: public Configuration, public std::map<std::string, std::vector<std::string> >{
+	public:
+		virtual std::istream& load(std::istream& is);
+		virtual SensorMap computeSensorMap() const;
+};
+
+};
+
+#endif
+
+
+============================== log/sensorlog.cpp  (3766 bytes)
+#include "gmapping/log/sensorlog.h"
+
+#include <iostream>
+#include <sstream>
+#include <assert.h>
+#include <gmapping/sensor/sensor_odometry/odometrysensor.h>
+#include <gmapping/sensor/sensor_range/rangesensor.h>
+
+#define LINEBUFFER_SIZE 100000
+
+namespace GMapping {
+
+using namespace std;
+
+SensorLog::SensorLog(const SensorMap& sm): m_sensorMap(sm){
+}
+
+SensorLog::~SensorLog(){
+	for (iterator it=begin(); it!=end(); it++)
+		if (*it) delete (*it);
+}
+
+istream& SensorLog::load(istream& is){
+	for (iterator it=begin(); it!=end(); it++)
+		if (*it) delete (*it);
+	clear();
+	
+	char buf[LINEBUFFER_SIZE];
+	while (is){
+		is.getline(buf, LINEBUFFER_SIZE);
+		istringstream lis(buf);
+		
+		string sensorname;
+		
+		if (lis) 
+			lis >>sensorname; 
+		else 
+			continue;
+		
+		
+   ... includes: #include "gmapping/log/sensorlog.h" | #include <iostream> | #include <sstream> | #include <assert.h> | #include <gmapping/sensor/sensor_odometry/odometrysensor.h> | #include <gmapping/sensor/sensor_range/rangesensor.h>
+============================== log/configuration.cpp  (102 bytes)
+#include "gmapping/log/configuration.h"
+
+namespace GMapping {
+
+Configuration::~Configuration(){
+}
+
+};
+   ... includes: #include "gmapping/log/configuration.h"
+============================== log/sensorstream.cpp  (3929 bytes)
+#include <assert.h>
+#include <sstream>
+#include "gmapping/log/sensorstream.h"
+//#define LINEBUFFER_SIZE 1000000 //for not Cyrill to unbless me, it is better to exagerate :-))
+// Can't declare a buffer that big on the stack.  So we'll risk Cyrill's
+// unblessing, and make it smaller.
+#define LINEBUFFER_SIZE 8192
+
+namespace GMapping {
+
+using namespace std;
+
+//SensorStream
+SensorStream::SensorStream(const SensorMap& sensorMap) :m_sensorMap(sensorMap){}
+
+SensorStream::~SensorStream(){}
+
+SensorReading* SensorStream::parseReading(std::istream& is, const SensorMap& smap){
+	SensorReading* reading=0;
+	if (is){
+		char buf[LINEBUFFER_SIZE];
+		is.getline(buf, LINEBUFFER_SIZE);
+		istringstream lis(buf);
+		
+		string sensorname;
+		
+		if (lis){
+			lis >>sensorname; 
+		} else 
+			return 0;
+		
+		SensorMap::const_iterator it=smap.find(sensorname);
+		if (it==smap.end()){
+			return 0;
+		}
+		
+		Sensor* sensor=it->second;
+		
+		OdometrySensor* odometry=dynamic_cast<OdometrySensor*>(sensor);
+		if (odometry)
+   ... includes: #include <assert.h> | #include <sstream> | #include "gmapping/log/sensorstream.h"
+============================== log/carmenconfiguration.cpp  (12103 bytes)
+#include <cstdlib>
+#include "gmapping/log/carmenconfiguration.h"
+#include <iostream>
+#include <sstream>
+#include <assert.h>
+#include <sys/types.h>
+#include <gmapping/sensor/sensor_odometry/odometrysensor.h>
+#include <gmapping/sensor/sensor_range/rangesensor.h>
+
+
+#define LINEBUFFER_SIZE 10000
+
+namespace GMapping {
+
+using namespace std;
+
+istream& CarmenConfiguration::load(istream& is){
+	clear();
+	char buf[LINEBUFFER_SIZE];
+	bool laseron=false;
+	bool rlaseron=false;
+	bool rlaser1=false;
+	bool rlaser2=false;
+
+	string beams;
+	string rbeams;
+
+	while (is){
+		is.getline(buf, LINEBUFFER_SIZE);
+		istringstream lis(buf);
+		
+		string qualifier;
+		string name;
+		
+		if (lis) 
+			lis >> qualifier; 
+		else 
+			continue;
+		//this is a workaround for carmen log files
+		//the number lf laser beams should be specofoed in the config
+   ... includes: #include <cstdlib> | #include "gmapping/log/carmenconfiguration.h" | #include <iostream> | #include <sstream> | #include <assert.h> | #include <sys/types.h> | #include <gmapping/sensor/sensor_odometry/odometrysensor.h> | #include <gmapping/sensor/sensor_range/rangesensor.h>

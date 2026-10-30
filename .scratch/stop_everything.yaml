@@ -1,0 +1,8 @@
+# Temporary, for one test run only: the stop polygon of the in-chain collision
+# monitor widened to cover everything within 12 m ahead of the robot - the
+# laser's own range, so no goal can be reached through it. Loaded last, after
+# nav2_shim_safety_chain.yaml, by `--safety-params`.
+collision_monitor:
+  ros__parameters:
+    PolygonStop:
+      points: "[[12.0, 12.0], [12.0, -12.0], [-1.0, -12.0], [-1.0, 12.0]]"

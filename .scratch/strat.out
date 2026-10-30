@@ -1,0 +1,8 @@
+MoveFileEx->Replace    holder=plain ifstream ok   0/200     105.1 ms total,  0.525 ms each
+MoveFileEx->Replace    holder=share-delete  ok 200/200      80.9 ms total,  0.404 ms each
+Replace->MoveFileEx    holder=plain ifstream ok   0/200     134.2 ms total,  0.671 ms each
+Replace->MoveFileEx    holder=share-delete  ok 200/200    1060.1 ms total,  5.301 ms each
+Delete+Move            holder=plain ifstream ok   0/200      65.5 ms total,  0.327 ms each
+Delete+Move            holder=share-delete  ok 200/200      93.6 ms total,  0.468 ms each
+MoveFileEx only        holder=plain ifstream ok   0/200      70.3 ms total,  0.351 ms each
+MoveFileEx only        holder=share-delete  ok   0/200      66.1 ms total,  0.330 ms each

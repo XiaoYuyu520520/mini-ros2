@@ -1,0 +1,17 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: uptime; echo ---TMUX---; tmux ls 2>&1; echo ---TOP---; ps -eo pid,etime,args --sort=-etime | grep -v '^\s*[0-9]*\s*[0-9: -]*\[' | head -12
+ 05:59:11 up 16 days, 14:17,  4 users,  load average: 0.32, 0.36, 0.57
+---TMUX---
+no server running on /tmp/tmux-1000/default
+---TOP---
+    PID     ELAPSED COMMAND
+      1 16-14:17:02 /usr/lib/systemd/systemd --system --deserialize=101 splash
+    329 16-14:16:56 /usr/lib/systemd/systemd-journald
+    419 16-14:16:54 /usr/lib/systemd/systemd-udevd
+    978 16-14:16:47 /sbin/rpcbind -f -w
+    983 16-14:16:47 /usr/lib/systemd/systemd-oomd
+    984 16-14:16:47 /usr/lib/systemd/systemd-resolved
+    986 16-14:16:47 /usr/lib/systemd/systemd-timesyncd
+    998 16-14:16:47 /usr/sbin/blkmapd
+   1000 16-14:16:47 /usr/sbin/nfsdcld
+   1051 16-14:16:46 avahi-daemon: running [ubuntu-ASUS.local]
+   1052 16-14:16:46 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only

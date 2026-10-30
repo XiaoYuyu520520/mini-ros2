@@ -1,0 +1,12 @@
+[lifecycle_manager] nav2\ros2_shim\config\nav2_map_server.yaml: 8 parameter(s) for node 'lifecycle_manager'
+[INFO] [lifecycle_manager] Creating
+[lifecycle_manager] 'lifecycle_manager' started with 8 parameter override(s)
+[INFO] [lifecycle_manager] [34m[1mCreating and initializing lifecycle publishers[0m[0m
+[INFO] [lifecycle_manager] [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[INFO] [lifecycle_manager] [34m[1mCreating and initializing lifecycle service servers[0m[0m
+[INFO] [lifecycle_manager] [34m[1mStarting managed nodes bringup...[0m[0m
+[INFO] [lifecycle_manager] [34m[1mConfiguring map_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mConfiguring map_saver[0m[0m
+[INFO] [lifecycle_manager] [34m[1mActivating map_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mActivating map_saver[0m[0m
+[INFO] [lifecycle_manager] [34m[1mManaged nodes are active[0m[0m

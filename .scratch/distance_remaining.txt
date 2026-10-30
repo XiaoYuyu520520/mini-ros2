@@ -1,0 +1,94 @@
+== ai_第一个点后回终点.py
+   ??    22 self.distance_remaining = None
+   ??    64 if feedback.distance_remaining > 0.0:
+   ??    65 self.get_logger().info(f'到目标的距离: {feedback.distance_remaining:.2f} 米')
+   ??    66 self.distance_remaining = feedback.distance_remaining
+   ??    68 if feedback.distance_remaining < 0.5 and not self.is_paused:
+   ??    78 if self.distance_remaining > 0.5 and not self.is_paused:
+== detct.py
+   ??    22 self.distance_remaining = None
+   ??    71 if feedback.distance_remaining > 0.0:
+   ??    72 self.get_logger().info(f'到目标的距离: {feedback.distance_remaining:.2f} 米')
+   ??    73 self.distance_remaining = feedback.distance_remaining
+   ??    75 if feedback.distance_remaining < 1.0 and not self.is_paused:
+   OK   105 if self.distance_remaining is None or self.is_paused:
+   ??   109 if self.distance_remaining > 0.5:
+== end_3_12.py
+   ??    19 self.distance_remaining = None
+   ??    48 if feedback.distance_remaining > 0.0:
+   ??    49 self.get_logger().info(f'Distance to target: {feedback.distance_remaining:.2f} meters')
+   ??    50 self.distance_remaining = feedback.distance_remaining
+   ??    52 if feedback.distance_remaining < 1 and not self.is_paused:
+   ??    69 if  self.distance_remaining > 1 and not self.is_paused:
+== go copy_多点需要切换.py
+   ??    37 if feedback and feedback.distance_remaining > 0.0:  # 确保反馈值是合理的
+   ??    38 print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+   ??    46 print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+   ??    47 if feedback.distance_remaining < 0.6:  # 如果距离小于0.6米
+== go.py
+   ??    20 self.distance_remaining = None
+   ??    51 if  feedback.distance_remaining > 0.0:
+   ??    52 self.get_logger().info(f'Distance to target: {feedback.distance_remaining:.2f} meters')
+   ??    53 self.distance_remaining = feedback.distance_remaining
+   OK    55 if self.distance_remaining is not None and feedback.distance_remaining < 0.5 and not self.is_paused:
+   OK    69 if self.distance_remaining is not None and self.distance_remaining > 0.5 and not self.is_paused:
+== go_2c.py
+   ??    37 if feedback and feedback.distance_remaining > 0.0:  # 确保反馈值是合理的
+   ??    38 print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+   ??    46 print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+   ??    47 if feedback.distance_remaining < 0.6:  # 如果距离小于0.6米
+== goal_l.py
+   ??    22 self.distance_remaining = None
+   ??    71 if feedback.distance_remaining > 0.0:
+   ??    72 self.get_logger().info(f'到目标的距离: {feedback.distance_remaining:.2f} 米')
+   ??    73 self.distance_remaining = feedback.distance_remaining
+   ??    75 if feedback.distance_remaining < 1.0 and not self.is_paused:
+   OK   105 if self.distance_remaining is None or self.is_paused:
+   ??   109 if self.distance_remaining > 0.5:
+== 人工智能赛道初始版本代码.py
+   ??    18 self.distance_remaining = None
+   ??    49 if feedback.distance_remaining > 0.0:
+   ??    50 self.get_logger().info(f'Distance to target: {feedback.distance_remaining:.2f} meters')
+   ??    51 self.distance_remaining = feedback.distance_remaining
+   ??    53 if feedback.distance_remaining < 0.5 and not self.is_paused:
+   ??    66 if  self.distance_remaining > 0.5 and not self.is_paused:
+== 会跳过几个点.py
+   ??    19 self.distance_remaining = None
+   ??    60 if feedback.distance_remaining > 0.0 and not self.is_paused:
+   ??    62 if feedback.distance_remaining <= 3.0:
+   ??    63 self.get_logger().info(f'Distance to target: {feedback.distance_remaining:.2f} meters')
+   ??    64 self.distance_remaining = feedback.distance_remaining
+   ??    68 if not hasattr(self, 'last_output_distance') or abs(feedback.distance_remaining - self.last_output_distance) >
+   ??    69 self.get_logger().info(f'Distance to target: {feedback.distance_remaining:.2f} meters')
+   ??    70 self.distance_remaining = feedback.distance_remaining
+   ??    71 self.last_output_distance = feedback.distance_remaining  # 更新上次输出的距离
+   ??    77 if feedback.distance_remaining < 0.5 and not self.is_paused and not self.lap_completed:
+   ??    95 if feedback.distance_remaining > 1.0 and self.lap_completed:
+   OK   120 if self.distance_remaining is not None and self.distance_remaining > 0.5 and not self.is_paused:
+== 第二个点nav2打断，然后转圈圈.py
+   ??    22 self.distance_remaining = None
+   ??    72 if feedback.distance_remaining > 0.0:
+   ??    73 self.get_logger().info(f'到目标的距离: {feedback.distance_remaining:.2f} 米')
+   ??    74 self.distance_remaining = feedback.distance_remaining
+   ??    76 if feedback.distance_remaining < 1.0 and not self.is_paused:
+   OK    92 if self.distance_remaining is None or self.is_paused:
+   ??    96 if self.distance_remaining > 0.5:
+== 终点不停.py
+   ??    48 if feedback.distance_remaining > 0.0:
+   ??    49 self.get_logger().info(f'Distance to target: {feedback.distance_remaining:.2f} meters')
+   ??    51 if feedback.distance_remaining < 1:
+== 跑一圈以内.py
+   ??    19 self.distance_remaining = None
+   ??    48 if feedback.distance_remaining > 0.0:
+   ??    49 self.get_logger().info(f'Distance to target: {feedback.distance_remaining:.2f} meters')
+   ??    50 self.distance_remaining = feedback.distance_remaining
+   ??    52 if feedback.distance_remaining < 1 and not self.is_paused:
+   ??    69 if  self.distance_remaining > 1 and not self.is_paused:
+== 重复载入完成圈数.py
+   ??    19 self.distance_remaining = None
+   ??    60 if feedback.distance_remaining > 0.0 and not self.is_paused:
+   ??    61 self.get_logger().info(f'Distance to target: {feedback.distance_remaining:.2f} meters')
+   ??    62 self.distance_remaining = feedback.distance_remaining
+   ??    65 if feedback.distance_remaining < 0.3 and not self.is_paused and not self.lap_completed :
+   ??    86 if feedback.distance_remaining > 1.0 and self.lap_completed:
+   OK    91 if self.distance_remaining is not None and self.distance_remaining > 0.3 and not self.is_paused:

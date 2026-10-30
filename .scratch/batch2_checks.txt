@@ -1,0 +1,28 @@
+--- summary tail ---
+  result: NONE
+  | # s07 : go_2c.py 
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 107
+
+--- s05  go copy_多点需要切换.py   exit=-9 wall=240.0 s
+  log lines 86, feedback 0, goal accepted NO
+  result: NONE
+  | # s05 : go copy_多点需要切换.py 
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64
+
+--- go copy.py: what it subscribes to and logs ---
+     18 self.pub = self.create_publisher(PoseStamped, '/goal_pose', 10)
+     19 self.pose_ekf_sub = self.create_subscription(Odometry, '/odometry/filtered', self.getPose_ekf, 10)
+     20 self.plan_sub = self.create_subscription(Path, '/plan', self.plan_callback, 10)
+     21 self.pub_final = self.create_publisher(Float64, '/arrfinal', 1)
+     64 self.get_logger().info("Received valid plan.")
+--- go_2c.py / go copy_多点需要切换.py: shutdown calls ---
+== go_2c.py
+     65 navigator.lifecycleShutdown()  # 关闭导航器
+== go copy_多点需要切换.py
+     70 navigator.lifecycleShutdown()  # 关闭导航器

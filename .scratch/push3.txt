@@ -1,0 +1,24 @@
+--- unpacked ---
+build
+gmapping.bat
+gmapping.sh
+install
+log
+map
+map.md
+nav.bat
+nav.sh
+README.md
+save.bat
+save.sh
+src
+tools
+--- colcon list ---
+lslidar_driver	src/lslidar_driver	(ros.ament_cmake)
+lslidar_msgs	src/lslidar_msgs	(ros.ament_cmake)
+nav2_waypoint_cycle	src/nav2_waypoint_cycle	(ros.ament_python)
+openslam_gmapping	src/openslam_gmapping	(ros.ament_cmake)
+racecar	src/racecar	(ros.ament_cmake)
+slam_gmapping	src/slam_gmapping	(ros.ament_cmake)
+packed 11 top level entries -> E:\DesktopData\app\code\CPU\.scratch\racecar_push.tar.gz (0.2 MB)
++ ssh mkdir -p ~/code/CPU/code/Desktop/racecar && tar -xzf /tmp/racecar_push.tar.gz -C ~/code/CPU/code/Desktop/racecar && rm -f /tmp/racecar_push.tar.gz && echo '--- unpacked ---' && ls ~/code/CPU/code/Desktop/racecar && echo '--- colcon list ---' && source /opt/ros/jazzy/setup.bash && cd ~/code/CPU/code/Desktop/racecar && colcon list 2>&1 | head -20

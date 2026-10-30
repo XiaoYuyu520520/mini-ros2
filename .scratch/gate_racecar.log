@@ -1,0 +1,6 @@
+[check] pushing 8040 files, 219.5 MB
+pushed
+[check] local  racecar: colcon build (remote) / entry point PASS  (0.0s)
+[check] remote racecar: colcon build (remote) / entry point PASS  (2.9s)
+
+[check] both halves green (1 steps)

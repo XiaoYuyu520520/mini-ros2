@@ -1,0 +1,45 @@
+--- unpacked ---
+gmapping.bat
+gmapping.sh
+map
+map.md
+nav.bat
+nav.sh
+README.md
+save.bat
+save.sh
+src
+tools
+--- colcon list ---
+lslidar_driver	src/lslidar_driver	(ros.ament_cmake)
+lslidar_msgs	src/lslidar_msgs	(ros.ament_cmake)
+nav2_waypoint_cycle	src/nav2_waypoint_cycle	(ros.ament_python)
+openslam_gmapping	src/openslam_gmapping	(ros.ament_cmake)
+racecar	src/racecar	(ros.ament_cmake)
+slam_gmapping	src/slam_gmapping	(ros.ament_cmake)
+Starting >>> lslidar_msgs
+Starting >>> nav2_waypoint_cycle
+Starting >>> openslam_gmapping
+--- stderr: openslam_gmapping
+In file included from /home/ubuntu/code/CPU/code/Desktop/racecar/src/openslam_gmapping/scanmatcher/scanmatcherprocessor.cpp:2:
+/home/ubuntu/code/CPU/code/Desktop/racecar/src/openslam_gmapping/scanmatcher/scanmatcherprocessor.h:4:10: fatal error: gmapping/log/sensorlog.h: 没有那个文件或目录
+    4 | #include <gmapping/log/sensorlog.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+gmake[2]: *** [scanmatcher/CMakeFiles/scanmatcher.dir/build.make:104：scanmatcher/CMakeFiles/scanmatcher.dir/scanmatcherprocessor.cpp.o] 错误 1
+gmake[2]: *** 正在等待未完成的任务....
+gmake[1]: *** [CMakeFiles/Makefile2:288：scanmatcher/CMakeFiles/scanmatcher.dir/all] 错误 2
+gmake: *** [Makefile:146：all] 错误 2
+---
+Failed   <<< openslam_gmapping [4.23s, exited with code 2]
+Aborted  <<< nav2_waypoint_cycle [4.81s]
+Aborted  <<< lslidar_msgs [7.98s]
+
+Summary: 0 packages finished [8.15s]
+  1 package failed: openslam_gmapping
+  2 packages aborted: lslidar_msgs nav2_waypoint_cycle
+  1 package had stderr output: openslam_gmapping
+  3 packages not processed
+packed 11 top level entries -> E:\DesktopData\app\code\CPU\.scratch\racecar_push.tar.gz (0.2 MB)
++ ssh mkdir -p ~/code/CPU/code/Desktop/racecar && tar -xzf /tmp/racecar_push.tar.gz -C ~/code/CPU/code/Desktop/racecar && rm -f /tmp/racecar_push.tar.gz && echo '--- unpacked ---' && ls ~/code/CPU/code/Desktop/racecar && echo '--- colcon list ---' && source /opt/ros/jazzy/setup.bash && cd ~/code/CPU/code/Desktop/racecar && colcon list 2>&1 | head -20
++ ssh source /opt/ros/jazzy/setup.bash && cd ~/code/CPU/code/Desktop/racecar && colcon build --parallel-workers 6 2>&1 | tail -40

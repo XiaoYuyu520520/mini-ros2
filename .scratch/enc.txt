@@ -1,0 +1,23 @@
+ai_test.csv                        bom=False crlf=10   size=782
+ai_test1.csv                       bom=False crlf=3    size=230
+ai_test2.csv                       bom=False crlf=4    size=217
+ai_第一个点后回终点.py                     bom=False crlf=0    size=4768
+detct.py                           bom=False crlf=0    size=7255
+end_3_12.py                        bom=False crlf=0    size=4425
+get.py                             bom=False crlf=0    size=2024
+go copy.py                         bom=False crlf=0    size=4268
+go copy_多点需要切换.py                  bom=False crlf=0    size=3274
+go.py                              bom=False crlf=0    size=5284
+go_2c.py                           bom=False crlf=0    size=3037
+goal_l.py                          bom=False crlf=0    size=7255
+go一条路径.py                          bom=False crlf=0    size=2248
+sim_room12.csv                     bom=False crlf=0    size=700
+一条路径+csv.py                        bom=False crlf=0    size=2651
+人工智能赛道初始版本代码.py                    bom=False crlf=0    size=4060
+会跳过几个点.py                          bom=False crlf=0    size=7013
+第二个点nav2打断，然后转圈圈.py                bom=False crlf=0    size=6425
+终点不停.py                            bom=False crlf=0    size=3669
+跑一圈以内.py                           bom=False crlf=0    size=4427
+重复载入完成圈数.py                        bom=False crlf=0    size=5432
+
+CMakeLists bom=False crlf=0

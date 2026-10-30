@@ -1,0 +1,5 @@
+49:    lifecycle_nodes = [
+82:    configured_params = ParameterFile(
+90:    stdout_linebuf_envvar = SetEnvironmentVariable(
+149:            parameters=[configured_params, {'autostart': autostart}],
+191:    ld.add_action(stdout_linebuf_envvar)

@@ -1,0 +1,42 @@
+02-running.md:979 [27 条] :: 兼容层 + 魔改 nav2（27 条，清单见 03-validation 的「单元与一致性测试」）
+02-running.md:986 [27/27] 串行跑每次都 27/27（约 47 s）。**加了 `-j` 现在也可以**，但还不是无条件：
+02-running.md:1006 [add_test] 同时通道名接上 `NAV2_SHM_NAMESPACE`，`add_test` 也补上了命名空间 —— 两份同名的 `test_shm.exe`
+03-validation.md:319 [17 个 fixture] | CDR ↔ 共享内存 逐字节转码 | `build_bridge.py --test` | 17 个 fixture、51 组字节比较、**0 失败** |
+03-validation.md:322 [27/27] | 兼容层 + 魔改 nav2 | `ctest --test-dir nav2\ros2_shim\build --output-on-failure` | **27/27 passed**（46.40 s，**串行**；每条测试自己带一个通道命名空间，图注册表目录也跟着走，所以守护进程在跑也互不干扰，`-j` 并发同样可用 —— 残留只剩 `ros2_shim_graph_rewrite` 偶
+03-validation.md:338 [307] 转码测试的意义：`generate_fixtures.py` 从兼容层头文件里独立解析出 307 个结构体布局，
+03-validation.md:1865 [add_test] `CMakeLists.txt` 里 `add_test(NAME ros2_shim_remap ...)`）。全量回归：
+03-validation.md:3240 [add_test] | `nav2\shm_transport\CMakeLists.txt` | `shm_transport` 这条 `add_test` 补上 `ENVIRONMENT_MODIFICATION "NAV2_SHM_NAMESPACE=set:ctest_shm_transport"`（原来是全树唯一没隔离的） |
+03-validation.md:3332 [27/27] 全套 `ctest` 在改之后仍然是 **27/27、50.26 s**。
+03-validation.md:3410 [add_test] 26 条 shim 测试（`nav2\ros2_shim\CMakeLists.txt` 里的 `add_test`，经同文件的 `add_executable`
+03-validation.md:3454 [add_test] `add_test`，分别指向 `test_shim_compile.cpp` 和 `compile_all_messages.cpp`；上一轮把「纯编译
+03-validation.md:3461 [add_test] 断言**，也**没有 `add_test`**（shim 的 `CMakeLists.txt` 里 `add_executable` 37 个、`add_test`
+03-validation.md:3496 [27 条] 27 条逐条的 `runs / failed / 最慢一次` 全在 `.scratch\ctest_stress.json` 里，失败列为空
+03-validation.md:3658 [add_test] `bridge\windows\CMakeLists.txt` 里 4 条 `add_test`（`bridge_shm_roundtrip` 在
+03-validation.md:3732 [add_test] | 构建树 | `add_test` | 隔离方式 |
+03-validation.md:3739 [27/27] 这一轮的复跑（守护进程都活着）：shim **27/27**、`bridge\windows` **4/4**、
+03-validation.md:3952 [27/27] | `nav2\ros2_shim` | **28/28**（原来 27/27，新增 `ros2_shim_param_args`） | `.scratch\ctest_after_param_fix.log` |
+03-validation.md:4081 [17 个 fixture] 17 个 fixture 里 **14 个**的 shim 布局被写成 0 字节（`twist` 48 → 0、`odometry` 709 → 21、
+03-validation.md:4112 [51 组] （`.scratch\cdr_check_after_codec.log`；原来 17 fixtures / 51 组。）同时把
+04-gaps.md:193 [51 组] 后果：现在这套东西证明的是**协议与兼容层是对的**（CDR 转码有独立的 51 组字节比对，
+04-gaps.md:294 [27/27] 漏掉 `seek_to_latest()` 这个通用缺陷。串行 `ctest` **27/27**（后来补了 `ros2_shim_channel_ring_lifecycle`，见证据 42）。
+04-gaps.md:308 [27/27] （那一次记的是当时的 25/25；补上位姿图存档那一条用例之后是 **26/26**（见证据 41）；再补上通道环生命周期那一条是 **27/27**，见证据 42。）
+04-gaps.md:323 [27/27] | 兼容层 + 魔改 nav2 | `.scratch\run_ctest.py 1`（`nav2\ros2_shim\build`，6 大核） | **27/27、53.88 s** |
+04-gaps.md:349 [27 条] `add_test` 26 条，它是只有前者的那一个（编译期验证，ctest 的 27 条里没有它）。
+04-gaps.md:351 [17 个 fixture] 17 个 fixture / 51 组字节比较 —— 不是缺陷，但静态看「断言密度」会把它当成空测试。
+04-gaps.md:376 [add_test] 一条没有 `ENVIRONMENT_MODIFICATION` 的 `add_test`，它跑在默认命名空间里，
+04-gaps.md:402 [add_test] `add_test`」；这句话按 `add_test` 数是对的，**按「用了 shim 的测试」数就不对**：
+04-gaps.md:403 [add_test] `bridge\windows\CMakeLists.txt` 里 4 条 `add_test`（实注册 3 条，`shm_roundtrip.cpp` 不存在，
+04-gaps.md:432 [17 个 fixture] `bridge\tests\cdr_check.cpp` 一个 `CHECK` 宏都没有但实跑 17 行（17 个 fixture × 3 组字节比较，
+04-gaps.md:435 [add_test] 另有 **21 个 exe 有 `add_test` 之外的用途**（服务端/工具/探针），「名叫 test 却从不执行」的
+04-gaps.md:457 [27 条] 证据 48）。加表之前这一句是「67 条话题，其中 27 条的类型不在表里」（nav2_msgs 13、
+04-gaps.md:461 [27 条] `/parameter_events` 都在这 27 条里）。同一轮里 32 种类型**全部**打得出字段（0 条退化成
+04-gaps.md:551 [27 条] | 1 | 20.8 s、96%（27 条里挂 1） | `ros2_shim_graph_rewrite` |
+04-gaps.md:618 [27/27] 逐字段相同。全套 `ctest` 仍然是 27/27。
+04-gaps.md:628 [add_test] `add_test`。**2026-09-17 晚更正：这句话当时就不准** —— `bridge\windows\CMakeLists.txt` 当时
+04-gaps.md:629 [add_test] 也没有（4 条 `add_test`、0 条隔离），准确说法是「shim 这棵树里唯一」；已经补上，见第二节第 8 条。
+04-gaps.md:714 [add_test] `shm_transport` 这条 `add_test` 补上 `ENVIRONMENT_MODIFICATION` —— 它原来是整棵树里**唯一**没有
+04-gaps.md:752 [add_test] 2 轮丢读数 → 20 轮 0 轮。另外通道名也开始跟命名空间走（补上了那条唯一没隔离的 `add_test`），
+04-gaps.md:766 [27/27] | 兼容层 + 魔改 nav2 | `.scratch\run_ctest.py 1` | 27/27、53.88 s | **27/27、50.65 s** |
+04-gaps.md:773 [27 条] | `.scratch\ctest_stress.py` --rounds 10 --jobs 8（27 条全跑、钉 6 大核） | `ctest -j 8` × 10 轮 | **7/10 轮干净**（`ros2_shim_graph_rewrite` 挂 1 次、`slam_toolbox_mapping` 挂 1 次，另 1 轮卡到 900 s 超时） | **10/10 轮干净、0 次失败
+01-architecture.md:132 [307] `bridge/tests/generate_fixtures.py` 从兼容层的头文件里**解析出 307 个结构体布局**（独立于 C++ 的
+01-architecture.md:140 [17 个 fixture] 结果是 17 个 fixture、51 组字节比较、0 失败 —— 即转码在两个方向上都是逐字节精确的。

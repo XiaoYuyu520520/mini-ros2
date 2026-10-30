@@ -1,0 +1,14 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(Threads)
+find_dependency(Protobuf CONFIG)
+find_dependency(gRPC CONFIG)
+
+if(@ROS2_GRPC_SDK_WITH_ROS2@)
+  find_dependency(rclcpp)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/ros2_grpc_sdkTargets.cmake")
+
+check_required_components(ros2_grpc_sdk)

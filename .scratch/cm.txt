@@ -1,0 +1,50 @@
+ 114| install(FILES
+ 115|   scripts/ai_test.csv
+ 116|   scripts/ai_test1.csv
+ 117|   scripts/ai_test2.csv
+ 118|   scripts/sim_room12.csv
+ 119|   DESTINATION lib/${PROJECT_NAME}
+ 120| )
+ 121| 
+ 122| install(DIRECTORY
+ 123|   config
+ 124|   DESTINATION share/${PROJECT_NAME}
+ 125| )
+ 126| install(DIRECTORY
+ 127|   maps
+ 128|   DESTINATION share/${PROJECT_NAME}
+ 129| )
+ 130| 
+ 131| install(DIRECTORY
+ 132|   launch
+ 133|   DESTINATION share/${PROJECT_NAME}
+ 134| )
+ 135| 
+ 136| 
+ 137| ament_package()
+
+--- code\Desktop\racecar\src\racecar\maps\ceshi1.yaml
+image: /racecar/src/racecar/map/ceshi1.pgm
+resolution: 0.050000
+origin: [-100.000000, -100.000000, 0.000000]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+
+
+--- code\Desktop\racecar\src\racecar\map\ai_map.yaml
+image: ai_map.pgm
+mode: trinary
+resolution: 0.05
+origin: [-10, -10, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.25
+--- code\Desktop\racecar\src\racecar\map\test_map.yaml
+image: test_map.pgm
+mode: trinary
+resolution: 0.05
+origin: [-10, -10, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.25

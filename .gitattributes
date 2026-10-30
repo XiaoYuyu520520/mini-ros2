@@ -1,0 +1,16 @@
+# The line endings this repository actually uses, written down so a checkout on
+# another machine cannot quietly rewrite them.
+#
+# `tools/check_docs.py` fails on any CR byte in a `.md` (a stray \r renders as a
+# visible box in the middle of a Chinese paragraph), and the `.bat` files are CRLF
+# by construction - `cmd.exe` is unreliable with LF batch files. Without this file
+# a Windows checkout with the usual `core.autocrlf=true` rewrites every LF to CRLF
+# and `python tools/check_docs.py` starts failing on files nobody edited.
+#
+# `text=auto` still lets git detect binaries (the DLLs, the PGMs, the build trees)
+# and leave them alone.
+* text=auto eol=lf
+
+# Last match wins, so these two override the line above.
+*.bat text eol=crlf
+*.ps1 text eol=crlf

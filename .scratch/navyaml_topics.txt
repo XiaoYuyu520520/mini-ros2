@@ -1,0 +1,20 @@
+11 # 那几项兼容层专用设置（use_sim_time / enable_stamped_cmd_vel / 行为树路径 /
+19 #   * odom_topic 写成话题名 /odom
+20 #   * controller_server / behavior_server 的 enable_stamped_cmd_vel: false
+68     scan_topic: /scan               #要订阅的激光雷达
+96     odom_topic: /odom                       # 兼容层/仿真：真车是 odom_combined
+122     odom_topic: /odom                       # 兼容层/仿真：真车是 odom_combined
+123     #兼容层：nav2 1.5 默认在 /cmd_vel 上发 TwistStamped，兼容层按话题名转发、
+127     enable_stamped_cmd_vel: false
+210         observation_sources: scan                  #观测源
+211         scan:
+212           topic: /scan
+216           data_type: "LaserScan"                    #数据类型
+246         observation_sources: scan                  #观测源
+247         scan:
+248           topic: scan
+252           data_type: "LaserScan"                   #数据类型
+352     costmap_topic: local_costmap/costmap_raw           #用于在局部代价地图上进行碰撞检查的原始代价地图主题。
+353     footprint_topic: local_costmap/published_footprint #局部代价地图框架中的足迹发布主题。
+373     #兼容层：同 controller_server 的 enable_stamped_cmd_vel —— 恢复分支上的
+375     enable_stamped_cmd_vel: false

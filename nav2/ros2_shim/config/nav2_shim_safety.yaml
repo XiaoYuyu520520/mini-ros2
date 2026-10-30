@@ -1,0 +1,103 @@
+# Parameters for the two nodes that sit between the controller and the wheels.
+# They are a separate file rather than blocks in nav2_shim_overrides.yaml
+# because they are a separate *stack*: they are started by
+# bridge\windows\nav2_safety.bat, and - unless it is asked for with --safety -
+# nothing in `nav2_stack.bat`'s chain reads these values.
+#
+# There are two ways to run the pair, and the topic names are what tell them
+# apart. Everything else in this file is the same for both:
+#
+#   beside the stack - `nav2_safety.bat`, and the only mode this file has to
+#   describe on its own: no node is remapped, so velocity_smoother listens to
+#   the same `/cmd_vel` the controller writes and the monitor's output goes to
+#   `/cmd_vel_monitored`, which nothing reads. The two nodes then measure and
+#   check the command stream without being able to change what the robot does.
+#
+#   in the chain - `nav2_stack.bat --safety`: the controller and the behavior
+#   server are remapped to `/cmd_vel_nav`, the smoother follows them there, and
+#   `nav2_shim_safety_chain.yaml` - loaded on top of this file, see the
+#   `collision_monitor` block at the bottom - puts the monitor's output back on
+#   `/cmd_vel`. The monitor is then the single writer of the topic the robot
+#   listens to, and nothing reaches the wheels unchecked.
+
+# nav2_velocity_smoother's topics are not parameters - it subscribes `cmd_vel`
+# and publishes `cmd_vel_smoothed`, both spelled out in velocity_smoother.cpp
+# (`smoothed_cmd_pub_` and `cmd_sub_`, set up in `on_configure`), and upstream
+# relies on `navigation_launch.py` to remap the input. This port has the same
+# mechanism now, `-r FROM:=TO` on the command line, which is what
+# `nav2_stack.bat --safety` uses to point this node at `/cmd_vel_nav`; in the
+# beside-the-stack mode there is no remapping, so the node listens to the same
+# `/cmd_vel` the controller writes.
+#
+# Either way the answer goes to `/cmd_vel_smoothed`, and the acceleration limits
+# below are what it has been through by then. With no remapping that topic has
+# no reader, which is what makes the pair safe to run against a live stack: the
+# robot still takes its orders straight from `/cmd_vel`.
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: true
+    # Plain Twist, like the rest of the chain: the robot subscribes to `Twist`,
+    # and `nav2_util::TwistPublisher` would otherwise stamp the output.
+    enable_stamped_cmd_vel: false
+    smoothing_frequency: 20.0
+    scale_velocities: false
+    # Open loop: the smoothed value is derived from the previous *command*, not
+    # from `/odom`. Closed loop needs a wheel-odometry feedback type and a robot
+    # that reports its own velocity, which the simulated one does not.
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.45, 0.0, 1.0]
+    min_velocity: [-0.45, 0.0, -1.0]
+    max_accel: [0.5, 0.0, 1.0]
+    max_decel: [-0.5, 0.0, -1.0]
+    # Zero out commands below these, so a controller holding a tiny value does
+    # not leave the wheels creeping.
+    deadband_velocity: [0.01, 0.0, 0.01]
+    velocity_timeout: 1.0
+    odom_topic: /odom
+    odom_duration: 0.1
+
+# collision_monitor *does* take its topics from parameters, so its output can be
+# moved out of the way - and in the beside-the-stack mode it has to be, because
+# `/cmd_vel` already has a writer (the controller). `cmd_vel_out_topic` is
+# `cmd_vel_monitored` here rather than upstream's `/cmd_vel`, so the monitor can
+# watch the stream the smoother produces without being able to stop the robot.
+#
+# In the chain the same parameter goes back to upstream's `/cmd_vel`, and that
+# one line is the whole difference: it is in `nav2_shim_safety_chain.yaml`,
+# loaded after this file by `nav2_stack.bat --safety`, and it is why the monitor
+# is the last thing a velocity command passes on its way to the wheels. The
+# `cmd_vel_in_topic` below is upstream's value either way - the smoother is what
+# the monitor reads, in both modes.
+collision_monitor:
+  ros__parameters:
+    use_sim_time: true
+    enable_stamped_cmd_vel: false
+    enabled: true
+    base_frame_id: base_link
+    odom_frame_id: odom
+    cmd_vel_in_topic: cmd_vel_smoothed
+    cmd_vel_out_topic: cmd_vel_monitored
+    state_topic: collision_monitor_state
+    transform_tolerance: 0.5
+    source_timeout: 2.0
+    base_shift_correction: true
+    stop_pub_timeout: 2.0
+    # One polygon: everything the laser can see inside 0.45 m ahead of
+    # `base_link`, half a metre wide. `action_type: stop` means the monitor
+    # publishes zero for as long as anything is in it.
+    polygons: ["PolygonStop"]
+    PolygonStop:
+      type: "polygon"
+      points: "[[0.45, 0.3], [0.45, -0.3], [0.0, -0.3], [0.0, 0.3]]"
+      action_type: "stop"
+      min_points: 4
+      visualize: true
+      polygon_pub_topic: "polygon_stop"
+      enabled: true
+    # The same laser the rest of the stack uses. `/scan` is what the bridge
+    # mirrors in from the robot and what both costmaps are built from.
+    observation_sources: ["scan"]
+    scan:
+      type: "scan"
+      topic: "scan"
+      enabled: true

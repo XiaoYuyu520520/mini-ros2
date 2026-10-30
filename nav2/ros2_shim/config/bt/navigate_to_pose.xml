@@ -1,0 +1,54 @@
+<!--
+  The tree `bt_navigator` loads instead of upstream's
+  `navigate_to_pose_w_replanning_and_recovery.xml`.
+
+  It is upstream's tree, including the recovery round robin at the end that
+  spins in place, waits and backs up - the three action nodes that only work
+  while `behavior_server.exe` is running (see apps/behavior_server_node.cpp).
+  A behavior tree is built when the navigator activates, so a missing action
+  server is not a degraded recovery branch but a navigator that refuses to
+  activate at all: "Action server spin not available". `nav2_stack.bat` starts
+  the behavior server alongside the other three for that reason.
+
+  The pipeline itself is upstream's: the planner and controller selectors, the
+  goal and progress checkers and the costmap clearing recoveries, whose
+  services are the ones `nav2_costmap_2d` advertises here
+  (`global_costmap/clear_entirely_global_costmap` and
+  `local_costmap/clear_entirely_local_costmap`).
+
+  What is left out relative to upstream's current file is the newer
+  path-handling machinery (`PathHandlerSelector`, `GlobalUpdatedGoal`,
+  `IsGoalNearby`, `TruncatePathLocal`, `ValidatePath`) and the
+  `WouldA*RecoveryHelp` guards, none of which this port registers. The
+  behaviour a navigation gets without them is the older pipeline's: replan at
+  1 Hz, clear the costmaps, then try the three behaviors.
+-->
+<root BTCPP_format="4" main_tree_to_execute="NavigateToPoseWReplanning">
+  <BehaviorTree ID="NavigateToPoseWReplanning">
+    <RecoveryNode number_of_retries="6" name="NavigateRecovery">
+      <PipelineSequence name="NavigateWithReplanning">
+        <ProgressCheckerSelector selected_progress_checker="{selected_progress_checker}" default_progress_checker="progress_checker" topic_name="progress_checker_selector"/>
+        <GoalCheckerSelector selected_goal_checker="{selected_goal_checker}" default_goal_checker="general_goal_checker" topic_name="goal_checker_selector"/>
+        <ControllerSelector selected_controller="{selected_controller}" default_controller="FollowPath" topic_name="controller_selector"/>
+        <PlannerSelector selected_planner="{selected_planner}" default_planner="GridBased" topic_name="planner_selector"/>
+        <RateController hz="1.0">
+          <RecoveryNode number_of_retries="1" name="ComputePathToPose">
+            <ComputePathToPose goal="{goal}" path="{path}" planner_id="{selected_planner}" error_code_id="{compute_path_error_code}" error_msg="{compute_path_error_msg}"/>
+            <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
+          </RecoveryNode>
+        </RateController>
+        <RecoveryNode number_of_retries="1" name="FollowPath">
+          <FollowPath path="{path}" controller_id="{selected_controller}" error_code_id="{follow_path_error_code}" error_msg="{follow_path_error_msg}" tracking_feedback="{tracking_feedback}"/>
+          <ClearEntireCostmap name="ClearLocalCostmap-Context" service_name="local_costmap/clear_entirely_local_costmap"/>
+        </RecoveryNode>
+      </PipelineSequence>
+      <RoundRobin name="RecoveryActions">
+        <ClearEntireCostmap name="ClearLocalCostmap-Subtree" service_name="local_costmap/clear_entirely_local_costmap"/>
+        <ClearEntireCostmap name="ClearGlobalCostmap-Subtree" service_name="global_costmap/clear_entirely_global_costmap"/>
+        <Spin spin_dist="1.57" error_code_id="{spin_error_code}" error_msg="{spin_error_msg}"/>
+        <Wait wait_duration="5.0" error_code_id="{wait_error_code}" error_msg="{wait_error_msg}"/>
+        <BackUp backup_dist="0.30" backup_speed="0.15" error_code_id="{backup_error_code}" error_msg="{backup_error_msg}"/>
+      </RoundRobin>
+    </RecoveryNode>
+  </BehaviorTree>
+</root>

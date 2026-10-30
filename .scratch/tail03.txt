@@ -1,0 +1,73 @@
+bom=True crlf=0 size=488470
+lines 8061
+---- tail 70 ----
+ 7992| [check] remote shim: build entry point            PASS  (4.2s)
+ 7993| [check] remote shim: ctest                        PASS  (273.2s)
+ 7994| [check] remote shm: ctest                         PASS  (1.1s)
+ 7995| [check] remote bridge: build entry point + ctest  PASS  (4.0s)
+ 7996| [check] remote bridge: control entry point        PASS  (0.2s)
+ 7997| [check] remote grpc sdk: build entry point + ctest PASS  (2.2s)
+ 7998| 
+ 7999| [check] both halves green (6 steps)
+ 8000| 
+ 8001| $ python tools\check_cross_platform.py --local
+ 8002| [check] local  shim: build entry point            PASS  (1.0s)
+ 8003| [check] local  shim: ctest                        PASS  (53.5s)
+ 8004| [check] local  shm: ctest                         PASS  (1.1s)
+ 8005| [check] local  bridge: build entry point + ctest  PASS  (4.3s)
+ 8006| [check] local  bridge: control entry point        PASS  (0.3s)
+ 8007| [check] local  grpc sdk: build entry point + ctest PASS  (2.4s)
+ 8008| 
+ 8009| [check] both halves green (6 steps)
+ 8010| ```
+ 8011| 
+ 8012| ### 一、`PASS` 背后是多少条
+ 8013| 
+ 8014| 这个脚本**通过的时候只打一行 `PASS (秒)`**，被跑命令的输出只在失败时打尾部 25 行
+ 8015| （`print_verdict()`），所以「remote shim: ctest PASS」这句自己看不出跑了多少条。补一次原始输出：
+ 8016| 
+ 8017| ```text
+ 8018| $ ssh ubuntu@192.168.1.113 'cd ~/code/CPU && python3 nav2/ros2_shim/build.py --jobs 6 | tail -4 &&
+ 8019|       ctest --test-dir nav2/ros2_shim/build --output-on-failure | tail -5'
+ 8020| -- Generating done (0.1s)
+ 8021| -- Build files have been written to: /home/ubuntu/code/CPU/nav2/ros2_shim/build
+ 8022| >>> /usr/bin/cmake --build /home/ubuntu/code/CPU/nav2/ros2_shim/build -- -j 6
+ 8023| ninja: no work to do.
+ 8024| 33/33 Test #33: shm_transport ...........................   Passed    0.78 sec
+ 8025| 
+ 8026| 100% tests passed, 0 tests failed out of 33
+ 8027| 
+ 8028| Total Test time (real) =  14.69 sec
+ 8029| ```
+ 8030| 
+ 8031| * 273.2 s 是**编译**（推送把源文件的 mtime 更新了，`ninja` 因此重建了那一批），不是 ctest；紧接着
+ 8032|   重跑就是 `ninja: no work to do` + ctest **14.69 s**；
+ 8033| * **33/33 和 Windows 那边是同一个数**（证据 73 的表），两组用例名也相同；
+ 8034| * 本机 53.5 s 里同样主要是编译（MSYS2，`--jobs 6`）。
+ 8035| 
+ 8036| ### 二、这一轮改了什么
+ 8037| 
+ 8038| 只改了 `bridge/tests/generate_fixtures.py` 与 `bridge/tests/fixtures/`（证据 73）和两份文档，
+ 8039| **`nav2/ros2_shim` 一个字节都没动**。所以上面那两组 33/33 是「同一份代码在两个平台上」的结果，
+ 8040| 不是「一边改了、另一边照着改」。
+ 8041| 
+ 8042| ### 三、这条能证明什么、不能证明什么
+ 8043| 
+ 8044| 能证明：
+ 8045| 
+ 8046| * 六个步骤（`shim` / `shm` / `bridge` / `grpc` 的构建入口、`bridge` 的控制入口、三套 ctest）在
+ 8047|   Windows 与 Ubuntu 上各跑一遍都是绿的，用的是同一个 `tools/check_cross_platform.py`；
+ 8048| * 远端那棵树**是这一轮推上去的**（7704 个文件 / 215.6 MB，`build` 目录不参与推送），所以「绿」是在
+ 8049|   当前源码上量的，不是靠上一轮留下的构建树；
+ 8050| * 两边的 shim ctest 是同一个数：33/33。
+ 8051| 
+ 8052| 不能证明：
+ 8053| 
+ 8054| * 它仍然是**手工跑**的：`.github/workflows/cross-platform.yml` 一次都没在 runner 上跑过
+ 8055|   （`04-gaps.md` 第二十二节第一节），今天绿不代表下一次提交还绿；
+ 8056| * `--remote` 要 SSH 到 192.168.1.113，所以它**不适合**进 CI（`04-gaps.md` 第二十二节末尾写过这一条）；
+ 8057| * 推送清单 `PUSH` 里那 20 个条目之外的东西不会同步到远端，「远端绿」说的只是这 20 个条目里的树；
+ 8058| * 远端那六步里 `bridge: control entry point` 只跑了 0.2 s：远端的 `bridge/linux/ros2_bridge.sh pid`
+ 8059|   答的是 **1778872**（那台机器上一直挂着一个 daemon，`--agent 127.0.0.1:50051`），于是走了脚本里
+ 8060|   「已经有一个 daemon 在跑，就不动它」那条提前返回 —— 那一格里「start → pid → stop → 再 start 带
+ 8061|   选项」这半边这次是**跳过**的，不是通过的。

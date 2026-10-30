@@ -1,0 +1,477 @@
+    107     # 将导航点转换为 PoseStamped 消息
+    108     poses = []
+    109     for point in waypoints:
+    110         pose = PoseStamped()
+    111         pose.header.frame_id = 'map'
+    112         pose.header.stamp.sec = 0
+    113         pose.pose.position.x = point["x"]
+    114         pose.pose.position.y = point["y"]
+    115         pose.pose.position.z = point["z"]
+    116         pose.pose.orientation.w = point["w"]
+    117         poses.append(pose)
+    118     client.poses = poses  # 保存 poses 到 client 中
+    119 
+    120     client.send_goal(poses)
+    121 
+    122     rclpy.spin(client)
+    123 
+    124 if __name__ == '__main__':
+    125     main()
+======================== detct.py lines=172
+    135 def main(args=None):
+    136     rclpy.init(args=args)
+    137 
+    138     client = NavThroughPosesClient()
+    139 
+    140     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+    141     script_dir = os.path.dirname(os.path.abspath(__file__))
+    142     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'ai_test2.csv'))
+    143 
+    144     # 将导航点按4个一组分组
+    145     group_size = 4
+    146     groups = group_waypoints(waypoints, group_size)
+    147 
+    148     # 将分组后的路径点转换为 PoseStamped 消息
+    149     client.groups = []
+    150     for group in groups:
+    151         poses = []
+    152         for point in group:
+    153             pose = PoseStamped()
+    154             pose.header.frame_id = 'map'
+    155             pose.header.stamp.sec = 0
+    156             pose.pose.position.x = point["x"]
+    157             pose.pose.position.y = point["y"]
+    158             pose.pose.position.z = point["z"]
+    159             pose.pose.orientation.w = point["w"]
+    160             poses.append(pose)
+    161         client.groups.append(poses)
+    162 
+    163     # 发送第一组目标
+    164     if len(client.groups) > 0:
+    165         client.send_goal(client.groups[0])
+    166     else:
+    167         client.get_logger().info('没有有效的导航点组')
+    168 
+    169     rclpy.spin(client)
+    170 
+    171 if __name__ == '__main__':
+    172     main()
+======================== end_3_12.py lines=130
+    104 def main(args=None):
+    105     rclpy.init(args=args)
+    106 
+    107     client = NavThroughPosesClient()
+    108 
+    109     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+    110     waypoints = read_waypoints_from_csv(waypoint_file())
+    111 
+    112 
+    113     # 将导航点转换为 PoseStamped 消息
+    114     poses = []
+    115     for point in waypoints:
+    116         pose = PoseStamped()
+    117         pose.header.frame_id = 'map'
+    118         pose.header.stamp.sec = 0
+    119         pose.pose.position.x = point["x"]
+    120         pose.pose.position.y = point["y"]
+    121         pose.pose.position.z = point["z"]
+    122         pose.pose.orientation.w = point["w"]
+    123         poses.append(pose)
+    124 
+    125     client.send_goal(poses)
+    126 
+    127     rclpy.spin(client)
+    128 
+    129 if __name__ == '__main__':
+    130     main()
+======================== goal_l.py lines=172
+    135 def main(args=None):
+    136     rclpy.init(args=args)
+    137 
+    138     client = NavThroughPosesClient()
+    139 
+    140     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+    141     script_dir = os.path.dirname(os.path.abspath(__file__))
+    142     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'ai_test2.csv'))
+    143 
+    144     # 将导航点按4个一组分组
+    145     group_size = 4
+    146     groups = group_waypoints(waypoints, group_size)
+    147 
+    148     # 将分组后的路径点转换为 PoseStamped 消息
+    149     client.groups = []
+    150     for group in groups:
+    151         poses = []
+    152         for point in group:
+    153             pose = PoseStamped()
+    154             pose.header.frame_id = 'map'
+    155             pose.header.stamp.sec = 0
+    156             pose.pose.position.x = point["x"]
+    157             pose.pose.position.y = point["y"]
+    158             pose.pose.position.z = point["z"]
+    159             pose.pose.orientation.w = point["w"]
+    160             poses.append(pose)
+    161         client.groups.append(poses)
+    162 
+    163     # 发送第一组目标
+    164     if len(client.groups) > 0:
+    165         client.send_goal(client.groups[0])
+    166     else:
+    167         client.get_logger().info('没有有效的导航点组')
+    168 
+    169     rclpy.spin(client)
+    170 
+    171 if __name__ == '__main__':
+    172     main()
+======================== go一条路径.py lines=74
+     42 def main(args=None):
+     43     rclpy.init(args=args)
+     44 
+     45     client = NavThroughPosesClient()
+     46 
+     47     # 定义导航点
+     48     waypoints = [
+     49         {"x": 2.67, "y": -0.11},
+     50         {"x": 4.84, "y": 0.84},
+     51         {"x": 2.05, "y": 2.48}
+     52         # {"x": -1.16, "y": -1.17}
+     53         # {"x": 0.00, "y": 0.00}
+     54 
+     55     ]
+     56 
+     57     # 将导航点转换为 PoseStamped 消息
+     58     poses = []
+     59     for point in waypoints:
+     60         pose = PoseStamped()
+     61         pose.header.frame_id = 'map'
+     62         pose.header.stamp.sec = 0
+     63         pose.pose.position.x = point["x"]
+     64         pose.pose.position.y = point["y"]
+     65         pose.pose.orientation.w = 1.0
+     66         poses.append(pose)
+     67 
+     68     client.send_goal(poses)
+     69 
+     70     rclpy.spin(client)
+     71 
+     72 if __name__ == '__main__':
+     73     main()
+     74 
+======================== 人工智能赛道初始版本代码.py lines=115
+     86 def main(args=None):
+     87     rclpy.init(args=args)
+     88 
+     89     client = NavThroughPosesClient()
+     90 
+     91     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+     92     script_dir = os.path.dirname(os.path.abspath(__file__))
+     93 
+     94     # 从CSV文件读取导航点
+     95     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'ai_test.csv'))
+     96 
+     97 
+     98     # 将导航点转换为 PoseStamped 消息
+     99     poses = []
+    100     for point in waypoints:
+    101         pose = PoseStamped()
+    102         pose.header.frame_id = 'map'
+    103         pose.header.stamp.sec = 0
+    104         pose.pose.position.x = point["x"]
+    105         pose.pose.position.y = point["y"]
+    106         pose.pose.position.z = point["z"]
+    107         pose.pose.orientation.w = point["w"]
+    108         poses.append(pose)
+    109 
+    110     client.send_goal(poses)
+    111 
+    112     rclpy.spin(client)
+    113 
+    114 if __name__ == '__main__':
+    115     main()
+======================== 会跳过几个点.py lines=181
+    154 def main(args=None):
+    155     rclpy.init(args=args)
+    156 
+    157     client = NavThroughPosesClient()
+    158 
+    159     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+    160     waypoints = read_waypoints_from_csv(waypoint_file())
+    161     # waypoints = read_waypoints_fr
+    162 
+    163 
+    164     # 将导航点转换为 PoseStamped 消息
+    165     poses = []
+    166     for point in waypoints:
+    167         pose = PoseStamped()
+    168         pose.header.frame_id = 'map'
+    169         pose.header.stamp.sec = 0
+    170         pose.pose.position.x = point["x"]
+    171         pose.pose.position.y = point["y"]
+    172         pose.pose.position.z = point["z"]
+    173         pose.pose.orientation.w = point["w"]
+    174         poses.append(pose)
+    175 
+    176     client.send_goal(poses)
+    177 
+    178     rclpy.spin(client)
+    179 
+    180 if __name__ == '__main__':
+    181     main()
+======================== 第二个点nav2打断，然后转圈圈.py lines=161
+    122 def main(args=None):
+    123     rclpy.init(args=args)
+    124 
+    125     client = NavThroughPosesClient()
+    126 
+    127     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+    128     script_dir = os.path.dirname(os.path.abspath(__file__))
+    129 
+    130     # 从 CSV 文件读取导航点
+    131     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'ai_test.csv'))
+    132 
+    133     # 将导航点按4个一组分组
+    134     group_size = 4
+    135     groups = group_waypoints(waypoints, group_size)
+    136 
+    137     # 将分组后的路径点转换为 PoseStamped 消息
+    138     client.groups = []
+    139     for group in groups:
+    140         poses = []
+    141         for point in group:
+    142             pose = PoseStamped()
+    143             pose.header.frame_id = 'map'
+    144             pose.header.stamp.sec = 0
+    145             pose.pose.position.x = point["x"]
+    146             pose.pose.position.y = point["y"]
+    147             pose.pose.position.z = point["z"]
+    148             pose.pose.orientation.w = point["w"]
+    149             poses.append(pose)
+    150         client.groups.append(poses)
+    151 
+    152     # 发送第一组目标
+    153     if len(client.groups) > 0:
+    154         client.send_goal(client.groups[0])
+    155     else:
+    156         client.get_logger().info('没有有效的导航点组')
+    157 
+    158     rclpy.spin(client)
+    159 
+    160 if __name__ == '__main__':
+    161     main()
+======================== 跑一圈以内.py lines=130
+    104 def main(args=None):
+    105     rclpy.init(args=args)
+    106 
+    107     client = NavThroughPosesClient()
+    108 
+    109     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+    110     waypoints = read_waypoints_from_csv(waypoint_file())
+    111 
+    112 
+    113     # 将导航点转换为 PoseStamped 消息
+    114     poses = []
+    115     for point in waypoints:
+    116         pose = PoseStamped()
+    117         pose.header.frame_id = 'map'
+    118         pose.header.stamp.sec = 0
+    119         pose.pose.position.x = point["x"]
+    120         pose.pose.position.y = point["y"]
+    121         pose.pose.position.z = point["z"]
+    122         pose.pose.orientation.w = point["w"]
+    123         poses.append(pose)
+    124 
+    125     client.send_goal(poses)
+    126 
+    127     rclpy.spin(client)
+    128 
+    129 if __name__ == '__main__':
+    130     main()
+======================== 重复载入完成圈数.py lines=149
+    124 def main(args=None):
+    125     rclpy.init(args=args)
+    126 
+    127     client = NavThroughPosesClient()
+    128 
+    129     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+    130     waypoints = read_waypoints_from_csv(waypoint_file())
+    131 
+    132     # 将导航点转换为 PoseStamped 消息
+    133     poses = []
+    134     for point in waypoints:
+    135         pose = PoseStamped()
+    136         pose.header.frame_id = 'map'
+    137         pose.header.stamp.sec = 0
+    138         pose.pose.position.x = point["x"]
+    139         pose.pose.position.y = point["y"]
+    140         pose.pose.position.z = point["z"]
+    141         pose.pose.orientation.w = point["w"]
+    142         poses.append(pose)
+    143 
+    144     client.send_goal(poses)
+    145 
+    146     rclpy.spin(client)
+    147 
+    148 if __name__ == '__main__':
+    149     main()
+======================== go copy.py lines=145
+    110 def main(args=None):
+    111     rclpy.init(args=args)
+    112 
+    113     goalListX = []
+    114     goalListY = []
+    115     goalListZ = []
+    116     goalListW = []
+    117 
+    118     map_frame = 'map'
+    119 
+    120     with open(waypoint_file(), 'r') as f:
+    121         reader = csv.reader(f)
+    122         goalList = [list(map(float, cols)) for cols in reader]
+    123 
+    124     goalList = np.array(goalList)
+    125     print("read suc!!")
+    126     goalListX = goalList[:, 0]
+    127     goalListY = goalList[:, 1]
+    128     goalListZ = goalList[:, 2]
+    129     goalListW = goalList[:, 3]
+    130 
+    131     if len(goalListX) == len(goalListY) and len(goalListY) >= 1:
+    132         print("Multi Goals Executing...")
+    133         mg = MultiGoals(goalListX, goalListY, goalListZ, goalListW, 1, map_frame)
+    134         rclpy.spin(mg)
+    135     else:
+    136         print("Lengths of goal lists are not the same")
+    137 
+    138     mg.destroy_node()
+    139     rclpy.shutdown()
+    140 
+    141 if __name__ == '__main__':
+    142     try:
+    143         main()
+    144     except KeyboardInterrupt:
+    145         print("shutting down")
+======================== go_2c.py lines=69
+     11 def main():
+     12     rclpy.init()  # 初始化ROS 2
+     13     navigator = BasicNavigator()  # 创建导航器实例
+     14 
+     15     # 定义导航点
+     16     waypoints = [
+     17         {"x": 1.178, "y": -1.089},
+     18         {"x": 2.531, "y": -2.070},
+     19         {"x": 4.180, "y": -3.071}
+     20     ]
+     21 
+     22     # 遍历导航点
+     23     for idx, point in enumerate(waypoints):
+     24         goal_pose = PoseStamped()  # 创建目标姿态消息
+     25         goal_pose.header.frame_id = 'map'  # 设置参考坐标系为地图
+     26         goal_pose.header.stamp = navigator.get_clock().now().to_msg()  # 设置时间戳
+     27         goal_pose.pose.position.x = point["x"]  # 设置目标点的x坐标
+     28         goal_pose.pose.position.y = point["y"]  # 设置目标点的y坐标
+     29         goal_pose.pose.orientation.w = 1.0  # 设置默认的方向（朝向正北）
+     30 
+     31         print(f"Sending goal to point ({point['x']}, {point['y']})")  # 打印当前目标点
+     32         navigator.goToPose(goal_pose)  # 发送导航请求
+     33 
+     34         # 等待导航任务启动
+     35         while not navigator.isTaskComplete():
+     36             feedback = navigator.getFeedback()  # 获取导航反馈
+     37             if feedback and feedback.distance_remaining > 0.0:  # 确保反馈值是合理的
+     38                 print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+     39                 break  # 任务已启动，跳出等待循环
+     40             time.sleep(0.5)  # 等待0.5秒后再次检查
+     41 
+     42         # 等待导航任务完成或距离小于0.6米
+     43         while not navigator.isTaskComplete():
+     44             feedback = navigator.getFeedback()  # 获取导航反馈
+     45             if feedback:
+     46                 print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+     47                 if feedback.distance_remaining < 0.6:  # 如果距离小于0.6米
+     48                     print(f"Skipping to next waypoint as distance to goal is less than 0.6 meters.")
+     49                     navigator.cancelTask()  # 显式取消当前任务
+     50                     break  # 跳出当前导航点的等待循环
+     51             time.sleep(0.5)  # 等待0.5秒后再次检查
+     52 
+     53         # 检查导航结果
+     54         result = navigator.getResult()
+     55         if result == TaskResult.SUCCEEDED:  # 使用TaskResult枚举
+     56             print(f"Reached waypoint {idx + 1}: ({point['x']}, {point['y']})")  # 打印完成标志
+     57         elif result == TaskResult.CANCELED:
+     58             print(f"Goal to waypoint {idx + 1} was canceled!")
+     59         elif result == TaskResult.FAILED:
+     60             print(f"Goal to waypoint {idx + 1} failed!")
+     61         else:
+     62             print(f"Goal to waypoint {idx + 1} has an invalid return status!")
+     63 
+     64     print("All waypoints completed!")  # 所有导航点完成后打印
+     65     navigator.lifecycleShutdown()  # 关闭导航器
+     66 
+     67 if __name__ == "__main__":
+     68     main()
+     69 
+======================== go copy_多点需要切换.py lines=74
+     11 def main():
+     12     rclpy.init()  # 初始化ROS 2
+     13     navigator = BasicNavigator()  # 创建导航器实例
+     14 
+     15     # 定义导航点
+     16     waypoints = [
+     17         {"x": 1.178, "y": -1.089},
+     18         {"x": 2.531, "y": -2.070},
+     19         {"x": 4.180, "y": -3.071}
+     20     ]
+     21 
+     22     # 遍历导航点
+     23     for idx, point in enumerate(waypoints):
+     24         goal_pose = PoseStamped()  # 创建目标姿态消息
+     25         goal_pose.header.frame_id = 'map'  # 设置参考坐标系为地图
+     26         goal_pose.header.stamp = navigator.get_clock().now().to_msg()  # 设置时间戳
+     27         goal_pose.pose.position.x = point["x"]  # 设置目标点的x坐标
+     28         goal_pose.pose.position.y = point["y"]  # 设置目标点的y坐标
+     29         goal_pose.pose.orientation.w = 1.0  # 设置默认的方向（朝向正北）
+     30 
+     31         print(f"Sending goal to point ({point['x']}, {point['y']})")  # 打印当前目标点
+     32         navigator.goToPose(goal_pose)  # 发送导航请求
+     33 
+     34         # 等待导航任务启动
+     35         while not navigator.isTaskComplete():
+     36             feedback = navigator.getFeedback()  # 获取导航反馈
+     37             if feedback and feedback.distance_remaining > 0.0:  # 确保反馈值是合理的
+     38                 print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+     39                 break  # 任务已启动，跳出等待循环
+     40             time.sleep(0.5)  # 等待0.5秒后再次检查
+     41 
+     42         # 等待导航任务完成或距离小于0.6米
+     43         while not navigator.isTaskComplete():
+     44             feedback = navigator.getFeedback()  # 获取导航反馈
+     45             if feedback:
+     46                 print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+     47                 if feedback.distance_remaining < 0.6:  # 如果距离小于0.6米
+     48                     print(f"Skipping to next waypoint as distance to goal is less than 0.6 meters.")
+     49                     navigator.cancelTask()  # 显式取消当前任务
+     50                     time.sleep(1.0)  # 等待1秒，确保导航器状态更新
+     51                     break  # 跳出当前导航点的等待循环
+     52             time.sleep(0.5)  # 等待0.5秒后再次检查
+     53 
+     54         # 检查导航结果
+     55         result = navigator.getResult()
+     56         if result == TaskResult.SUCCEEDED:  # 使用TaskResult枚举
+     57             print(f"Reached waypoint {idx + 1}: ({point['x']}, {point['y']})")  # 打印完成标志
+     58         elif result == TaskResult.CANCELED:
+     59             print(f"Goal to waypoint {idx + 1} was canceled!")
+     60         elif result == TaskResult.FAILED:
+     61             print(f"Goal to waypoint {idx + 1} failed!")
+     62         else:
+     63             print(f"Goal to waypoint {idx + 1} has an invalid return status!")
+     64 
+     65         # 清理导航器状态
+     66         navigator.clearAllCostmaps()  # 清除代价地图
+     67         time.sleep(1.0)  # 等待1秒，确保状态清理完成
+     68 
+     69     print("All waypoints completed!")  # 所有导航点完成后打印
+     70     navigator.lifecycleShutdown()  # 关闭导航器
+     71 
+     72 if __name__ == "__main__":
+     73     main()
+     74 

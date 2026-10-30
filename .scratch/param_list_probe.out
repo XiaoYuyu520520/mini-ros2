@@ -1,0 +1,12 @@
+[03:24:00] === daemon (default mirrors) ===
+[03:24:03] === localization node, -p map_start_pose:=[0.0,0.0,0.0] ===
+[03:24:33] param get map_file_name -> String value is: E:/DesktopData/app/code/CPU/.scratch/slam_persist
+[03:24:33] param get map_start_pose -> DoubleArray value is: []
+[03:24:34] param get map_start_at_dock -> Boolean value is: false
+[03:24:34] === same list through `ros2 param set` (the other parsing path) ===
+[03:24:34] Set parameter successful
+[03:24:34] param get map_start_pose -> DoubleArray value is: [1.0, 2.0, 3.0]
+[03:24:34] param get map_start_at_dock -> Boolean value is: false
+[03:24:34] === node log ===
+[03:24:35]   [ERROR] [slam_toolbox] LocalizationSlamToolbox: Map starting pose not specified. Set either map_start_pose or map_start_at_dock.
+[03:24:35]   [WARN] [slam_toolbox] maximum laser range setting (25.0 m) exceeds the capabilities of the used Lidar (12.0 m)

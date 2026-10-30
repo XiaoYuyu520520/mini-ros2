@@ -1,0 +1,21 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: ls -la ~/code/CPU 2>&1 | head -12; echo ---SIMLOG---; tail -n 5 ~/sim.log 2>&1; echo ---PID---; cat ~/.ros2_bridge_sim.pid 2>&1
+总计 108
+drwxrwxr-x  9 ubuntu ubuntu  4096  9月 19 05:25 .
+drwxrwxr-x 11 ubuntu ubuntu  4096  9月 14 11:54 ..
+drwxrwxr-x  8 ubuntu ubuntu  4096  9月 19 05:25 bridge
+-rw-rw-r--  1 ubuntu ubuntu 26304  9月 19 01:39 BUILD.md
+drwxrwxr-x  3 ubuntu ubuntu  4096  9月 18 09:02 .github
+drwxrwxr-x  3 ubuntu ubuntu  4096  9月 17 11:13 gRPC
+drwxrwxr-x  8 ubuntu ubuntu  4096  9月 19 05:25 nav2
+-rw-rw-r--  1 ubuntu ubuntu 43994  9月 19 01:40 README.md
+drwxrwxr-x  4 ubuntu ubuntu  4096  9月 19 05:25 .scratch
+drwxrwxr-x  3 ubuntu ubuntu  4096  9月 19 05:25 tools
+drwxrwxr-x  5 ubuntu ubuntu  4096  9月 14 12:16 .venv
+---SIMLOG---
+2026-09-19 05:21:07,599 INFO    ros2_bridge_sim.services: service /sim/reset: back to the origin
+2026-09-19 05:42:04,138 INFO    ros2_bridge_sim.services: service /sim/reset: back to the origin
+2026-09-19 05:42:11,659 INFO    ros2_bridge_sim.services: service /sim/reset: back to the origin
+2026-09-19 05:43:58,750 WARNING ros2_bridge_sim.sim: cmd_vel watchdog: no command for 0.51 s, stopping the car (trip 15)
+2026-09-19 05:45:38,134 INFO    ros2_bridge_sim.services: service /sim/reset: back to the origin
+---PID---
+1773547

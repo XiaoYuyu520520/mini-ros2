@@ -1,0 +1,15 @@
+{
+  "reached": true,
+  "reason": "",
+  "elapsed_s": 21.9747,
+  "map_source": "union",
+  "map": {"width": 480, "height": 480, "resolution": 0.05, "lethal": 15734, "inscribed": 16297, "unknown": 0},
+  "scan": {"scans": 8, "beams": 360, "free_marks": 452891, "occupied_marks": 1668},
+  "plan": {"waypoints": 10, "length_m": 0.470711},
+  "goal": [-1.975, -7.175],
+  "start_pose": [3.91421, 3.27776],
+  "final_pose": [-1.97305, -6.91566, -1.64606],
+  "travelled_m": 11.7714,
+  "remaining_m": 0.259345,
+  "messages": {"map": 28, "scan": 216, "odom": 1051}
+}

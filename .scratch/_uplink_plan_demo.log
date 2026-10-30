@@ -1,0 +1,53 @@
+[run_nav2_demo] using existing E:\DesktopData\app\code\CPU\nav2\ros2_shim\build\nav2_bridge_demo.exe
+[run_nav2_demo] bridge daemon already running
+[run_nav2_demo] nav2_bridge_demo.exe --goal auto --timeout 150 --report E:\DesktopData\app\code\CPU\.scratch\_uplink_plan_report.json
+=== nav2_bridge_demo ===
+  map source : union
+  goal       : auto
+  topics     : the shim graph currently knows
+    /clock         rosgraph_msgs/msg/Clock            pub=1 sub=0 source=remote:192.168.1.113:50051
+    /cmd_vel       geometry_msgs/msg/Twist            pub=1 sub=1 source=local
+    /cmd_vel       geometry_msgs/msg/Twist            pub=1 sub=0 source=remote:192.168.1.113:50051
+    /map           nav_msgs/msg/OccupancyGrid         pub=0 sub=1 source=local
+    /map           nav_msgs/msg/OccupancyGrid         pub=1 sub=0 source=remote:192.168.1.113:50051
+    /odom          nav_msgs/msg/Odometry              pub=0 sub=1 source=local
+    /odom          nav_msgs/msg/Odometry              pub=1 sub=0 source=remote:192.168.1.113:50051
+    /parameter_events rcl_interfaces/msg/ParameterEvent  pub=1 sub=0 source=local
+    /plan          nav_msgs/msg/Path                  pub=1 sub=1 source=local
+    /plan          nav_msgs/msg/Path                  pub=1 sub=0 source=remote:192.168.1.113:50051
+    /rosout        rcl_interfaces/msg/Log             pub=1 sub=0 source=local
+    /scan          sensor_msgs/msg/LaserScan          pub=0 sub=1 source=local
+    /scan          sensor_msgs/msg/LaserScan          pub=1 sub=0 source=remote:192.168.1.113:50051
+    /tf            tf2_msgs/msg/TFMessage             pub=1 sub=0 source=remote:192.168.1.113:50051
+    /tf_static     tf2_msgs/msg/TFMessage             pub=1 sub=0 source=remote:192.168.1.113:50051
+  received   : /map x1 (480x480 @ 0.050 m), /scan x5 (360 beams), /odom x22
+  robot      : (0.00, 0.00, 0.00 rad) from the latest /odom
+  costmap    : 480x480, 11589 lethal, 13153 inscribed, 0 unknown cells
+  laser      : 1 scan(s), 360 beams, 53594 free marks, 132 occupied marks, closest return 6.83 m
+  auto goal  : picked (-5.17, 10.83), 12.00 m away, 1 of 2103 candidates tried
+  goal       : (-5.17, 10.83) in the map frame
+  plan       : 268 waypoints, 14.49 m long, from (-0.02, -0.02) to (-5.17, 10.83)
+  driving    : 10 Hz control loop, 0.60 m/s limit, replanning every 3.0 s
+    t=  1.6s pose=(  0.05,  0.23, 1.74) waypoint=1/268 remaining=11.81m cmd=(0.54,1.53)
+    t=  2.7s pose=( -0.32,  0.64, 2.31) waypoint=18/268 remaining=11.28m cmd=(0.57,-0.58)
+    t=  3.8s pose=( -0.63,  1.20, 1.97) waypoint=1/254 remaining=10.65m cmd=(0.59,0.17)
+    t=  4.9s pose=( -0.87,  1.76, 1.96) waypoint=17/254 remaining=10.04m cmd=(0.60,-0.02)
+    t=  6.0s pose=( -1.08,  2.34, 1.89) waypoint=32/254 remaining=9.42m cmd=(0.59,-0.13)
+    t=  7.1s pose=( -1.28,  2.91, 1.96) waypoint=1/195 remaining=8.82m cmd=(0.59,0.15)
+    t=  8.2s pose=( -1.51,  3.48, 1.93) waypoint=19/195 remaining=8.21m cmd=(0.60,-0.04)
+    t=  9.3s pose=( -1.72,  4.06, 1.89) waypoint=33/195 remaining=7.60m cmd=(0.60,0.02)
+    t= 10.4s pose=( -1.91,  4.65, 1.91) waypoint=9/182 remaining=6.98m cmd=(0.60,-0.02)
+    t= 11.5s pose=( -2.11,  5.24, 1.88) waypoint=22/182 remaining=6.37m cmd=(0.60,-0.09)
+    t= 12.5s pose=( -2.28,  5.84, 1.84) waypoint=34/182 remaining=5.76m cmd=(0.60,-0.05)
+    t= 13.6s pose=( -2.45,  6.43, 1.83) waypoint=10/133 remaining=5.17m cmd=(0.60,-0.10)
+    t= 14.7s pose=( -2.59,  7.02, 1.86) waypoint=24/133 remaining=4.60m cmd=(0.59,0.16)
+    t= 15.8s pose=( -2.83,  7.58, 2.14) waypoint=0/94 remaining=4.00m cmd=(0.59,0.18)
+    t= 16.9s pose=( -3.21,  8.07, 2.25) waypoint=16/94 remaining=3.38m cmd=(0.59,-0.10)
+    t= 18.0s pose=( -3.59,  8.57, 2.21) waypoint=29/94 remaining=2.75m cmd=(0.60,0.03)
+    t= 19.1s pose=( -3.97,  9.07, 2.23) waypoint=3/54 remaining=2.13m cmd=(0.60,0.03)
+    t= 20.2s pose=( -4.34,  9.57, 2.21) waypoint=18/54 remaining=1.51m cmd=(0.60,0.01)
+    t= 21.3s pose=( -4.71, 10.07, 2.19) waypoint=31/54 remaining=0.89m cmd=(0.59,0.11)
+    t= 22.4s pose=( -5.03, 10.54, 2.09) waypoint=3/13 remaining=0.32m cmd=(0.38,-0.15)
+  reached    : (-5.06, 10.58) after 22.5 s, 11.73 m from the start, 0.27 m from the goal
+  result     : OK
+  report     : E:\DesktopData\app\code\CPU\.scratch\_uplink_plan_report.json

@@ -1,0 +1,6 @@
+src\nav2_waypoint_cycle\nav2_waypoint_cycle\__pycache__\waypoint_cycle.cpython-312.pyc bom=False crlf=1    lf=50  
+src\racecar\config\help.md                                             bom=True  crlf=0    lf=57  
+src\racecar\launch\Run_nav.launch.py                                   bom=False crlf=69   lf=69  
+src\racecar\scripts\ai_test.csv                                        bom=False crlf=10   lf=10  
+src\racecar\scripts\ai_test1.csv                                       bom=False crlf=3    lf=3   
+src\racecar\scripts\ai_test2.csv                                       bom=False crlf=4    lf=4   

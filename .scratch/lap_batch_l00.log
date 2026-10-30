@@ -1,0 +1,98 @@
+# l00 : 重复载入完成圈数.py sim_room12.csv  --laps 2
+
+$ E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\code\Desktop\racecar\tools\racecar_ctl.py stop
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+[nav2_stack] stopping the previous stack
+[nav2_stack] stopped
+
+-- exit 0 after 3.9 s
+
+$ cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2.bat service call /sim/reset std_srvs/srv/Trigger
+request:
+(empty)
+response:
+success: true
+message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+
+-- exit 0 after 0.2 s
+
+$ E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\code\Desktop\racecar\tools\racecar_ctl.py nav --map live
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start
+[ros2_bridge] starting daemon --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors every topic again (including /map)
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\save_map.py -f E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live
+[save_map] /map -> E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.pgm + E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[launcher] map_saver_cli.exe -t /map -f E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live --fmt pgm
+[INFO] [map_saver] 
+	map_saver lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [map_saver] Creating
+[INFO] [map_saver] Configuring
+[INFO] [map_saver] Saving map from '/map' topic to 'E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live' file
+[WARN] [map_saver] Free threshold unspecified. Setting it to default value: 0.250000
+[WARN] [map_saver] Occupied threshold unspecified. Setting it to default value: 0.650000
+[INFO] [map_io] Received a 240 X 240 map @ 0.05 m/pix
+[INFO] [map_io] Writing map occupancy data to E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.pgm
+[INFO] [map_io] Writing map metadata to E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[INFO] [map_io] Map saved
+[INFO] [map_saver] Map saved successfully
+[INFO] [map_saver] Destroying
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static
+[ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors /clock /odom /scan /tf /tf_static only
+[racecar] navigating from the map the peer is publishing (truth_live.yaml)
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static
+[ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors /clock /odom /scan /tf /tf_static only
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py --params E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\nav.yaml --no-overrides --map E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[nav2_stack] logs: C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack
+[nav2_stack] starting map_server  (E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml)
+[nav2_stack]   map_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\map_server.log
+[nav2_stack] map_server is active
+[nav2_stack] map_server -> /map  (it is the only writer of it)
+[nav2_stack] starting amcl_bridge_node  (map -> odom)
+[nav2_stack] starting planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower
+[nav2_stack]   planner_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\planner_server.log
+[nav2_stack]   controller_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\controller_server.log
+[nav2_stack]   bt_navigator -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\bt_navigator.log
+[nav2_stack]   behavior_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\behavior_server.log
+[nav2_stack]   smoother_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\smoother_server.log
+[nav2_stack]   waypoint_follower -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\waypoint_follower.log
+[nav2_stack] starting lifecycle_manager
+[nav2_stack] planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower are active
+[nav2_stack] the stack is running; stop it with:  python bridge/scripts/run_nav2_stack.py stop
+
+-- exit 0 after 15.8 s
+
+$ E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\code\Desktop\racecar\tools\racecar_ctl.py run --sim-time 重复载入完成圈数.py sim_room12.csv --laps 2
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\shim_run.py --sim-time E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\scripts\重复载入完成圈数.py sim_room12.csv --laps 2
+shim_run: use_sim_time from the environment: 1
+[INFO] [1789776786.625321984] [follow_waypoints_client]: Waypoint 1/9
+[INFO] [1789776786.625321984] [follow_waypoints_client]: Goal accepted :)  9 pose(s), 2 lap(s)
+[INFO] [1789776793.734959616] [follow_waypoints_client]: Waypoint 2/9
+[INFO] [1789776801.440168960] [follow_waypoints_client]: Waypoint 3/9
+[INFO] [1789776815.831553792] [follow_waypoints_client]: Waypoint 4/9
+[INFO] [1789776826.128458496] [follow_waypoints_client]: Waypoint 5/9
+[INFO] [1789776831.439137280] [follow_waypoints_client]: Waypoint 6/9
+[INFO] [1789776839.534648832] [follow_waypoints_client]: Waypoint 7/9
+[INFO] [1789776845.128255488] [follow_waypoints_client]: Waypoint 8/9
+[INFO] [1789776853.580869376] [follow_waypoints_client]: Waypoint 9/9
+[INFO] [1789776859.081561344] [follow_waypoints_client]: Waypoint 1/9
+[INFO] [1789776878.831759616] [follow_waypoints_client]: Waypoint 2/9
+[INFO] [1789776892.489222656] [follow_waypoints_client]: Waypoint 3/9
+[INFO] [1789776898.301316096] [follow_waypoints_client]: Waypoint 4/9
+[INFO] [1789776912.582498560] [follow_waypoints_client]: Waypoint 5/9
+[INFO] [1789776917.458696960] [follow_waypoints_client]: Waypoint 6/9
+[INFO] [1789776925.803480576] [follow_waypoints_client]: Waypoint 7/9
+[INFO] [1789776931.491195392] [follow_waypoints_client]: Waypoint 8/9
+[INFO] [1789776940.335387648] [follow_waypoints_client]: Waypoint 9/9
+[INFO] [1789776945.646517760] [follow_waypoints_client]: Navigation result: error_code=0 missed_waypoints=0
+
+-- exit 0 after 159.2 s

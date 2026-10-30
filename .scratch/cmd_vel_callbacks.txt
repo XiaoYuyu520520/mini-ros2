@@ -1,0 +1,216 @@
+====================== end_3_12.py
+     60     def cmd_vel_callback(self, msg):
+     61         # 如果剩余距离小于 1 米且标志位为暂停状态，发送零速度
+     62         # if self.distance_remaining is not None and self.distance_remaining < 1 and self.is_paused:
+     63         #     self.get_logger().info('Reached the target, stopping the robot.')
+     64         #     twist = Twist()
+     65         #     twist.linear.x = 0.0
+     66         #     twist.angular.z = 0.0
+     67         #     self.car_cmd_vel_pub.publish(twist)
+     68         # else:
+     69         if  self.distance_remaining > 1 and not self.is_paused:
+     70             # 否则，正常转发速度命令
+     71             self.car_cmd_vel_pub.publish(msg)
+     72 
+     73         
+     74 
+     75 def read_waypoints_from_csv(filename):
+     76     waypoints = []
+     77     with open(filename, 'r') as f:
+     78         reader = csv.reader(f)
+     79         for row in reader:
+     80             if len(row) == 4:  # Ensure each row has x, y, z, w
+     81                 waypoints.append({
+     82                     "x": float(row[0]),
+     83                     "y": float(row[1]),
+     84                     "z": float(row[2]),
+     85                     "w": float(row[3])
+====================== 跑一圈以内.py
+     60     def cmd_vel_callback(self, msg):
+     61         # 如果剩余距离小于 1 米且标志位为暂停状态，发送零速度
+     62         # if self.distance_remaining is not None and self.distance_remaining < 1 and self.is_paused:
+     63         #     self.get_logger().info('Reached the target, stopping the robot.')
+     64         #     twist = Twist()
+     65         #     twist.linear.x = 0.0
+     66         #     twist.angular.z = 0.0
+     67         #     self.car_cmd_vel_pub.publish(twist)
+     68         # else:
+     69         if  self.distance_remaining > 1 and not self.is_paused:
+     70             # 否则，正常转发速度命令
+     71             self.car_cmd_vel_pub.publish(msg)
+     72 
+     73         
+     74 
+     75 def read_waypoints_from_csv(filename):
+     76     waypoints = []
+     77     with open(filename, 'r') as f:
+     78         reader = csv.reader(f)
+     79         for row in reader:
+     80             if len(row) == 4:  # Ensure each row has x, y, z, w
+     81                 waypoints.append({
+     82                     "x": float(row[0]),
+     83                     "y": float(row[1]),
+     84                     "z": float(row[2]),
+     85                     "w": float(row[3])
+====================== 人工智能赛道初始版本代码.py
+     64     def cmd_vel_callback(self, msg):
+     65 
+     66         if  self.distance_remaining > 0.5 and not self.is_paused:
+     67             # 否则，正常转发速度命令
+     68             self.car_cmd_vel_pub.publish(msg)
+     69 
+     70         
+     71 
+     72 def read_waypoints_from_csv(filename):
+     73     waypoints = []
+     74     with open(filename, 'r') as f:
+     75         reader = csv.reader(f)
+     76         for row in reader:
+     77             if len(row) == 4:  # Ensure each row has x, y, z, w
+     78                 waypoints.append({
+     79                     "x": float(row[0]),
+     80                     "y": float(row[1]),
+     81                     "z": float(row[2]),
+     82                     "w": float(row[3])
+     83                 })
+     84     return waypoints
+     85 
+     86 def main(args=None):
+     87     rclpy.init(args=args)
+     88 
+     89     client = NavThroughPosesClient()
+====================== ai_第一个点后回终点.py
+     76     def cmd_vel_callback(self, msg):
+     77         # 如果剩余距离大于 0.5 米且未暂停，正常转发速度命令
+     78         if self.distance_remaining > 0.5 and not self.is_paused:
+     79             self.car_cmd_vel_pub.publish(msg)
+     80 
+     81 def read_waypoints_from_csv(filename):
+     82     # 从 CSV 文件读取导航点
+     83     waypoints = []
+     84     with open(filename, 'r') as f:
+     85         reader = csv.reader(f)
+     86         for row in reader:
+     87             if len(row) == 4:  # 确保每行有 x, y, z, w
+     88                 waypoints.append({
+     89                     "x": float(row[0]),
+     90                     "y": float(row[1]),
+     91                     "z": float(row[2]),
+     92                     "w": float(row[3])
+     93                 })
+     94     return waypoints
+     95 
+     96 def main(args=None):
+     97     rclpy.init(args=args)
+     98 
+     99     client = NavThroughPosesClient()
+    100 
+    101     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+====================== detct.py
+    103     def cmd_vel_callback(self, msg):
+    104         # 如果剩余距离未初始化或未暂停，不处理速度命令
+    105         if self.distance_remaining is None or self.is_paused:
+    106             return
+    107 
+    108         # 如果剩余距离大于 0.5 米且未暂停，正常转发速度命令
+    109         if self.distance_remaining > 0.5:
+    110             self.car_cmd_vel_pub.publish(msg)
+    111 
+    112 def read_waypoints_from_csv(filename):
+    113     # 从 CSV 文件读取导航点
+    114     waypoints = []
+    115     with open(filename, 'r') as f:
+    116         reader = csv.reader(f)
+    117         for row in reader:
+    118             if len(row) == 4:  # 确保每行有 x, y, z, w
+    119                 waypoints.append({
+    120                     "x": float(row[0]),
+    121                     "y": float(row[1]),
+    122                     "z": float(row[2]),
+    123                     "w": float(row[3])
+    124                 })
+    125     return waypoints
+    126 
+    127 def group_waypoints(waypoints, group_size):
+    128     # 将导航点按组大小分组
+====================== goal_l.py
+    103     def cmd_vel_callback(self, msg):
+    104         # 如果剩余距离未初始化或未暂停，不处理速度命令
+    105         if self.distance_remaining is None or self.is_paused:
+    106             return
+    107 
+    108         # 如果剩余距离大于 0.5 米且未暂停，正常转发速度命令
+    109         if self.distance_remaining > 0.5:
+    110             self.car_cmd_vel_pub.publish(msg)
+    111 
+    112 def read_waypoints_from_csv(filename):
+    113     # 从 CSV 文件读取导航点
+    114     waypoints = []
+    115     with open(filename, 'r') as f:
+    116         reader = csv.reader(f)
+    117         for row in reader:
+    118             if len(row) == 4:  # 确保每行有 x, y, z, w
+    119                 waypoints.append({
+    120                     "x": float(row[0]),
+    121                     "y": float(row[1]),
+    122                     "z": float(row[2]),
+    123                     "w": float(row[3])
+    124                 })
+    125     return waypoints
+    126 
+    127 def group_waypoints(waypoints, group_size):
+    128     # 将导航点按组大小分组
+====================== 第二个点nav2打断，然后转圈圈.py
+     90     def cmd_vel_callback(self, msg):
+     91         # 如果剩余距离未初始化或未暂停，不处理速度命令
+     92         if self.distance_remaining is None or self.is_paused:
+     93             return
+     94 
+     95         # 如果剩余距离大于 0.5 米且未暂停，正常转发速度命令
+     96         if self.distance_remaining > 0.5:
+     97             self.car_cmd_vel_pub.publish(msg)
+     98 
+     99 def read_waypoints_from_csv(filename):
+    100     # 从 CSV 文件读取导航点
+    101     waypoints = []
+    102     with open(filename, 'r') as f:
+    103         reader = csv.reader(f)
+    104         for row in reader:
+    105             if len(row) == 4:  # 确保每行有 x, y, z, w
+    106                 waypoints.append({
+    107                     "x": float(row[0]),
+    108                     "y": float(row[1]),
+    109                     "z": float(row[2]),
+    110                     "w": float(row[3])
+    111                 })
+    112     return waypoints
+    113 
+    114 def group_waypoints(waypoints, group_size):
+    115     # 将导航点按组大小分组
+====================== go.py
+     66     def cmd_vel_callback(self, msg):
+     67 
+     68         # if  self.distance_remaining > 0.5 and not self.is_paused:
+     69         if self.distance_remaining is not None and self.distance_remaining > 0.5 and not self.is_paused:
+     70             # 否则，正常转发速度命令
+     71             self.car_cmd_vel_pub.publish(msg)
+     72 
+     73         
+     74 
+     75 def read_waypoints_from_csv(filename):
+     76     waypoints = []
+     77     with open(filename, 'r') as f:
+     78         reader = csv.reader(f)
+     79         for row in reader:
+     80             if len(row) == 4:  # Ensure each row has x, y, z, w
+     81                 waypoints.append({
+     82                     "x": float(row[0]),
+     83                     "y": float(row[1]),
+     84                     "z": float(row[2]),
+     85                     "w": float(row[3])
+     86                 })
+     87     return waypoints
+     88 
+     89 def waypoint_file():
+     90     # 这一趟跑哪条航线：`run go.py sim_room12.csv` 会给一个文件名，不给就用脚本
+     91     # 自带的那条赛道航线。名字相对脚本目录解析，和车上、机器上都一致。

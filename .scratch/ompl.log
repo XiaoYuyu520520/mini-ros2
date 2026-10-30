@@ -1,0 +1,11 @@
+dubins: a word is only offered if it drives to the goal
+  4145 word solutions, worst landing error 2.701e-14 m
+dubins: every geometrically feasible word is offered
+  900 pairs, 3803 feasible words, 0 missing
+dubins: the interpolated path is arc-length parameterised and never turns tighter than rho
+  worst length error 2.403e-02 m over 900 pairs, worst curvature 5.000823 (1/rho = 5.000000)
+dubins: hand-checkable answers
+reeds-shepp: never worse than dubins, and its reverse leg lands where it should
+  900 pairs, 445 planned in reverse, worst end error 1.275e-13 m / 1.688e-14 rad, worst start error 9.566e-15 m
+se2: euclidean distance and shortest-angle interpolation
+all checks passed

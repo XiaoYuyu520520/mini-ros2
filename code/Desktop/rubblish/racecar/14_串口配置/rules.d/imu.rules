@@ -1,0 +1,7 @@
+# set the udev rule , make the device_port be fixed by hi226
+#
+ACTION=="add",KERNELS=="3-1.1:1.0",SUBSYSTEMS=="usb",MODE:="666", SYMLINK+="imu"
+
+# set the udev rule , make the device_port be fixed by sanchi_imu
+#
+

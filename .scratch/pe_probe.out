@@ -1,0 +1,12 @@
+watching /parameter_events (volatile, from the head of the ring)
+event 1
+  stamp   56316.359996853
+  node    /controller_server
+  changed bond_heartbeat_period = 1.25
+---
+event 2
+  stamp   56317.479996853
+  node    /controller_server
+  changed bond_heartbeat_period = 0.25
+---
+2 event(s)

@@ -1,0 +1,12 @@
+set pagination off
+set confirm off
+set height 0
+set width 0
+break operator new(unsigned long long) if $rcx > 1000000000
+continue
+printf "=== absurd operator new ===\n"
+printf "size=%lu\n", $rcx
+p/x $rcx
+bt 8
+detach
+quit

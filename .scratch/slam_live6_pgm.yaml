@@ -1,0 +1,7 @@
+image: slam_live6_pgm.pgm
+mode: trinary
+resolution: 0.050
+origin: [-11.758, -11.818, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196

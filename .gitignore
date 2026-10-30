@@ -1,0 +1,63 @@
+# Build output. Every tree here is built with Ninja into its own build/:
+#   nav2/ros2_shim/build  nav2/shm_transport/build  bridge/windows/build
+#   gRPC/ros2_gRPC_sdk/build
+**/build/**
+
+# The stray 0-byte file called `target` in the repo root -- a leftover from a
+# shell redirect. No slash: this one is a file, not a directory.
+target
+
+# The same kind of leftover, from a command whose output was redirected to a
+# name Windows treats as a device ("nul"). It is a captured log, not a file
+# anybody wants in the history.
+nul
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Credentials. Nothing that can authenticate against a service belongs in the
+# history: it is public from the moment it is pushed, and a token in a commit
+# stays reachable even after it is deleted in a later one.
+#
+# The token file that was sitting in the repo root is covered by name as well
+# as by the patterns below, so it cannot be added by accident.
+我的Github令牌-千万不要上传.txt
+*令牌*
+*token*.txt
+*secret*.txt
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+id_ecdsa
+.netrc
+credentials*
+.env
+.env.*
+service-account*.json
+
+# .scratch/ is the evidence store for bridge/docs: 260 of its top-level entries are
+# cited by name in 02-running / 03-validation / 04-gaps and have to stay. The other
+# 3648 -- one-shot probes, logs, generated snapshots -- were archived into
+# .scratch/attic/ on 2026-09-17 and do not belong in version control.
+# (Run `python tools/find_scratch_refs.py` before changing this.)
+.scratch/attic/
+
+# Upstream sources pulled in for the Windows ports. The unpacked trees stay;
+# the archives and the download cache do not (they are re-obtainable).
+nav2/navigation2-1.5.1.zip
+nav2/third_party/**/*.zip
+nav2/third_party/dl/
+
+# Local run artifacts. Deliberately narrow: the .pgm / .posegraph maps under
+# .scratch/ are cited evidence (bridge/docs/04-gaps.md), so they stay tracked.
+bridge/windows/*.log
+
+# `python package.py` output: build products, re-made from the source tree.
+dist/

@@ -1,0 +1,62 @@
+Test project E:/DesktopData/app/code/CPU/nav2/ros2_shim/build
+      Start  1: ros2_shim_messages
+ 1/28 Test  #1: ros2_shim_messages .....................   Passed    0.14 sec
+      Start  2: ros2_shim_compile_check
+ 2/28 Test  #2: ros2_shim_compile_check ................   Passed    0.03 sec
+      Start  3: ros2_shim_node
+ 3/28 Test  #3: ros2_shim_node .........................   Passed    0.19 sec
+      Start  4: ros2_shim_compile
+ 4/28 Test  #4: ros2_shim_compile ......................   Passed    0.03 sec
+      Start  5: nav2_navfn_planning
+ 5/28 Test  #5: nav2_navfn_planning ....................   Passed    0.02 sec
+      Start  6: ros2_shim_params_file
+ 6/28 Test  #6: ros2_shim_params_file ..................   Passed    0.16 sec
+      Start  7: ros2_shim_lifecycle_services
+ 7/28 Test  #7: ros2_shim_lifecycle_services ...........   Passed    0.41 sec
+      Start  8: ros2_shim_channel_ring_lifecycle
+ 8/28 Test  #8: ros2_shim_channel_ring_lifecycle .......   Passed   13.08 sec
+      Start  9: ros2_shim_tf_time
+ 9/28 Test  #9: ros2_shim_tf_time ......................   Passed    0.01 sec
+      Start 10: ros2_shim_tf_convert
+10/28 Test #10: ros2_shim_tf_convert ...................   Passed    0.04 sec
+      Start 11: ros2_shim_tf_buffer_lookup
+11/28 Test #11: ros2_shim_tf_buffer_lookup .............   Passed    0.01 sec
+      Start 12: nav2_e2e_pipeline
+12/28 Test #12: nav2_e2e_pipeline ......................   Passed    0.10 sec
+      Start 13: nav2_map_server_map_io
+13/28 Test #13: nav2_map_server_map_io .................   Passed    0.09 sec
+      Start 14: nav2_smac_ompl_spaces
+14/28 Test #14: nav2_smac_ompl_spaces ..................   Passed    1.43 sec
+      Start 15: ros2_shim_parameter_event_handler
+15/28 Test #15: ros2_shim_parameter_event_handler ......   Passed    0.10 sec
+      Start 16: ros2_shim_plugin_names
+16/28 Test #16: ros2_shim_plugin_names .................   Passed    0.02 sec
+      Start 17: ros2_shim_graph_rewrite
+17/28 Test #17: ros2_shim_graph_rewrite ................   Passed    4.52 sec
+      Start 18: ros2_shim_clock
+18/28 Test #18: ros2_shim_clock ........................   Passed    0.07 sec
+      Start 19: ros2_shim_uuid
+19/28 Test #19: ros2_shim_uuid .........................   Passed    0.03 sec
+      Start 20: ros2_shim_remap
+20/28 Test #20: ros2_shim_remap ........................   Passed    0.13 sec
+      Start 21: ros2_shim_param_args
+21/28 Test #21: ros2_shim_param_args ...................   Passed    0.06 sec
+      Start 22: ros2_shim_parameter_service
+22/28 Test #22: ros2_shim_parameter_service ............   Passed    0.28 sec
+      Start 23: ros2_shim_parameter_events
+23/28 Test #23: ros2_shim_parameter_events .............   Passed    1.00 sec
+      Start 24: slam_toolbox_eigen_pose_graph_solver
+24/28 Test #24: slam_toolbox_eigen_pose_graph_solver ...   Passed    0.03 sec
+      Start 25: slam_toolbox_mapping
+25/28 Test #25: slam_toolbox_mapping ...................   Passed   12.20 sec
+      Start 26: slam_toolbox_laser_points
+26/28 Test #26: slam_toolbox_laser_points ..............   Passed    0.03 sec
+      Start 27: slam_toolbox_serialization
+27/28 Test #27: slam_toolbox_serialization .............   Passed   14.36 sec
+      Start 28: shm_transport
+28/28 Test #28: shm_transport ..........................   Passed    1.08 sec
+
+100% tests passed out of 28
+
+Total Test time (real) =  49.70 sec
+[ctest] rc=0 in 49.7 s (mask 0x3C03)

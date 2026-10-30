@@ -1,0 +1,15 @@
+=== nav2_goal ===
+  action     : navigate_to_pose
+  goal       : auto
+  frame      : map
+  waiting    : /map (elapsed 0.0s)
+  stack      : bt_navigator present, /odom x9, /map x1 (480x480 @ 0.050 m)
+  robot      : (0.00, 0.00, 0.00 rad), goal (2.55, 0.00), 2.55 m away
+  sending    : NavigateToPose x=2.55 y=0.00 yaw=0.0 deg
+  accepted   : status 1 after 0.028 s
+  result     : SUCCEEDED
+  reason     : SUCCEEDED
+  odom       : (1.98, 0.03, -0.04 rad) from (0.00, 0.00)
+  travelled  : 1.98 m, 0.57 m left to the goal
+  pipeline   : /cmd_vel x107 Twist (106 moving, max 0.45 m/s), /plan x6 (last 9 poses), /odom x302, 6.4 s
+  report     : .scratch\fm_rpp.json

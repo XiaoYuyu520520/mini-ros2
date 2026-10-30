@@ -1,0 +1,152 @@
+[PASS] saveMapToFile() writes a trinary map
+[PASS] the file is P5, 4x3, maxval 255
+[PASS] the rows are flipped once, into image order
+[PASS] the YAML sidecar was written
+[PASS] the sidecar names the image
+[PASS] the sidecar keeps the mode
+[PASS] the sidecar keeps the resolution
+[PASS] the sidecar says negate: 0
+[PASS] the trinary occupied threshold
+[PASS] the trinary free threshold
+[PASS] the sidecar origin has three elements (got 3, expected 3)
+[PASS] loadMapFromYaml() reads the pair back
+[PASS] the trinary grid round trips: 100,100,100,100,-1,-1,-1,-1,0,0,0,0
+[PASS] the width survives (got 4, expected 4)
+[PASS] the height survives (got 3, expected 3)
+[PASS] the resolution survives
+[PASS] the origin survives
+[PASS] saveMapToFile() writes a raw map
+[PASS] loadMapFromYaml() reads a raw map back
+[PASS] the raw grid round trips: 0,1,50,99,100,-1
+[PASS] loadMapFromYaml() reads a P2 file
+[PASS] P2 samples are scaled by maxval: -1,0,100,100
+[PASS] loadMapFromYaml() reads a 16-bit P5 file
+[PASS] 16-bit samples land on the same palette as 8-bit ones: -1,0,100,100
+[PASS] an empty YAML name is MAP_DOES_NOT_EXIST
+[PASS] a YAML that is not there is INVALID_MAP_METADATA
+[PASS] a PNG that stops inside its first chunk is INVALID_MAP_DATA
+[PASS] a format with no coder falls back to one this build has
+[PASS] and the map lands in no_coder.png, with no .bmp left behind
+[PASS] a trinary map saves as PNG
+[PASS] the file really is a PNG (signature first)
+[PASS] and it is 8-bit grayscale (IHDR bit depth 8, colour type 0)
+[PASS] loadMapFromYaml() reads the PNG pair back
+[PASS] the trinary grid round trips through PNG: 100,100,100,100,-1,-1,-1,-1,0,0,0,0
+[PASS] a scale-mode map saves as PNG
+[PASS] and it carries an alpha channel (IHDR colour type 4)
+[PASS] loadMapFromYaml() reads the scale-mode PNG back
+[PASS] the transparent cells come back as unknown: 100,0,-1,-1
+
+PASSED (0 failure(s))
+[WARN] [map_io] Occupied threshold unspecified. Setting it to default value: 0.65
+[WARN] [map_io] Free threshold unspecified. Setting it to default value: 0.25
+[INFO] [map_io] Received a 4 X 3 map @ 0.05 m/pix
+[INFO] [map_io] Writing map occupancy data to map_io_test/roundtrip.pgm
+[INFO] [map_io] Writing map metadata to map_io_test/roundtrip.yaml
+[INFO] [map_io] Map saved
+[INFO] [map_io] Loading yaml file: map_io_test/roundtrip.yaml
+[INFO] [map_io] resolution: 0.05
+[INFO] [map_io] origin[0]: 1.5
+[INFO] [map_io] origin[1]: -2.25
+[INFO] [map_io] origin[2]: 0
+[INFO] [map_io] free_thresh: 0.196
+[INFO] [map_io] occupied_thresh: 0.65
+[INFO] [map_io] mode: trinary
+[INFO] [map_io] negate: 0
+[INFO] [map_io] Loading image_file: map_io_test/roundtrip.pgm
+[INFO] [map_io] Read map map_io_test/roundtrip.pgm: 4 X 3 map @ 0.05 m/cell
+[WARN] [map_io] Occupied threshold unspecified. Setting it to default value: 0.65
+[WARN] [map_io] Free threshold unspecified. Setting it to default value: 0.25
+[INFO] [map_io] Received a 3 X 2 map @ 0.1 m/pix
+[INFO] [map_io] Writing map occupancy data to map_io_test/raw.pgm
+[INFO] [map_io] Writing map metadata to map_io_test/raw.yaml
+[INFO] [map_io] Map saved
+[INFO] [map_io] Loading yaml file: map_io_test/raw.yaml
+[INFO] [map_io] resolution: 0.1
+[INFO] [map_io] origin[0]: 1.5
+[INFO] [map_io] origin[1]: -2.25
+[INFO] [map_io] origin[2]: 0
+[INFO] [map_io] free_thresh: 0.25
+[INFO] [map_io] occupied_thresh: 0.65
+[INFO] [map_io] mode: raw
+[INFO] [map_io] negate: 0
+[INFO] [map_io] Loading image_file: map_io_test/raw.pgm
+[INFO] [map_io] Read map map_io_test/raw.pgm: 3 X 2 map @ 0.1 m/cell
+[INFO] [map_io] Loading yaml file: map_io_test/ascii.yaml
+[INFO] [map_io] resolution: 0.05
+[INFO] [map_io] origin[0]: 0
+[INFO] [map_io] origin[1]: 0
+[INFO] [map_io] origin[2]: 0
+[INFO] [map_io] free_thresh: 0.196
+[INFO] [map_io] occupied_thresh: 0.65
+[INFO] [map_io] mode: trinary
+[INFO] [map_io] negate: 0
+[INFO] [map_io] Loading image_file: map_io_test/ascii.pgm
+[INFO] [map_io] Read map map_io_test/ascii.pgm: 2 X 2 map @ 0.05 m/cell
+[INFO] [map_io] Loading yaml file: map_io_test/deep.yaml
+[INFO] [map_io] resolution: 0.05
+[INFO] [map_io] origin[0]: 0
+[INFO] [map_io] origin[1]: 0
+[INFO] [map_io] origin[2]: 0
+[INFO] [map_io] free_thresh: 0.196
+[INFO] [map_io] occupied_thresh: 0.65
+[INFO] [map_io] mode: trinary
+[INFO] [map_io] negate: 0
+[INFO] [map_io] Loading image_file: map_io_test/deep.pgm
+[INFO] [map_io] Read map map_io_test/deep.pgm: 2 X 2 map @ 0.05 m/cell
+[ERROR] [map_io] YAML file name is empty, can't load!
+[INFO] [map_io] Loading yaml file: map_io_test/absent.yaml
+[ERROR] [map_io] Failed processing YAML file map_io_test/absent.yaml at position (-1:-1) for reason: bad file: map_io_test/absent.yaml
+[INFO] [map_io] Loading yaml file: map_io_test/pngmap.yaml
+[INFO] [map_io] resolution: 0.05
+[INFO] [map_io] origin[0]: 0
+[INFO] [map_io] origin[1]: 0
+[INFO] [map_io] origin[2]: 0
+[INFO] [map_io] free_thresh: 0.196
+[INFO] [map_io] occupied_thresh: 0.65
+[INFO] [map_io] mode: trinary
+[INFO] [map_io] negate: 0
+[INFO] [map_io] Loading image_file: map_io_test/fake.png
+[ERROR] [map_io] Failed to load image file map_io_test/fake.png for reason: image 'map_io_test/fake.png' is a PNG with no IHDR chunk
+[WARN] [map_io] Occupied threshold unspecified. Setting it to default value: 0.65
+[WARN] [map_io] Free threshold unspecified. Setting it to default value: 0.25
+[WARN] [map_io] Format 'bmp' is not usable. Using 'png' instead:
+no coder for 'bmp': this build's Magick++ speaks pgm and png only
+[INFO] [map_io] Received a 4 X 3 map @ 0.05 m/pix
+[INFO] [map_io] Writing map occupancy data to map_io_test/no_coder.png
+[INFO] [map_io] Writing map metadata to map_io_test/no_coder.yaml
+[INFO] [map_io] Map saved
+[WARN] [map_io] Occupied threshold unspecified. Setting it to default value: 0.65
+[WARN] [map_io] Free threshold unspecified. Setting it to default value: 0.25
+[INFO] [map_io] Received a 4 X 3 map @ 0.05 m/pix
+[INFO] [map_io] Writing map occupancy data to map_io_test/trinary_png.png
+[INFO] [map_io] Writing map metadata to map_io_test/trinary_png.yaml
+[INFO] [map_io] Map saved
+[INFO] [map_io] Loading yaml file: map_io_test/trinary_png.yaml
+[INFO] [map_io] resolution: 0.05
+[INFO] [map_io] origin[0]: 1.5
+[INFO] [map_io] origin[1]: -2.25
+[INFO] [map_io] origin[2]: 0
+[INFO] [map_io] free_thresh: 0.196
+[INFO] [map_io] occupied_thresh: 0.65
+[INFO] [map_io] mode: trinary
+[INFO] [map_io] negate: 0
+[INFO] [map_io] Loading image_file: map_io_test/trinary_png.png
+[INFO] [map_io] Read map map_io_test/trinary_png.png: 4 X 3 map @ 0.05 m/cell
+[WARN] [map_io] Occupied threshold unspecified. Setting it to default value: 0.65
+[WARN] [map_io] Free threshold unspecified. Setting it to default value: 0.25
+[INFO] [map_io] Received a 2 X 2 map @ 0.05 m/pix
+[INFO] [map_io] Writing map occupancy data to map_io_test/scale_png.png
+[INFO] [map_io] Writing map metadata to map_io_test/scale_png.yaml
+[INFO] [map_io] Map saved
+[INFO] [map_io] Loading yaml file: map_io_test/scale_png.yaml
+[INFO] [map_io] resolution: 0.05
+[INFO] [map_io] origin[0]: 1.5
+[INFO] [map_io] origin[1]: -2.25
+[INFO] [map_io] origin[2]: 0
+[INFO] [map_io] free_thresh: 0.25
+[INFO] [map_io] occupied_thresh: 0.65
+[INFO] [map_io] mode: scale
+[INFO] [map_io] negate: 0
+[INFO] [map_io] Loading image_file: map_io_test/scale_png.png
+[INFO] [map_io] Read map map_io_test/scale_png.png: 2 X 2 map @ 0.05 m/cell

@@ -1,0 +1,87 @@
+[waypoint_follower] E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\nav.yaml: 14 parameter(s) for node 'waypoint_follower'
+[INFO] [waypoint_follower] 
+	waypoint_follower lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [waypoint_follower] Creating
+[waypoint_follower] 'waypoint_follower' started with 14 parameter override(s)
+[waypoint_follower] waiting for external lifecycle transitions on /waypoint_follower/change_state
+[INFO] [waypoint_follower] Configuring
+[INFO] [waypoint_follower] Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
+[INFO] [waypoint_follower] Activating
+[INFO] [waypoint_follower] Creating bond (waypoint_follower) to lifecycle manager.
+[INFO] [waypoint_follower] Received follow waypoint request with 9 waypoints.
+[INFO] [waypoint_follower] Succeeded processing waypoint 0, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 0'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 0 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 0, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 1, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 1'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 1 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 1, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 2, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 2'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 2 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 2, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 3, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 3'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 3 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 3, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 4, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 4'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 4 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 4, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 5, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 5'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 5 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 5, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 6, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 6'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 6 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 6, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 7, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 7'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 7 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 7, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 8, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 8'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 8 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 8, moving to next.
+[INFO] [waypoint_follower] Starting a new loop, current loop count is 0
+[INFO] [waypoint_follower] Succeeded processing waypoint 0, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 0'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 0 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 0, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 1, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 1'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 1 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 1, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 2, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 2'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 2 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 2, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 3, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 3'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 3 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 3, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 4, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 4'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 4 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 4, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 5, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 5'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 5 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 5, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 6, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 6'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 6 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 6, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 7, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 7'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 7 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 7, moving to next.
+[INFO] [waypoint_follower] Succeeded processing waypoint 8, processing waypoint task execution
+[INFO] [waypoint_follower] Arrived at 8'th waypoint, sleeping for 200 milliseconds
+[INFO] [waypoint_follower] Task execution at waypoint 8 succeeded
+[INFO] [waypoint_follower] Handled task execution on waypoint 8, moving to next.
+[INFO] [waypoint_follower] Completed all 9 waypoints requested.

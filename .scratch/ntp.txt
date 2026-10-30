@@ -1,0 +1,34 @@
+  42|     getName() + ".tracking_feedback_blackboard_id",
+  43|     std::string("tracking_feedback"));
+  44| 
+  45|   search_window_ = node->declare_or_get_parameter(getName() + "search_window", 2.0);
+  46| 
+  47|   // Odometry smoother object for getting current speed
+  48|   odom_smoother_ = odom_smoother;
+  49| 
+  50|   self_client_ = node->create_action_client<ActionT>(getName());
+  51| 
+  52|   goal_sub_ = node->create_subscription<geometry_msgs::msg::PoseStamped>(
+  53|     "goal_pose",
+  54|     std::bind(&NavigateToPoseNavigator::onGoalPoseReceived, this, std::placeholders::_1));
+  55| 
+  56|   bool enable_groot_monitoring =
+  57|     node->declare_or_get_parameter(getName() + ".enable_groot_monitoring", false);
+  58|   int groot_server_port =
+  59|     node->declare_or_get_parameter(getName() + ".groot_server_port", 1669);
+  60| 
+  61|   bt_action_server_->setGrootMonitoring(
+  62|     enable_groot_monitoring,
+  63|     groot_server_port);
+  64| 
+  65|   return true;
+  66| }
+  67| 
+  68| std::string
+  69| NavigateToPoseNavigator::getDefaultBTFilepath(
+  70|   nav2::LifecycleNode::WeakPtr parent_node)
+  71| {
+  72|   auto node = parent_node.lock();
+  73|   std::string pkg_share_dir =
+  74|     nav2::get_package_share_directory("nav2_bt_navigator");
+  75| 

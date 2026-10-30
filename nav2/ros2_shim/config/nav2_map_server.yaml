@@ -1,0 +1,42 @@
+# The map nodes on the Windows side, and the manager that brings them up.
+#
+#     map_server        --params-file <this file> -p yaml_filename:=C:/maps/office.yaml
+#     map_saver         --params-file <this file>
+#     lifecycle_manager --params-file <this file>
+#
+# This is the file-on-disk half of the port: `map_saver_cli` (or the `save_map`
+# service) turns whatever is on `/map` into a PGM plus this YAML, and `map_server`
+# turns it back into `/map` - which is what a costmap's static layer or AMCL
+# localises against, with no simulator on the other end of the bridge.
+#
+# `-p` goes *after* `--params-file`: parameters apply in the order they appear,
+# so `yaml_filename` below would otherwise win over the command line. The same
+# rule is what makes `nav2_stack.bat` pass `base_frame_id` the way it does.
+
+map_server:
+  ros__parameters:
+    # Empty means "publish nothing until someone calls the load_map service".
+    # Point it at a YAML/PGM pair on the command line instead.
+    yaml_filename: ""
+    topic_name: "map"
+    frame_id: "map"
+
+map_saver:
+  ros__parameters:
+    save_map_timeout: 5.0
+    free_thresh_default: 0.25
+    occupied_thresh_default: 0.65
+    # `/map` from the bridge (or from map_server) is published latched, so the
+    # saver has to ask for the last sample - otherwise it waits for a map that
+    # was published before it subscribed. A shared-memory channel hands a new
+    # reader the newest sample in the ring, which is what makes this work here.
+    map_subscribe_transient_local: true
+
+lifecycle_manager:
+  ros__parameters:
+    autostart: true
+    node_names: ["map_server", "map_saver"]
+    # As in nav2_shim_overrides.yaml: the shim's bond cannot fail, so the
+    # respawn machinery has nothing to watch; 0.0 turns its timer off.
+    bond_timeout: 0.0
+    attempt_respawn_reconnection: false

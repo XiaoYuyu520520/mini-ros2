@@ -1,0 +1,3 @@
+service_exists alone      : 0.207 ms each, worst 0.429 ms
+service_exists under churn: 0.867 ms each over 321 calls, worst 13.709 ms, 0 misses
+read_shared under churn   : 0.292 ms each, worst 0.534 ms

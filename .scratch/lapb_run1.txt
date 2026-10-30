@@ -1,0 +1,3 @@
+[lap] l00  重复载入完成圈数.py  sim_room12.csv
+[lap] l00 exit=0 wall=159.2 s
+EXIT=0

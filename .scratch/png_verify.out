@@ -1,0 +1,27 @@
+E:\DesktopData\app\code\CPU\.scratch\png_verify.py:137: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  check(list(img.getdata()) == [254] * 4 + [205] * 4 + [0] * 4,
+E:\DesktopData\app\code\CPU\.scratch\png_verify.py:142: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  check(list(img.getdata()) == [(0, 255), (255, 255), (128, 0), (255, 255)],
+[PASS] gray.png: every chunk CRC checks out (3 chunks)
+[PASS] gray.png: IHDR first, IEND last
+[PASS] gray.png: 8-bit, deflate, adaptive filter, non-interlaced
+[PASS] gray.png: colour type 0
+[PASS] gray.png: IDAT inflates to 3 scanlines of 5 bytes
+[PASS] gray.png: the gray rows are the ones that went in
+    gray.png: 4 x 3, colour type 0, 74 bytes on disk
+[PASS] matte.png: every chunk CRC checks out (3 chunks)
+[PASS] matte.png: IHDR first, IEND last
+[PASS] matte.png: 8-bit, deflate, adaptive filter, non-interlaced
+[PASS] matte.png: colour type 4
+[PASS] matte.png: IDAT inflates to 2 scanlines of 5 bytes
+[PASS] matte.png: the gray rows are the ones that went in
+[PASS] matte.png: the alpha rows are the ones that went in
+[PASS] matte.png: the transparent cell kept both its level and its opacity
+[PASS] matte.png: gray and alpha really are interleaved per pixel
+    matte.png: 2 x 2, colour type 4, 74 bytes on disk
+[PASS] Pillow reads gray.png as L 4x3
+[PASS] Pillow sees the same gray levels
+[PASS] Pillow reads matte.png as LA 2x2
+[PASS] Pillow sees the same levels and opacities
+
+PASSED (0 failure(s))

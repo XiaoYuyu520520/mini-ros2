@@ -1,0 +1,70 @@
+   1| import os
+   2| from ament_index_python.packages import get_package_share_directory
+   3| from launch_ros.actions import Node
+   4| from launch import LaunchDescription
+   5| from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+   6| from launch.launch_description_sources import PythonLaunchDescriptionSource
+   7| from launch.substitutions import LaunchConfiguration
+   8| 
+   9| def generate_launch_description():
+  10|     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+  11| 
+  12|         
+  13|     # nav_dir = get_package_share_directory('racecar')
+  14|     # nav_launchr = os.path.join(nav_dir, 'launch')
+  15| 
+  16|     racecar_dir = get_package_share_directory('racecar')
+  17|     racecar_launchr = os.path.join(racecar_dir, 'launch')
+  18| 
+  19|     map_file = LaunchConfiguration(
+  20|         'map',
+  21|         default='/root/Desktop/racecar/map/ai_map001.yaml'
+  22|     )
+  23|  
+  24|     param_dir = os.path.join(racecar_dir, 'config')
+  25|     param_file = LaunchConfiguration('params', default=os.path.join(
+  26|         param_dir, 'nav.yaml'))
+  27| 
+  28| 
+  29|     return LaunchDescription([
+  30|         DeclareLaunchArgument(
+  31|             'map',
+  32|             default_value=map_file,
+  33|             description='Full path to map file to load'),
+  34| 
+  35|         DeclareLaunchArgument(
+  36|             'params',
+  37|             default_value=param_file,
+  38|             description='Full path to param file to load'),
+  39|         Node(
+  40|             name='waypoint_cycle',
+  41|             package='nav2_waypoint_cycle',
+  42|             executable='nav2_waypoint_cycle',
+  43|         ),
+  44| 
+  45|         IncludeLaunchDescription(
+  46|             PythonLaunchDescriptionSource(
+  47|                 [racecar_launchr, '/bringup_launch.py']),
+  48|             launch_arguments={
+  49|                 'map': map_file,
+  50|                 'use_sim_time': use_sim_time,
+  51|                 'params_file': param_file}.items(),
+  52|         ),
+  53| 
+  54|     ])
+  55| 
+  56| 
+  57| 
+  58| # 这里有个明显的 Bug：
+  59| # 在你的代码第 18-20 行：
+  60| 
+  61| # Python
+  62| # map_file = LaunchConfiguration('map', default=os.path.join(
+  63| #     map_dir, '/home/davinci-mini/racecar/src/racecar/map/ai_map.yaml'))
+  64| # os.path.join 的特性是：如果后续参数以 / 开头（绝对路径），它会丢弃前面的所有路径。
+  65| 
+  66| # 因此，不管你的 map_dir 是什么，它最终指向的就是 /home/davinci-mini/racecar/src/racecar/map/ai_map.yaml。
+  67| 
+  68| # 注意：这指向的是你的源码目录，而不是安装后的 install 目录。
+  69| 
+  70| #/root/Desktop/racecar/install/racecar/share/racecar/config/nav.yaml

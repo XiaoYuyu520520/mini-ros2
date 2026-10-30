@@ -1,0 +1,28 @@
+*** Begin Patch
+*** Update File: nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/include/nav2_smac_planner/analytic_expansion_impl.hpp
+@@
+ #include <algorithm>
++#include <cmath>
+ #include <limits>
+@@
+       reals = s.reals();
+-      // Make sure in range [0, 2PI)
+-      theta = (reals[2] < 0.0) ? (reals[2] + 2.0 * M_PI) : reals[2];
+-      theta = (theta > 2.0 * M_PI) ? (theta - 2.0 * M_PI) : theta;
+-      angle = _ctx->motion_table.getAngle(theta);
++      // Make sure in range [0, 2PI). The interpolated yaw is an absolute angle, not an
++      // offset, so it can be more than one turn outside this range and a single add or
++      // subtract - which is what this used to be - leaves it there. The bin this
++      // produces becomes the pose theta of every node on the expansion, and the
++      // collision checker indexes its precomputed footprints with a pose theta.
++      if (!std::isfinite(reals[0]) || !std::isfinite(reals[1]) || !std::isfinite(reals[2])) {
++        // An interpolation that is not a number cannot describe a pose, so there is
++        // nothing here to expand. Abandon it rather than write it into a node.
++        return AnalyticExpansionNodes();
++      }
++      theta = std::fmod(reals[2], 2.0 * M_PI);
++      if (theta < 0.0) {
++        theta += 2.0 * M_PI;
++      }
++      angle = static_cast<float>(_ctx->motion_table.getAngle(theta));
+*** End Patch

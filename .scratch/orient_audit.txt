@@ -1,0 +1,33 @@
+ai_第一个点后回终点.py: position.z=[(133, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(134, 'pose.pose.orientation.w = point["w"]')]
+
+detct.py: position.z=[(170, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(171, 'pose.pose.orientation.w = point["w"]')]
+
+end_3_12.py: position.z=[(121, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(122, 'pose.pose.orientation.w = point["w"]')]
+
+get.py: position.z=[] orientation.z=[(32, 'gz = msg.pose.orientation.z')] orientation.w=[(33, 'gw = msg.pose.orientation.w')]
+
+go copy.py: position.z=[] orientation.z=[(55, 'self.goalMsg.pose.orientation.z = self.goalListZ[self.goalId]')] orientation.w=[(56, 'self.goalMsg.pose.orientation.w = self.goalListW[self.goalId]')]
+
+go copy_多点需要切换.py: position.z=[] orientation.z=[] orientation.w=[(29, 'goal_pose.pose.orientation.w = 1.0  # 设置默认的方向（朝向正北）')]
+
+go.py: position.z=[(129, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(130, 'pose.pose.orientation.w = point["w"]')]
+
+go_2c.py: position.z=[] orientation.z=[] orientation.w=[(29, 'goal_pose.pose.orientation.w = 1.0  # 设置默认的方向（朝向正北）')]
+
+goal_l.py: position.z=[(170, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(171, 'pose.pose.orientation.w = point["w"]')]
+
+go一条路径.py: position.z=[] orientation.z=[] orientation.w=[(65, 'pose.pose.orientation.w = 1.0')]
+
+一条路径+csv.py: position.z=[(91, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(92, 'pose.pose.orientation.w = point["w"]')]
+
+人工智能赛道初始版本代码.py: position.z=[(118, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(119, 'pose.pose.orientation.w = point["w"]')]
+
+会跳过几个点.py: position.z=[(172, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(173, 'pose.pose.orientation.w = point["w"]')]
+
+第二个点nav2打断，然后转圈圈.py: position.z=[(159, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(160, 'pose.pose.orientation.w = point["w"]')]
+
+终点不停.py: position.z=[(123, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(124, 'pose.pose.orientation.w = point["w"]')]
+
+跑一圈以内.py: position.z=[(121, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(122, 'pose.pose.orientation.w = point["w"]')]
+
+重复载入完成圈数.py: position.z=[(140, 'pose.pose.position.z = point["z"]')] orientation.z=[] orientation.w=[(141, 'pose.pose.orientation.w = point["w"]')]

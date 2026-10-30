@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>geometry_msgs</name>
+  <version>5.0.0</version>
+  <description>
+    Compatibility overlay for geometry_msgs definitions that ROS 2 Rolling removed
+    but that released distributions (Humble..Jazzy) still ship.  Merged on top of
+    the Rolling copy under common_interfaces/.
+  </description>
+  <maintainer email="dev@example.com">nav2 windows port</maintainer>
+  <license>Apache-2.0</license>
+</package>

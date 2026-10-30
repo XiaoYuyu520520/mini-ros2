@@ -1,0 +1,80 @@
+### ai_第一个点后回终点.py
+    113| pose.pose.position.x = point["x"]
+    114| pose.pose.position.y = point["y"]
+    115| pose.pose.position.z = point["z"]
+    116| pose.pose.orientation.w = point["w"]
+### detct.py
+    156| pose.pose.position.x = point["x"]
+    157| pose.pose.position.y = point["y"]
+    158| pose.pose.position.z = point["z"]
+    159| pose.pose.orientation.w = point["w"]
+### end_3_12.py
+    119| pose.pose.position.x = point["x"]
+    120| pose.pose.position.y = point["y"]
+    121| pose.pose.position.z = point["z"]
+    122| pose.pose.orientation.w = point["w"]
+### get.py
+     32| gz = msg.pose.orientation.z
+     33| gw = msg.pose.orientation.w
+### go copy.py
+     53| self.goalMsg.pose.position.x = self.goalListX[self.goalId]
+     54| self.goalMsg.pose.position.y = self.goalListY[self.goalId]
+     55| self.goalMsg.pose.orientation.z = self.goalListZ[self.goalId]
+     56| self.goalMsg.pose.orientation.w = self.goalListW[self.goalId]
+### go copy_多点需要切换.py
+     27| goal_pose.pose.position.x = point["x"]  # 设置目标点的x坐标
+     28| goal_pose.pose.position.y = point["y"]  # 设置目标点的y坐标
+     29| goal_pose.pose.orientation.w = 1.0  # 设置默认的方向（朝向正北）
+### go.py
+    127| pose.pose.position.x = point["x"]
+    128| pose.pose.position.y = point["y"]
+    129| pose.pose.position.z = point["z"]
+    130| pose.pose.orientation.w = point["w"]
+### go_2c.py
+     27| goal_pose.pose.position.x = point["x"]  # 设置目标点的x坐标
+     28| goal_pose.pose.position.y = point["y"]  # 设置目标点的y坐标
+     29| goal_pose.pose.orientation.w = 1.0  # 设置默认的方向（朝向正北）
+### goal_l.py
+    156| pose.pose.position.x = point["x"]
+    157| pose.pose.position.y = point["y"]
+    158| pose.pose.position.z = point["z"]
+    159| pose.pose.orientation.w = point["w"]
+### go一条路径.py
+     63| pose.pose.position.x = point["x"]
+     64| pose.pose.position.y = point["y"]
+     65| pose.pose.orientation.w = 1.0
+### 一条路径+csv.py
+     89| pose.pose.position.x = point["x"]
+     90| pose.pose.position.y = point["y"]
+     91| pose.pose.position.z = point["z"]
+     92| pose.pose.orientation.w = point["w"]
+### 人工智能赛道初始版本代码.py
+    104| pose.pose.position.x = point["x"]
+    105| pose.pose.position.y = point["y"]
+    106| pose.pose.position.z = point["z"]
+    107| pose.pose.orientation.w = point["w"]
+### 会跳过几个点.py
+    170| pose.pose.position.x = point["x"]
+    171| pose.pose.position.y = point["y"]
+    172| pose.pose.position.z = point["z"]
+    173| pose.pose.orientation.w = point["w"]
+### 第二个点nav2打断，然后转圈圈.py
+    145| pose.pose.position.x = point["x"]
+    146| pose.pose.position.y = point["y"]
+    147| pose.pose.position.z = point["z"]
+    148| pose.pose.orientation.w = point["w"]
+### 终点不停.py
+    121| pose.pose.position.x = point["x"]
+    122| pose.pose.position.y = point["y"]
+    123| pose.pose.position.z = point["z"]
+    124| pose.pose.orientation.w = point["w"]
+### 跑一圈以内.py
+    119| pose.pose.position.x = point["x"]
+    120| pose.pose.position.y = point["y"]
+    121| pose.pose.position.z = point["z"]
+    122| pose.pose.orientation.w = point["w"]
+### 重复载入完成圈数.py
+    138| pose.pose.position.x = point["x"]
+    139| pose.pose.position.y = point["y"]
+    140| pose.pose.position.z = point["z"]
+    141| pose.pose.orientation.w = point["w"]

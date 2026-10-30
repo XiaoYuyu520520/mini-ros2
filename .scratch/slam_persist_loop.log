@@ -1,0 +1,37 @@
+[03:18:20] === 0. clean slate ===
+[03:18:25] === 1. daemon without /map (SLAM owns it) ===
+[03:18:26] topics: /clock /cmd_vel /odom /scan /tf /tf_static
+[03:18:27] reset: message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+[03:18:27] === 2. mapping run: lap of 4 x (2 m + 90 deg) ===
+[03:18:31] mapping /map publisher: True
+[03:18:42]   leg 1/4 done
+[03:18:53]   leg 2/4 done
+[03:19:04]   leg 3/4 done
+[03:19:15]   leg 4/4 done
+[03:19:15] message: "x=0.165 y=-0.192 theta=0.157 cmd=(0.00, 0.00) paused=false"
+[03:19:29] MAP before serialize: 472x473 occupied=300 free=40964 unknown=181992
+[03:19:29] === 3. serialize the pose graph ===
+[03:19:29] service response: request: | filename: "E:/DesktopData/app/code/CPU/.scratch/slam_persist" | response: | result: 0 (success)
+[03:19:30]   slam_persist.posegraph exists=True bytes=7028932
+[03:19:30]   slam_persist.data exists=True bytes=104106
+[03:19:30] === 4. stop the mapping process ===
+[03:19:31] slam_still_running=True
+[03:19:33] === 5. fresh process, localization mode, loading that file ===
+[03:19:37] localization /map publisher: True
+[03:19:37] === 6. what the localization node publishes ===
+[03:19:51] MAP after reload: 472x472 res=0.050 origin=(-11.70,-11.78) occupied=0 free=516 unknown=222268
+[03:19:51] same shape: False; occupied delta: -300
+[03:19:51] === 7. localization log tail ===
+[03:19:51] [slam_bridge_node] /tf_static carries the laser frame
+[INFO] [slam_toolbox] Configuring
+[INFO] [slam_toolbox] Using solver plugin solver_plugins::CeresSolver
+[INFO] [slam_toolbox] EigenPoseGraphSolver: configured with 50 max iterations.
+[ERROR] [slam_toolbox] LocalizationSlamToolbox: Map starting pose not specified. Set either map_start_pose or map_start_at_dock.
+[INFO] [slam_toolbox] Activating
+[slam_bridge_node] localization active: /scan -> /map, base_link frame, resolution 0.0500, map every 10.0 s, scan buffer 10, with scan matching, with loop closing
+[WARN] [slam_toolbox] maximum laser range setting (25.0 m) exceeds the capabilities of the used Lidar (12.0 m)
+Registering sensor: [Custom Described Lidar]
+
+[03:19:51] === 8. cleanup ===
+[03:19:53] restored topics: /clock /cmd_vel /map /odom /scan /tf /tf_static
+saved .scratch\slam_persist_loop.out

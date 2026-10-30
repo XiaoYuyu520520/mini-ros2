@@ -1,0 +1,316 @@
+
+=== nav2_stack.bat (the whole stack, on the six big cores)
+[nav2_stack]   amcl_bridge_node -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\amcl_bridge_node.log
+[nav2_stack] starting planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower
+[nav2_stack]   planner_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\planner_server.log
+[nav2_stack]   controller_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\controller_server.log
+[nav2_stack]   bt_navigator -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\bt_navigator.log
+[nav2_stack]   behavior_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\behavior_server.log
+[nav2_stack]   smoother_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\smoother_server.log
+[nav2_stack]   waypoint_follower -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\waypoint_follower.log
+[nav2_stack] starting lifecycle_manager
+[nav2_stack]   lifecycle_manager -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\lifecycle_manager.log
+[nav2_stack] planner_server, controller_server, bt_navigator, behavior_server, smoother_server and waypoint_follower are active
+[nav2_stack] the stack is running; stop it with:  nav2_stack.bat stop
+
+=== ros2 node list
+/amcl
+/behavior_server
+/bt_navigator
+/bt_navigator_navigate_through_poses_rclcpp_node
+/bt_navigator_navigate_to_pose_rclcpp_node
+/controller_server
+/global_costmap/global_costmap
+/lifecycle_manager
+/local_costmap/local_costmap
+/planner_server
+/ros2_bridge_daemon
+/ros2_cli_sub
+/ros2_cli_sub
+/smoother_server
+/transform_listener_impl_7615312
+/transform_listener_impl_8923760
+/waypoint_follower
+
+=== ros2 topic info /parameter_events (the whole stack publishing)
+Type: rcl_interfaces/msg/ParameterEvent
+
+Publisher count: 14
+Subscription count: 0
+Source: local (shared memory)
+/controller_server:
+  /disable_heartbeat_timeout
+  DWBFollowPath.BaseObstacle.class
+  DWBFollowPath.BaseObstacle.scale
+  DWBFollowPath.BaseObstacle.sum_scores
+  DWBFollowPath.GoalAlign.aggregation_type
+  DWBFollowPath.GoalAlign.class
+  DWBFollowPath.GoalAlign.forward_point_distance
+  DWBFollowPath.GoalAlign.scale
+  DWBFollowPath.GoalDist.aggregation_type
+  DWBFollowPath.GoalDist.class
+  DWBFollowPath.GoalDist.scale
+  DWBFollowPath.Oscillation.class
+  DWBFollowPath.Oscillation.oscillation_reset_angle
+  DWBFollowPath.Oscillation.oscillation_reset_dist
+  DWBFollowPath.Oscillation.oscillation_reset_time
+  DWBFollowPath.Oscillation.scale
+  DWBFollowPath.Oscillation.x_only_threshold
+  DWBFollowPath.PathAlign.aggregation_type
+  DWBFollowPath.PathAlign.class
+  DWBFollowPath.PathAlign.forward_point_distance
+  DWBFollowPath.PathAlign.scale
+  DWBFollowPath.PathDist.aggregation_type
+  DWBFollowPath.PathDist.class
+  DWBFollowPath.PathDist.scale
+  DWBFollowPath.RotateToGoal.class
+  DWBFollowPath.RotateToGoal.lookahead_time
+  DWBFollowPath.RotateToGoal.scale
+  DWBFollowPath.RotateToGoal.slowing_factor
+  DWBFollowPath.acc_lim_theta
+  DWBFollowPath.acc_lim_x
+  DWBFollowPath.acc_lim_y
+  DWBFollowPath.angular_granularity
+  DWBFollowPath.critics
+  DWBFollowPath.debug_trajectory_details
+  DWBFollowPath.decel_lim_theta
+  DWBFollowPath.decel_lim_x
+  DWBFollowPath.decel_lim_y
+  DWBFollowPath.default_critic_namespaces
+  DWBFollowPath.discretize_by_time
+  DWBFollowPath.include_last_point
+  DWBFollowPath.limit_vel_cmd_in_traj
+  DWBFollowPath.linear_granularity
+  DWBFollowPath.marker_lifetime
+  DWBFollowPath.max_speed_xy
+  DWBFollowPath.max_vel_theta
+  DWBFollowPath.max_vel_x
+  DWBFollowPath.max_vel_y
+  DWBFollowPath.min_speed_theta
+  DWBFollowPath.min_speed_xy
+  DWBFollowPath.min_vel_x
+  DWBFollowPath.min_vel_y
+  DWBFollowPath.plugin
+  DWBFollowPath.publish_cost_grid_pc
+  DWBFollowPath.publish_evaluation
+  DWBFollowPath.publish_local_plan
+  DWBFollowPath.publish_trajectories
+  DWBFollowPath.short_circuit_trajectory_evaluation
+  DWBFollowPath.sim_time
+  DWBFollowPath.time_granularity
+  DWBFollowPath.trajectory_generator_name
+  DWBFollowPath.trans_stopped_velocity
+  DWBFollowPath.vtheta_samples
+  DWBFollowPath.vx_samples
+  DWBFollowPath.vy_samples
+  DWBFollowPath.xy_goal_tolerance
+  DWBFollowPathpath_length_tolerance
+  FollowPath.allow_obstacle_checking_beyond_goal
+  FollowPath.allow_reversing
+  FollowPath.approach_velocity_scaling_dist
+  FollowPath.cancel_deceleration
+  FollowPath.cost_scaling_dist
+  FollowPath.cost_scaling_gain
+  FollowPath.curvature_lookahead_dist
+  FollowPath.desired_linear_vel
+  FollowPath.inflation_cost_scaling_factor
+  FollowPath.interpolate_curvature_after_goal
+  FollowPath.lookahead_dist
+  FollowPath.lookahead_time
+  FollowPath.max_allowed_time_to_collision_up_to_carrot
+  FollowPath.max_angular_accel
+  FollowPath.max_angular_decel
+  FollowPath.max_angular_vel
+  FollowPath.max_linear_accel
+  FollowPath.max_linear_decel
+  FollowPath.max_lookahead_dist
+  FollowPath.min_angular_vel
+  FollowPath.min_approach_linear_velocity
+  FollowPath.min_distance_to_obstacle
+  FollowPath.min_linear_vel
+  FollowPath.min_lookahead_dist
+  FollowPath.plugin
+  FollowPath.regulated_linear_scaling_min_radius
+  FollowPath.regulated_linear_scaling_min_speed
+  FollowPath.rotate_to_heading_angular_vel
+  FollowPath.rotate_to_heading_min_angle
+  FollowPath.use_cancel_deceleration
+  FollowPath.use_collision_detection
+  FollowPath.use_cost_regulated_linear_velocity_scaling
+  FollowPath.use_dynamic_window
+  FollowPath.use_fixed_curvature_lookahead
+  FollowPath.use_regulated_linear_velocity_scaling
+  FollowPath.use_rotate_to_heading
+  FollowPath.use_velocity_scaled_lookahead_dist
+  GracefulFollowPath.allow_backward
+  GracefulFollowPath.beta
+  GracefulFollowPath.deceleration_max
+  GracefulFollowPath.final_rotation_search_step
+  GracefulFollowPath.footprint_scaling_factor
+  GracefulFollowPath.footprint_scaling_linear_vel
+  GracefulFollowPath.footprint_scaling_step
+  GracefulFollowPath.in_place_collision_resolution
+  GracefulFollowPath.initial_rotation
+  GracefulFollowPath.initial_rotation_tolerance
+  GracefulFollowPath.k_delta
+  GracefulFollowPath.k_phi
+  GracefulFollowPath.lambda
+  GracefulFollowPath.max_lookahead
+  GracefulFollowPath.min_lookahead
+  GracefulFollowPath.obstacle_cost_margin
+  GracefulFollowPath.plugin
+  GracefulFollowPath.prefer_final_rotation
+  GracefulFollowPath.rotation_scaling_factor
+  GracefulFollowPath.slowdown_radius
+  GracefulFollowPath.use_collision_detection
+  GracefulFollowPath.v_angular_max
+  GracefulFollowPath.v_angular_min_in_place
+  GracefulFollowPath.v_linear_max
+  GracefulFollowPath.v_linear_min
+  MPPIFollowPath.ConstraintCritic.cost_power
+  MPPIFollowPath.ConstraintCritic.cost_weight
+  MPPIFollowPath.ConstraintCritic.enabled
+  MPPIFollowPath.CostCritic.collision_cost
+  MPPIFollowPath.CostCritic.consider_footprint
+  MPPIFollowPath.CostCritic.cost_power
+  MPPIFollowPath.CostCritic.cost_weight
+  MPPIFollowPath.CostCritic.critical_cost
+  MPPIFollowPath.CostCritic.enabled
+  MPPIFollowPath.CostCritic.inflation_layer_name
+  MPPIFollowPath.CostCritic.near_collision_cost
+  MPPIFollowPath.CostCritic.near_goal_distance
+  MPPIFollowPath.CostCritic.trajectory_point_step
+  MPPIFollowPath.GoalAngleCritic.cost_power
+  MPPIFollowPath.GoalAngleCritic.cost_weight
+  MPPIFollowPath.GoalAngleCritic.enabled
+  MPPIFollowPath.GoalAngleCritic.symmetric_yaw_tolerance
+  MPPIFollowPath.GoalAngleCritic.threshold_to_consider
+  MPPIFollowPath.GoalCritic.cost_power
+  MPPIFollowPath.GoalCritic.cost_weight
+  MPPIFollowPath.GoalCritic.enabled
+  MPPIFollowPath.GoalCritic.threshold_to_consider
+  MPPIFollowPath.PathAlignCritic.cost_power
+  MPPIFollowPath.PathAlignCritic.cost_weight
+  MPPIFollowPath.PathAlignCritic.enabled
+  MPPIFollowPath.PathAlignCritic.max_path_occupancy_ratio
+  MPPIFollowPath.PathAlignCritic.offset_from_furthest
+  MPPIFollowPath.PathAlignCritic.threshold_to_consider
+  MPPIFollowPath.PathAlignCritic.trajectory_point_step
+  MPPIFollowPath.PathAlignCritic.use_path_orientations
+  MPPIFollowPath.PathAngleCritic.cost_power
+  MPPIFollowPath.PathAngleCritic.cost_weight
+  MPPIFollowPath.PathAngleCritic.enabled
+  MPPIFollowPath.PathAngleCritic.max_angle_to_furthest
+  MPPIFollowPath.PathAngleCritic.mode
+  MPPIFollowPath.PathAngleCritic.offset_from_furthest
+  MPPIFollowPath.PathAngleCritic.threshold_to_consider
+  MPPIFollowPath.PathFollowCritic.cost_power
+  MPPIFollowPath.PathFollowCritic.cost_weight
+  MPPIFollowPath.PathFollowCritic.enabled
+  MPPIFollowPath.PathFollowCritic.offset_from_furthest
+  MPPIFollowPath.PathFollowCritic.threshold_to_consider
+  MPPIFollowPath.PreferForwardCritic.cost_power
+  MPPIFollowPath.PreferForwardCritic.cost_weight
+  MPPIFollowPath.PreferForwardCritic.enabled
+  MPPIFollowPath.PreferForwardCritic.threshold_to_consider
+  MPPIFollowPath.TrajectoryValidator.collision_lookahead_time
+  MPPIFollowPath.TrajectoryValidator.consider_footprint
+  MPPIFollowPath.TrajectoryValidator.plugin
+  MPPIFollowPath.TrajectoryVisualizer.time_step
+  MPPIFollowPath.TrajectoryVisualizer.trajectory_step
+  MPPIFollowPath.ax_max
+  MPPIFollowPath.ax_min
+  MPPIFollowPath.ay_max
+  MPPIFollowPath.ay_min
+  MPPIFollowPath.az_max
+  MPPIFollowPath.batch_size
+  MPPIFollowPath.clamp_raw_controls
+  MPPIFollowPath.critic_index_to_visualize
+  MPPIFollowPath.critics
+  MPPIFollowPath.diff_drive.plugin
+  MPPIFollowPath.gamma
+  MPPIFollowPath.iteration_count
+  MPPIFollowPath.model_delay_vx
+  MPPIFollowPath.model_delay_vy
+  MPPIFollowPath.model_delay_wz
+  MPPIFollowPath.model_dt
+  MPPIFollowPath.motion_model
+  MPPIFollowPath.open_loop
+  MPPIFollowPath.plugin
+  MPPIFollowPath.publish_optimal_trajectory
+  MPPIFollowPath.regenerate_noises
+  MPPIFollowPath.retry_attempt_limit
+  MPPIFollowPath.sgf_order
+  MPPIFollowPath.temperature
+  MPPIFollowPath.time_steps
+  MPPIFollowPath.visualize
+  MPPIFollowPath.vx_max
+  MPPIFollowPath.vx_min
+  MPPIFollowPath.vx_std
+  MPPIFollowPath.vy_max
+  MPPIFollowPath.vy_std
+  MPPIFollowPath.wz_max
+  MPPIFollowPath.wz_std
+  PathHandler.enforce_path_inversion
+  PathHandler.enforce_path_rotation
+  PathHandler.inversion_xy_tolerance
+  PathHandler.inversion_yaw_tolerance
+  PathHandler.max_robot_pose_search_dist
+  PathHandler.minimum_rotation_angle
+  PathHandler.plugin
+  PathHandler.prune_distance
+  PathHandler.reject_unit_path
+  allow_parameter_qos_overrides
+  autostart_node
+  bond_heartbeat_period
+  controller_frequency
+  controller_plugins
+  controller_server.verbose
+  costmap_update_timeout
+  enable_stamped_cmd_vel
+  failure_tolerance
+  general_goal_checker.path_length_tolerance
+  general_goal_checker.plugin
+  general_goal_checker.stateful
+  general_goal_checker.symmetric_yaw_tolerance
+  general_goal_checker.xy_goal_tolerance
+  general_goal_checker.xy_goal_tolerance_buffer
+  general_goal_checker.yaw_goal_tolerance
+  goal_checker_plugins
+  min_theta_velocity_threshold
+  min_x_velocity_threshold
+  min_y_velocity_threshold
+  odom_duration
+  odom_topic
+  path_handler_plugins
+  progress_checker.movement_time_allowance
+  progress_checker.plugin
+  progress_checker.required_movement_radius
+  progress_checker_plugins
+  publish_zero_velocity
+  search_window
+  speed_limit_topic
+  strict_param_loading
+  use_realtime_priority
+  use_sim_time
+  warn_on_missing_params
+/planner_server:
+  /disable_heartbeat_timeout
+  GridBased.allow_unknown
+  GridBased.max_cycles_factor
+  GridBased.plugin
+  GridBased.tolerance
+  GridBased.use_astar
+  GridBased.use_final_approach_orientation
+  allow_parameter_qos_overrides
+  allow_partial_planning
+  autostart_node
+  bond_heartbeat_period
+  costmap_update_timeout
+  expected_planner_frequency
+  planner_plugins
+  strict_param_loading
+  use_sim_time
+  warn_on_missing_params
+
+=== chosen parameters: controller_server None, planner_server None

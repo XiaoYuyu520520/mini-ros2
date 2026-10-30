@@ -1,0 +1,23 @@
+{
+  "succeeded": false,
+  "reason": "ABORTED",
+  "action": "navigate_to_pose",
+  "goal": [2.55, 0, 0],
+  "goal_source": "auto",
+  "frame": "map",
+  "result": "ABORTED",
+  "error_code": 105,
+  "error_msg": "Failed to make progress",
+  "elapsed_s": 73.0299,
+  "start_pose": [0, 0],
+  "final_pose": [0, 0, 0],
+  "travelled_m": 0,
+  "remaining_m": 2.55,
+  "feedback_messages": 3761,
+  "number_of_recoveries": 7,
+  "last_distance_remaining_m": 2.55,
+  "max_linear_velocity": 0,
+  "ack_latency_s": 0.0381618,
+  "result_latency_s": 71.987,
+  "messages": {"cmd_vel": 34, "cmd_vel_type": "Twist", "cmd_vel_moving": 0, "plan": 40, "plan_poses": 100, "odom": 3447}
+}

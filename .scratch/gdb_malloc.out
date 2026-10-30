@@ -1,0 +1,19 @@
+[New Thread 28548.0x57e4]
+[New Thread 28548.0x4f18]
+[New Thread 28548.0x103c]
+[New Thread 28548.0x5b50]
+[New Thread 28548.0x4378]
+[New Thread 28548.0x5470]
+[New Thread 28548.0x32c0]
+[New Thread 28548.0x628c]
+[New Thread 28548.0x668c]
+All functions matching regular expression "^malloc$":
+
+Non-debugging symbols:
+0x00007ff77326dea0  malloc
+0x00007ff987edd640  malloc
+0x00007ff987655e00  malloc
+Breakpoint 1 at 0x7ff987655e00 (2 locations)
+[Thread 28548.0x668c exited with code 0]
+[New Thread 28548.0x46f4]
+[Thread 28548.0x46f4 exited with code 0]

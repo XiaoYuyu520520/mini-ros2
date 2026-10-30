@@ -1,0 +1,33 @@
+[racecar] the shim graph has a /clock publisher: use_sim_time:=true
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\shim_run.py --sim-time .scratch\probe_repeat.py
+shim_run: use_sim_time from the environment: 1
+[probe]    0.00 s  read 9 poses from E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\scripts\sim_room12.csv
+[probe]    0.01 s  G1 full list, lap 1: sending 9 pose(s)
+[probe]    0.02 s  G1 full list, lap 1: accepted=True after 0.01 s
+[probe]    0.05 s  G1 full list, lap 1: feedback 1  distance_remaining=0.00  poses_remaining=9
+[probe]    0.11 s  G1 full list, lap 1: feedback 2  distance_remaining=15.30  poses_remaining=9
+[probe]    0.14 s  G1 full list, lap 1: feedback 3  distance_remaining=15.30  poses_remaining=9
+[probe]   72.80 s  G1 full list, lap 1: result after 72.80 s  error_code=0  statuses=[1]  feedbacks=2296
+[probe]   72.80 s  G2 the same list again: sending 9 pose(s)
+[probe]   72.82 s  G2 the same list again: accepted=True after 0.01 s
+[probe]   72.85 s  G2 the same list again: feedback 1  distance_remaining=0.00  poses_remaining=9
+[probe]   72.89 s  G2 the same list again: feedback 2  distance_remaining=17.81  poses_remaining=9
+[probe]   72.91 s  G2 the same list again: result after 0.11 s  error_code=0  statuses=[1]  feedbacks=2
+[probe]   72.91 s  G3 one pose = waypoint 1: sending 1 pose(s)
+[probe]   72.93 s  G3 one pose = waypoint 1: accepted=True after 0.01 s
+[probe]   72.96 s  G3 one pose = waypoint 1: feedback 1  distance_remaining=0.00  poses_remaining=1
+[probe]   73.00 s  G3 one pose = waypoint 1: feedback 2  distance_remaining=4.77  poses_remaining=1
+[probe]   73.04 s  G3 one pose = waypoint 1: feedback 3  distance_remaining=4.77  poses_remaining=1
+[probe]   91.23 s  G3 one pose = waypoint 1: result after 18.31 s  error_code=0  statuses=[1]  feedbacks=578
+[probe]   91.23 s  G4 that same one pose again: sending 1 pose(s)
+[probe]   91.24 s  G4 that same one pose again: accepted=True after 0.01 s
+[probe]   91.27 s  G4 that same one pose again: feedback 1  distance_remaining=0.00  poses_remaining=1
+[probe]   91.32 s  G4 that same one pose again: feedback 2  distance_remaining=0.98  poses_remaining=1
+[probe]   91.33 s  G4 that same one pose again: result after 0.11 s  error_code=0  statuses=[1]  feedbacks=2
+
+[probe] ===== summary =====
+[probe] G1  G1 full list, lap 1          poses=9  accepted=0.01 s  result=72.80 s   feedbacks=2296  code=0 status=[1] distinct_distance=[0.0, 0.13, 0.36, 0.38, 0.42, 0.44, 0.47, 0.48, 0.51, 0.55, 0.58, 0.62, 0.66, 0.68, 0.75, 0.82, 0.89, 0.96, 1.02, 1.06, 1.13, 1.2, 1.27, 1.34, 1.41, 1.48, 1.56, 1.63, 1.93, 2.0, 2.07, 2.13, 2.2, 2.27, 2.34, 2.4, 2.47, 2.54, 2.67, 2.74, 2.81, 2.88, 2.96, 3.03, 3.1, 3.17, 3.24, 3.47, 3.55, 4.5, 4.58, 4.65, 4.72, 4.8, 4.84, 4.87, 4.91, 4.94, 4.98, 5.02, 5.05, 5.08, 5.12, 5.15, 5.19, 5.22, 5.26, 5.3, 5.33, 5.37, 5.4, 5.44, 5.47, 5.51, 5.55, 5.59, 5.62, 5.66, 5.69, 5.76, 5.84, 5.91, 5.98, 6.06, 6.13, 6.81, 6.88, 6.95, 7.02, 7.09, 7.16, 7.19, 7.23, 7.29, 7.3, 7.36, 7.37, 7.44, 7.45, 7.51, 7.52, 7.58, 7.59, 7.66, 7.67, 7.74, 7.81, 7.89, 7.96, 8.49, 8.56, 8.63, 8.69, 8.76, 8.83, 8.9, 8.97, 9.04, 9.07, 9.14, 9.22, 9.29, 9.37, 9.44, 9.51, 9.53, 9.59, 9.65, 9.71, 10.21, 10.28, 10.35, 10.42, 10.49, 10.56, 10.63, 10.7, 10.87, 10.94, 11.02, 11.1, 11.18, 11.26, 11.33, 11.4, 11.47, 11.49, 11.57, 11.64, 11.71, 11.79, 11.86, 11.94, 12.01, 12.09, 12.18, 12.25, 12.32, 12.4, 12.47, 12.54, 12.61, 12.69, 12.76, 13.88, 13.95, 14.03, 14.1, 14.17, 14.24, 14.32, 14.39, 14.46, 14.54, 14.56, 14.63, 14.7, 14.71, 14.77, 14.78, 14.84, 14.86, 14.92, 14.93, 14.99, 15.0, 15.06, 15.08, 15.13, 15.15, 15.2, 15.23, 15.28, 15.3, 15.35, 15.42, 15.49, 15.56, 15.63, 15.71, 15.78, 15.85]
+[probe] G2  G2 the same list again       poses=9  accepted=0.01 s  result=0.11 s    feedbacks=2     code=0 status=[1] distinct_distance=[0.0, 17.81]
+[probe] G3  G3 one pose = waypoint 1     poses=1  accepted=0.01 s  result=18.31 s   feedbacks=578   code=0 status=[1] distinct_distance=[0.0, 1.04, 1.12, 1.19, 1.26, 1.33, 1.41, 1.48, 1.55, 1.63, 1.7, 1.77, 1.84, 1.92, 1.99, 2.06, 2.14, 2.21, 2.28, 2.33, 2.4, 2.47, 2.55, 2.62, 2.69, 2.77, 2.84, 2.91, 2.98, 3.03, 3.1, 3.18, 3.25, 3.32, 3.39, 3.47, 3.54, 3.58, 3.61, 3.66, 3.73, 3.8, 3.87, 3.95, 4.02, 4.09, 4.17, 4.3, 4.38, 4.46, 4.54, 4.61, 4.69, 4.77]
+[probe] G4  G4 that same one pose again  poses=1  accepted=0.01 s  result=0.11 s    feedbacks=2     code=0 status=[1] distinct_distance=[0.0, 0.98]
+[probe]   91.33 s  done

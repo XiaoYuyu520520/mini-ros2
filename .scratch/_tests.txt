@@ -1,0 +1,166 @@
+['__pycache__', 'test_cdr_matches_rosbags.py', 'test_graph_agent.py', 'test_services.py', 'test_sim.py']
+===== test_cdr_matches_rosbags.py 16460
+#!/usr/bin/env python3
+"""Byte-for-byte validation of the CDR codec against the ``rosbags`` library.
+
+``rosbags`` parses the real ``.msg`` files that ship with this repository, so
+it is an independent oracle for the wire format: it derives field order and
+types from the ``.msg`` files while :mod:`ros2_bridge_sim.messages` derives
+them from the generated C++ headers.
+
+Runs under pytest, or standalone::
+
+    python tests/test_cdr_matches_rosbags.py
+
+It skips cleanly (with a clear message) when ``rosbags`` is not installed or
+when the repository's ``.msg`` sources cannot be found.
+"""
+
+from __future__ import annotations
+
+import glob
+import math
+import os
+import re
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from ros2_bridge_sim import messages as m  # noqa: E402
+
+try:  # pragma: no cover - depends on the environment
+    import pytest
+except ImportError:  # pragma: no cover
+    pytest = None
+
+
+def skip(reason: str):
+    """Skip under pytest, or report and exit when run standalone."""
+    if pytest is not None:
+        pytest.skip(reason)
+    print("SKIP: %s" % reason)
+    raise SystemExit(0)
+
+
+# -------------------------
+===== test_graph_agent.py 11991
+#!/usr/bin/env python3
+"""End-to-end test: a real gRPC client against the bridge agent over a channel.
+
+Starts the simulated car + agent on an ephemeral port, then exercises
+Ping / ListTopics / GetTopicInfo / Subscribe / Publish with the real
+``grpc`` client.
+
+Run under pytest or standalone::
+
+    python tests/test_graph_agent.py
+"""
+
+from __future__ import annotations
+
+import os
+import sys
+import time
+from contextlib import contextmanager
+from types import SimpleNamespace
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+import grpc  # noqa: E402
+
+from ros2_bridge_sim import messages as m  # noqa: E402
+from ros2_bridge_sim.agent import build_server, stop_server  # noqa: E402
+from ros2_bridge_sim.graph import Graph  # noqa: E402
+from ros2_bridge_sim.proto import ros2_bridge_pb2 as pb  # noqa: E402
+from ros2_bridge_sim.proto import ros2_bridge_pb2_grpc as pb_grpc  # noqa: E402
+from ros2_bridge_sim.sim import SIM_TOPICS, SimCar  # noqa: E402
+from ros2_bridge_sim.world import World  # noqa: E402
+
+HOST = "127.0.0.1"
+
+
+def wait_for(predicate, timeout: float = 5.0, interval: float = 0.02) -> bool:
+    deadline = time.monotonic() + timeout
+
+===== test_services.py 24790
+#!/usr/bin/env python3
+"""End-to-end test: services and actions across the bridge agent.
+
+The bridge carried topics only for a long time, which meant a caller on the
+other side of the wire could watch the robot but not ask it anything or tell
+it to do something. This exercises the two RPC families that closed that gap
+with a real ``grpc`` client against a real agent:
+
+* ``ListServices`` / ``GetServiceInfo`` / ``CallService``, and
+* ``ListActions`` / ``SendActionGoal`` / ``ActionFeedback`` /
+  ``GetActionResult`` / ``CancelActionGoal``.
+
+Run under pytest or standalone::
+
+    python tests/test_services.py
+"""
+
+from __future__ import annotations
+
+import math
+import os
+import sys
+import threading
+import time
+from contextlib import contextmanager
+from types import SimpleNamespace
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+import grpc  # noqa: E402
+
+from ros2_bridge_sim import messages as m  # noqa: E402
+from ros2_bridge_sim import services  # noqa: E402
+from ros2_bridge_sim.agent import build_server, stop_server  # noqa: E402
+from ros2_bridge_sim.graph import Graph  # noqa: E402
+from ros2_bridge_sim.proto import ros2_bridge_pb2 as 
+===== test_sim.py 10282
+#!/usr/bin/env python3
+"""Unit tests for the simulated car, the world and the lidar.
+
+Run under pytest or standalone::
+
+    python tests/test_sim.py
+"""
+
+from __future__ import annotations
+
+import math
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from ros2_bridge_sim import messages as m  # noqa: E402
+from ros2_bridge_sim.graph import Graph  # noqa: E402
+from ros2_bridge_sim.sim import (  # noqa: E402
+    TOPIC_ODOM,
+    TOPIC_SCAN,
+    TOPIC_TF,
+    SimCar,
+)
+from ros2_bridge_sim.world import FREE, OCCUPIED, UNKNOWN, World  # noqa: E402
+
+BEAM_FORWARD = 180  # beams=360 spans -pi..pi, so index 180 points along +x
+
+
+def run_steps(car: SimCar, count: int, dt: float = 0.02) -> None:
+    for _ in range(count):
+        car.step(dt)
+
+
+# --------------------------------------------------------------------------
+# Car kinematics
+# --------------------------------------------------------------------------
+
+def test_car_integrates_linear_cmd_vel():
+    graph, world = Graph(), World()
+    car = SimCar(graph, world, rate=50.0)
+    graph.create_subscription(TOPIC_ODOM, m.ODOMETRY, lambda event: None)
+
+    # goes through 

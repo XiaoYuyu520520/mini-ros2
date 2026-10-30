@@ -1,0 +1,56 @@
+=== A. collision_monitor: add / remove exclusion zone ===
+  [wait] /add_exclusion_zone NOT seen after 90.0s
+  [stop] nav2_safety.bat rc=0 [nav2_safety] stopping the previous safety nodes
+[nav2_safety] stopped
+
+=== B. vector_object_server: add / get / remove shapes ===
+  [wait] /vector_object_server/get_shapes after 2.5s
+$ ros2 service call /vector_object_server/get_shapes nav2_msgs/srv/GetShapes 
+  request:
+  (empty)
+  response:
+  circles: [1]
+    - circle b81389f45b55463b8e1f3a158c4e4d9b: center (1.5, 0.5, 0) radius 0.7 value 100 fill true in "map"
+  polygons: [1]
+    - polygon 6fae63e587644b0381bb8823fd8667b5: 3 point(s), closed, value 100 in "map"
+  [exit 0]
+$ ros2 service call /vector_object_server/add_shapes nav2_msgs/srv/AddShapes 
+  request:
+  circles: [0]
+  polygons: [0]
+  response:
+  success: true
+  [exit 0]
+$ ros2 service call /vector_object_server/remove_shapes nav2_msgs/srv/RemoveShapes all_objects=true
+  request:
+  all_objects: true
+  uuids: [0]
+  response:
+  success: true
+  [exit 0]
+$ ros2 service call /vector_object_server/get_shapes nav2_msgs/srv/GetShapes 
+  request:
+  (empty)
+  response:
+  circles: [0]
+  polygons: [0]
+  [exit 0]
+
+=== C. route_server + docking_server: graph and dock database ===
+  [wait] /route_server/set_route_graph after 4.8s
+  [services] edge services: (none)
+  [services] dock services: ['/docking_server/reload_database']
+$ ros2 service call /route_server/set_route_graph nav2_msgs/srv/SetRouteGraph graph_filepath=C:/maps/nope.geojson
+  request:
+  graph_filepath: "C:/maps/nope.geojson"
+  response:
+  success: false
+  [exit 0]
+$ ros2 service call /docking_server/reload_database nav2_msgs/srv/ReloadDockDatabase filepath=C:/maps/nope.yaml
+  request:
+  filepath: "C:/maps/nope.yaml"
+  response:
+  success: false
+  [exit 0]
+  [stop] nav2_docking_route.bat rc=0 [nav2_docking_route] stopping the previous servers
+[nav2_docking_route] stopped

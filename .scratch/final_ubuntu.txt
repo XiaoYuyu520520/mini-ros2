@@ -1,0 +1,2 @@
+1773547    06:55:33 /home/ubuntu/code/CPU/.venv/bin/python -m ros2_bridge_sim.run_sim --no-console --port 50051
+1778872    06:54:47 /home/ubuntu/code/CPU/bridge/windows/build/ros2_bridge_daemon --agent 127.0.0.1:50051 --ready-file /home/ubuntu/code/CPU/bridge/windows/build/ros2_bridge_daemon.ready --detach

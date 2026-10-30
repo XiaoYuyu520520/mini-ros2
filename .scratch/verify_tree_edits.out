@@ -1,0 +1,34 @@
+  buildtool_depend ament_cmake ament_cmake_python
+  depend         action_msgs geometry_msgs message_filters nav2_amcl nav2_msgs nav2_simple_commander nav_msgs rclcpp rclpy sensor_msgs std_msgs std_srvs tf2 tf2_geometry_msgs tf2_ros visualization_msgs
+  exec_depend    ament_index_python launch launch_ros nav2_bringup nav2_common nav2_waypoint_cycle
+  test_depend    ament_lint_auto ament_lint_common
+  ok      nav2_msgs
+  ok      std_srvs
+  ok      nav2_simple_commander
+  ok      rclpy
+  ok      nav2_bringup
+  ok      nav2_common
+  ok      nav2_waypoint_cycle
+  ok      launch
+  ok      launch_ros
+compiles: Run_nav.launch.py
+compiles: bringup_launch.py
+  ok      Run_nav.launch.py "'/root/Desktop/racecar" present=False (want False)
+  ok      Run_nav.launch.py "'/home/davinci-mini" present=False (want False)
+  ok      Run_nav.launch.py "default=os.path.join(racecar_dir, 'map', 'ai_map.yaml')" present=True (want True)
+  ok      Run_nav.launch.py "param_dir, 'nav.yaml'" present=True (want True)
+  ok      bringup_launch.py live `lifecycle_nodes` assignments: 0
+  install(DIRECTORY ...): config, maps, map, rviz, launch
+  install(PROGRAMS/FILES): 21 entries
+  ok      src/racecar/config/
+  ok      src/racecar/maps/
+  ok      src/racecar/map/
+  ok      src/racecar/rviz/
+  ok      src/racecar/launch/
+  ok      all 21 script/csv entries exist
+  ok      Run_nav's default map ships: src/racecar/map/ai_map.yaml
+  ok      ceshi1.yaml                  image=ceshi1.pgm     -> code\Desktop\racecar\src\racecar\maps\ceshi1.pgm
+  ok      ai_map.yaml                  image=ai_map.pgm     -> code\Desktop\racecar\src\racecar\map\ai_map.pgm
+  ok      test_map.yaml                image=test_map.pgm   -> code\Desktop\racecar\src\racecar\map\test_map.pgm
+
+VERDICT: all checks pass

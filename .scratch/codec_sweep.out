@@ -1,0 +1,142 @@
+[03:58:54] === 0. clean slate ===
+[03:58:58] === 1. daemon ===
+[03:58:58] [ros2_bridge] starting daemon --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[03:59:00] mirrored topics: /clock /cmd_vel /map /odom /scan /tf /tf_static
+[03:59:00] request:
+(empty)
+response:
+success: true
+message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+[03:59:00] === 2. nav2 with the safety chain, driving to a goal ===
+[03:59:00] waiting for the lifecycle manager to activate the stack
+[03:59:06] nodes: /amcl /behavior_server /bt_navigator /controller_server /global_costmap/global_costmap /local_costmap/local_costmap /planner_server /ros2_bridge_daemon /smoother_server /waypoint_follower
+[03:59:06] === 3. interface list ===
+[03:59:06] the bridge can convert 58 interfaces
+[03:59:06] graph dir      : C:\Users\ADMINI~1\AppData\Local\Temp\nav2_shim_graph
+topics         : 11 (7 remote, 4 local)
+services       : 100 (7 remote, 93 local)
+actions        : 5 (5 remote, 0 local)
+nodes          : 10
+known types    : 38
+  /amcl_pose                     geometry_msgs/msg/PoseWithCovarianceStamped [shm]
+  /clock                         rosgraph_msgs/msg/Clock              [gRPC bridge]
+  /cmd_vel                       geometry_msgs/msg/Twist              [gRPC bridge]
+  /initialpose                   geometry_msgs/msg/PoseWithCovarianceStamped [shm]
+  /map                           nav_msgs/msg/OccupancyGrid           [gRPC bridge]
+  /odom                          nav_msgs/msg/Odometry                [gRPC bridge]
+  /parameter_events              rcl_interfaces/msg/ParameterEvent    [shm]
+  /particle_cloud                nav2_msgs/msg/ParticleCloud          [shm]
+  /scan                          sensor_msgs/msg/LaserScan            [gRPC bridge]
+  /tf                            tf2_msgs/msg/TFMessage               [gRPC bridge]
+  /tf_static                     tf2_msgs/msg/TFMessage               [gRPC bridge]
+[03:59:06] === 4. sweep: every topic, decoded or not ===
+[03:59:07] /amcl_pose                                           geometry_msgs/msg/PoseWithCovarianceStamped decoded
+[03:59:07] /clock                                               rosgraph_msgs/msg/Clock                    decoded
+[03:59:13] /cmd_vel                                             geometry_msgs/msg/Twist                    silent (no writer in 6 s)
+[03:59:20] /initialpose                                         geometry_msgs/msg/PoseWithCovarianceStamped silent (no writer in 6 s)
+[03:59:20] /map                                                 nav_msgs/msg/OccupancyGrid                 decoded
+[03:59:20] /odom                                                nav_msgs/msg/Odometry                      decoded
+[03:59:21] /parameter_events                                    rcl_interfaces/msg/ParameterEvent          decoded
+[03:59:21] /particle_cloud                                      nav2_msgs/msg/ParticleCloud                decoded
+[03:59:21] /scan                                                sensor_msgs/msg/LaserScan                  decoded
+[03:59:21] /tf                                                  tf2_msgs/msg/TFMessage                     decoded
+[03:59:22] /tf_static                                           tf2_msgs/msg/TFMessage                     decoded
+[03:59:22] /behavior_tree_log                                   nav2_msgs/msg/BehaviorTreeLog              decoded
+[03:59:22] /cmd_vel_nav                                         geometry_msgs/msg/Twist                    decoded
+[03:59:23] /cmd_vel_smoothed                                    geometry_msgs/msg/Twist                    decoded
+[03:59:29] /cmd_vel_teleop                                      geometry_msgs/msg/Twist                    silent (no writer in 6 s)
+[03:59:35] /collision_monitor/collision_points_marker           visualization_msgs/msg/MarkerArray         silent (no writer in 6 s)
+[03:59:42] /collision_monitor/triggering_points                 visualization_msgs/msg/MarkerArray         silent (no writer in 6 s)
+[03:59:48] /collision_monitor_state                             nav2_msgs/msg/CollisionMonitorState        silent (no writer in 6 s)
+[03:59:54] /controller_selector                                 std_msgs/msg/String                        silent (no writer in 6 s)
+[04:00:01] /controller_server/candidate_trajectories            visualization_msgs/msg/MarkerArray         silent (no writer in 6 s)
+[04:00:07] /controller_server/critics_stats                     nav2_msgs/msg/CriticsStats                 silent (no writer in 6 s)
+[04:00:14] /controller_server/optimal_path                      nav_msgs/msg/Path                          silent (no writer in 6 s)
+[04:00:20] /controller_server/optimal_trajectory                nav_msgs/msg/Trajectory                    silent (no writer in 6 s)
+[04:00:26] /cost_cloud                                          sensor_msgs/msg/PointCloud2                silent (no writer in 6 s)
+[04:00:33] /curvature_lookahead_point                           geometry_msgs/msg/PointStamped             silent (no writer in 6 s)
+[04:00:39] /evaluation                                          dwb_msgs/msg/LocalPlanEvaluation           silent (no writer in 6 s)
+[04:00:39] /global_costmap/costmap                              nav_msgs/msg/OccupancyGrid                 decoded
+[04:00:40] /global_costmap/costmap_raw                          nav2_msgs/msg/Costmap                      decoded
+[04:00:46] /global_costmap/costmap_raw_updates                  nav2_msgs/msg/CostmapUpdate                silent (no writer in 6 s)
+[04:00:52] /global_costmap/costmap_updates                      map_msgs/msg/OccupancyGridUpdate           silent (no writer in 6 s)
+[04:00:59] /global_costmap/footprint                            geometry_msgs/msg/Polygon                  silent (no writer in 6 s)
+[04:00:59] /global_costmap/obstacle_layer                       nav_msgs/msg/OccupancyGrid                 decoded
+[04:00:59] /global_costmap/obstacle_layer_raw                   nav2_msgs/msg/Costmap                      decoded
+[04:01:06] /global_costmap/obstacle_layer_raw_updates           nav2_msgs/msg/CostmapUpdate                silent (no writer in 6 s)
+[04:01:12] /global_costmap/obstacle_layer_updates               map_msgs/msg/OccupancyGridUpdate           silent (no writer in 6 s)
+[04:01:12] /global_costmap/published_footprint                  geometry_msgs/msg/PolygonStamped           decoded
+[04:01:12] /global_costmap/static_layer                         nav_msgs/msg/OccupancyGrid                 decoded
+[04:01:13] /global_costmap/static_layer_raw                     nav2_msgs/msg/Costmap                      decoded
+[04:01:19] /global_costmap/static_layer_raw_updates             nav2_msgs/msg/CostmapUpdate                silent (no writer in 6 s)
+[04:01:25] /global_costmap/static_layer_updates                 map_msgs/msg/OccupancyGridUpdate           silent (no writer in 6 s)
+[04:01:32] /goal_checker_selector                               std_msgs/msg/String                        silent (no writer in 6 s)
+[04:01:38] /goal_pose                                           geometry_msgs/msg/PoseStamped              silent (no writer in 6 s)
+[04:01:39] /is_rotating_to_heading                              std_msgs/msg/Bool                          decoded
+[04:01:45] /keepout_costmap_filter_info                         nav2_msgs/msg/CostmapFilterInfo            silent (no writer in 6 s)
+[04:01:45] /lifecycle_manager/managed_nodes_activated           std_msgs/msg/Bool                          decoded
+[04:01:46] /local_costmap/clearing_endpoints                    sensor_msgs/msg/PointCloud2                decoded
+[04:01:46] /local_costmap/costmap                               nav_msgs/msg/OccupancyGrid                 decoded
+[04:01:46] /local_costmap/costmap_raw                           nav2_msgs/msg/Costmap                      decoded
+[04:01:53] /local_costmap/costmap_raw_updates                   nav2_msgs/msg/CostmapUpdate                silent (no writer in 6 s)
+[04:01:59] /local_costmap/costmap_updates                       map_msgs/msg/OccupancyGridUpdate           silent (no writer in 6 s)
+[04:02:05] /local_costmap/footprint                             geometry_msgs/msg/Polygon                  silent (no writer in 6 s)
+[04:02:06] /local_costmap/published_footprint                   geometry_msgs/msg/PolygonStamped           decoded
+[04:02:06] /local_costmap/voxel_grid                            nav2_msgs/msg/VoxelGrid                    decoded
+[04:02:06] /local_costmap/voxel_layer                           nav_msgs/msg/OccupancyGrid                 decoded
+[04:02:07] /local_costmap/voxel_layer_raw                       nav2_msgs/msg/Costmap                      decoded
+[04:02:13] /local_costmap/voxel_layer_raw_updates               nav2_msgs/msg/CostmapUpdate                silent (no writer in 6 s)
+[04:02:19] /local_costmap/voxel_layer_updates                   map_msgs/msg/OccupancyGridUpdate           silent (no writer in 6 s)
+[04:02:26] /local_plan                                          nav_msgs/msg/Path                          silent (no writer in 6 s)
+[04:02:26] /lookahead_collision_arc                             nav_msgs/msg/Path                          decoded
+[04:02:26] /lookahead_point                                     geometry_msgs/msg/PointStamped             decoded
+[04:02:33] /marker                                              visualization_msgs/msg/MarkerArray         silent (no writer in 6 s)
+[04:02:39] /motion_target                                       geometry_msgs/msg/PoseStamped              silent (no writer in 6 s)
+[04:02:39] /plan                                                nav_msgs/msg/Path                          decoded
+[04:02:46] /plan_smoothed                                       nav_msgs/msg/Path                          silent (no writer in 6 s)
+[04:02:52] /planner_selector                                    std_msgs/msg/String                        silent (no writer in 6 s)
+[04:02:52] /polygon_stop                                        geometry_msgs/msg/PolygonStamped           decoded
+[04:02:59] /preempt_teleop                                      std_msgs/msg/Empty                         silent (no writer in 6 s)
+[04:03:05] /progress_checker_selector                           std_msgs/msg/String                        silent (no writer in 6 s)
+[04:03:11] /slowdown                                            visualization_msgs/msg/Marker              silent (no writer in 6 s)
+[04:03:18] /speed_costmap_filter_info                           nav2_msgs/msg/CostmapFilterInfo            silent (no writer in 6 s)
+[04:03:24] /speed_limit                                         nav2_msgs/msg/SpeedLimit                   silent (no writer in 6 s)
+[04:03:30] /tracking_feedback                                   nav2_msgs/msg/TrackingFeedback             silent (no writer in 6 s)
+[04:03:37] /transformed_global_plan                             nav_msgs/msg/Path                          silent (no writer in 6 s)
+[04:03:37] 
+[04:03:37] === 5. summary ===
+[04:03:37] topics on the graph      : 73
+[04:03:37] distinct types           : 32
+[04:03:37] types with a codec       : 32
+[04:03:37] types without a codec    : 0 []
+[04:03:37] decoded topics           : 32
+[04:03:37] silent topics            : 41 ['/cmd_vel', '/initialpose', '/cmd_vel_teleop', '/collision_monitor/collision_points_marker', '/collision_monitor/triggering_points', '/collision_monitor_state', '/controller_selector', '/controller_server/candidate_trajectories', '/controller_server/critics_stats', '/controller_server/optimal_path', '/controller_server/optimal_trajectory', '/cost_cloud', '/curvature_lookahead_point', '/evaluation', '/global_costmap/costmap_raw_updates', '/global_costmap/costmap_updates', '/global_costmap/footprint', '/global_costmap/obstacle_layer_raw_updates', '/global_costmap/obstacle_layer_updates', '/global_costmap/static_layer_raw_updates', '/global_costmap/static_layer_updates', '/goal_checker_selector', '/goal_pose', '/keepout_costmap_filter_info', '/local_costmap/costmap_raw_updates', '/local_costmap/costmap_updates', '/local_costmap/footprint', '/local_costmap/voxel_layer_raw_updates', '/local_costmap/voxel_layer_updates', '/local_plan', '/marker', '/motion_target', '/plan_smoothed', '/planner_selector', '/preempt_teleop', '/progress_checker_selector', '/slowdown', '/speed_costmap_filter_info', '/speed_limit', '/tracking_feedback', '/transformed_global_plan']
+[04:03:37] byte-count fallbacks     : 0 []
+[04:03:37] === 6. goal report ===
+[04:03:37] {
+  "succeeded": true,
+  "reason": "SUCCEEDED",
+  "action": "navigate_to_pose",
+  "goal": [1, -1, 0],
+  "goal_source": "1.0,-1.0",
+  "frame": "map",
+  "result": "SUCCEEDED",
+  "error_code": 0,
+  "error_msg": "",
+  "elapsed_s": 5.8755,
+  "start_pose": [0, 0],
+  "final_pose": [0.931148, -0.859485, -0.193842],
+  "travelled_m": 1.26718,
+  "remaining_m": 0.156477,
+  "feedback_messages": 302,
+  "number_of_recoveries": 0,
+  "last_distance_remaining_m": 0.212199,
+  "max_linear_velocity": 0.45,
+  "ack_latency_s": 0.0262183,
+  "result_latency_s": 5.73466,
+  "messages": {"cmd_vel": 91, "cmd_vel_type": "Twist", "cmd_vel_moving": 91, "plan": 6, "plan_poses": 7, "odom": 279}
+}
+
+[04:03:37] === 7. cleanup ===
+[04:03:42] [nav2_stack] stopping the previous stack
+[nav2_stack] stopped

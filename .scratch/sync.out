@@ -1,0 +1,3 @@
++ ssh -i 'E:\DesktopData\app\ssh_key\id_ed25519' -p 22 -o BatchMode=yes -o StrictHostKeyChecking=accept-new ubuntu@192.168.1.113 'mkdir -p ~/code/CPU/bridge/ubuntu/ros2_bridge_sim'
++ tar -czf - -C E:\DesktopData\app\code\CPU\bridge\ubuntu\ros2_bridge_sim . | ssh ubuntu@192.168.1.113 'tar -xzf - -C ~/code/CPU/bridge/ubuntu/ros2_bridge_sim'
+synced to ubuntu@192.168.1.113:~/code/CPU/bridge/ubuntu/ros2_bridge_sim

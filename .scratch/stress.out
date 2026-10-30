@@ -1,0 +1,16 @@
+run 1  OK       66s  result     : SUCCEEDED
+        pipeline   : /cmd_vel x279 Twist (278 moving, max 0.45 m/s), /plan x13 (last 8 poses), /odom x748, 15.8 s
+run 2  OK       60s  result     : SUCCEEDED
+        pipeline   : /cmd_vel x143 Twist (142 moving, max 0.45 m/s), /plan x7 (last 16 poses), /odom x372, 7.8 s
+run 3  OK       67s  result     : SUCCEEDED
+        pipeline   : /cmd_vel x269 Twist (268 moving, max 0.45 m/s), /plan x5 (last 97 poses), /odom x708, 14.9 s
+run 4  OK       58s  result     : SUCCEEDED
+        pipeline   : /cmd_vel x135 Twist (134 moving, max 0.45 m/s), /plan x5 (last 41 poses), /odom x382, 8.0 s
+run 5  OK       71s  result     : SUCCEEDED
+        pipeline   : /cmd_vel x264 Twist (263 moving, max 0.45 m/s), /plan x10 (last 9 poses), /odom x658, 13.8 s
+run 6  OK       64s  result     : SUCCEEDED
+        pipeline   : /cmd_vel x138 Twist (137 moving, max 0.45 m/s), /plan x5 (last 41 poses), /odom x404, 8.4 s
+run 7  OK       69s  result     : SUCCEEDED
+        pipeline   : /cmd_vel x332 Twist (330 moving, max 0.45 m/s), /plan x17 (last 9 poses), /odom x850, 17.8 s
+run 8  OK       61s  result     : SUCCEEDED
+        pipeline   : /cmd_vel x152 Twist (151 moving, max 0.45 m/s), /plan x5 (last 50 poses), /odom x436, 9.2 s

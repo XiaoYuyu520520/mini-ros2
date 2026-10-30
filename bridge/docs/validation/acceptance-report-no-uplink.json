@@ -1,0 +1,118 @@
+{
+  "generated_at": "2026-09-17T15:44:11+0800",
+  "host": "WIN-UB1HRT8QI4S",
+  "passed": 2,
+  "failed": 4,
+  "checks": [
+    {
+      "check": "topic_list",
+      "title": "Windows lists the Ubuntu topics (cold start)",
+      "ok": false,
+      "seconds": 0.25,
+      "detail": "missing ['/cmd_vel']; wrong type {}",
+      "data": {
+        "cold_start": false,
+        "seconds": 0.25,
+        "topics": {
+          "/behavior_tree_log": "nav2_msgs/msg/BehaviorTreeLog",
+          "/clock": "rosgraph_msgs/msg/Clock",
+          "/map": "nav_msgs/msg/OccupancyGrid",
+          "/odom": "nav_msgs/msg/Odometry",
+          "/plan": "nav_msgs/msg/Path",
+          "/scan": "sensor_msgs/msg/LaserScan",
+          "/tf": "tf2_msgs/msg/TFMessage",
+          "/tf_static": "tf2_msgs/msg/TFMessage"
+        },
+        "missing": [
+          "/cmd_vel"
+        ],
+        "wrong_type": {}
+      }
+    },
+    {
+      "check": "topic_info",
+      "title": "Windows resolves /scan to the gRPC peer",
+      "ok": true,
+      "seconds": 0.25,
+      "detail": "reported as remote (bridged over gRPC)",
+      "data": {
+        "remote": true,
+        "type_ok": true
+      }
+    },
+    {
+      "check": "scan_rate",
+      "title": "Mirrored /scan keeps its 10 Hz",
+      "ok": true,
+      "seconds": 6.28,
+      "detail": "9.49 Hz average over 55 samples",
+      "data": {
+        "samples": 55,
+        "average_hz": 9.489,
+        "min_hz": 9.158,
+        "max_hz": 10.031
+      }
+    },
+    {
+      "check": "uplink",
+      "title": "Windows /cmd_vel moves the Ubuntu robot",
+      "ok": false,
+      "seconds": 4.67,
+      "detail": "published /cmd_vel did not reach the simulator: moved 0.00 m, /odom twist.linear.x=0.000 while commanded",
+      "data": {
+        "before": [
+          0.7883,
+          1.8755
+        ],
+        "after": [
+          0.7883,
+          1.8755
+        ],
+        "moved_m": 0.0,
+        "odom_twist_while_commanded": 0.0
+      }
+    },
+    {
+      "check": "uplink_nav2",
+      "title": "the plan nav2 publishes reaches the robot (default uplink table)",
+      "ok": false,
+      "seconds": 69.2,
+      "detail": "the daemon never armed {'/plan': (None, 'nav_msgs/msg/Path'), '/behavior_tree_log': (None, 'nav2_msgs/msg/BehaviorTreeLog')}, so the default uplink table does not carry it (the table should be /cmd_vel, /goal_pose, /initialpose, /plan, /behavior_tree_log)",
+      "data": {
+        "armed_table": {},
+        "documented_table": {
+          "/cmd_vel": "geometry_msgs/msg/Twist",
+          "/goal_pose": "geometry_msgs/msg/PoseStamped",
+          "/initialpose": "geometry_msgs/msg/PoseWithCovarianceStamped",
+          "/plan": "nav_msgs/msg/Path",
+          "/behavior_tree_log": "nav2_msgs/msg/BehaviorTreeLog"
+        },
+        "warmup_exit": {
+          "/plan": 0,
+          "/behavior_tree_log": 0
+        },
+        "plan_before": [
+          null,
+          0,
+          0
+        ],
+        "plan_after": null,
+        "publisher_exit": 0
+      }
+    },
+    {
+      "check": "cmd_vel_watchdog",
+      "title": "a /cmd_vel that stops arriving stops the robot",
+      "ok": false,
+      "seconds": 4.61,
+      "detail": "the command never reached the robot: drove 0.00 m on a 1 s command, then 0.000 m in the next second, /odom twist.linear.x=0",
+      "data": {
+        "published_for_s": 1.0,
+        "drove_m": 0.0,
+        "coasted_m_after_1s": 0.0,
+        "linear_x_settled": 0.0,
+        "linear_x_a_second_later": 0.0
+      }
+    }
+  ]
+}

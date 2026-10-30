@@ -1,0 +1,178 @@
+15826
+class Step:
+    """One row of the table: the same check, spelled for each platform."""
+
+    def __init__(self, key: str, title: str, local: list[str], remote: str,
+                 quick: bool = False, slow: bool = False) -> None:
+        self.key = key
+        self.title = title
+        self.local = local
+        self.remote = remote
+        self.quick = quick
+        self.slow = slow
+
+
+def python() -> str:
+    return sys.executable
+
+
+def steps() -> list[Step]:
+    py = python()
+    shim_targets = ["test_messages"]
+    return [
+        Step("shim-build", "shim: build entry point",
+             [py, "nav2/ros2_shim/build.py"] + shim_targets,
+             "python3 nav2/ros2_shim/build.py " + " ".join(shim_targets),
+             quick=True),
+        # The remote half builds before it tests, and that is not symmetry for
+        # its own sake. A bare `ctest` there reads whatever `nav2/ros2_shim/build`
+        # happens to hold, so a clone that was never fully built reports
+        # "Unable to find executable" for every target nobody compiled and the
+        # step reads as a portability failure of the code instead of a missing
+        # build. Building through the same entry point the step above uses makes
+        # the result a statement about the tree rather than about this machine's
+        # build directory - and the entry point is itself one of the things
+        # these two rows exist to check.
+        Step("shim-test", "shim: ctest",
+             [py, "tools/run_ctest.py", "shim"],
+             "python3 nav2/ros2_shim/build.py --jobs 6 && "
+             "ctest --test-dir nav2/ros2_shim/build --output-on-failure",
+             slow=True),
+        Step("shm-test", "shm: ctest",
+             [py, "tools/run_ctest.py", "shm"],
+             "ctest --test-dir nav2/shm_transport/build --output-on-failure",
+             quick=True),
+        Step("bridge-build", "bridge: build entry point + ctest",
+             [py, "bridge/scripts/build_bridge.py", "--test"],
+             "python3 bridge/scripts/build_bridge.py --test",
+             slow=True),
+        # Not `quick`: this step needs the daemon the bridge-build step above
+        # produces, and `--quick` may run on a machine that has never built it.
+        #
+        # The remote side is a full start / pid / stop / no-pid cycle, and then
+        # one more start/stop that leaves a *second* assertion behind: that the
+        # words after the verb reach the daemon. They did not - `extra` was
+        # built from the environment only, and `"$@"` was handed on by the
+        # `run` branch alone - so `ros2_bri
+......
+on tools/check_cross_platform.py --local    # this machine only
+    python tools/check_cross_platform.py --remote   # the Ubuntu box only
+    python tools/check_cross_platform.py --quick    # shim + shm, skip the rest
+    python tools/check_cross_platform.py --push-only
+
+The remote half needs the ssh key and host from `bridge/scripts/ubuntu_ssh.py`
+(``-i ~/Desktop/app/ssh_key/id_ed25519 ubuntu@192.168.1.113``) and writes into
+``~/code/CPU`` there, which is what the device is already set up for. Only the
+slices a build needs are pushed; build trees are never sent. The documents travel
+with them: a slice that compiles but cannot explain itself is how `nav2/ros2_shim`
+went 909 files without a README, and `tools/check_docs.py` /
+`tools/check_structure.py` are two of the gates CI runs on both platforms, so the
+remote half has to be able to run them.
+"""
+from __future__ import annotations
+
+import argparse
+import base64
+import io
+import os
+import pathlib
+import subprocess
+import sys
+import tarfile
+import time
+
+REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
+DEFAULT_KEY = os.path.expanduser(r"~/Desktop/app/ssh_key/id_ed25519")
+DEFAULT_TARGET = "ubuntu@192.168.1.113"
+SSH_KEY = DEFAULT_KEY
+SSH_TARGET = DEFAULT_TARGET
+REMOTE_ROOT = "~/code/CPU"
+
+# Directories that have to exist on the other machine for the trees below to
+# configure. `nav2/third_party` and `nav2/nav2_extracted` are the bulky ones
+# (~220 MB together, ~10 s over the LAN) and they only go over because the shim
+# really does compile from them.
+PUSH = [
+    "tools",
+    "nav2/ros2_shim",
+    "nav2/shm_transport",
+    "nav2/slam_toolbox_port",
+    "nav2/third_party",
+    "nav2/nav2_extracted",
+    "bridge/scripts",
+    "bridge/linux",
+    "bridge/windows",
+    "bridge/tests",
+    "gRPC/ros2_gRPC_sdk",
+    # The documents, and the two areas the *gates* read while no build compiles
+    # them: `nav2/patches` is what `verify_patch.py` checks and what the shim's
+    # CMakeLists configures against, and `bridge/ubuntu/ros2_bridge_sim` owns the
+    # simulator's pytest tree (the fifth test tree). Both were quietly missing
+    # from this list, which is why the remote half could not run two of the gates
+    # CI runs on both platforms.
+    "README.md",
+    "BUILD.md",
+    ".github",
+    ".scratch/README.md",
+    "bridge/README.md",
+    "bridge/docs",
+    "bridge/ubuntu/ros2_bridge_sim",
+    "nav2/README.md",
+    "nav2/patches",
+    # The application layer: the car's ROS2 workspace. It is what the
+    # `racecar-build` step below builds on the other side, and a step whose
+    # subject is not pushed is a step that tests nothing.
+    "code/Desktop/racecar",
+]
+
+# `bridge/scripts` is in the list because the bridge's own build entry point has
+# to be there for its step to mean anything: without it the remote half failed
+# with "can't open file '.../bridge/scripts/build_bridge.py'", which says
+# nothing about whether the bridge builds on Linux - which is the thing the
+# step exists to find out.
+# `build` / `install` / `log` are the colcon workspace directories and they only
+# count as such at the *top* of a pushed tree: `include/gmapping/log/` is source,
+# and skipping it is how a vendored package ends up unable to compile at all
+# (`bridge/docs/04-gaps.md` section 28 item 17).
+TOP_LEVEL_SKIP = {"build", "install", "log"}
+ANY_LEVEL_SKIP = {"__pycache__", ".git", ".scratch", ".venv", "node_modules"}
+
+
+class Step:
+    """One row of the table: the same check, spelled for each platform."""
+
+    def __init__(self, key: str, title: str, local: list[str], remote: str,
+                 quick: bool = False, slow: bool = False) -> None:
+        self.key = key
+        self.title = title
+        self.local = local
+        self.remote = remote
+        self.quick = quick
+        self.slow = slow
+
+
+def python() -> str:
+    return sys.executable
+
+
+def steps() -> list[Step]:
+    py = python()
+    shim_targets = ["test_messages"]
+    return [
+        Step("shim-build", "shim: build entry point",
+             [py, "nav2/ros2_shim/build.py"] + shim_targets,
+             "python3 nav2/ros2_shim/build.py " + " ".join(shim_targets),
+             quick=True),
+        # The remote half builds before it tests, and that is not symmetry for
+        # its own sake. A bare `ctest` there reads whatever `nav2/ros2_shim/build`
+        # happens to hold, so a clone that was never fully built reports
+        # "Unable to find executable" for every target nobody compiled and the
+        # step reads as a portability failure of the code instead of a missing
+        # build. Building through the same entry point the step above uses makes
+        # the result a statement about the tree rather than about this machine's
+        # build directory - and the entry point is itself one of the things
+        # these two rows exist to check.
+        Step("shim-test", "shim: ctest",
+             [py, "tools/run_ctest.py", "shim"],
+             "python3 nav2/ros2_shim/build.py --jobs 6 && "
+             "ctest

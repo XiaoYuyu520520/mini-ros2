@@ -1,0 +1,9 @@
+================== end_3_12.py
+     17 self.cmd_vel_sub = self.create_subscription(Twist, '/cmd_vel', self.cmd_vel_callback, 10)
+     18 self.car_cmd_vel_pub = self.create_publisher(Twist, '/car_cmd_vel', 10)
+================== ai_第一个点后回终点.py
+     19 self.cmd_vel_sub = self.create_subscription(Twist, '/cmd_vel', self.cmd_vel_callback, 10)
+     21 self.car_cmd_vel_pub = self.create_publisher(Twist, '/car_cmd_vel', 10)
+================== go.py
+     18 self.cmd_vel_sub = self.create_subscription(Twist, '/cmd_vel', self.cmd_vel_callback, 10)
+     19 self.car_cmd_vel_pub = self.create_publisher(Twist, '/car_cmd_vel', 10)

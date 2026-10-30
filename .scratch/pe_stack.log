@@ -1,0 +1,14 @@
+[nav2_stack] logs: C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack
+[nav2_stack] starting amcl_bridge_node  (map -> odom)
+[nav2_stack]   amcl_bridge_node -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\amcl_bridge_node.log
+[nav2_stack] starting planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower
+[nav2_stack]   planner_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\planner_server.log
+[nav2_stack]   controller_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\controller_server.log
+[nav2_stack]   bt_navigator -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\bt_navigator.log
+[nav2_stack]   behavior_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\behavior_server.log
+[nav2_stack]   smoother_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\smoother_server.log
+[nav2_stack]   waypoint_follower -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\waypoint_follower.log
+[nav2_stack] starting lifecycle_manager
+[nav2_stack]   lifecycle_manager -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\lifecycle_manager.log
+[nav2_stack] planner_server, controller_server, bt_navigator, behavior_server, smoother_server and waypoint_follower are active
+[nav2_stack] the stack is running; stop it with:  nav2_stack.bat stop

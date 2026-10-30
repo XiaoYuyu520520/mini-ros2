@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+edited launch\Run_nav.launch.py                 eol=CRLF
+  File "C:\Users\ADMINI~1\AppData\Local\Temp\edit7.py", line 38, in <module>
+    edit(os.path.join("launch", "Run_nav.launch.py"),
+  File "C:\Users\ADMINI~1\AppData\Local\Temp\edit7.py", line 17, in edit
+    assert n == 1, "%s: %d matches" % (label, n)
+AssertionError: Run_nav stale note: 0 matches

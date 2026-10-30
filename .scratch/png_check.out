@@ -1,0 +1,19 @@
+$ .scratch\png_check.exe .scratch\pngout
+[PASS] gray.png starts with the PNG signature
+[PASS] gray.png is 8-bit grayscale (IHDR depth 8, colour type 0)
+[PASS] gray.png is deflate / adaptive-filter / non-interlaced
+[PASS] gray.png reads back with no alpha channel
+[PASS] gray.png reads back 4x3
+[PASS] the gray levels survive the round trip
+[PASS] the PGM coder still round trips
+[PASS] matte.png is gray + alpha (IHDR colour type 4)
+[PASS] matte.png reads back with an alpha channel
+[PASS] the alpha image's gray levels survive
+[PASS] the alpha channel survives
+[PASS] a PNG that stops after its signature throws
+[PASS] a file that is not there throws
+[PASS] CoderInfo('bmp') throws, so map_io falls back to png
+[PASS] CoderInfo('png') is writable
+[PASS] CoderInfo('pgm') is writable
+
+PASSED (0 failure(s))

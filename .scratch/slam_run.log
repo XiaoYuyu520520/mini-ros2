@@ -1,0 +1,17 @@
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static
+[ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors /clock /odom /scan /tf /tf_static only
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_slam_demo.py --params-file E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\slam_toolbox.yaml --mode async --duration 20
+[launcher] slam_bridge_node.exe --params-file E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\slam_toolbox.yaml --mode async --duration 20
+[slam_bridge_node] E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\slam_toolbox.yaml: 112 parameter(s) for node 'slam_toolbox'
+[slam_bridge_node] /tf_static carries the laser frame
+[INFO] [slam_toolbox] Node using stack size 40000000
+[INFO] [slam_toolbox] Configuring
+[INFO] [slam_toolbox] Using solver plugin solver_plugins::CeresSolver
+[INFO] [slam_toolbox] EigenPoseGraphSolver: configured with 50 max iterations.
+[INFO] [slam_toolbox] Activating
+[slam_bridge_node] async active: /scan -> /map, base_link frame, resolution 0.0500, map every 5.0 s, scan buffer 10, with scan matching, with loop closing
+Registering sensor: [Custom Described Lidar]
+Unregistering sensor: Custom Described Lidar

@@ -1,0 +1,81 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: set -o pipefail
+source /opt/ros/jazzy/setup.bash
+cd ~/code/CPU/code/Desktop/racecar
+rm -rf build install log
+echo "--- clean tree ---"
+ls
+echo "--- colcon build, 6 workers ---"
+colcon build --parallel-workers 6 2>&1 | tail -40
+echo "CONCOLEXIT=${PIPESTATUS[0]}"
+echo "--- install tree ---"
+ls install 2>/dev/null
+ls install/openslam_gmapping/lib 2>/dev/null
+ls install/openslam_gmapping/include/gmapping/log 2>/dev/null
+--- clean tree ---
+gmapping.bat
+gmapping.sh
+map
+map.md
+nav.bat
+nav.sh
+README.md
+save.bat
+save.sh
+src
+tools
+--- colcon build, 6 workers ---
+Starting >>> lslidar_msgs
+Starting >>> nav2_waypoint_cycle
+Starting >>> openslam_gmapping
+Finished <<< nav2_waypoint_cycle [1.80s]
+Starting >>> racecar
+Finished <<< racecar [3.72s]
+Finished <<< openslam_gmapping [6.11s]
+Starting >>> slam_gmapping
+--- stderr: slam_gmapping
+ -fuse-ld=lld -Wl,--disable-new-dtags
+In file included from /home/ubuntu/code/CPU/code/Desktop/racecar/src/slam_gmapping/src/slam_gmapping.cpp:24:
+/home/ubuntu/code/CPU/code/Desktop/racecar/src/slam_gmapping/include/slam_gmapping/slam_gmapping.h:38:10: fatal error: tf2_geometry_msgs/tf2_geometry_msgs.h: 没有那个文件或目录
+   38 | #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+gmake[2]: *** [CMakeFiles/slam_gmapping.dir/build.make:76：CMakeFiles/slam_gmapping.dir/src/slam_gmapping.cpp.o] 错误 1
+gmake[1]: *** [CMakeFiles/Makefile2:137：CMakeFiles/slam_gmapping.dir/all] 错误 2
+gmake: *** [Makefile:146：all] 错误 2
+---
+Failed   <<< slam_gmapping [3.68s, exited with code 2]
+Aborted  <<< lslidar_msgs [10.4s]
+
+Summary: 3 packages finished [10.5s]
+  1 package failed: slam_gmapping
+  1 package aborted: lslidar_msgs
+  1 package had stderr output: slam_gmapping
+  1 package not processed
+CONCOLEXIT=2
+--- install tree ---
+COLCON_IGNORE
+local_setup.bash
+local_setup.ps1
+local_setup.sh
+_local_setup_util_ps1.py
+_local_setup_util_sh.py
+local_setup.zsh
+nav2_waypoint_cycle
+openslam_gmapping
+racecar
+setup.bash
+setup.ps1
+setup.sh
+setup.zsh
+slam_gmapping
+libgridfastslam.a
+liblog.a
+libscanmatcher.a
+libsensor_base.a
+libsensor_odometry.a
+libsensor_range.a
+libutils.a
+carmenconfiguration.h
+configuration.h
+sensorlog.h
+sensorstream.h

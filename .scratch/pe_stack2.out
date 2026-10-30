@@ -1,0 +1,61 @@
+/amcl
+/behavior_server
+/bt_navigator
+/bt_navigator_navigate_through_poses_rclcpp_node
+/bt_navigator_navigate_to_pose_rclcpp_node
+/controller_server
+/global_costmap/global_costmap
+/lifecycle_manager
+/local_costmap/local_costmap
+/planner_server
+/ros2_bridge_daemon
+/ros2_cli_sub
+/ros2_cli_sub
+/smoother_server
+/transform_listener_impl_7615312
+/transform_listener_impl_8923760
+/waypoint_follower
+
+=== ros2 topic info /parameter_events (the whole stack, before)
+Type: rcl_interfaces/msg/ParameterEvent
+
+Publisher count: 14
+Subscription count: 0
+Source: local (shared memory)
+Double value is: 0.25
+Double value is: 0.25
+
+=== parameters to move: [('/controller_server', 'bond_heartbeat_period', 0.25), ('/planner_server', 'bond_heartbeat_period', 0.25)]
+
+=== starting parameter_events_probe.exe in its own process
+
+=== ros2 param set /controller_server bond_heartbeat_period 1.25  (was 0.25)
+Set parameter successful
+
+=== ros2 param set /planner_server bond_heartbeat_period 1.25  (was 0.25)
+Set parameter successful
+
+=== parameter_events_probe.exe output
+watching /parameter_events (volatile, from the head of the ring)
+event 1
+  stamp   55844.579996929
+  node    /controller_server
+  changed bond_heartbeat_period = 1.25
+---
+event 2
+  stamp   55845.219996928
+  node    /planner_server
+  changed bond_heartbeat_period = 1.25
+---
+2 event(s)
+
+=== ros2 topic info /parameter_events (the whole stack, after)
+Type: rcl_interfaces/msg/ParameterEvent
+
+Publisher count: 14
+Subscription count: 0
+Source: local (shared memory)
+
+=== nav2_stack.bat stop
+[nav2_stack] stopping the previous stack
+[nav2_stack] stopped

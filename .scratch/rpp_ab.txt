@@ -1,0 +1,11 @@
+$ ros2 service call /sim/reset std_srvs/srv/Trigger -> message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+$ ros2 topic pub /controller_selector ... data=FollowPath --once -> exit 0
+  sending    : NavigateToPose x=2.55 y=0.00 yaw=0.0 deg
+  accepted   : status 1 after 0.039 s
+  result     : SUCCEEDED
+  reason     : SUCCEEDED
+  odom       : (2.77, 0.04, -0.17 rad) from (0.00, 0.00)
+  travelled  : 2.77 m, 0.22 m left to the goal
+  pipeline   : /cmd_vel x598 Twist (592 moving, max 0.45 m/s), /plan x28 (last 8 poses), /odom x1425, 30.1 s
+  report     : E:\DesktopData\app\code\CPU\.scratch\rpp_goal.json
+

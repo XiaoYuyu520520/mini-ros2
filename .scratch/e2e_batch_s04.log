@@ -1,0 +1,607 @@
+# s04 : go copy.py sim_room12.csv
+
+$ E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\code\Desktop\racecar\tools\racecar_ctl.py stop
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+[nav2_stack] stopping the previous stack
+[nav2_stack] stopped
+
+-- exit 0 after 4.2 s
+
+$ cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2.bat service call /sim/reset std_srvs/srv/Trigger
+request:
+(empty)
+response:
+success: true
+message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+
+-- exit 0 after 0.3 s
+
+$ E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\code\Desktop\racecar\tools\racecar_ctl.py nav --map live
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start
+[ros2_bridge] starting daemon --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors every topic again (including /map)
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\save_map.py -f E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live
+[save_map] /map -> E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.pgm + E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[launcher] map_saver_cli.exe -t /map -f E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live --fmt pgm
+[INFO] [map_saver] 
+	map_saver lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [map_saver] Creating
+[INFO] [map_saver] Configuring
+[INFO] [map_saver] Saving map from '/map' topic to 'E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live' file
+[WARN] [map_saver] Free threshold unspecified. Setting it to default value: 0.250000
+[WARN] [map_saver] Occupied threshold unspecified. Setting it to default value: 0.650000
+[INFO] [map_io] Received a 240 X 240 map @ 0.05 m/pix
+[INFO] [map_io] Writing map occupancy data to E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.pgm
+[INFO] [map_io] Writing map metadata to E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[INFO] [map_io] Map saved
+[INFO] [map_saver] Map saved successfully
+[INFO] [map_saver] Destroying
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static
+[ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors /clock /odom /scan /tf /tf_static only
+[racecar] navigating from the map the peer is publishing (truth_live.yaml)
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static
+[ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors /clock /odom /scan /tf /tf_static only
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py --params E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\nav.yaml --no-overrides --map E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[nav2_stack] logs: C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack
+[nav2_stack] starting map_server  (E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml)
+[nav2_stack]   map_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\map_server.log
+[nav2_stack] map_server is active
+[nav2_stack] map_server -> /map  (it is the only writer of it)
+[nav2_stack] starting amcl_bridge_node  (map -> odom)
+[nav2_stack] starting planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower
+[nav2_stack]   planner_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\planner_server.log
+[nav2_stack]   controller_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\controller_server.log
+[nav2_stack]   bt_navigator -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\bt_navigator.log
+[nav2_stack]   behavior_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\behavior_server.log
+[nav2_stack]   smoother_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\smoother_server.log
+[nav2_stack]   waypoint_follower -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\waypoint_follower.log
+[nav2_stack] starting lifecycle_manager
+[nav2_stack] planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower are active
+[nav2_stack] the stack is running; stop it with:  python bridge/scripts/run_nav2_stack.py stop
+
+-- exit 0 after 19.5 s
+
+$ E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\code\Desktop\racecar\tools\racecar_ctl.py run go copy.py sim_room12.csv
+[racecar] the shim graph has a /clock publisher: use_sim_time:=true
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\shim_run.py --sim-time E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\scripts\go copy.py sim_room12.csv
+shim_run: use_sim_time from the environment: 1
+[INFO] [1789772537.898459136] [multi_goals]: Published goal! Goal ID: 0
+[INFO] [1789772537.937356032] [multi_goals]: Received valid plan.
+[INFO] [1789772538.983902720] [multi_goals]: Received valid plan.
+[INFO] [1789772540.042970624] [multi_goals]: Received valid plan.
+[INFO] [1789772541.104987904] [multi_goals]: Received valid plan.
+[INFO] [1789772542.170726912] [multi_goals]: Received valid plan.
+[INFO] [1789772543.234356480] [multi_goals]: Received valid plan.
+[INFO] [1789772544.290629120] [multi_goals]: Received valid plan.
+
+!! killed after 240 s
+
+-- exit -9 after 240.0 s
+[INFO] [1789772797.880865024] [multi_goals]: Received valid plan.
+[INFO] [1789772798.927254016] [multi_goals]: Received valid plan.
+[INFO] [1789772799.990266880] [multi_goals]: Received valid plan.
+[INFO] [1789772801.058491392] [multi_goals]: Received valid plan.
+[INFO] [1789772801.661642752] [multi_goals]: Received valid plan.
+[INFO] [1789772802.709751552] [multi_goals]: Received valid plan.
+[INFO] [1789772803.771980800] [multi_goals]: Received valid plan.
+[INFO] [1789772804.818745088] [multi_goals]: Received valid plan.
+[INFO] [1789772805.880665856] [multi_goals]: Received valid plan.
+[INFO] [1789772806.942554880] [multi_goals]: Received valid plan.
+[INFO] [1789772807.989709824] [multi_goals]: Received valid plan.
+[INFO] [1789772809.042068992] [multi_goals]: Received valid plan.
+[INFO] [1789772809.694966272] [multi_goals]: Received valid plan.
+[INFO] [1789772810.745308160] [multi_goals]: Received valid plan.
+[INFO] [1789772811.807858944] [multi_goals]: Received valid plan.
+[INFO] [1789772812.869342208] [multi_goals]: Received valid plan.
+[INFO] [1789772813.931850240] [multi_goals]: Received valid plan.
+[INFO] [1789772814.991801600] [multi_goals]: Received valid plan.
+[INFO] [1789772816.037596160] [multi_goals]: Received valid plan.
+[INFO] [1789772817.100980224] [multi_goals]: Received valid plan.
+[INFO] [1789772818.162133248] [multi_goals]: Received valid plan.
+[INFO] [1789772850.715366912] [multi_goals]: Received valid plan.
+[INFO] [1789772851.788790528] [multi_goals]: Received valid plan.
+[INFO] [1789772852.844053504] [multi_goals]: Received valid plan.
+[INFO] [1789772853.898193408] [multi_goals]: Received valid plan.
+[INFO] [1789772855.530757888] [multi_goals]: Received valid plan.
+[INFO] [1789772856.587925504] [multi_goals]: Received valid plan.
+[INFO] [1789772857.637875456] [multi_goals]: Received valid plan.
+[INFO] [1789772859.039798272] [multi_goals]: Received valid plan.
+[INFO] [1789772860.106885120] [multi_goals]: Received valid plan.
+[INFO] [1789772861.166081024] [multi_goals]: Received valid plan.
+[INFO] [1789772862.209634816] [multi_goals]: Received valid plan.
+[INFO] [1789772863.256941056] [multi_goals]: Received valid plan.
+[INFO] [1789772864.653695488] [multi_goals]: Received valid plan.
+[INFO] [1789772865.699688448] [multi_goals]: Received valid plan.
+[INFO] [1789772866.747108096] [multi_goals]: Received valid plan.
+[INFO] [1789772867.806486272] [multi_goals]: Received valid plan.
+[INFO] [1789772868.867666432] [multi_goals]: Received valid plan.
+[INFO] [1789772869.929661440] [multi_goals]: Received valid plan.
+[INFO] [1789772871.008630784] [multi_goals]: Received valid plan.
+[INFO] [1789772872.070842880] [multi_goals]: Received valid plan.
+[INFO] [1789772873.116805888] [multi_goals]: Received valid plan.
+[INFO] [1789773207.262550016] [multi_goals]: Received valid plan.
+[INFO] [1789773210.341243392] [multi_goals]: Received valid plan.
+[INFO] [1789773213.418469888] [multi_goals]: Received valid plan.
+[INFO] [1789773216.484162816] [multi_goals]: Received valid plan.
+[INFO] [1789773219.560542208] [multi_goals]: Received valid plan.
+[INFO] [1789773222.636389888] [multi_goals]: Received valid plan.
+[INFO] [1789773225.679843072] [multi_goals]: Received valid plan.
+[INFO] [1789773228.758192640] [multi_goals]: Received valid plan.
+[INFO] [1789773231.823125504] [multi_goals]: Received valid plan.
+[INFO] [1789773234.866447360] [multi_goals]: Received valid plan.
+[INFO] [1789773237.933559296] [multi_goals]: Received valid plan.
+[INFO] [1789773240.979664384] [multi_goals]: Received valid plan.
+[INFO] [1789773244.052635392] [multi_goals]: Received valid plan.
+[INFO] [1789773901.441947392] [multi_goals]: Received valid plan.
+[INFO] [1789773904.514804736] [multi_goals]: Received valid plan.
+[INFO] [1789773907.576628224] [multi_goals]: Received valid plan.
+[INFO] [1789773910.644737536] [multi_goals]: Received valid plan.
+[INFO] [1789773913.723293696] [multi_goals]: Received valid plan.
+[INFO] [1789773916.801499392] [multi_goals]: Received valid plan.
+[INFO] [1789773919.857754624] [multi_goals]: Received valid plan.
+[INFO] [1789773922.926128640] [multi_goals]: Received valid plan.
+[INFO] [1789773925.980737792] [multi_goals]: Received valid plan.
+[INFO] [1789773929.044158464] [multi_goals]: Received valid plan.
+[INFO] [1789773932.105355776] [multi_goals]: Received valid plan.
+[INFO] [1789773935.188088576] [multi_goals]: Received valid plan.
+[INFO] [1789773938.244041984] [multi_goals]: Received valid plan.
+[INFO] [1789773941.312039936] [multi_goals]: Received valid plan.
+[INFO] [1789773944.367491840] [multi_goals]: Received valid plan.
+[INFO] [1789773947.444575232] [multi_goals]: Received valid plan.
+[INFO] [1789773950.507886336] [multi_goals]: Received valid plan.
+[INFO] [1789773953.581189632] [multi_goals]: Received valid plan.
+[INFO] [1789773956.643885312] [multi_goals]: Received valid plan.
+[INFO] [1789773959.675848960] [multi_goals]: Received valid plan.
+[INFO] [1789773962.724967936] [multi_goals]: Received valid plan.
+[INFO] [1789773965.781824256] [multi_goals]: Received valid plan.
+[INFO] [1789773968.828492032] [multi_goals]: Received valid plan.
+[INFO] [1789773971.896759808] [multi_goals]: Received valid plan.
+[INFO] [1789773974.241195520] [multi_goals]: Received valid plan.
+[INFO] [1789773974.331997440] [multi_goals]: Received valid plan.
+[INFO] [1789773977.399618048] [multi_goals]: Received valid plan.
+[INFO] [1789773980.471195648] [multi_goals]: Received valid plan.
+[INFO] [1789773983.539755520] [multi_goals]: Received valid plan.
+[INFO] [1789773986.596451584] [multi_goals]: Received valid plan.
+[INFO] [1789773989.673856512] [multi_goals]: Received valid plan.
+[INFO] [1789773992.640776704] [multi_goals]: Received valid plan.
+[INFO] [1789774062.808033280] [multi_goals]: Received valid plan.
+[INFO] [1789774063.854315008] [multi_goals]: Received valid plan.
+[INFO] [1789774064.909568000] [multi_goals]: Received valid plan.
+[INFO] [1789774065.977460992] [multi_goals]: Received valid plan.
+[INFO] [1789774067.019973632] [multi_goals]: Received valid plan.
+[INFO] [1789774068.083658752] [multi_goals]: Received valid plan.
+[INFO] [1789774069.144012288] [multi_goals]: Received valid plan.
+[INFO] [1789774070.071596544] [multi_goals]: Received valid plan.
+[INFO] [1789774071.130958592] [multi_goals]: Received valid plan.
+[INFO] [1789774072.192559616] [multi_goals]: Received valid plan.
+[INFO] [1789774073.253879808] [multi_goals]: Received valid plan.
+[INFO] [1789774074.322149376] [multi_goals]: Received valid plan.
+[INFO] [1789774075.385314560] [multi_goals]: Received valid plan.
+[INFO] [1789774076.440581120] [multi_goals]: Received valid plan.
+[INFO] [1789774077.457342720] [multi_goals]: Received valid plan.
+[INFO] [1789774078.535692800] [multi_goals]: Received valid plan.
+[INFO] [1789774079.599344128] [multi_goals]: Received valid plan.
+[INFO] [1789774080.662010368] [multi_goals]: Received valid plan.
+[INFO] [1789774081.692243712] [multi_goals]: Received valid plan.
+[INFO] [1789774082.754307840] [multi_goals]: Received valid plan.
+[INFO] [1789774084.009860864] [multi_goals]: Received valid plan.
+[INFO] [1789774085.053165312] [multi_goals]: Received valid plan.
+[INFO] [1789774086.099835904] [multi_goals]: Received valid plan.
+[INFO] [1789774087.162230528] [multi_goals]: Received valid plan.
+[INFO] [1789774088.223905536] [multi_goals]: Received valid plan.
+[INFO] [1789774089.289830912] [multi_goals]: Received valid plan.
+[INFO] [1789774090.348318976] [multi_goals]: Received valid plan.
+[INFO] [1789774091.410112512] [multi_goals]: Received valid plan.
+[INFO] [1789774092.476114176] [multi_goals]: Received valid plan.
+[INFO] [1789774093.535523840] [multi_goals]: Received valid plan.
+[INFO] [1789774094.598002432] [multi_goals]: Received valid plan.
+[INFO] [1789774095.661554688] [multi_goals]: Received valid plan.
+[INFO] [1789774096.729627136] [multi_goals]: Received valid plan.
+[INFO] [1789774097.962935296] [multi_goals]: Received valid plan.
+[INFO] [1789774099.022546176] [multi_goals]: Received valid plan.
+[INFO] [1789774100.084455424] [multi_goals]: Received valid plan.
+[INFO] [1789774101.136277760] [multi_goals]: Received valid plan.
+[INFO] [1789774102.167952896] [multi_goals]: Received valid plan.
+[INFO] [1789774103.229238272] [multi_goals]: Received valid plan.
+[INFO] [1789774104.301269248] [multi_goals]: Received valid plan.
+[INFO] [1789774105.364354560] [multi_goals]: Received valid plan.
+[INFO] [1789774106.426427392] [multi_goals]: Received valid plan.
+[INFO] [1789774107.495090432] [multi_goals]: Received valid plan.
+[INFO] [1789774108.535269120] [multi_goals]: Received valid plan.
+[INFO] [1789774109.598503424] [multi_goals]: Received valid plan.
+[INFO] [1789774110.661388800] [multi_goals]: Received valid plan.
+[INFO] [1789774112.147932928] [multi_goals]: Received valid plan.
+[INFO] [1789774113.208773376] [multi_goals]: Received valid plan.
+[INFO] [1789774113.698505984] [multi_goals]: Received valid plan.
+[INFO] [1789774114.760489728] [multi_goals]: Received valid plan.
+[INFO] [1789774115.840834816] [multi_goals]: Received valid plan.
+[INFO] [1789774116.901475072] [multi_goals]: Received valid plan.
+[INFO] [1789774117.974852096] [multi_goals]: Received valid plan.
+[INFO] [1789774119.040242688] [multi_goals]: Received valid plan.
+[INFO] [1789774120.151314688] [multi_goals]: Received valid plan.
+[INFO] [1789774121.211474432] [multi_goals]: Received valid plan.
+[INFO] [1789774122.287326208] [multi_goals]: Received valid plan.
+[INFO] [1789774123.351736064] [multi_goals]: Received valid plan.
+[INFO] [1789774124.427954432] [multi_goals]: Received valid plan.
+[INFO] [1789774125.665046784] [multi_goals]: Received valid plan.
+[INFO] [1789774126.712246784] [multi_goals]: Received valid plan.
+[INFO] [1789774127.771390976] [multi_goals]: Received valid plan.
+[INFO] [1789774128.834235648] [multi_goals]: Received valid plan.
+[INFO] [1789774129.901828096] [multi_goals]: Received valid plan.
+[INFO] [1789774130.978204672] [multi_goals]: Received valid plan.
+[INFO] [1789774132.036300032] [multi_goals]: Received valid plan.
+[INFO] [1789774133.114357504] [multi_goals]: Received valid plan.
+[INFO] [1789774134.183668736] [multi_goals]: Received valid plan.
+[INFO] [1789774135.260605696] [multi_goals]: Received valid plan.
+[INFO] [1789774136.320196608] [multi_goals]: Received valid plan.
+[INFO] [1789774137.382153216] [multi_goals]: Received valid plan.
+[INFO] [1789774138.460527872] [multi_goals]: Received valid plan.
+[INFO] [1789774139.522052352] [multi_goals]: Received valid plan.
+[INFO] [1789774140.589056000] [multi_goals]: Received valid plan.
+[INFO] [1789774141.631270912] [multi_goals]: Received valid plan.
+[INFO] [1789774142.756199680] [multi_goals]: Received valid plan.
+[INFO] [1789774143.162487552] [multi_goals]: Received valid plan.
+[INFO] [1789774144.227244544] [multi_goals]: Received valid plan.
+[INFO] [1789774145.292940800] [multi_goals]: Received valid plan.
+[INFO] [1789774146.352979968] [multi_goals]: Received valid plan.
+[INFO] [1789774147.404945920] [multi_goals]: Received valid plan.
+[INFO] [1789774148.483042048] [multi_goals]: Received valid plan.
+[INFO] [1789774149.539091200] [multi_goals]: Received valid plan.
+[INFO] [1789774150.601144320] [multi_goals]: Received valid plan.
+[INFO] [1789774151.667267072] [multi_goals]: Received valid plan.
+[INFO] [1789774152.968589312] [multi_goals]: Received valid plan.
+[INFO] [1789774154.010647040] [multi_goals]: Received valid plan.
+[INFO] [1789774155.069306624] [multi_goals]: Received valid plan.
+[INFO] [1789774156.117174784] [multi_goals]: Received valid plan.
+[INFO] [1789774157.184273152] [multi_goals]: Received valid plan.
+[INFO] [1789774158.240340480] [multi_goals]: Received valid plan.
+[INFO] [1789774158.576296192] [multi_goals]: Received valid plan.
+[INFO] [1789774159.634798336] [multi_goals]: Received valid plan.
+[INFO] [1789774160.697102592] [multi_goals]: Received valid plan.
+[INFO] [1789774161.763768064] [multi_goals]: Received valid plan.
+[INFO] [1789774162.807072768] [multi_goals]: Received valid plan.
+[INFO] [1789774163.874288896] [multi_goals]: Received valid plan.
+[INFO] [1789774164.935770624] [multi_goals]: Received valid plan.
+[INFO] [1789774165.998966528] [multi_goals]: Received valid plan.
+[INFO] [1789774167.043517696] [multi_goals]: Received valid plan.
+[INFO] [1789774168.087139584] [multi_goals]: Received valid plan.
+[INFO] [1789774169.133482752] [multi_goals]: Received valid plan.
+[INFO] [1789774170.215249408] [multi_goals]: Received valid plan.
+[INFO] [1789774171.273692928] [multi_goals]: Received valid plan.
+[INFO] [1789774172.337572352] [multi_goals]: Received valid plan.
+[INFO] [1789774173.389014528] [multi_goals]: Received valid plan.
+[INFO] [1789774174.451203840] [multi_goals]: Received valid plan.
+[INFO] [1789774175.498289664] [multi_goals]: Received valid plan.
+[INFO] [1789774176.555879168] [multi_goals]: Received valid plan.
+[INFO] [1789774177.586525440] [multi_goals]: Received valid plan.
+[INFO] [1789774178.649897216] [multi_goals]: Received valid plan.
+[INFO] [1789774179.727502592] [multi_goals]: Received valid plan.
+[INFO] [1789774180.775172864] [multi_goals]: Received valid plan.
+[INFO] [1789774181.822634240] [multi_goals]: Received valid plan.
+[INFO] [1789774182.889593600] [multi_goals]: Received valid plan.
+[INFO] [1789774183.929465856] [multi_goals]: Received valid plan.
+[INFO] [1789774185.275357440] [multi_goals]: Received valid plan.
+[INFO] [1789774186.342945280] [multi_goals]: Received valid plan.
+[INFO] [1789774187.402861568] [multi_goals]: Received valid plan.
+[INFO] [1789774188.465877504] [multi_goals]: Received valid plan.
+[INFO] [1789774189.523864832] [multi_goals]: Received valid plan.
+[INFO] [1789774190.590041600] [multi_goals]: Received valid plan.
+[INFO] [1789774191.649141760] [multi_goals]: Received valid plan.
+[INFO] [1789774191.997699840] [multi_goals]: Received valid plan.
+[INFO] [1789774193.056929792] [multi_goals]: Received valid plan.
+[INFO] [1789774194.119963904] [multi_goals]: Received valid plan.
+[INFO] [1789774195.184427264] [multi_goals]: Received valid plan.
+[INFO] [1789774196.242932736] [multi_goals]: Received valid plan.
+[INFO] [1789774197.312732160] [multi_goals]: Received valid plan.
+[INFO] [1789774198.373481472] [multi_goals]: Received valid plan.
+[INFO] [1789774199.419084544] [multi_goals]: Received valid plan.
+[INFO] [1789774200.492979200] [multi_goals]: Received valid plan.
+[INFO] [1789774201.554085632] [multi_goals]: Received valid plan.
+[INFO] [1789774202.617276416] [multi_goals]: Received valid plan.
+[INFO] [1789774203.688960256] [multi_goals]: Received valid plan.
+[INFO] [1789774204.727841024] [multi_goals]: Received valid plan.
+[INFO] [1789774205.791291392] [multi_goals]: Received valid plan.
+[INFO] [1789774206.404417792] [multi_goals]: Received valid plan.
+[INFO] [1789774207.463960320] [multi_goals]: Received valid plan.
+[INFO] [1789774208.802465792] [multi_goals]: Received valid plan.
+[INFO] [1789774209.845018368] [multi_goals]: Received valid plan.
+[INFO] [1789774210.906425088] [multi_goals]: Received valid plan.
+[INFO] [1789774211.967189504] [multi_goals]: Received valid plan.
+[INFO] [1789774213.025867776] [multi_goals]: Received valid plan.
+[INFO] [1789774214.091655680] [multi_goals]: Received valid plan.
+[INFO] [1789774215.156036096] [multi_goals]: Received valid plan.
+[INFO] [1789774216.213758976] [multi_goals]: Received valid plan.
+[INFO] [1789774217.399223040] [multi_goals]: Received valid plan.
+[INFO] [1789774218.468677632] [multi_goals]: Received valid plan.
+[INFO] [1789774219.525702400] [multi_goals]: Received valid plan.
+[INFO] [1789774220.593390848] [multi_goals]: Received valid plan.
+[INFO] [1789774221.636346624] [multi_goals]: Received valid plan.
+[INFO] [1789774222.686473984] [multi_goals]: Received valid plan.
+[INFO] [1789774223.391335680] [multi_goals]: Received valid plan.
+[INFO] [1789774224.452761088] [multi_goals]: Received valid plan.
+[INFO] [1789774225.516708352] [multi_goals]: Received valid plan.
+[INFO] [1789774226.577793792] [multi_goals]: Received valid plan.
+[INFO] [1789774227.640794624] [multi_goals]: Received valid plan.
+[INFO] [1789774228.701634304] [multi_goals]: Received valid plan.
+[INFO] [1789774229.759234816] [multi_goals]: Received valid plan.
+[INFO] [1789774230.812218880] [multi_goals]: Received valid plan.
+[INFO] [1789774232.214957824] [multi_goals]: Received valid plan.
+[INFO] [1789774233.245560576] [multi_goals]: Received valid plan.
+[INFO] [1789774234.323278080] [multi_goals]: Received valid plan.
+[INFO] [1789774235.228861184] [multi_goals]: Received valid plan.
+[INFO] [1789774236.277795328] [multi_goals]: Received valid plan.
+[INFO] [1789774237.343911680] [multi_goals]: Received valid plan.
+[INFO] [1789774238.405875200] [multi_goals]: Received valid plan.
+[INFO] [1789774239.464229120] [multi_goals]: Received valid plan.
+[INFO] [1789774240.525810432] [multi_goals]: Received valid plan.
+[INFO] [1789774241.617505536] [multi_goals]: Received valid plan.
+[INFO] [1789774242.651823360] [multi_goals]: Received valid plan.
+[INFO] [1789774243.698003712] [multi_goals]: Received valid plan.
+[INFO] [1789774244.731547392] [multi_goals]: Received valid plan.
+[INFO] [1789774246.223683840] [multi_goals]: Received valid plan.
+[INFO] [1789774247.282324736] [multi_goals]: Received valid plan.
+[INFO] [1789774248.420880128] [multi_goals]: Received valid plan.
+[INFO] [1789774249.481138944] [multi_goals]: Received valid plan.
+[INFO] [1789774250.547330304] [multi_goals]: Received valid plan.
+[INFO] [1789774251.622784000] [multi_goals]: Received valid plan.
+[INFO] [1789774252.672469248] [multi_goals]: Received valid plan.
+[INFO] [1789774253.028204800] [multi_goals]: Received valid plan.
+[INFO] [1789774254.079975424] [multi_goals]: Received valid plan.
+[INFO] [1789774255.139113728] [multi_goals]: Received valid plan.
+[INFO] [1789774256.206084352] [multi_goals]: Received valid plan.
+[INFO] [1789774257.263246592] [multi_goals]: Received valid plan.
+[INFO] [1789774258.326414080] [multi_goals]: Received valid plan.
+[INFO] [1789774259.409221120] [multi_goals]: Received valid plan.
+[INFO] [1789774260.455785216] [multi_goals]: Received valid plan.
+[INFO] [1789774261.517125120] [multi_goals]: Received valid plan.
+[INFO] [1789774262.580977152] [multi_goals]: Received valid plan.
+[INFO] [1789774263.621567488] [multi_goals]: Received valid plan.
+[INFO] [1789774264.673812224] [multi_goals]: Received valid plan.
+[INFO] [1789774265.715702016] [multi_goals]: Received valid plan.
+[INFO] [1789774266.764052736] [multi_goals]: Received valid plan.
+[INFO] [1789774267.825946880] [multi_goals]: Received valid plan.
+[INFO] [1789774314.611524608] [multi_goals]: Received valid plan.
+[INFO] [1789774315.643673600] [multi_goals]: Received valid plan.
+[INFO] [1789774316.688470272] [multi_goals]: Received valid plan.
+[INFO] [1789774318.060313344] [multi_goals]: Received valid plan.
+[INFO] [1789774319.116160768] [multi_goals]: Received valid plan.
+[INFO] [1789774320.177430784] [multi_goals]: Received valid plan.
+[INFO] [1789774321.222934784] [multi_goals]: Received valid plan.
+[INFO] [1789774321.610964480] [multi_goals]: Received valid plan.
+[INFO] [1789774322.665669120] [multi_goals]: Received valid plan.
+[INFO] [1789774323.704148224] [multi_goals]: Received valid plan.
+[INFO] [1789774324.752078080] [multi_goals]: Received valid plan.
+[INFO] [1789774325.804793856] [multi_goals]: Received valid plan.
+[INFO] [1789774326.865804288] [multi_goals]: Received valid plan.
+[INFO] [1789774327.922535680] [multi_goals]: Received valid plan.
+[INFO] [1789774328.991611392] [multi_goals]: Received valid plan.
+[INFO] [1789774329.553494016] [multi_goals]: Received valid plan.
+[INFO] [1789774330.601568512] [multi_goals]: Received valid plan.
+[INFO] [1789774331.665753344] [multi_goals]: Received valid plan.
+[INFO] [1789774332.723731456] [multi_goals]: Received valid plan.
+[INFO] [1789774333.771222272] [multi_goals]: Received valid plan.
+[INFO] [1789774334.802972160] [multi_goals]: Received valid plan.
+[INFO] [1789774335.852119296] [multi_goals]: Received valid plan.
+[INFO] [1789774336.897896192] [multi_goals]: Received valid plan.
+[INFO] [1789774337.423655680] [multi_goals]: Received valid plan.
+[INFO] [1789774338.487324416] [multi_goals]: Received valid plan.
+[INFO] [1789774339.548312832] [multi_goals]: Received valid plan.
+[INFO] [1789774340.613649664] [multi_goals]: Received valid plan.
+[INFO] [1789774341.663446016] [multi_goals]: Received valid plan.
+[INFO] [1789774342.725962496] [multi_goals]: Received valid plan.
+[INFO] [1789774343.773822464] [multi_goals]: Received valid plan.
+[INFO] [1789774344.835171584] [multi_goals]: Received valid plan.
+[INFO] [1789774345.880818432] [multi_goals]: Received valid plan.
+[INFO] [1789774346.923553536] [multi_goals]: Received valid plan.
+[INFO] [1789774348.075250176] [multi_goals]: Received valid plan.
+[INFO] [1789774349.134162688] [multi_goals]: Received valid plan.
+[INFO] [1789774350.180745728] [multi_goals]: Received valid plan.
+[INFO] [1789774350.534451712] [multi_goals]: Received valid plan.
+[INFO] [1789774351.597724928] [multi_goals]: Received valid plan.
+[INFO] [1789774352.643056384] [multi_goals]: Received valid plan.
+[INFO] [1789774353.707390208] [multi_goals]: Received valid plan.
+[INFO] [1789774354.757137664] [multi_goals]: Received valid plan.
+[INFO] [1789774355.815336704] [multi_goals]: Received valid plan.
+[INFO] [1789774356.896116992] [multi_goals]: Received valid plan.
+[INFO] [1789774357.940481024] [multi_goals]: Received valid plan.
+[INFO] [1789774359.003316992] [multi_goals]: Received valid plan.
+[INFO] [1789774360.078120192] [multi_goals]: Received valid plan.
+[INFO] [1789774361.133511936] [multi_goals]: Received valid plan.
+[INFO] [1789774362.180190464] [multi_goals]: Received valid plan.
+[INFO] [1789774363.257326080] [multi_goals]: Received valid plan.
+[INFO] [1789774364.331485440] [multi_goals]: Received valid plan.
+[INFO] [1789774365.393968128] [multi_goals]: Received valid plan.
+[INFO] [1789774366.459939328] [multi_goals]: Received valid plan.
+[INFO] [1789774366.799817984] [multi_goals]: Received valid plan.
+[INFO] [1789774367.868741888] [multi_goals]: Received valid plan.
+[INFO] [1789774368.926134272] [multi_goals]: Received valid plan.
+[INFO] [1789774369.971805696] [multi_goals]: Received valid plan.
+[INFO] [1789774371.008988160] [multi_goals]: Received valid plan.
+[INFO] [1789774372.039980288] [multi_goals]: Received valid plan.
+[INFO] [1789774373.081818880] [multi_goals]: Received valid plan.
+[INFO] [1789774374.127502848] [multi_goals]: Received valid plan.
+[INFO] [1789774375.180903168] [multi_goals]: Received valid plan.
+[INFO] [1789774376.239892992] [multi_goals]: Received valid plan.
+[INFO] [1789774377.300952576] [multi_goals]: Received valid plan.
+[INFO] [1789774378.163643648] [multi_goals]: Received valid plan.
+[INFO] [1789774379.212887808] [multi_goals]: Received valid plan.
+[INFO] [1789774380.259409408] [multi_goals]: Received valid plan.
+[INFO] [1789774381.301121280] [multi_goals]: Received valid plan.
+[INFO] [1789774382.331964672] [multi_goals]: Received valid plan.
+[INFO] [1789774383.383733504] [multi_goals]: Received valid plan.
+[INFO] [1789774384.425818624] [multi_goals]: Received valid plan.
+[INFO] [1789774385.471415808] [multi_goals]: Received valid plan.
+[INFO] [1789774386.534930688] [multi_goals]: Received valid plan.
+[INFO] [1789774387.587126272] [multi_goals]: Received valid plan.
+[INFO] [1789774388.650856192] [multi_goals]: Received valid plan.
+[INFO] [1789774389.697324544] [multi_goals]: Received valid plan.
+[INFO] [1789774390.759832064] [multi_goals]: Received valid plan.
+[INFO] [1789774391.801126656] [multi_goals]: Received valid plan.
+[INFO] [1789774392.862874880] [multi_goals]: Received valid plan.
+[INFO] [1789774393.668392704] [multi_goals]: Received valid plan.
+[INFO] [1789774394.010594816] [multi_goals]: Received valid plan.
+[INFO] [1789774395.056737280] [multi_goals]: Received valid plan.
+[INFO] [1789774396.090350336] [multi_goals]: Received valid plan.
+[INFO] [1789774397.115247104] [multi_goals]: Received valid plan.
+[INFO] [1789774398.502447104] [multi_goals]: Received valid plan.
+[INFO] [1789774399.573924864] [multi_goals]: Received valid plan.
+[INFO] [1789774400.615279360] [multi_goals]: Received valid plan.
+[INFO] [1789774401.661574400] [multi_goals]: Received valid plan.
+[INFO] [1789774402.697105408] [multi_goals]: Received valid plan.
+[INFO] [1789774403.742830592] [multi_goals]: Received valid plan.
+[INFO] [1789774404.801884416] [multi_goals]: Received valid plan.
+[INFO] [1789774405.869161216] [multi_goals]: Received valid plan.
+[INFO] [1789774406.928681472] [multi_goals]: Received valid plan.
+[INFO] [1789774407.975297536] [multi_goals]: Received valid plan.
+[INFO] [1789774409.037092608] [multi_goals]: Received valid plan.
+[INFO] [1789774410.727739392] [multi_goals]: Received valid plan.
+[INFO] [1789774411.774907392] [multi_goals]: Received valid plan.
+[INFO] [1789774412.821673216] [multi_goals]: Received valid plan.
+[INFO] [1789774413.872490496] [multi_goals]: Received valid plan.
+[INFO] [1789774414.930847488] [multi_goals]: Received valid plan.
+[INFO] [1789774415.997283840] [multi_goals]: Received valid plan.
+[INFO] [1789774417.039648768] [multi_goals]: Received valid plan.
+[INFO] [1789774418.103175680] [multi_goals]: Received valid plan.
+[INFO] [1789774419.163669504] [multi_goals]: Received valid plan.
+[INFO] [1789774420.225771776] [multi_goals]: Received valid plan.
+[INFO] [1789774421.278341632] [multi_goals]: Received valid plan.
+[INFO] [1789774422.336075776] [multi_goals]: Received valid plan.
+[INFO] [1789774423.399100160] [multi_goals]: Received valid plan.
+[INFO] [1789774424.448827648] [multi_goals]: Received valid plan.
+[INFO] [1789774425.490793984] [multi_goals]: Received valid plan.
+[INFO] [1789774426.553972992] [multi_goals]: Received valid plan.
+[INFO] [1789774427.615794688] [multi_goals]: Received valid plan.
+[INFO] [1789774428.683810816] [multi_goals]: Received valid plan.
+[INFO] [1789774429.637341696] [multi_goals]: Received valid plan.
+[INFO] [1789774430.699528192] [multi_goals]: Received valid plan.
+[INFO] [1789774431.761860608] [multi_goals]: Received valid plan.
+[INFO] [1789774432.819695360] [multi_goals]: Received valid plan.
+[INFO] [1789774433.882149632] [multi_goals]: Received valid plan.
+[INFO] [1789774434.964372224] [multi_goals]: Received valid plan.
+[INFO] [1789774436.022459904] [multi_goals]: Received valid plan.
+[INFO] [1789774437.090557440] [multi_goals]: Received valid plan.
+[INFO] [1789774437.434789120] [multi_goals]: Received valid plan.
+[INFO] [1789774438.491499776] [multi_goals]: Received valid plan.
+[INFO] [1789774439.560230912] [multi_goals]: Received valid plan.
+[INFO] [1789774440.616909568] [multi_goals]: Received valid plan.
+[INFO] [1789774441.679857408] [multi_goals]: Received valid plan.
+[INFO] [1789774442.726973184] [multi_goals]: Received valid plan.
+[INFO] [1789774443.930960384] [multi_goals]: Received valid plan.
+[INFO] [1789774444.981488128] [multi_goals]: Received valid plan.
+[INFO] [1789774446.011559424] [multi_goals]: Received valid plan.
+[INFO] [1789774447.074062592] [multi_goals]: Received valid plan.
+[INFO] [1789774448.137627904] [multi_goals]: Received valid plan.
+[INFO] [1789774449.199429888] [multi_goals]: Received valid plan.
+[INFO] [1789774450.261723904] [multi_goals]: Received valid plan.
+[INFO] [1789774451.319960576] [multi_goals]: Received valid plan.
+[INFO] [1789774452.381067008] [multi_goals]: Received valid plan.
+[INFO] [1789774453.449412096] [multi_goals]: Received valid plan.
+[INFO] [1789774454.525102592] [multi_goals]: Received valid plan.
+[INFO] [1789774455.570941440] [multi_goals]: Received valid plan.
+[INFO] [1789774456.924924928] [multi_goals]: Received valid plan.
+[INFO] [1789774457.523695616] [multi_goals]: Received valid plan.
+[INFO] [1789774458.588157184] [multi_goals]: Received valid plan.
+[INFO] [1789774459.649799168] [multi_goals]: Received valid plan.
+[INFO] [1789774460.927793664] [multi_goals]: Received valid plan.
+[INFO] [1789774461.962363648] [multi_goals]: Received valid plan.
+[INFO] [1789774463.028793600] [multi_goals]: Received valid plan.
+[INFO] [1789774464.087740928] [multi_goals]: Received valid plan.
+[INFO] [1789774465.149390336] [multi_goals]: Received valid plan.
+[INFO] [1789774466.216387840] [multi_goals]: Received valid plan.
+[INFO] [1789774467.248321024] [multi_goals]: Received valid plan.
+[INFO] [1789774468.294880000] [multi_goals]: Received valid plan.
+[INFO] [1789774469.336703232] [multi_goals]: Received valid plan.
+[INFO] [1789774470.387252736] [multi_goals]: Received valid plan.
+[INFO] [1789774471.450207232] [multi_goals]: Received valid plan.
+[INFO] [1789774472.510358016] [multi_goals]: Received valid plan.
+[INFO] [1789774473.554429184] [multi_goals]: Received valid plan.
+[INFO] [1789774473.931719168] [multi_goals]: Received valid plan.
+[INFO] [1789774474.998143488] [multi_goals]: Received valid plan.
+[INFO] [1789774476.060551680] [multi_goals]: Received valid plan.
+[INFO] [1789774477.119525120] [multi_goals]: Received valid plan.
+[INFO] [1789774478.164760576] [multi_goals]: Received valid plan.
+[INFO] [1789774479.228037376] [multi_goals]: Received valid plan.
+[INFO] [1789774480.289508352] [multi_goals]: Received valid plan.
+[INFO] [1789774481.373285376] [multi_goals]: Received valid plan.
+[INFO] [1789774482.430830336] [multi_goals]: Received valid plan.
+[INFO] [1789774483.493808384] [multi_goals]: Received valid plan.
+[INFO] [1789774484.556022784] [multi_goals]: Received valid plan.
+[INFO] [1789774485.759393024] [multi_goals]: Received valid plan.
+[INFO] [1789774486.821400320] [multi_goals]: Received valid plan.
+[INFO] [1789774487.898507520] [multi_goals]: Received valid plan.
+[INFO] [1789774488.962602752] [multi_goals]: Received valid plan.
+[INFO] [1789774490.012789760] [multi_goals]: Received valid plan.
+[INFO] [1789774491.086870784] [multi_goals]: Received valid plan.
+[INFO] [1789774492.342312704] [multi_goals]: Received valid plan.
+[INFO] [1789774493.400241408] [multi_goals]: Received valid plan.
+[INFO] [1789774494.466966272] [multi_goals]: Received valid plan.
+[INFO] [1789774495.545840128] [multi_goals]: Received valid plan.
+[INFO] [1789774496.592596992] [multi_goals]: Received valid plan.
+[INFO] [1789774497.655480576] [multi_goals]: Received valid plan.
+[INFO] [1789774498.717394688] [multi_goals]: Received valid plan.
+[INFO] [1789774499.775256320] [multi_goals]: Received valid plan.
+[INFO] [1789774500.822762752] [multi_goals]: Received valid plan.
+[INFO] [1789774501.168200960] [multi_goals]: Received valid plan.
+[INFO] [1789774502.231376896] [multi_goals]: Received valid plan.
+[INFO] [1789774503.296332800] [multi_goals]: Received valid plan.
+[INFO] [1789774504.344674304] [multi_goals]: Received valid plan.
+[INFO] [1789774505.392606208] [multi_goals]: Received valid plan.
+[INFO] [1789774506.456364544] [multi_goals]: Received valid plan.
+[INFO] [1789774507.760744448] [multi_goals]: Received valid plan.
+[INFO] [1789774508.814230272] [multi_goals]: Received valid plan.
+[INFO] [1789774510.158163200] [multi_goals]: Received valid plan.
+[INFO] [1789774511.236381696] [multi_goals]: Received valid plan.
+[INFO] [1789774512.308097280] [multi_goals]: Received valid plan.
+[INFO] [1789774513.375737088] [multi_goals]: Received valid plan.
+[INFO] [1789774514.422786304] [multi_goals]: Received valid plan.
+[INFO] [1789774515.463266304] [multi_goals]: Received valid plan.
+[INFO] [1789774516.500978688] [multi_goals]: Received valid plan.
+[INFO] [1789774517.546375424] [multi_goals]: Received valid plan.
+[INFO] [1789774518.608907520] [multi_goals]: Received valid plan.
+[INFO] [1789774519.671382784] [multi_goals]: Received valid plan.
+[INFO] [1789774520.957747200] [multi_goals]: Received valid plan.
+[INFO] [1789774522.011490816] [multi_goals]: Received valid plan.
+[INFO] [1789774523.074323200] [multi_goals]: Received valid plan.
+[INFO] [1789774558.644234240] [multi_goals]: Received valid plan.
+[INFO] [1789774561.703006208] [multi_goals]: Received valid plan.
+[INFO] [1789774564.769748992] [multi_goals]: Received valid plan.
+[INFO] [1789774567.840773120] [multi_goals]: Received valid plan.
+[INFO] [1789774570.908164096] [multi_goals]: Received valid plan.
+[INFO] [1789774573.998874880] [multi_goals]: Received valid plan.
+[INFO] [1789774577.079531008] [multi_goals]: Received valid plan.
+[INFO] [1789774580.145038848] [multi_goals]: Received valid plan.
+[INFO] [1789774583.204397824] [multi_goals]: Received valid plan.
+[INFO] [1789774586.281517312] [multi_goals]: Received valid plan.
+[INFO] [1789774589.341178880] [multi_goals]: Received valid plan.
+[INFO] [1789774592.406574848] [multi_goals]: Received valid plan.
+[INFO] [1789774595.465869312] [multi_goals]: Received valid plan.
+[INFO] [1789774598.523080192] [multi_goals]: Received valid plan.
+[INFO] [1789774601.587363840] [multi_goals]: Received valid plan.
+[INFO] [1789774604.644037888] [multi_goals]: Received valid plan.
+[INFO] [1789774607.705288960] [multi_goals]: Received valid plan.
+[INFO] [1789774610.774008576] [multi_goals]: Received valid plan.
+[INFO] [1789774613.830383360] [multi_goals]: Received valid plan.
+[INFO] [1789774616.893632512] [multi_goals]: Received valid plan.
+[INFO] [1789774619.953577472] [multi_goals]: Received valid plan.
+[INFO] [1789774623.015253504] [multi_goals]: Received valid plan.
+[INFO] [1789774626.077252352] [multi_goals]: Received valid plan.
+[INFO] [1789774629.156348672] [multi_goals]: Received valid plan.
+[INFO] [1789774631.632424448] [multi_goals]: Received valid plan.
+[INFO] [1789774631.689321728] [multi_goals]: Received valid plan.
+[INFO] [1789774634.759718912] [multi_goals]: Received valid plan.
+[INFO] [1789774637.830358272] [multi_goals]: Received valid plan.
+[INFO] [1789774640.895756288] [multi_goals]: Received valid plan.
+[INFO] [1789774643.954910720] [multi_goals]: Received valid plan.
+[INFO] [1789774647.005033984] [multi_goals]: Received valid plan.
+[INFO] [1789774650.053512192] [multi_goals]: Received valid plan.
+[INFO] [1789774650.687865344] [multi_goals]: Received valid plan.

@@ -1,0 +1,72 @@
+==================== sim.py 16766
+3: The car subscribes to ``/cmd_vel`` and publishes ``/odom``, ``/scan``, ``/tf``,
+4: ``/tf_static``, ``/map`` and ``/clock``.  Sim time starts at 0 and advances in
+7: Like a real base, the car stops when the commands stop: a ``/cmd_vel`` that
+26: #: counterpart of `velocity_smoother`'s `cmd_vel_timeout`: the bridge, nav2 and
+27: #: a hand-typed `ros2 topic pub` all publish well inside it, so the only thing
+28: #: it ever stops is a command whose publisher has gone away.
+36: TOPIC_CMD_VEL = "/cmd_vel"
+37: TOPIC_ODOM = "/odom"
+38: TOPIC_SCAN = "/scan"
+41: TOPIC_MAP = "/map"
+42: TOPIC_CLOCK = "/clock"
+60: """Integrates ``/cmd_vel`` into a pose and publishes the sensor topics."""
+87: #: The lidar's own limits: the rays are cast with them and ``/scan``
+124: self._pub_odom = graph.create_publisher(TOPIC_ODOM, msg.ODOMETRY)
+125: self._pub_scan = graph.create_publisher(TOPIC_SCAN, msg.LASER_SCAN)
+126: self._pub_tf = graph.create_publisher(TOPIC_TF, msg.TF_MESSAGE)
+127: self._pub_tf_static = graph.create_publisher(TOPIC_TF_STATIC, msg.TF_MESSAGE)
+128: self._pub_map = graph.create_publisher(TOPIC_MAP, msg.OCCUPANCY_GRID)
+129: self._pub_clock = graph.create_publisher(TOPIC_CLOCK, msg.CLOCK)
+132: TOPIC_CMD_VEL, msg.TWIST, self._on_cmd_vel, decode=True
+137: def _on_cmd_vel(self, event: Message) -> None:
+148: at the keyboard and no publisher exists to keep re-sending -- so the
+163: publishing `/cmd_vel` at a fixed rate while its goal runs, so nothing
+178: This is the behaviour the audit found missing: a publisher that dies
+197: "cmd_vel watchdog: no command for %.2f s, stopping the car (trip %d)",
+240: """Advance the simulation by one control step and publish what is due."""
+245: # robot on a velocity its publisher sent minutes ago.
+256: publish_scan = now >= self._next_scan
+257: publish_map = now >= self._next_map
+258: publish_tf_static = now >= self._next_tf_static
+259: if publish_scan:
+261: if publish_map:
+263: if publish_tf_static:
+266: self._publish_clock()
+267: self._publish_odom()
+268: self._publish_tf()
+269: if publish_tf_static:
+270: self._publish_tf_static()
+271: if publish_scan:
+272: self._publish_scan()
+273: if publish_map:
+274: self._publish_map()
+302: # -- publishers --------------------------------------------------------
+308: def _publish_clock(self) -> None:
+310: self._pub_clock.publish(message={"clock": msg.make_time(sec, nanosec)}, stamp_ns=self.stamp_ns)
+312: def _publish_odom(self) -> None:
+326: self._pub_odom.publish(message=odometry, stamp_ns=self.stamp_ns)
+328: def _publish_scan(self) -> None:
+344: self._pub_scan.publish(message=scan, stamp_ns=self.stamp_ns)
+346: def _publish_tf(self) -> None:
+356: self._pub_tf.publish(message={"transforms": [transform]}, stamp_ns=self.stamp_ns)
+358: def _publish_tf_static(self) -> None:
+368: self._pub_tf_static.publish(message={"transforms": [transform]}, stamp_ns=self.stamp_ns)
+370: def _publish_map(self) -> None:
+383: self._pub_map.publish(message=grid, stamp_ns=self.stamp_ns)
+409: self._pub = graph.create_publisher(TOPIC_CMD_VEL, msg.TWIST)
+423: self._pub.publish(message=msg.make_twist(0.0, 0.0))
+433: self._pub.publish(message=msg.make_twist(*command))
+437: self._pub.publish(message=msg.make_twist(0.0, 0.0))
+438: self._sub.unsubscribe()
+==================== run_sim.py 12961
+78: "--subscribe",
+102: """Split a ``--subscribe`` argument into ``(topic, type)``.
+105: spells it out, ``/probe/x`` leaves it to whatever the first publisher
+111: raise ValueError("--subscribe expects 'TOPIC[:TYPE]', got %r" % spec)
+124: The car only subscribes to what it drives on, so a caller that pushes a
+152: rows.append((topic.name, topic.type or "-", str(topic.publisher_count), str(topic.subscriber_count)))
+210: # there is no publisher to time out, so the command is held
+247: watched = attach_probe_subscriptions(graph, args.subscribe)
+272: for name, type_name in (parse_subscription(spec) for spec in args.subscribe):
+280: print("  cmd    : publish geometry_msgs/msg/Twist on %s, or use the console" % TOPIC_CMD_VEL)

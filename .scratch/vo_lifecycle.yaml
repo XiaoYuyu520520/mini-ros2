@@ -1,0 +1,13 @@
+# A stand-alone lifecycle_manager for one run of `vector_object_server.exe`.
+#
+# The stack's own manager lists the six navigation servers, and this node has no
+# block in upstream's nav2_params.yaml, so it needs its own `node_names`. The
+# server waits for external transitions (`ros2_shim/server_runner.hpp` prints
+# exactly that on start), which is why a manager is the thing that makes it come
+# up at all.
+lifecycle_manager:
+  ros__parameters:
+    autostart: true
+    node_names: ["vector_object_server"]
+    bond_timeout: 0.0
+    attempt_respawn_reconnection: false

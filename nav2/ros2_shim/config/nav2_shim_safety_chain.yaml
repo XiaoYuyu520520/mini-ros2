@@ -1,0 +1,33 @@
+# Parameters for the two nodes that sit between the controller and the wheels,
+# for the mode where they are *in* the driving chain rather than beside it:
+#
+#     nav2_stack.bat --safety
+#
+# nav2_shim_safety.yaml holds the smoothing limits and the stop polygon, and it
+# is the only safety file `nav2_safety.bat` loads. This one is loaded on top of
+# it, and only by `nav2_stack.bat --safety`, because the two topic names below
+# are exactly what tells the two modes apart:
+#
+#   beside the stack (nav2_safety.bat, no remapping anywhere)
+#       controller_server  -> /cmd_vel           (the robot reads this)
+#       velocity_smoother  -> /cmd_vel_smoothed  (nothing reads this)
+#       collision_monitor  -> /cmd_vel_monitored (nothing reads this)
+#       ... so the pair can run against a live stack and change nothing.
+#
+#   in the chain (nav2_stack.bat --safety, remapping on the writers)
+#       controller_server  -> /cmd_vel_nav
+#       velocity_smoother  -> /cmd_vel_smoothed
+#       collision_monitor  -> /cmd_vel           (the robot reads this)
+#       ... the same two nodes, now the only way a velocity command reaches
+#       the wheels.
+#
+# The stack script does the rewriting itself: controller_server and
+# behavior_server are started with `-r cmd_vel:=cmd_vel_nav`, and
+# velocity_smoother with the same rule so that it reads the stream the
+# controller writes. Nothing is remapped on collision_monitor - its topics are
+# parameters, and `cmd_vel_out_topic: cmd_vel` below is what makes it the single
+# writer of the topic the robot listens to.
+collision_monitor:
+  ros__parameters:
+    cmd_vel_in_topic: cmd_vel_smoothed
+    cmd_vel_out_topic: cmd_vel

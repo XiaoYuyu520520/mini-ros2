@@ -1,0 +1,19 @@
+# Scratch override, loaded LAST by `nav2_stack.bat --safety --safety-params`.
+#
+# It restates *only* the stop polygon - widened to a 40 x 40 m box, so that
+# whatever the laser currently sees is inside it. Everything else, in
+# particular `cmd_vel_out_topic: cmd_vel` from nav2_shim_safety_chain.yaml,
+# stays as the chain mode set it. That is the difference from
+# `.scratch\safety_stopall.yaml`, which also moves the monitor's output back to
+# `cmd_vel_monitored` and therefore cuts the chain instead of closing it.
+collision_monitor:
+  ros__parameters:
+    polygons: ["PolygonStop"]
+    PolygonStop:
+      type: "polygon"
+      points: "[[20.0, 20.0], [20.0, -20.0], [-20.0, -20.0], [-20.0, 20.0]]"
+      action_type: "stop"
+      min_points: 4
+      visualize: true
+      polygon_pub_topic: "polygon_stop"
+      enabled: true

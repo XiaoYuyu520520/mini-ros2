@@ -1,0 +1,24 @@
+
+=== topic_list: Windows lists the Ubuntu topics (cold start)
+[bridge] stopping the daemon to force a cold start ...
+[PASS] topic_list (2.1 s) - 7 topics with types in 2.1 s (cold start)
+
+=== topic_info: Windows resolves /scan to the gRPC peer
+[PASS] topic_info (0.2 s) - reported as remote (bridged over gRPC)
+
+=== scan_rate: Mirrored /scan keeps its 10 Hz
+[PASS] scan_rate (6.2 s) - 9.33 Hz average over 54 samples
+
+=== uplink: Windows /cmd_vel moves the Ubuntu robot
+[PASS] uplink (4.6 s) - moved 0.80 m, /odom twist.linear.x=0.250 while commanded
+
+=== cmd_vel_watchdog: a /cmd_vel that stops arriving stops the robot
+[PASS] cmd_vel_watchdog (4.6 s) - drove 0.38 m on a 1 s command, then 0.000 m in the next second, /odom twist.linear.x=0
+
+=== nav2_demo: nav2 plans a path and drives to the goal
+[PASS] nav2_demo (21.7 s) - goal [10.425, 8.025] reached from [0.911387, 0.71221]: travelled 11.72 m, remaining 0.28 m, plan 304 waypoints
+
+=== reset: putting the car back at the origin
+[done] /sim/reset
+
+6/6 checks passed; report: E:\DesktopData\app\code\CPU\.scratch\acceptance-latest.json

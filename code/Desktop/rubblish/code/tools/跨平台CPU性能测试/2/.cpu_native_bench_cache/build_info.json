@@ -1,0 +1,16 @@
+{
+  "bench_version": "2.5.0",
+  "source_sha256": "2174b40f66feaad08cc38b8cd28f0637b0d1eadfe0d1bb71a8eb5207459f39be",
+  "compiler": "/usr/bin/aarch64-linux-gnu-g++-11",
+  "compiler_version": "aarch64-linux-gnu-g++-11 (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+  "flags": [
+    "-O2",
+    "-std=c++17",
+    "-DNDEBUG",
+    "-march=native",
+    "-pthread"
+  ],
+  "platform": "Linux-5.10.0+-aarch64-with-glibc2.35",
+  "machine": "aarch64",
+  "python_bits": 64
+}

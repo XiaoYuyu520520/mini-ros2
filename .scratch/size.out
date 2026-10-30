@@ -1,0 +1,5 @@
+    1 records,     75 bytes:    96.6 ms for 300 swaps,  0.322 ms each
+   10 records,    543 bytes:    96.1 ms for 300 swaps,  0.320 ms each
+   50 records,   2663 bytes:   113.5 ms for 300 swaps,  0.378 ms each
+  200 records,  10713 bytes:   114.0 ms for 300 swaps,  0.380 ms each
+ 1000 records,  53913 bytes:   107.7 ms for 300 swaps,  0.359 ms each

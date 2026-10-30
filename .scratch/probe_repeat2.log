@@ -1,0 +1,91 @@
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+[nav2_stack] stopping the previous stack
+[nav2_stack] stopped
+request:
+(empty)
+response:
+success: true
+message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start
+[ros2_bridge] starting daemon --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors every topic again (including /map)
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\save_map.py -f E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live
+[save_map] /map -> E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.pgm + E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[launcher] map_saver_cli.exe -t /map -f E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live --fmt pgm
+[INFO] [map_saver] 
+	map_saver lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [map_saver] Creating
+[INFO] [map_saver] Configuring
+[INFO] [map_saver] Saving map from '/map' topic to 'E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live' file
+[WARN] [map_saver] Free threshold unspecified. Setting it to default value: 0.250000
+[WARN] [map_saver] Occupied threshold unspecified. Setting it to default value: 0.650000
+[INFO] [map_io] Received a 240 X 240 map @ 0.05 m/pix
+[INFO] [map_io] Writing map occupancy data to E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.pgm
+[INFO] [map_io] Writing map metadata to E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[INFO] [map_io] Map saved
+[INFO] [map_saver] Map saved successfully
+[INFO] [map_saver] Destroying
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static
+[ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors /clock /odom /scan /tf /tf_static only
+[racecar] navigating from the map the peer is publishing (truth_live.yaml)
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static
+[ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors /clock /odom /scan /tf /tf_static only
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py --params E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\nav.yaml --no-overrides --map E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[nav2_stack] logs: C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack
+[nav2_stack] starting map_server  (E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml)
+[nav2_stack]   map_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\map_server.log
+[nav2_stack] map_server is active
+[nav2_stack] map_server -> /map  (it is the only writer of it)
+[nav2_stack] starting amcl_bridge_node  (map -> odom)
+[nav2_stack] starting planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower
+[nav2_stack]   planner_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\planner_server.log
+[nav2_stack]   controller_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\controller_server.log
+[nav2_stack]   bt_navigator -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\bt_navigator.log
+[nav2_stack]   behavior_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\behavior_server.log
+[nav2_stack]   smoother_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\smoother_server.log
+[nav2_stack]   waypoint_follower -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\waypoint_follower.log
+[nav2_stack] starting lifecycle_manager
+[nav2_stack] planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower are active
+[nav2_stack] the stack is running; stop it with:  python bridge/scripts/run_nav2_stack.py stop
+[racecar] the shim graph has a /clock publisher: use_sim_time:=true
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\shim_run.py --sim-time .scratch\probe_repeat.py
+shim_run: use_sim_time from the environment: 1
+[probe]    0.00 s  read 9 poses from E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\scripts\sim_room12.csv
+[probe]    0.01 s  G1 full list, lap 1: sending 9 pose(s)
+[probe]    0.03 s  G1 full list, lap 1: accepted=True after 0.02 s
+[probe]    0.06 s  G1 full list, lap 1: feedback 1  distance_remaining=0.00  poses_remaining=9
+[probe]    0.12 s  G1 full list, lap 1: feedback 2  distance_remaining=15.31  poses_remaining=9
+[probe]    0.15 s  G1 full list, lap 1: feedback 3  distance_remaining=15.31  poses_remaining=9
+[probe]   73.00 s  G1 full list, lap 1: result after 72.99 s  error_code=0  statuses=[1]  feedbacks=2304
+[probe]   73.00 s  G2 the same list again: sending 9 pose(s)
+[probe]   73.02 s  G2 the same list again: accepted=True after 0.02 s
+[probe]   73.05 s  G2 the same list again: feedback 1  distance_remaining=0.00  poses_remaining=9
+[probe]   73.08 s  G2 the same list again: result after 0.08 s  error_code=0  statuses=[1]  feedbacks=1
+[probe]   73.08 s  G3 one pose = waypoint 1: sending 1 pose(s)
+[probe]   73.09 s  G3 one pose = waypoint 1: accepted=True after 0.01 s
+[probe]   73.13 s  G3 one pose = waypoint 1: feedback 1  distance_remaining=0.00  poses_remaining=1
+[probe]   73.17 s  G3 one pose = waypoint 1: feedback 2  distance_remaining=4.78  poses_remaining=1
+[probe]   73.20 s  G3 one pose = waypoint 1: feedback 3  distance_remaining=4.78  poses_remaining=1
+[probe]   92.08 s  G3 one pose = waypoint 1: result after 19.00 s  error_code=0  statuses=[1]  feedbacks=599
+[probe]   92.08 s  G4 that same one pose again: sending 1 pose(s)
+[probe]   92.09 s  G4 that same one pose again: accepted=True after 0.01 s
+[probe]   92.13 s  G4 that same one pose again: feedback 1  distance_remaining=0.00  poses_remaining=1
+[probe]   92.17 s  G4 that same one pose again: feedback 2  distance_remaining=0.91  poses_remaining=1
+[probe]   92.19 s  G4 that same one pose again: result after 0.11 s  error_code=0  statuses=[1]  feedbacks=2
+
+[probe] ===== summary =====
+[probe] G1  G1 full list, lap 1          poses=9  accepted=0.02 s  result=72.99 s   feedbacks=2304  code=0 status=[1] distinct_distance=[0.0, 0.12, 0.15, 0.35, 0.4, 0.42, 0.45, 0.5, 0.55, 0.56, 0.57, 0.63, 0.64, 0.69, 0.71, 0.76, 0.83, 0.9, 0.97, 1.04, 1.1, 1.11, 1.17, 1.25, 1.32, 1.39, 1.46, 1.54, 1.61, 1.89, 1.96, 2.02, 2.09, 2.15, 2.22, 2.28, 2.35, 2.41, 2.48, 2.51, 2.58, 2.66, 2.73, 2.8, 2.87, 2.94, 3.01, 3.08, 3.15, 3.47, 4.44, 4.52, 4.59, 4.66, 4.74, 4.81, 4.88, 4.96, 5.01, 5.08, 5.16, 5.23, 5.3, 5.38, 5.45, 5.47, 5.52, 5.55, 5.59, 5.62, 5.69, 5.76, 5.84, 5.91, 5.93, 5.98, 6.0, 6.06, 6.07, 6.13, 6.14, 6.21, 6.28, 6.35, 6.42, 6.49, 6.57, 6.77, 6.84, 6.91, 6.98, 7.05, 7.09, 7.12, 7.19, 7.27, 7.29, 7.34, 7.37, 7.39, 7.41, 7.44, 7.47, 7.51, 7.54, 7.59, 7.62, 7.66, 7.7, 7.77, 7.85, 7.92, 8.0, 8.34, 8.41, 8.48, 8.54, 8.61, 8.68, 8.75, 8.82, 8.89, 8.95, 8.96, 9.03, 9.1, 9.18, 9.25, 9.32, 9.39, 9.47, 9.54, 9.57, 9.63, 9.7, 9.76, 9.97, 10.03, 10.1, 10.16, 10.22, 10.29, 10.35, 10.41, 10.48, 10.54, 10.61, 10.67, 10.74, 10.82, 10.89, 10.96, 11.04, 11.11, 11.18, 11.25, 11.46, 11.54, 11.61, 11.69, 11.77, 11.84, 11.92, 11.99, 12.07, 12.12, 12.19, 12.26, 12.34, 12.41, 12.48, 12.56, 12.63, 12.7, 12.78, 13.91, 13.99, 14.06, 14.13, 14.2, 14.28, 14.35, 14.42, 14.5, 14.57, 14.6, 14.67, 14.74, 14.79, 14.81, 14.87, 14.88, 14.94, 14.95, 15.01, 15.02, 15.09, 15.16, 15.23, 15.24, 15.26, 15.31, 15.32, 15.38, 15.45, 15.52, 15.59, 15.66, 15.73, 15.8, 15.87]
+[probe] G2  G2 the same list again       poses=9  accepted=0.02 s  result=0.08 s    feedbacks=1     code=0 status=[1] distinct_distance=[0.0]
+[probe] G3  G3 one pose = waypoint 1     poses=1  accepted=0.01 s  result=19.00 s   feedbacks=599   code=0 status=[1] distinct_distance=[0.0, 0.95, 1.02, 1.09, 1.17, 1.24, 1.31, 1.38, 1.46, 1.53, 1.6, 1.68, 1.75, 1.83, 1.9, 1.97, 2.04, 2.12, 2.19, 2.26, 2.34, 2.41, 2.48, 2.55, 2.63, 2.7, 2.77, 2.84, 2.92, 2.99, 3.02, 3.09, 3.17, 3.24, 3.31, 3.39, 3.46, 3.53, 3.57, 3.6, 3.65, 3.72, 3.79, 3.87, 3.94, 4.01, 4.08, 4.16, 4.23, 4.31, 4.39, 4.47, 4.54, 4.62, 4.7, 4.78]
+[probe] G4  G4 that same one pose again  poses=1  accepted=0.01 s  result=0.11 s    feedbacks=2     code=0 status=[1] distinct_distance=[0.0, 0.91]
+[probe]   92.19 s  done

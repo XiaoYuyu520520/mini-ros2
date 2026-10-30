@@ -1,0 +1,13 @@
+Test project E:/DesktopData/app/code/CPU/bridge/windows/build
+    Start 1: bridge_cdr_roundtrip
+1/4 Test #1: bridge_cdr_roundtrip .............   Passed    0.01 sec
+    Start 2: bridge_service_roundtrip
+2/4 Test #2: bridge_service_roundtrip .........   Passed    0.40 sec
+    Start 3: bridge_action_roundtrip
+3/4 Test #3: bridge_action_roundtrip ..........   Passed    0.72 sec
+    Start 4: shm_transport
+4/4 Test #4: shm_transport ....................   Passed    0.96 sec
+
+100% tests passed out of 4
+
+Total Test time (real) =   2.09 sec

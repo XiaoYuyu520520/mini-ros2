@@ -1,0 +1,32 @@
+*** Begin Patch
+*** Update File: nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/node_hybrid.cpp
+@@
+     const float & node_heading = node->pose.theta;
+     float new_heading = node_heading + proj_motion_model._theta;
+ 
+-    if (new_heading < 0.0) {
++    // fmod, not the single add or subtract this used to be: `node_heading` is only
++    // known to be a bin because the pose says so, and a pose filled by an interpolation
++    // is not (see AnalyticExpansion::getAnalyticPath). Adding one turn to a heading
++    // that is already a turn out leaves it a turn out.
++    new_heading = fmodf(new_heading, num_angle_quantization_float);
++    if (new_heading < 0.0f) {
+       new_heading += num_angle_quantization_float;
+     }
+ 
+-    if (new_heading >= num_angle_quantization_float) {
+-      new_heading -= num_angle_quantization_float;
++    // The heading is also the index into this projection's own deltas, where one
++    // outside the table reads past the end of the row.
++    unsigned int node_bin = 0u;
++    if (node_heading >= 0.0f && node_heading < num_angle_quantization_float) {
++      node_bin = static_cast<unsigned int>(node_heading);
+     }
+ 
+     projection_list.emplace_back(
+-      delta_xs[i][node_heading] + node->pose.x,
+-      delta_ys[i][node_heading] + node->pose.y,
++      delta_xs[i][node_bin] + node->pose.x,
++      delta_ys[i][node_bin] + node->pose.y,
+       new_heading, proj_motion_model._turn_dir);
+*** End Patch

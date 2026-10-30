@@ -1,0 +1,33 @@
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\shim_run.py --sim-time .scratch\probe_orientation.py
+shim_run: use_sim_time from the environment: 1
+[probe]    0.21 s  start (odom frame): x=0.01 y=-0.00 yaw=-0.09 deg
+[probe]    2.24 s  --- old mapping: goal x=1.20 y=-3.00  quaternion z=0.0000 w=0.5372  (yaw +0.00 deg)
+[probe]    2.26 s  old goal accepted
+[probe]   19.74 s  old result after 17.50 s (status=4)
+[probe]   22.76 s  old ended (odom frame): x=1.15 y=-2.93 yaw=-55.65 deg
+[probe]   22.76 s  --- fixed mapping: goal x=1.20 y=-3.00  quaternion z=0.8435 w=0.5372  (yaw +115.02 deg)
+[probe]   22.77 s  fixed goal accepted
+[probe]   26.17 s  fixed result after 3.41 s (status=4)
+[probe]   29.26 s  fixed ended (odom frame): x=1.36 y=-3.11 yaw=+61.14 deg
+
+[probe] ===== summary =====
+[probe] CSV: E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\scripts\sim_room12.csv
+[probe] 
+[probe] row   x       y       col3(z)  col4(w)   yaw asked for   yaw the old mapping sends
+[probe]   0    2.00   -1.00   -0.1602   0.9871     -18.43 deg        +0.00 deg
+[probe]   1    3.50   -1.50   -0.5847   0.8112     -71.57 deg        +0.00 deg
+[probe]   2    4.00   -3.00   -0.9571   0.2898    -146.31 deg        +0.00 deg
+[probe]   3    2.50   -4.00    0.9467   0.3220    +142.43 deg        +0.00 deg
+[probe]   4    1.20   -3.00    0.8435   0.5372    +115.02 deg        +0.00 deg
+[probe]   5    0.50   -1.50    0.8507   0.5257    +116.57 deg        +0.00 deg
+[probe]   6    0.00   -0.50    0.9951   0.0985    +168.69 deg        +0.00 deg
+[probe]   7   -1.50   -0.20   -0.9239   0.3827    -135.00 deg        +0.00 deg
+[probe]   8   -2.50   -1.20   -0.9239   0.3827    -135.00 deg        +0.00 deg
+[probe] 
+[probe] live measurement, waypoint row 4 (x=1.20 y=-3.00, yaw asked +115.02 deg)
+[probe]   old    position.z = col3, quaternion (0,0,0,col4)    ended x=1.15 y=-2.93 yaw=-55.65 deg  (170.67 deg off what the CSV asked, 17.5 s)
+[probe]   fixed  quaternion (0,0,col3,col4)                    ended x=1.36 y=-3.11 yaw=+61.14 deg  (53.87 deg off what the CSV asked, 3.4 s)
+[probe] 
+[probe] both tolerances are 1.0 rad (57.3 deg) in src/racecar/config/nav.yaml:138-139
+[probe]   29.26 s  done
+EXIT=0

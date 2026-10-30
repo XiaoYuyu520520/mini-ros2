@@ -1,0 +1,108 @@
+bom=True crlf=0 size=6926
+   1| # racecar —— 建图 / 导航工作区（SLAM + nav2）
+   2| 
+   3| `code/Desktop/racecar` 是从真车工作区（真机上在 `/root/Desktop/racecar`）搬进 CPU 仓库的 ROS2 源码树。
+   4| **这里只留建图（SLAM）和导航（nav2）**：底盘启动、EKF、串口、摄像头、AI 推理都已经移到
+   5| `../rubblish/`，见 `../rubblish/README.md`。
+   6| 
+   7| 这套代码有两个后端，共用一个入口 `tools/racecar_ctl.py`：
+   8| 
+   9| * `shim` —— 本仓库自带的那套：nav2 与 slam_toolbox 是 `nav2/` 下面的移植二进制，话题走 gRPC 桥
+  10|   （`bridge/`），参数文件就是下面那两个 yaml。
+  11| * `ros2` —— 真车上的 ROS2 安装（`ros2 launch racecar Run_nav.launch.py ...`）。
+  12| 
+  13| `auto`（默认）在看得见 `bridge/scripts/run_nav2_stack.py` 时选 `shim`，否则选 `ros2`。
+  14| 
+  15| ## 目录
+  16| 
+  17| ```text
+  18| racecar/
+  19| ├── nav.bat  nav.sh           导航    -> tools/racecar_ctl.py nav
+  20| ├── gmapping.bat gmapping.sh  建图    -> tools/racecar_ctl.py slam
+  21| ├── save.bat save.sh          存图    -> tools/racecar_ctl.py save-map
+  22| ├── map.md                    SLAM 排查笔记（TF 树 / RViz fixed frame / 雷达话题）
+  23| ├── map/                      地图；save-map 写这里，map_eraser.py 擦多余像素
+  24| ├── tools/racecar_ctl.py      唯一入口（nav / slam / save-map / run / stop / status /
+  25| │                            mirror-all / where）
+  26| └── src/
+  27|     ├── racecar/                       主包：配置 + launch + 航点脚本
+  28|     │   ├── config/nav.yaml            ★ nav2 的全部参数：AMCL、两个 costmap、Smac Hybrid、RPP、BT 路径
+  29|     │   ├── config/slam_toolbox.yaml   slam_toolbox 参数
+  30|     │   ├── config/help.md             goal_checker / 到点容差怎么调
+  31|     │   ├── config/laser_box/          雷达角度裁剪（建图用）
+  32|     │   ├── launch/Run_nav.launch.py   waypoint_cycle + bringup
+  33|     │   ├── launch/bringup_launch.py   nav2 bringup（planner_server / bt_navigator ...）
+  34|     │   ├── scripts/                   航点脚本（go.py / goal_l.py / detct.py ...，要 rclpy）
+  35|     │   │                              ai_test*.csv 是赛道航线，sim_room12.csv 是仿真器那间 12 m 房间
+  36|     │   └── rviz/  map/  maps/         RViz 配置与随包地图
+  37|     ├── nav2_waypoint_cycle/           航点循环（Run_nav.launch.py 会起）
+  38|     ├── slam_gmapping/                 gmapping 建图（ROS2 封装）
+  39|     ├── openslam_gmapping/             gmapping 本体
+  40|     └── lslidar_driver/ lslidar_msgs/  镭神雷达驱动
+  41| ```
+  42| 
+  43| ## 用法
+  44| 
+  45| Windows / 本仓库（`shim` 后端）：
+  46| 
+  47| ```powershell
+  48| E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py status
+  49| E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py slam
+  50| E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py save-map -f ai_map001
+  51| E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py nav --goal auto
+  52| E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py stop
+  53| ```
+  54| 
+  55| 一条完整的仿真演示。`/sim/reset` 必须在**起栈之前**：`nav` 会给 AMCL 传 `--initial-pose-from-odom`，
+  56| 顺序反了它拿到的是上一趟留下的 odom 位姿，`map -> odom` 从第一个 tick 就是错的。
+  57| 
+  58| ```powershell
+  59| E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py stop
+  60| cmd /c "bridge\windows\ros2.bat service call /sim/reset std_srvs/srv/Trigger"
+  61| E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py nav --map live
+  62| E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py run go.py sim_room12.csv
+  63| ```
+  64| 
+  65| `run <script> [args]` 把这台机器上的 ROS2 交给 `src/racecar/scripts/` 里那个脚本：`shim` 后端走
+  66| `nav2/ros2_shim/python/shim_run.py`（shim 自己的 `rclpy` 和生成的消息类），`ros2` 后端走
+  67| `ros2 run racecar <script>`。裸名字在 `src/racecar/scripts/` 下找，脚本自己能收到后面的参数 ——
+  68| `go.py` 用第一个 `.csv` 参数挑航线，不给就还是它自带的 `ai_test.csv`。
+  69| 
+  70| 真车 / Ubuntu（`ros2` 后端）：
+  71| 
+  72| ```bash
+  73| source ~/Desktop/racecar/install/setup.bash
+  74| bash ~/Desktop/racecar/nav.sh
+  75| ```
+  76| 
+  77| 每个子命令的完整选项在 `tools/racecar_ctl.py --help` 里。
+  78| 
+  79| ## 几个必须记住的坑
+  80| 
+  81| * **`slam` 会重启 gRPC 守护进程**：shim 的一个话题只能有一个 writer，而 slam_toolbox 也要发 `/map`，
+  82|   所以建图时守护进程改成只镜像 `/clock /odom /scan /tf /tf_static`；跑完用 `mirror-all` 恢复。
+  83| * **建图时导航要加 `--no-amcl`**：此时地图来自 slam_toolbox，`map -> odom` 由它发布。
+  84| * **`nav --map NAME` 读的是快照**：`run_sim.py --seed` 默认不给，所以每次重启仿真器都是一间
+  85|   新房，`map/truth_room12` 这类文件只对应某一次采摘（实测差 15.5% 的像素）。仿真里要用**当前**
+  86|   这间房就写 `nav --map live`：它先镜像仿真器的 `/map`（话题本身就是真值）、当场存成
+  87|   `map/truth_live.yaml`，再按 `nav` 那套镜像把 `map_server` 立成 `/map` 唯一的写者。
+  88| * **仿真器重启之后必须重启整栈**：栈里每个 `use_sim_time` 的节点握的都是仿真时钟的**绝对时刻**
+  89|   （`Wait` 行为的 `wait_end_`、AMCL 的超时、控制器的提前模拟窗口）。仿真器一重启，`/clock` 的纪元
+  90|   从头开始，那些绝对时刻就落到未来几小时 —— 恢复分支里那个 5 秒的 `Wait` 永不返回，`bt_navigator`
+  91|   卡在「processing」，之后每个 goal 都被拒（现象就是 `BasicNavigator` 打
+  92|   `NavigateToPose goal to ... was rejected!`）。顺序永远是 `stop` → 重启仿真器 → `nav`。
+  93|   链条与实测见 `bridge/docs/04-gaps.md` 第二十八节第十一条。
+  94| * **`NavigateThroughPoses` 的最后一个航点不能是起点**：`nav2_controller` 的 goal checker 比的是
+  95|   **路径的终点**，终点压在车轮底下（`xy_goal_tolerance` 是 1.0 m）会立刻报 `Goal succeeded` 而车
+  96|   一动不动。闭环要靠重复发目标，不能靠一条首尾相接的 CSV。
+  97| 
+  98| ## 搬走了什么
+  99| 
+ 100| | 搬走的东西 | 现在在哪 |
+ 101| | --- | --- |
+ 102| | `car.sh`、`racecar_init.sh`、串口 udev 规则 | `../rubblish/racecar/` |
+ 103| | `racecar_driver`、`encoder`、`hipnuc_imu`、`serial-foxy` | `../rubblish/racecar/src/` |
+ 104| | 旧底盘节点 `.cpp`、`Run_car.launch.py`、`ekf.launch.py`、EKF 配置 | `../rubblish/racecar/chassis_legacy/` |
+ 105| | 摄像头配置与视觉脚本（`detct copy.py`、`hsv_show.py`、`record.py`） | `../rubblish/racecar/chassis_legacy/` |
+ 106| | 键盘遥控 `racecar_teleop.py`（发 `/teleop_cmd_vel`，PWM 约定，Windows 上 import 就挂） | `../rubblish/racecar/chassis_legacy/scripts/` |
+ 107| | AI 推理 / 相机 / 性能测试那一整套 `code/` | `../rubblish/code/` |

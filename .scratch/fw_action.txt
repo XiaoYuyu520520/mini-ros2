@@ -1,0 +1,25 @@
+--- stdout ---
+MARK1
+#goal definition
+uint32 number_of_loops
+uint32 goal_index 0
+geometry_msgs/PoseStamped[] poses
+---
+#result definition
+
+# Error codes
+# Note: The expected priority order of the errors should match the message order
+uint16 NONE=0
+uint16 UNKNOWN=600
+uint16 TASK_EXECUTOR_FAILED=601
+
+MissedWaypoint[] missed_waypoints
+uint16 error_code
+string error_msg
+---
+#feedback definition
+uint32 current_waypoint
+MARK2
+
+--- stderr ---
+[ubuntu_ssh] ubuntu@192.168.1.113: echo MARK1; cat /opt/ros/jazzy/share/nav2_msgs/action/FollowWaypoints.action; echo MARK2

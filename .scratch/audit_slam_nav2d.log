@@ -1,0 +1,153 @@
+[01:23:04] === 0. clean slate ===
+[01:23:06] [nav2_stack] stopped
+[01:23:07] [ros2_bridge] stopping daemon
+[01:23:09] === 1. daemon WITHOUT /map: slam_toolbox owns the map topic ===
+[01:23:09] [ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[01:23:11] mirrored: /clock /cmd_vel /odom /scan /tf /tf_static
+[01:23:11] === 2. robot to the origin ===
+[01:23:11] request:
+(empty)
+response:
+success: true
+message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+[01:23:11] === 3. slam_toolbox ===
+[01:23:16] SLAM is publishing /map
+[01:23:16] === 4. map a closed lap: 4 x (2 m + 90 deg) ===
+[01:23:27]   leg 1 done
+[01:23:38]   leg 2 done
+[01:23:49]   leg 3 done
+[01:24:00]   leg 4 done
+[01:24:00] request:
+(empty)
+response:
+success: true
+message: "x=0.125 y=-0.064 theta=0.117 cmd=(0.00, 0.00) paused=false"
+[01:24:06] === 5. the SLAM map after the lap ===
+[01:24:12] MAPDUMP frames=4 frame=map size=473x473 res=0.0500 origin=(-11.719, -11.813) occupied=421 free=41294 unknown=182014
+MAPDUMP wrote E:\DesktopData\app\code\CPU\.scratch\audit_slam_map4.pgm
+MAPDUMP |                        .# ###############              |
+MAPDUMP |                       .... .. .  ..   .                |
+MAPDUMP |                     .   .   .... . .                   |
+MAPDUMP |                        . ... . .. . .                  |
+MAPDUMP |                         .... ... . .                   |
+MAPDUMP |                           ... ... . ..                 |
+MAPDUMP |                          ......... ..                  |
+MAPDUMP |                   .      ........                    . |
+MAPDUMP |                     ... . ........ .              .    |
+MAPDUMP |                       ............                 ....|
+MAPDUMP |                         ..........              .  .  .|
+MAPDUMP |                           .... .....    ...  .  . . .  |
+MAPDUMP |                        .....................  .. .     |
+MAPDUMP |              . ...    . ............................ ..|
+MAPDUMP |         . .            .......................... ... .|
+MAPDUMP |                           .... ..  .............  ...  |
+MAPDUMP |                     ...      .  .  .....  .  ..    .  .|
+MAPDUMP |                 .... .        ..      ...  .           |
+MAPDUMP |                ... .          ..       ..  ..          |
+MAPDUMP |           .   ..               . .       .             |
+MAPDUMP |            ..                    .                     |
+MAPDUMP |            .                 . . ..                    |
+MAPDUMP |                                   .                    |
+MAPDUMP |                                  ..                    |
+MAPDUMP |                                                        |
+MAPDUMP |                                                        |
+MAPDUMP |                                                        |
+MAPDUMP |                                                        |
+[01:24:12] === 6. nav2 on the SLAM map (--no-amcl), explicit goal ===
+[01:24:12] command line: cmd /c E:\DesktopData\app\code\CPU\bridge\windows\nav2_stack.bat --no-amcl --goal "1.0,-1.0" --timeout 120 --report E:\DesktopData\app\code\CPU\.scratch\audit_slam_nav2d.json
+[01:24:41] --- node list ---
+[01:24:41] /behavior_server
+/bt_navigator
+/bt_navigator_navigate_through_poses_rclcpp_node
+/bt_navigator_navigate_to_pose_rclcpp_node
+/controller_server
+/global_costmap/global_costmap
+/lifecycle_manager
+/local_costmap/local_costmap
+/planner_server
+/ros2_bridge_daemon
+/slam_toolbox
+/smoother_server
+/transform_listener_impl_7551104
+/transform_listener_impl_7679440
+/transform_listener_impl_9041872
+/waypoint_follower
+[01:24:41] === 7. the goal report ===
+[01:24:41] {
+  "succeeded": true,
+  "reason": "SUCCEEDED",
+  "action": "navigate_to_pose",
+  "goal": [1, -1, 0],
+  "goal_source": "1.0,-1.0",
+  "frame": "map",
+  "result": "SUCCEEDED",
+  "error_code": 0,
+  "error_msg": "",
+  "elapsed_s": 6.09017,
+  "start_pose": [0.125459, -0.0637577],
+  "final_pose": [0.928892, -0.857601, -0.231216],
+  "travelled_m": 1.12947,
+  "remaining_m": 0.159166,
+  "feedback_messages": 316,
+  "number_of_recoveries": 0,
+  "last_distance_remaining_m": 0.293439,
+  "max_linear_velocity": 0.45,
+  "ack_latency_s": 0.042802,
+  "result_latency_s": 6.04471,
+  "messages": {"cmd_vel": 118, "cmd_vel_type": "Twist", "cmd_vel_moving": 117, "plan": 6, "plan_poses": 10, "odom": 288}
+}
+
+[01:24:41] === 8. the map again, after nav2 drove on it ===
+[01:24:47] MAPDUMP frames=4 frame=map size=473x474 res=0.0500 origin=(-11.719, -11.838) occupied=523 free=50538 unknown=173141
+MAPDUMP wrote E:\DesktopData\app\code\CPU\.scratch\audit_slam_map4_after.pgm
+MAPDUMP |                # #  ## ## ######## ##                  |
+MAPDUMP |                       . .. .. .  ..   .                |
+MAPDUMP |                         ..  .... .    .                |
+MAPDUMP |                    .   . ..... .. . .                  |
+MAPDUMP |                          ..  ... . .                   |
+MAPDUMP |                         . ... ... .  .                 |
+MAPDUMP |                          ......... ..                 .|
+MAPDUMP |                   ##.    ........                      |
+MAPDUMP |                     ..  . ........                     |
+MAPDUMP |                      .............        .     .   .. |
+MAPDUMP |                       ............     .      .   .  . |
+MAPDUMP |                         . .... .... .. ... ... .... . .|
+MAPDUMP |                        ....................... ....    |
+MAPDUMP |          . .    . ..   . ................... ..  ... ..|
+MAPDUMP |         .   . . .................................      |
+MAPDUMP |                          ........ .............. .. .. |
+MAPDUMP |                      ... . . .  .............  . . .. .|
+MAPDUMP |                 .... .      ...      .... ..   . . .   |
+MAPDUMP |              . ...         .....       .....           |
+MAPDUMP |          .. . .. .          ......       .             |
+MAPDUMP |            .                 . ...                     |
+MAPDUMP |                            . ......                    |
+MAPDUMP |            .               .    ...                    |
+MAPDUMP |                             .    ..                    |
+MAPDUMP |                             .                          |
+MAPDUMP |                                .                       |
+MAPDUMP |                          .                             |
+MAPDUMP |                                                        |
+[01:24:47] === 9. slam node log tail ===
+[01:24:47] [slam_bridge_node] /tf_static carries the laser frame
+[INFO] [slam_toolbox] Configuring
+[INFO] [slam_toolbox] Using solver plugin solver_plugins::CeresSolver
+[INFO] [slam_toolbox] EigenPoseGraphSolver: configured with 50 max iterations.
+[INFO] [slam_toolbox] Activating
+[slam_bridge_node] sync active: /scan -> /map, base_link frame, resolution 0.0500, map every 2.0 s, scan buffer 10, with scan matching, with loop closing
+Registering sensor: [Custom Described Lidar]
+
+[01:24:47] === 10. cleanup ===
+[01:24:52] [nav2_stack] stopping the previous stack
+[nav2_stack] stopped
+[01:24:53] [ros2_bridge] stopping daemon
+[01:24:55] [ros2_bridge] starting daemon --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[01:24:57] --- restored default daemon ---
+[01:24:57] /clock
+/cmd_vel
+/map
+/odom
+/scan
+/tf
+/tf_static
+saved .scratch\audit_slam_nav2d.out

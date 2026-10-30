@@ -1,0 +1,1 @@
+line with backtick ` and backslash \ and star * and quote ' and dquote "

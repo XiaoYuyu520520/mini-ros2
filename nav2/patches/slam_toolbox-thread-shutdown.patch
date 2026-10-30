@@ -1,0 +1,43 @@
+--- a/include/slam_toolbox/slam_toolbox_sync.hpp
++++ b/include/slam_toolbox/slam_toolbox_sync.hpp
+@@ -31,7 +31,39 @@
+ {
+ public:
+   explicit SynchronousSlamToolbox(rclcpp::NodeOptions options);
+-  ~SynchronousSlamToolbox() {}
++  // PORT (ros2_shim): interrupt and join the threads here, before the base
++  // destructor runs, instead of leaving an empty body as upstream does.
++  //
++  // `run()` - the thread `on_activate()` starts - locks `q_mutex_` on every
++  // iteration, and `q_mutex_` is a member of *this* class. The interrupt and
++  // the join live in the base destructor, and a C++ destructor runs derived
++  // body, derived members, base body: upstream destroys `q_mutex_` and only
++  // afterwards joins the thread that keeps locking it.
++  //
++  // That window is not a quiet one on glibc. With the thread still running,
++  // `pthread_mutex_destroy` fails and boost aborts inside `~mutex`:
++  //
++  //   boost/thread/pthread/mutex.hpp:56: boost::mutex::~mutex(): Assertion
++  //   `!posix::pthread_mutex_destroy(&m)' failed.
++  //
++  // Measured with the same two arms in `.scratch/dtor_order` (same classes,
++  // same order, thread looping through the lock): 10/10 aborts without the
++  // join below, 0/10 with it. Windows' pthread implementation does not
++  // validate the kind, which is why upstream never saw this - and why the port
++  // has to keep the edit rather than trust the platform it was tested on.
++  // Registered as nav2/patches/slam_toolbox-thread-shutdown.patch; see the
++  // README next to it.
++  //
++  // Joining here first closes the window; the base destructor then walks an
++  // empty vector and does nothing.
++  ~SynchronousSlamToolbox()
++  {
++    for (auto & thread : threads_) {
++      thread->interrupt();
++      thread->join();
++    }
++    threads_.clear();
++  }
+   void run();
+   CallbackReturn on_activate(const rclcpp_lifecycle::State & state) override;
+   CallbackReturn on_deactivate(const rclcpp_lifecycle::State & state) override;

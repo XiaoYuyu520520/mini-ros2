@@ -1,0 +1,158 @@
+[
+ {
+  "test": "ros2_shim_messages",
+  "src": "nav2\\ros2_shim\\tests\\test_messages.cpp",
+  "upper": 54,
+  "lower": 0
+ },
+ {
+  "test": "ros2_shim_compile_check",
+  "src": "nav2\\ros2_shim\\tests\\compile_all_messages.cpp",
+  "upper": 0,
+  "lower": 0
+ },
+ {
+  "test": "ros2_shim_node",
+  "src": "nav2\\ros2_shim\\tests\\test_shim_node.cpp",
+  "upper": 21,
+  "lower": 0
+ },
+ {
+  "test": "ros2_shim_compile",
+  "src": "nav2\\ros2_shim\\tests\\test_shim_compile.cpp",
+  "upper": 0,
+  "lower": 0
+ },
+ {
+  "test": "nav2_navfn_planning",
+  "src": "nav2\\ros2_shim\\tests\\navfn_planning.cpp",
+  "upper": 21,
+  "lower": 1
+ },
+ {
+  "test": "ros2_shim_params_file",
+  "src": "nav2\\ros2_shim\\tests\\params_file.cpp",
+  "upper": 0,
+  "lower": 57
+ },
+ {
+  "test": "ros2_shim_lifecycle_services",
+  "src": "nav2\\ros2_shim\\tests\\lifecycle_services.cpp",
+  "upper": 41,
+  "lower": 0
+ },
+ {
+  "test": "ros2_shim_channel_ring_lifecycle",
+  "src": "nav2\\ros2_shim\\tests\\channel_ring_lifecycle.cpp",
+  "upper": 0,
+  "lower": 41
+ },
+ {
+  "test": "ros2_shim_tf_time",
+  "src": "nav2\\ros2_shim\\tests\\tf_time.cpp",
+  "upper": 0,
+  "lower": 14
+ },
+ {
+  "test": "ros2_shim_tf_convert",
+  "src": "nav2\\ros2_shim\\tests\\tf_convert.cpp",
+  "upper": 0,
+  "lower": 12
+ },
+ {
+  "test": "ros2_shim_tf_buffer_lookup",
+  "src": "nav2\\ros2_shim\\tests\\tf_buffer_lookup.cpp",
+  "upper": 0,
+  "lower": 9
+ },
+ {
+  "test": "nav2_e2e_pipeline",
+  "src": "nav2\\ros2_shim\\tests\\test_e2e.cpp",
+  "upper": 14,
+  "lower": 0
+ },
+ {
+  "test": "nav2_map_server_map_io",
+  "src": "nav2\\ros2_shim\\tests\\map_io.cpp",
+  "upper": 0,
+  "lower": 41
+ },
+ {
+  "test": "nav2_smac_ompl_spaces",
+  "src": "nav2\\ros2_shim\\tests\\ompl_spaces.cpp",
+  "upper": 0,
+  "lower": 23
+ },
+ {
+  "test": "ros2_shim_parameter_event_handler",
+  "src": "nav2\\ros2_shim\\tests\\parameter_event_handler.cpp",
+  "upper": 0,
+  "lower": 21
+ },
+ {
+  "test": "ros2_shim_plugin_names",
+  "src": "nav2\\ros2_shim\\tests\\plugin_names.cpp",
+  "upper": 0,
+  "lower": 22
+ },
+ {
+  "test": "ros2_shim_graph_rewrite",
+  "src": "nav2\\ros2_shim\\tests\\graph_rewrite.cpp",
+  "upper": 0,
+  "lower": 9
+ },
+ {
+  "test": "ros2_shim_clock",
+  "src": "nav2\\ros2_shim\\tests\\clock.cpp",
+  "upper": 0,
+  "lower": 12
+ },
+ {
+  "test": "ros2_shim_uuid",
+  "src": "nav2\\ros2_shim\\tests\\uuid.cpp",
+  "upper": 0,
+  "lower": 26
+ },
+ {
+  "test": "ros2_shim_remap",
+  "src": "nav2\\ros2_shim\\tests\\remap.cpp",
+  "upper": 0,
+  "lower": 30
+ },
+ {
+  "test": "ros2_shim_parameter_service",
+  "src": "nav2\\ros2_shim\\tests\\parameter_service.cpp",
+  "upper": 0,
+  "lower": 64
+ },
+ {
+  "test": "ros2_shim_parameter_events",
+  "src": "nav2\\ros2_shim\\tests\\parameter_events.cpp",
+  "upper": 0,
+  "lower": 25
+ },
+ {
+  "test": "slam_toolbox_eigen_pose_graph_solver",
+  "src": "nav2\\slam_toolbox_port\\tests\\test_eigen_pose_graph_solver.cpp",
+  "upper": 1,
+  "lower": 0
+ },
+ {
+  "test": "slam_toolbox_mapping",
+  "src": "nav2\\slam_toolbox_port\\tests\\test_slam_mapping.cpp",
+  "upper": 13,
+  "lower": 0
+ },
+ {
+  "test": "slam_toolbox_laser_points",
+  "src": "nav2\\slam_toolbox_port\\tests\\test_laser_points.cpp",
+  "upper": 5,
+  "lower": 0
+ },
+ {
+  "test": "slam_toolbox_serialization",
+  "src": "nav2\\slam_toolbox_port\\tests\\test_slam_serialization.cpp",
+  "upper": 22,
+  "lower": 0
+ }
+]

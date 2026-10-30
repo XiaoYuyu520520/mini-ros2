@@ -1,0 +1,21 @@
+
+=== topic_list: Windows lists the Ubuntu topics (cold start)
+[bridge] stopping the daemon to force a cold start ...
+[PASS] topic_list (2.1 s) - 7 topics with types in 2.1 s (cold start)
+
+=== topic_info: Windows resolves /scan to the gRPC peer
+[PASS] topic_info (0.2 s) - reported as remote (bridged over gRPC)
+
+=== scan_rate: Mirrored /scan keeps its 10 Hz
+[PASS] scan_rate (6.2 s) - 9.59 Hz average over 55 samples
+
+=== uplink: Windows /cmd_vel moves the Ubuntu robot
+[PASS] uplink (3.4 s) - moved 0.62 m, /odom twist.linear.x=0.250
+
+=== nav2_demo: nav2 plans a path and drives to the goal
+[PASS] nav2_demo (21.8 s) - goal [7.625, 10.025] reached from [0.624703, 0.278975]: travelled 11.70 m, remaining 0.30 m, plan 276 waypoints
+
+=== reset: putting the car back at the origin
+[done] /sim/reset
+
+5/5 checks passed; report: E:\DesktopData\app\code\CPU\bridge\docs\validation\acceptance-report.json

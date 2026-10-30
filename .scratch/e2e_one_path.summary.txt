@@ -1,0 +1,15 @@
+log lines            : 2409
+goal accepted        : 1789767793.959841536
+feedback messages    : 2404
+first feedback       : t=1789767793.992386048 poses_remaining=9 distance=0.00 m passed=0
+last feedback        : t=1789767870.040475136 poses_remaining=1 distance=0.13 m passed=8
+poses_remaining seen : [1, 2, 3, 4, 5, 6, 7, 8, 9]
+result               : t=1789767870.056984320 wall=76.1 s
+result waypoints     : 9, statuses=['1']
+result error_code    : 0
+non-[INFO] log lines : 3
+    | [racecar] the shim graph has a /clock publisher: use_sim_time:=true
+    | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\shim_run.py --sim-time E:\
+    | shim_run: use_sim_time from the environment: 1
+
+VERDICT: one NavigateThroughPoses goal carried all 9 waypoints of sim_room12.csv and came back error_code=0

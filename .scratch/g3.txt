@@ -1,0 +1,135 @@
+132 distinct .scratch paths referenced by 9 file(s)
+  README.md                                  <- README.md
+  _assert_census.json                        <- bridge/docs/04-gaps.md
+  _assert_census2.py                         <- bridge/docs/03-validation.md
+  _audit_ns.py                               <- bridge/docs/04-gaps.md
+  _audit_slam_nav2d.py                       <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  _before\test_shm_before.exe                <- bridge/docs/03-validation.md
+  _bridge_pollute_after.py                   <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  _codec_pub_echo.py                         <- bridge/docs/03-validation.md
+  _codec_sweep.py                            <- bridge/docs/03-validation.md
+  _ctest_tree.py                             <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  _echoargs.bat                              <- bridge/docs/04-gaps.md
+  _g9.py                                     <- bridge/docs/03-validation.md
+  _greedy_graph_hold.py                      <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  _hold_probe.py                             <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  _mutex_hold_ab.py                          <- bridge/docs/04-gaps.md
+  _ns_pollute_ab.py                          <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  _param_cli_probe.py                        <- bridge/docs/03-validation.md
+  _param_list_probe.py                       <- bridge/docs/03-validation.md
+  _partial_graph_hold.py                     <- bridge/docs/02-running.md, bridge/docs/03-validation.md, bridge/docs/04-gaps.md, nav2/ros2_shim/include/ros2_shim/graph.hpp
+  _patience_ab.py                            <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  _run_slam_check.py                         <- bridge/docs/03-validation.md
+  _shm_transport_where.py                    <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  _slam_reload_ab.py                         <- bridge/docs/03-validation.md
+  acceptance_after47.json                    <- bridge/docs/03-validation.md
+  acceptance_after_codec.json                <- bridge/docs/03-validation.md
+  acceptance_audit.log                       <- bridge/docs/03-validation.md
+  acceptance_final.log                       <- bridge/docs/03-validation.md
+  acceptance_full.json                       <- bridge/docs/03-validation.md
+  acceptance_full.log                        <- bridge/docs/03-validation.md
+  acceptance_pe.log                          <- bridge/docs/03-validation.md
+  acceptance_pe2.log                         <- bridge/docs/03-validation.md
+  acceptance_round11.json                    <- bridge/docs/03-validation.md
+  acceptance_round12.json                    <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  acceptance_round13.json                    <- bridge/docs/05-audit.md
+  action_probe                               <- bridge/docs/03-validation.md
+  action_probe/grpc_action_client.py         <- bridge/docs/03-validation.md
+  attic                                      <- README.md
+  audit_acceptance.json                      <- bridge/docs/04-gaps.md
+  audit_slam_map4.pgm                        <- bridge/docs/04-gaps.md
+  audit_slam_nav2d.out                       <- bridge/docs/04-gaps.md
+  bt_brick_probe.py                          <- bridge/docs/03-validation.md
+  build_bridge_param_fix.log                 <- bridge/docs/03-validation.md
+  build_param_fix.log                        <- bridge/docs/03-validation.md
+  cdr_check_after_codec.log                  <- bridge/docs/03-validation.md
+  cdr_describe.log                           <- bridge/docs/03-validation.md
+  codec_sweep.out                            <- bridge/docs/03-validation.md
+  ctest_after_codec.log                      <- bridge/docs/03-validation.md
+  ctest_after_param_fix.log                  <- bridge/docs/03-validation.md
+  ctest_png.log                              <- bridge/docs/03-validation.md
+  ctest_png_serial.log                       <- bridge/docs/03-validation.md
+  ctest_stress.json                          <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  ctest_stress.py                            <- bridge/docs/02-running.md, bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  ctz.py                                     <- bridge/docs/03-validation.md
+  dbg6_counters.py                           <- bridge/docs/04-gaps.md
+  e2e_map                                    <- bridge/docs/03-validation.md
+  e2e_map.posegraph                          <- bridge/docs/03-validation.md
+  e2e_map_before                             <- bridge/docs/03-validation.md
+  e2e_map_before.pgm                         <- bridge/docs/03-validation.md
+  e2e_nav_live.log                           <- bridge/docs/03-validation.md
+  e2e_nav_live2.log                          <- bridge/docs/03-validation.md
+  e2e_one_path.log                           <- bridge/docs/03-validation.md
+  e2e_stop_srv.log                           <- bridge/docs/03-validation.md
+  e2e_stop_srv2.log                          <- bridge/docs/03-validation.md
+  final_recovery.log                         <- bridge/docs/03-validation.md
+  final_recovery.py                          <- bridge/docs/03-validation.md
+  fm_                                        <- bridge/docs/03-validation.md
+  gdb_savecaller.log                         <- bridge/docs/03-validation.md
+  goal_report_rerun1.json                    <- bridge/docs/03-validation.md
+  gr_selfrace.py                             <- bridge/docs/03-validation.md
+  graceful_ab.txt                            <- bridge/docs/03-validation.md
+  graph_old                                  <- bridge/docs/03-validation.md
+  map_io_run.txt                             <- bridge/docs/03-validation.md
+  map_roundtrip.py                           <- bridge/docs/02-running.md
+  nc_ring_lifecycle.log                      <- bridge/docs/03-validation.md
+  negctl_ring.py                             <- bridge/docs/03-validation.md
+  ns_                                        <- bridge/docs/04-gaps.md
+  param_cli_probe.out                        <- bridge/docs/03-validation.md
+  param_e2e.txt                              <- bridge/docs/03-validation.md
+  param_list_probe.out                       <- bridge/docs/03-validation.md
+  pe_probe.bat                               <- bridge/docs/03-validation.md
+  pe_stack2.py                               <- bridge/docs/03-validation.md
+  png_check.cpp                              <- bridge/docs/03-validation.md
+  png_check.exe                              <- bridge/docs/03-validation.md
+  png_check.out                              <- bridge/docs/03-validation.md
+  png_interop.out                            <- bridge/docs/03-validation.md
+  png_interop.py                             <- bridge/docs/03-validation.md
+  png_read.exe                               <- bridge/docs/03-validation.md
+  png_verify.py                              <- bridge/docs/03-validation.md
+  probe_amcl_pose.py                         <- bridge/docs/03-validation.md
+  probe_initialpose.py                       <- bridge/docs/03-validation.md
+  probe_plan.py                              <- bridge/docs/03-validation.md
+  probe_result_face.py                       <- bridge/docs/03-validation.md
+  probe_spin_once.py                         <- bridge/docs/03-validation.md
+  probe_waypoint_file.py                     <- bridge/docs/03-validation.md
+  rec_cmdvel.txt                             <- bridge/docs/03-validation.md
+  rpp_ab.txt                                 <- bridge/docs/03-validation.md
+  run_ctest.py                               <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  run_map_saver.bat                          <- bridge/docs/03-validation.md
+  safety_ab.py                               <- bridge/docs/03-validation.md
+  safety_stopall.yaml                        <- bridge/docs/03-validation.md
+  safety_stopall_chain.yaml                  <- bridge/docs/03-validation.md
+  saved_map.pgm                              <- bridge/docs/03-validation.md
+  saved_map.yaml                             <- bridge/docs/03-validation.md
+  simtime_amcl.json                          <- bridge/docs/03-validation.md
+  slam_live6.pgm                             <- bridge/docs/03-validation.md
+  slam_live6_pgm                             <- bridge/docs/03-validation.md
+  slam_live6_png                             <- bridge/docs/03-validation.md
+  slam_live6_png.yaml                        <- bridge/docs/03-validation.md
+  slam_map_check.py                          <- bridge/docs/03-validation.md
+  slam_persist                               <- bridge/docs/03-validation.md
+  slam_persist.data                          <- bridge/docs/03-validation.md
+  slam_persist.posegraph                     <- bridge/docs/03-validation.md
+  slam_persist_loop.out                      <- bridge/docs/03-validation.md
+  slam_reload_ab.log                         <- bridge/docs/03-validation.md
+  slam_reload_ab.out                         <- bridge/docs/03-validation.md
+  slam_reload_ab2.log                        <- bridge/docs/03-validation.md
+  slam_reload_ab2.out                        <- bridge/docs/03-validation.md
+  slam_run.log                               <- bridge/docs/03-validation.md
+  stress_after_fixes.log                     <- bridge/docs/03-validation.md
+  stress_fail_                               <- bridge/docs/04-gaps.md
+  stress_fail_009.log                        <- bridge/docs/04-gaps.md
+  stress_j8.log                              <- bridge/docs/03-validation.md
+  summarise_run.py                           <- bridge/docs/03-validation.md
+  sweep_plan.py                              <- bridge/docs/03-validation.md
+  ubuntu_cmake_install_probe.sh              <- bridge/docs/03-validation.md
+  upstream                                   <- bridge/docs/03-validation.md, bridge/docs/05-audit.md
+  vo_lifecycle.yaml                          <- bridge/docs/03-validation.md, bridge/docs/04-gaps.md
+  vo_manager.bat                             <- bridge/docs/03-validation.md
+  vo_run.py                                  <- bridge/docs/03-validation.md
+  vo_run.txt                                 <- bridge/docs/03-validation.md
+  vo_server.bat                              <- bridge/docs/03-validation.md
+  waypoint_file.out                          <- bridge/docs/03-validation.md
+
+0 referenced path(s) do not resolve

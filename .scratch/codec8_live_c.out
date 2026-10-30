@@ -1,0 +1,5 @@
+$ set_route_graph graph_filepath=E:/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/graphs/sample_graph.geojson
+request:
+graph_filepath: "E:/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/graphs/sample_graph.geojson"
+response:
+success: true

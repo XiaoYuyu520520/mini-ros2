@@ -1,0 +1,2 @@
+[lap] l01  会跳过几个点.py  sim_room12.csv
+[lap] l01 exit=0 wall=163.4 s

@@ -1,0 +1,20 @@
+### end_3_12.py
+    10| from std_srvs.srv import Trigger  # 导入 Trigger 服务
+### go.py
+    12| from std_srvs.srv import Trigger  # 导入 Trigger 服务
+### 人工智能赛道初始版本代码.py
+    10| from std_srvs.srv import Trigger  # 导入 Trigger 服务
+### 会跳过几个点.py
+    10| from std_srvs.srv import Trigger  # 导入 Trigger 服务
+### 终点不停.py
+     9| from std_srvs.srv import Trigger  # 导入 Trigger 服务
+    49|                 self.call_stop_service()
+    51|     def call_stop_service(self):
+    52|         stop_client = self.create_client(Trigger, 'stop')
+    53|         while not stop_client.wait_for_service(timeout_sec=1.0):
+    55|         request = Trigger.Request()
+    56|         future = stop_client.call_async(request)
+### 跑一圈以内.py
+    10| from std_srvs.srv import Trigger  # 导入 Trigger 服务
+### 重复载入完成圈数.py
+    10| from std_srvs.srv import Trigger  # 导入 Trigger 服务

@@ -1,0 +1,74 @@
+[run_ctest] E:\DesktopData\app\code\CPU\nav2\ros2_shim\build
+[run_ctest] ctest --output-on-failure -j 6 -- cores 0,1,10,11,12,13 (mask 0x3C03, pinned)
+Test project E:/DesktopData/app/code/CPU/nav2/ros2_shim/build
+      Start 10: ros2_shim_channel_ring_lifecycle
+      Start 32: slam_toolbox_serialization
+      Start 30: slam_toolbox_mapping
+      Start 19: ros2_shim_graph_rewrite
+      Start 26: ros2_shim_parameter_events
+      Start  3: ros2_shim_py_interop
+ 1/33 Test #26: ros2_shim_parameter_events ..............   Passed    1.10 sec
+      Start 27: ros2_shim_rosout
+ 2/33 Test #27: ros2_shim_rosout ........................   Passed    0.73 sec
+      Start 16: nav2_smac_ompl_spaces
+ 3/33 Test #16: nav2_smac_ompl_spaces ...................   Passed    1.09 sec
+      Start 33: shm_transport
+ 4/33 Test #33: shm_transport ...........................   Passed    1.01 sec
+      Start 20: ros2_shim_graph_rewrite_cross_process
+ 5/33 Test  #3: ros2_shim_py_interop ....................   Passed    4.07 sec
+      Start  9: ros2_shim_lifecycle_services
+ 6/33 Test #19: ros2_shim_graph_rewrite .................   Passed    4.64 sec
+      Start 25: ros2_shim_parameter_service
+ 7/33 Test  #9: ros2_shim_lifecycle_services ............   Passed    0.79 sec
+      Start  4: ros2_shim_node
+ 8/33 Test #25: ros2_shim_parameter_service .............   Passed    0.48 sec
+      Start 23: ros2_shim_remap
+ 9/33 Test #20: ros2_shim_graph_rewrite_cross_process ...   Passed    1.22 sec
+      Start 28: ros2_shim_action_status
+10/33 Test  #4: ros2_shim_node ..........................   Passed    0.30 sec
+      Start 17: ros2_shim_parameter_event_handler
+11/33 Test #23: ros2_shim_remap .........................   Passed    0.29 sec
+      Start 14: nav2_e2e_pipeline
+12/33 Test #28: ros2_shim_action_status .................   Passed    0.29 sec
+      Start 21: ros2_shim_clock
+13/33 Test #17: ros2_shim_parameter_event_handler .......   Passed    0.30 sec
+      Start 24: ros2_shim_param_args
+14/33 Test #14: nav2_e2e_pipeline .......................   Passed    0.28 sec
+      Start  7: ros2_shim_nav2_ros_common
+15/33 Test #21: ros2_shim_clock .........................   Passed    0.27 sec
+      Start 15: nav2_map_server_map_io
+16/33 Test #24: ros2_shim_param_args ....................   Passed    0.26 sec
+      Start 29: slam_toolbox_eigen_pose_graph_solver
+17/33 Test  #7: ros2_shim_nav2_ros_common ...............   Passed    0.28 sec
+      Start  5: ros2_shim_compile
+18/33 Test #15: nav2_map_server_map_io ..................   Passed    0.31 sec
+19/33 Test #29: slam_toolbox_eigen_pose_graph_solver ....   Passed    0.22 sec
+      Start 31: slam_toolbox_laser_points
+      Start  8: ros2_shim_params_file
+20/33 Test  #5: ros2_shim_compile .......................   Passed    0.25 sec
+      Start  1: ros2_shim_messages
+21/33 Test #31: slam_toolbox_laser_points ...............   Passed    0.18 sec
+      Start  6: nav2_navfn_planning
+22/33 Test  #8: ros2_shim_params_file ...................   Passed    0.12 sec
+      Start 18: ros2_shim_plugin_names
+23/33 Test  #1: ros2_shim_messages ......................   Passed    0.09 sec
+      Start 22: ros2_shim_uuid
+24/33 Test  #6: nav2_navfn_planning .....................   Passed    0.05 sec
+      Start 12: ros2_shim_tf_convert
+25/33 Test #18: ros2_shim_plugin_names ..................   Passed    0.04 sec
+      Start 11: ros2_shim_tf_time
+26/33 Test #22: ros2_shim_uuid ..........................   Passed    0.05 sec
+      Start 13: ros2_shim_tf_buffer_lookup
+27/33 Test #12: ros2_shim_tf_convert ....................   Passed    0.06 sec
+      Start  2: ros2_shim_compile_check
+28/33 Test #11: ros2_shim_tf_time .......................   Passed    0.08 sec
+29/33 Test #13: ros2_shim_tf_buffer_lookup ..............   Passed    0.05 sec
+30/33 Test  #2: ros2_shim_compile_check .................   Passed    0.03 sec
+31/33 Test #30: slam_toolbox_mapping ....................   Passed   12.74 sec
+32/33 Test #10: ros2_shim_channel_ring_lifecycle ........   Passed   14.29 sec
+33/33 Test #32: slam_toolbox_serialization ..............   Passed   14.92 sec
+
+100% tests passed out of 33
+
+Total Test time (real) =  15.01 sec
+[run_ctest] rc=0 in 15.0 s

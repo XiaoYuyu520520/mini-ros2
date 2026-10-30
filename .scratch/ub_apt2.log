@@ -1,0 +1,32 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: set -o pipefail
+export DEBIAN_FRONTEND=noninteractive
+sudo -n apt-get install -y libpcl-dev libpcap-dev ros-jazzy-diagnostic-updater ros-jazzy-pcl-conversions ros-jazzy-pluginlib 2>&1 | tail -25
+echo "APTEXIT=${PIPESTATUS[0]}"
+dpkg -l | grep -c "^ii  libpcl-dev"
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jfr 来在自动模式中提供 /usr/bin/jfr (jfr)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jimage 来在自动模式中提供 /usr/bin/jimage (jimage)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jinfo 来在自动模式中提供 /usr/bin/jinfo (jinfo)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jlink 来在自动模式中提供 /usr/bin/jlink (jlink)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jmap 来在自动模式中提供 /usr/bin/jmap (jmap)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jmod 来在自动模式中提供 /usr/bin/jmod (jmod)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jps 来在自动模式中提供 /usr/bin/jps (jps)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jrunscript 来在自动模式中提供 /usr/bin/jrunscript (jrunscript)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jshell 来在自动模式中提供 /usr/bin/jshell (jshell)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jstack 来在自动模式中提供 /usr/bin/jstack (jstack)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jstat 来在自动模式中提供 /usr/bin/jstat (jstat)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jstatd 来在自动模式中提供 /usr/bin/jstatd (jstatd)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jwebserver 来在自动模式中提供 /usr/bin/jwebserver (jwebserver)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/serialver 来在自动模式中提供 /usr/bin/serialver (serialver)
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jhsdb 来在自动模式中提供 /usr/bin/jhsdb (jhsdb)
+正在设置 default-jre-headless (2:1.21-75+exp1) ...
+正在设置 default-jre (2:1.21-75+exp1) ...
+正在设置 openjdk-21-jdk:amd64 (21.0.12+8-1~24.04) ...
+update-alternatives: 使用 /usr/lib/jvm/java-21-openjdk-amd64/bin/jconsole 来在自动模式中提供 /usr/bin/jconsole (jconsole)
+正在设置 default-jdk-headless (2:1.21-75+exp1) ...
+正在设置 default-jdk (2:1.21-75+exp1) ...
+正在设置 libvtk9-dev (9.1.0+really9.1.0+dfsg2-7.1build3) ...
+正在设置 libvtk9-qt-dev:amd64 (9.1.0+really9.1.0+dfsg2-7.1build3) ...
+正在设置 libpcl-dev (1.14.0+dfsg-1) ...
+正在设置 ros-jazzy-pcl-conversions (2.6.5-1noble.20260903.065915) ...
+APTEXIT=0
+1

@@ -1,0 +1,208 @@
+$ ros2 node list
+/amcl
+/behavior_server
+/bt_navigator
+/bt_navigator_navigate_through_poses_rclcpp_node
+/bt_navigator_navigate_to_pose_rclcpp_node
+/controller_server
+/global_costmap/global_costmap
+/lifecycle_manager
+/local_costmap/local_costmap
+/planner_server
+/ros2_bridge_daemon
+/smoother_server
+/transform_listener_impl_37141296
+/transform_listener_impl_7433520
+/waypoint_follower
+[exit 0]
+
+$ ros2 param list /bt_navigator
+/bt_navigator:
+  /disable_heartbeat_timeout
+  allow_navigator_preemption
+  allow_parameter_qos_overrides
+  always_reload_bt_xml
+  autostart_node
+  bond_heartbeat_period
+  bt_log_idle_transitions
+  bt_loop_duration
+  bt_search_directories
+  default_cancel_timeout
+  default_nav_through_poses_bt_xml
+  default_nav_to_pose_bt_xml
+  default_server_timeout
+  error_code_name_prefixes
+  filter_duration
+  global_frame
+  navigate_through_poses.enable_groot_monitoring
+  navigate_through_poses.goals_blackboard_id
+  navigate_through_poses.groot_server_port
+  navigate_through_poses.path_blackboard_id
+  navigate_through_poses.plugin
+  navigate_through_poses.tracking_feedback_blackboard_id
+  navigate_through_poses.waypoint_statuses_blackboard_id
+  navigate_through_posessearch_window
+  navigate_to_pose.enable_groot_monitoring
+  navigate_to_pose.goal_blackboard_id
+  navigate_to_pose.groot_server_port
+  navigate_to_pose.path_blackboard_id
+  navigate_to_pose.plugin
+  navigate_to_pose.tracking_feedback_blackboard_id
+  navigate_to_posesearch_window
+  navigator_preemption_timeout
+  navigators
+  odom_topic
+  plugin_lib_names
+  robot_base_frame
+  strict_param_loading
+  transform_tolerance
+  use_sim_time
+  wait_for_service_timeout
+  warn_on_missing_params
+[exit 0]
+
+$ ros2 param list /bt_navigator -t
+/bt_navigator:
+  /disable_heartbeat_timeout [Boolean]
+  allow_navigator_preemption [Boolean]
+  allow_parameter_qos_overrides [Boolean]
+  always_reload_bt_xml [Boolean]
+  autostart_node [Boolean]
+  bond_heartbeat_period [Double]
+  bt_log_idle_transitions [Boolean]
+  bt_loop_duration [Integer]
+  bt_search_directories [StringArray]
+  default_cancel_timeout [Integer]
+  default_nav_through_poses_bt_xml [String]
+  default_nav_to_pose_bt_xml [String]
+  default_server_timeout [Integer]
+  error_code_name_prefixes [StringArray]
+  filter_duration [Double]
+  global_frame [String]
+  navigate_through_poses.enable_groot_monitoring [Boolean]
+  navigate_through_poses.goals_blackboard_id [String]
+  navigate_through_poses.groot_server_port [Integer]
+  navigate_through_poses.path_blackboard_id [String]
+  navigate_through_poses.plugin [String]
+  navigate_through_poses.tracking_feedback_blackboard_id [String]
+  navigate_through_poses.waypoint_statuses_blackboard_id [String]
+  navigate_through_posessearch_window [Double]
+  navigate_to_pose.enable_groot_monitoring [Boolean]
+  navigate_to_pose.goal_blackboard_id [String]
+  navigate_to_pose.groot_server_port [Integer]
+  navigate_to_pose.path_blackboard_id [String]
+  navigate_to_pose.plugin [String]
+  navigate_to_pose.tracking_feedback_blackboard_id [String]
+  navigate_to_posesearch_window [Double]
+  navigator_preemption_timeout [Integer]
+  navigators [StringArray]
+  odom_topic [String]
+  plugin_lib_names [StringArray]
+  robot_base_frame [String]
+  strict_param_loading [Boolean]
+  transform_tolerance [Double]
+  use_sim_time [Boolean]
+  wait_for_service_timeout [Integer]
+  warn_on_missing_params [Boolean]
+[exit 0]
+
+$ ros2 param get /bt_navigator use_sim_time
+Boolean value is: true
+[exit 0]
+
+$ ros2 param describe /bt_navigator use_sim_time
+Boolean parameter 'use_sim_time'
+  Description: 
+  Constraints: (none)
+  Read only: false
+[exit 0]
+
+$ ros2 param get /controller_server controller_frequency
+Double value is: 20.0
+[exit 0]
+
+$ ros2 param set /controller_server controller_frequency 15.5
+Set parameter successful
+[exit 0]
+
+$ ros2 param get /controller_server controller_frequency
+Double value is: 15.5
+[exit 0]
+
+$ ros2 param get /controller_server min_x_velocity_threshold
+Double value is: 0.001
+[exit 0]
+
+$ ros2 param set /controller_server controller_frequency not_a_number
+Setting parameter failed: parameter 'controller_frequency' is a Double and cannot be set from a String
+[exit 1]
+
+$ ros2 param get /controller_server controller_frequency
+Double value is: 15.5
+[exit 0]
+
+$ ros2 param set /controller_server no_such_param 1.0
+Setting parameter failed: parameter 'no_such_param' has not been declared
+[exit 1]
+
+$ ros2 param get /controller_server no_such_param
+Parameter not set
+[exit 0]
+
+$ ros2 param describe /controller_server controller_frequency
+Double parameter 'controller_frequency'
+  Description: 
+  Constraints: (none)
+  Read only: false
+[exit 0]
+
+$ ros2 param describe /controller_server no_such_param
+Parameter not set
+[exit 0]
+
+$ ros2 param dump /bt_navigator
+/bt_navigator:
+  ros__parameters:
+    /disable_heartbeat_timeout: true
+    allow_navigator_preemption: false
+    allow_parameter_qos_overrides: true
+    always_reload_bt_xml: false
+    autostart_node: false
+    bond_heartbeat_period: 0.25
+    bt_log_idle_transitions: true
+    bt_loop_duration: 10
+    bt_search_directories: ['E:\DesktopData\app\code\CPU\nav2\nav2_extracted\navigation2-1.5.1\nav2_bt_navigator/behavior_trees']
+    default_cancel_timeout: 1000
+    default_nav_through_poses_bt_xml: 'E:\DesktopData\app\code\CPU\nav2\ros2_shim\config\bt/navigate_through_poses.xml'
+    default_nav_to_pose_bt_xml: 'E:\DesktopData\app\code\CPU\nav2\ros2_shim\config\bt/navigate_to_pose.xml'
+    default_server_timeout: 1000
+    error_code_name_prefixes: [assisted_teleop, backup, compute_path, dock_robot, 'drive_on_heading', follow_object, follow_path, 'nav_thru_poses', 'nav_to_pose', route, 'spin', smoother, 'undock_robot', wait]
+    filter_duration: 0.3
+    global_frame: map
+    navigate_through_poses.enable_groot_monitoring: false
+    navigate_through_poses.goals_blackboard_id: goals
+    navigate_through_poses.groot_server_port: 1669
+    navigate_through_poses.path_blackboard_id: path
+    navigate_through_poses.plugin: 'nav2_bt_navigator::NavigateThroughPosesNavigator'
+    navigate_through_poses.tracking_feedback_blackboard_id: 'tracking_feedback'
+    navigate_through_poses.waypoint_statuses_blackboard_id: 'waypoint_statuses'
+    navigate_through_posessearch_window: 2.0
+    navigate_to_pose.enable_groot_monitoring: false
+    navigate_to_pose.goal_blackboard_id: goal
+    navigate_to_pose.groot_server_port: 1667
+    navigate_to_pose.path_blackboard_id: path
+    navigate_to_pose.plugin: 'nav2_bt_navigator::NavigateToPoseNavigator'
+    navigate_to_pose.tracking_feedback_blackboard_id: 'tracking_feedback'
+    navigate_to_posesearch_window: 2.0
+    navigator_preemption_timeout: 500
+    navigators: ['navigate_to_pose', 'navigate_through_poses']
+    odom_topic: odom
+    plugin_lib_names: []
+    robot_base_frame: 'base_link'
+    strict_param_loading: false
+    transform_tolerance: 0.1
+    use_sim_time: true
+    wait_for_service_timeout: 1000
+    warn_on_missing_params: false
+[exit 0]
+

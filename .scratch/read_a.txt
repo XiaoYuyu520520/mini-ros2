@@ -1,0 +1,506 @@
+==============================================================================
+### go copy.py
+#!/usr/bin/env python3
+
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import PoseStamped
+from nav_msgs.msg import Odometry, Path
+from std_msgs.msg import Float64
+import csv
+import numpy as np
+import math
+
+class MultiGoals(Node):
+    def __init__(self, goalListX, goalListY, goalListZ, goalListW, retry, map_frame):
+        super().__init__('multi_goals')
+        self.retry = retry
+        self.pub = self.create_publisher(PoseStamped, '/goal_pose', 10)
+        self.pose_ekf_sub = self.create_subscription(Odometry, '/odometry/filtered', self.getPose_ekf, 10)
+        self.plan_sub = self.create_subscription(Path, '/plan', self.plan_callback, 10)
+        self.pub_final = self.create_publisher(Float64, '/arrfinal', 1)
+        
+        self.goalListX = goalListX
+        self.goalListY = goalListY
+        self.goalListZ = goalListZ
+        self.goalListW = goalListW
+        self.kx = 0
+        self.ky = 0
+        self.gx = 0
+        self.gy = 0
+        self.flag = 1
+        self.MIN_DISTANCE = 1.5  # min distance of the judge between the goal and odometry pose
+        self.LONG = len(self.goalListX)
+        self.goalId = 0
+        self.count = 0
+        self.start_time = 0
+        self.pubfinal = False
+        self.goalMsg = PoseStamped()
+        self.goalMsg.header.frame_id = map_frame
+        self.plan_received = False
+
+        # Timer to continuously publish goals
+        self.timer = self.create_timer(1.0, self.publish_goal)
+
+    def publish_goal(self):
+        if self.goalId >= len(self.goalListX):
+            self.get_logger().info("All goals have been published.")
+            self.timer.cancel()
+            return
+
+        if not self.plan_received:
+            self.goalMsg.header.stamp = self.get_clock().now().to_msg()
+            self.goalMsg.pose.position.x = self.goalListX[self.goalId]
+            self.goalMsg.pose.position.y = self.goalListY[self.goalId]
+            self.goalMsg.pose.orientation.z = self.goalListZ[self.goalId]
+            self.goalMsg.pose.orientation.w = self.goalListW[self.goalId]
+            self.pub.publish(self.goalMsg)
+            self.start_time = self.get_clock().now().to_msg().sec
+            self.get_logger().info(f"Published goal! Goal ID: {self.goalId}")
+
+    def plan_callback(self, msg):
+        if msg.poses:
+            self.plan_received = True
+            self.get_logger().info("Received valid plan.")
+            self.timer.cancel()
+
+    def statusCB(self):
+        if self.goalId >= len(self.goalListX):
+            return
+
+        self.gx = self.goalListX[self.goalId]
+        self.gy = self.goalListY[self.goalId]
+
+        self.dist = self.distance(self.kx, self.ky, self.gx, self.gy)
+
+        if self.dist < self.MIN_DISTANCE and self.flag == 1:
+            finish_time = self.get_clock().now().to_msg().sec
+            interval = finish_time - self.start_time
+            self.get_logger().info(f"Reached goal in {interval} seconds")
+
+            self.goalId += 1
+            self.plan_received = False
+            if self.goalId < len(self.goalListX):
+                self.timer.reset()
+                self.publish_goal()
+
+    def getPose_ekf(self, data):
+        self.kx = data.pose.pose.position.x
+        self.ky = data.pose.pose.position.y
+        self.statusCB()
+
+    def distance(self, kx, ky, gx, gy):
+        return math.sqrt((kx - gx) ** 2 + (ky - gy) ** 2)
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    goalListX = []
+    goalListY = []
+    goalListZ = []
+    goalListW = []
+
+    map_frame = 'map'
+
+    with open('test.csv', 'r') as f:
+        reader = csv.reader(f)
+        goalList = [list(map(float, cols)) for cols in reader]
+
+    goalList = np.array(goalList)
+    print("read suc!!")
+    goalListX = goalList[:, 0]
+    goalListY = goalList[:, 1]
+    goalListZ = goalList[:, 2]
+    goalListW = goalList[:, 3]
+
+    if len(goalListX) == len(goalListY) and len(goalListY) >= 1:
+        print("Multi Goals Executing...")
+        mg = MultiGoals(goalListX, goalListY, goalListZ, goalListW, 1, map_frame)
+        rclpy.spin(mg)
+    else:
+        print("Lengths of goal lists are not the same")
+
+    mg.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("shutting down")
+==============================================================================
+### get.py
+#!/usr/bin/env python3
+import os
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import PoseStamped
+import sys, select, termios, tty
+import csv
+import codecs
+
+class GoalPoseSubscriber(Node):
+    def __init__(self):
+        super().__init__('get_point')
+        self.subscription = self.create_subscription(
+            PoseStamped,
+            '/goal_pose',
+            self.pose_stamped_cb,
+            10)
+        self.subscription  # prevent unused variable warning
+        self.points = []
+        self.settings = termios.tcgetattr(sys.stdin)
+
+    def pose_stamped_cb(self, msg):
+        gx = msg.pose.position.x
+        gy = msg.pose.position.y
+        gz = msg.pose.orientation.z
+        gw = msg.pose.orientation.w
+        self.points.append([gx, gy, gz, gw])
+
+    def get_key(self):
+        tty.setraw(sys.stdin.fileno())
+        rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+        if rlist:
+            key = sys.stdin.read(1)
+        else:
+            key = ''
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
+        return key
+
+    def data_write_csv(self, file_name, datas):
+        with codecs.open(file_name, 'w+', 'utf-8') as file_csv:
+            writer = csv.writer(file_csv, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+            for data in datas:
+                writer.writerow(data)
+        self.get_logger().info('Data written to CSV successfully!')
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = GoalPoseSubscriber()
+    out_csv = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out_test.csv')
+
+    try:
+        while rclpy.ok():
+            rclpy.spin_once(node, timeout_sec=0.1)
+            key = node.get_key()
+            if key == 'f' or key == 'F':
+                node.data_write_csv(out_csv, node.points)
+            if key == '\x03':  # Ctrl+C to exit
+                break
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+==============================================================================
+### go_2c.py
+#!/usr/bin/env python3
+
+from nav2_simple_commander.robot_navigator import BasicNavigator
+from geometry_msgs.msg import PoseStamped
+from nav2_msgs.action import NavigateToPose
+from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
+
+import rclpy
+import time
+
+def main():
+    rclpy.init()  # 初始化ROS 2
+    navigator = BasicNavigator()  # 创建导航器实例
+
+    # 定义导航点
+    waypoints = [
+        {"x": 1.178, "y": -1.089},
+        {"x": 2.531, "y": -2.070},
+        {"x": 4.180, "y": -3.071}
+    ]
+
+    # 遍历导航点
+    for idx, point in enumerate(waypoints):
+        goal_pose = PoseStamped()  # 创建目标姿态消息
+        goal_pose.header.frame_id = 'map'  # 设置参考坐标系为地图
+        goal_pose.header.stamp = navigator.get_clock().now().to_msg()  # 设置时间戳
+        goal_pose.pose.position.x = point["x"]  # 设置目标点的x坐标
+        goal_pose.pose.position.y = point["y"]  # 设置目标点的y坐标
+        goal_pose.pose.orientation.w = 1.0  # 设置默认的方向（朝向正北）
+
+        print(f"Sending goal to point ({point['x']}, {point['y']})")  # 打印当前目标点
+        navigator.goToPose(goal_pose)  # 发送导航请求
+
+        # 等待导航任务启动
+        while not navigator.isTaskComplete():
+            feedback = navigator.getFeedback()  # 获取导航反馈
+            if feedback and feedback.distance_remaining > 0.0:  # 确保反馈值是合理的
+                print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+                break  # 任务已启动，跳出等待循环
+            time.sleep(0.5)  # 等待0.5秒后再次检查
+
+        # 等待导航任务完成或距离小于0.6米
+        while not navigator.isTaskComplete():
+            feedback = navigator.getFeedback()  # 获取导航反馈
+            if feedback:
+                print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+                if feedback.distance_remaining < 0.6:  # 如果距离小于0.6米
+                    print(f"Skipping to next waypoint as distance to goal is less than 0.6 meters.")
+                    navigator.cancelTask()  # 显式取消当前任务
+                    break  # 跳出当前导航点的等待循环
+            time.sleep(0.5)  # 等待0.5秒后再次检查
+
+        # 检查导航结果
+        result = navigator.getResult()
+        if result == TaskResult.SUCCEEDED:  # 使用TaskResult枚举
+            print(f"Reached waypoint {idx + 1}: ({point['x']}, {point['y']})")  # 打印完成标志
+        elif result == TaskResult.CANCELED:
+            print(f"Goal to waypoint {idx + 1} was canceled!")
+        elif result == TaskResult.FAILED:
+            print(f"Goal to waypoint {idx + 1} failed!")
+        else:
+            print(f"Goal to waypoint {idx + 1} has an invalid return status!")
+
+    print("All waypoints completed!")  # 所有导航点完成后打印
+    navigator.lifecycleShutdown()  # 关闭导航器
+
+if __name__ == "__main__":
+    main()
+
+==============================================================================
+### go copy_多点需要切换.py
+#!/usr/bin/env python3
+
+from nav2_simple_commander.robot_navigator import BasicNavigator
+from geometry_msgs.msg import PoseStamped
+from nav2_msgs.action import NavigateToPose
+from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
+
+import rclpy
+import time
+
+def main():
+    rclpy.init()  # 初始化ROS 2
+    navigator = BasicNavigator()  # 创建导航器实例
+
+    # 定义导航点
+    waypoints = [
+        {"x": 1.178, "y": -1.089},
+        {"x": 2.531, "y": -2.070},
+        {"x": 4.180, "y": -3.071}
+    ]
+
+    # 遍历导航点
+    for idx, point in enumerate(waypoints):
+        goal_pose = PoseStamped()  # 创建目标姿态消息
+        goal_pose.header.frame_id = 'map'  # 设置参考坐标系为地图
+        goal_pose.header.stamp = navigator.get_clock().now().to_msg()  # 设置时间戳
+        goal_pose.pose.position.x = point["x"]  # 设置目标点的x坐标
+        goal_pose.pose.position.y = point["y"]  # 设置目标点的y坐标
+        goal_pose.pose.orientation.w = 1.0  # 设置默认的方向（朝向正北）
+
+        print(f"Sending goal to point ({point['x']}, {point['y']})")  # 打印当前目标点
+        navigator.goToPose(goal_pose)  # 发送导航请求
+
+        # 等待导航任务启动
+        while not navigator.isTaskComplete():
+            feedback = navigator.getFeedback()  # 获取导航反馈
+            if feedback and feedback.distance_remaining > 0.0:  # 确保反馈值是合理的
+                print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+                break  # 任务已启动，跳出等待循环
+            time.sleep(0.5)  # 等待0.5秒后再次检查
+
+        # 等待导航任务完成或距离小于0.6米
+        while not navigator.isTaskComplete():
+            feedback = navigator.getFeedback()  # 获取导航反馈
+            if feedback:
+                print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
+                if feedback.distance_remaining < 0.6:  # 如果距离小于0.6米
+                    print(f"Skipping to next waypoint as distance to goal is less than 0.6 meters.")
+                    navigator.cancelTask()  # 显式取消当前任务
+                    time.sleep(1.0)  # 等待1秒，确保导航器状态更新
+                    break  # 跳出当前导航点的等待循环
+            time.sleep(0.5)  # 等待0.5秒后再次检查
+
+        # 检查导航结果
+        result = navigator.getResult()
+        if result == TaskResult.SUCCEEDED:  # 使用TaskResult枚举
+            print(f"Reached waypoint {idx + 1}: ({point['x']}, {point['y']})")  # 打印完成标志
+        elif result == TaskResult.CANCELED:
+            print(f"Goal to waypoint {idx + 1} was canceled!")
+        elif result == TaskResult.FAILED:
+            print(f"Goal to waypoint {idx + 1} failed!")
+        else:
+            print(f"Goal to waypoint {idx + 1} has an invalid return status!")
+
+        # 清理导航器状态
+        navigator.clearAllCostmaps()  # 清除代价地图
+        time.sleep(1.0)  # 等待1秒，确保状态清理完成
+
+    print("All waypoints completed!")  # 所有导航点完成后打印
+    navigator.lifecycleShutdown()  # 关闭导航器
+
+if __name__ == "__main__":
+    main()
+
+==============================================================================
+### go一条路径.py
+#!/usr/bin/env python3
+
+import rclpy
+from rclpy.action import ActionClient
+from rclpy.node import Node
+from nav2_msgs.action import NavigateThroughPoses
+from geometry_msgs.msg import PoseStamped
+
+class NavThroughPosesClient(Node):
+    def __init__(self):
+        super().__init__('nav_through_poses_client')
+        self._action_client = ActionClient(self, NavigateThroughPoses, 'navigate_through_poses')
+
+    def send_goal(self, poses):
+        goal_msg = NavigateThroughPoses.Goal()
+        goal_msg.poses.goals = poses
+
+        self._action_client.wait_for_server(timeout_sec=10.0)
+        self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+
+    def goal_response_callback(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().info('Goal rejected :(')
+            return
+
+        self.get_logger().info('Goal accepted :)')
+
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+
+    def get_result_callback(self, future):
+        result = future.result().result
+        self.get_logger().info('Navigation result: {0}'.format(result))
+        rclpy.shutdown()
+
+    def feedback_callback(self, feedback_msg):
+        feedback = feedback_msg.feedback
+        self.get_logger().info('Received feedback: {0}'.format(feedback))
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    client = NavThroughPosesClient()
+
+    # 定义导航点
+    waypoints = [
+        {"x": 2.67, "y": -0.11},
+        {"x": 4.84, "y": 0.84},
+        {"x": 2.05, "y": 2.48}
+        # {"x": -1.16, "y": -1.17}
+        # {"x": 0.00, "y": 0.00}
+
+    ]
+
+    # 将导航点转换为 PoseStamped 消息
+    poses = []
+    for point in waypoints:
+        pose = PoseStamped()
+        pose.header.frame_id = 'map'
+        pose.header.stamp.sec = 0
+        pose.pose.position.x = point["x"]
+        pose.pose.position.y = point["y"]
+        pose.pose.orientation.w = 1.0
+        poses.append(pose)
+
+    client.send_goal(poses)
+
+    rclpy.spin(client)
+
+if __name__ == '__main__':
+    main()
+
+==============================================================================
+### 一条路径+csv.py
+#!/usr/bin/env python3
+
+import rclpy
+from rclpy.action import ActionClient
+from rclpy.node import Node
+from nav2_msgs.action import NavigateThroughPoses
+from geometry_msgs.msg import PoseStamped
+import csv
+import numpy as np
+
+class NavThroughPosesClient(Node):
+    def __init__(self):
+        super().__init__('nav_through_poses_client')
+        self._action_client = ActionClient(self, NavigateThroughPoses, 'navigate_through_poses')
+
+    def send_goal(self, poses):
+        goal_msg = NavigateThroughPoses.Goal()
+        goal_msg.poses.goals = poses
+
+        self._action_client.wait_for_server(timeout_sec=10.0)
+        self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+
+    def goal_response_callback(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().info('Goal rejected :(')
+            return
+
+        self.get_logger().info('Goal accepted :)')
+
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+
+    def get_result_callback(self, future):
+        result = future.result().result
+        self.get_logger().info('Navigation result: {0}'.format(result))
+        rclpy.shutdown()
+
+    def feedback_callback(self, feedback_msg):
+        feedback = feedback_msg.feedback
+        self.get_logger().info('Received feedback: {0}'.format(feedback))
+
+def read_waypoints_from_csv(filename):
+    waypoints = []
+    with open(filename, 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if len(row) == 4:  # Ensure each row has x, y, z, w
+                waypoints.append({
+                    "x": float(row[0]),
+                    "y": float(row[1]),
+                    "z": float(row[2]),
+                    "w": float(row[3])
+                })
+    return waypoints
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    client = NavThroughPosesClient()
+
+    # 从CSV文件读取导航点
+    waypoints = read_waypoints_from_csv('test.csv')
+
+    # 将导航点转换为 PoseStamped 消息
+    poses = []
+    for point in waypoints:
+        pose = PoseStamped()
+        pose.header.frame_id = 'map'
+        pose.header.stamp.sec = 0
+        pose.pose.position.x = point["x"]
+        pose.pose.position.y = point["y"]
+        pose.pose.position.z = point["z"]
+        pose.pose.orientation.w = point["w"]
+        poses.append(pose)
+
+    client.send_goal(poses)
+
+    rclpy.spin(client)
+
+if __name__ == '__main__':
+    main()

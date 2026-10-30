@@ -1,0 +1,80 @@
+96         logger_,
+97         "NavigateThroughPosesNavigator::goalCompleted, internal error %d:'%s'.",
+98         result->error_code,
+99         result->error_msg.c_str());
+100     }
+101   } else {
+102     RCLCPP_WARN(
+103       logger_, "NavigateThroughPosesNavigator::goalCompleted error %d:'%s'.",
+104       result->error_code,
+105       result->error_msg.c_str());
+106   }
+107 
+108   // populate waypoint statuses in result
+109   auto blackboard = bt_action_server_->getBlackboard();
+110   auto waypoint_statuses =
+111     blackboard->get<std::vector<nav2_msgs::msg::WaypointStatus>>(waypoint_statuses_blackboard_id_);
+112 
+113   // populate remaining waypoint statuses based on final_bt_status
+114   auto integrate_waypoint_status = final_bt_status == nav2_behavior_tree::BtStatus::SUCCEEDED ?
+115     nav2_msgs::msg::WaypointStatus::COMPLETED : nav2_msgs::msg::WaypointStatus::FAILED;
+116   for (auto & waypoint_status : waypoint_statuses) {
+117     if (waypoint_status.waypoint_status == nav2_msgs::msg::WaypointStatus::PENDING) {
+118       waypoint_status.waypoint_status = integrate_waypoint_status;
+119     }
+120   }
+121 
+122   result->waypoint_statuses = std::move(waypoint_statuses);
+123 }
+124 
+125 void
+126 NavigateThroughPosesNavigator::onLoop()
+127 {
+128   using namespace nav2_util::geometry_utils;  // NOLINT
+129 
+130   // action server feedback (pose, duration of task,
+131   // number of recoveries, and distance remaining to goal, etc)
+132   auto feedback_msg = std::make_shared<ActionT::Feedback>();
+133 
+134   auto blackboard = bt_action_server_->getBlackboard();
+135 
+136   nav_msgs::msg::Goals goal_poses;
+137   [[maybe_unused]] auto res = blackboard->get(goals_blackboard_id_, goal_poses);
+138 
+139   feedback_msg->waypoint_statuses =
+140     blackboard->get<std::vector<nav2_msgs::msg::WaypointStatus>>(waypoint_statuses_blackboard_id_);
+141 
+142   if (goal_poses.goals.size() == 0) {
+143     bt_action_server_->publishFeedback(feedback_msg);
+144     return;
+145   }
+146 
+147   geometry_msgs::msg::PoseStamped current_pose;
+148   if (!nav2_util::getCurrentPose(
+149       current_pose, *feedback_utils_.tf,
+150       feedback_utils_.global_frame, feedback_utils_.robot_frame,
+151       feedback_utils_.transform_tolerance))
+152   {
+153     RCLCPP_ERROR(logger_, "Robot pose is not available.");
+154     return;
+155   }
+156 
+157   // Get current path points
+158   nav_msgs::msg::Path current_path;
+159   res = blackboard->get(path_blackboard_id_, current_path);
+160   if (res && current_path.poses.size() > 0u) {
+161     // Reset start index if path or goal is updated
+162     if (nav2_util::isPathUpdated(current_path, previous_path_) ||
+163       nav2_util::isGoalUpdated(current_path, previous_path_) ||
+164       previous_path_.poses.size() == 0u)
+165     {
+166       start_index_ = 0;
+167       previous_path_ = current_path;
+168     }
+169     // Find the closest pose to current pose on global path
+170     const auto path_search_result = nav2_util::distance_from_path(
+171       current_path, current_pose.pose, start_index_, search_window_);
+172 
+173     // Calculate distance on the path
+174     start_index_ = path_search_result.closest_segment_index;
+175     double distance_remaining =

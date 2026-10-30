@@ -1,0 +1,383 @@
+# Windows-side overrides on top of navigation2's own nav2_params.yaml.
+#
+# Every server in bridge\windows\nav2_stack.bat is started the same way -
+# `--params-file <nav2_params.yaml> --params-file <this file>` - and
+# `lifecycle_manager` reads only this one, because upstream's params file has no
+# block for it at all.
+#
+# Parameters are applied in the order the arguments appear, so a block here wins
+# over the same parameter in the upstream file. Only what actually differs is
+# listed - everything else comes from nav2_params.yaml untouched, which is the
+# point of loading it at all.
+
+# Every message on the bridge is stamped with the robot's simulation clock -
+# `/odom` says 397 s while the wall clock is at 1.79e9 s - so a node that pairs
+# its own `now()` with a stamped message is 56 years away from the message it is
+# pairing with. `use_sim_time` is what closes that: the shim's `now()` then
+# follows `/clock`, which the daemon mirrors from the robot (see
+# `bridge/docs/03-validation.md`, evidence 19).
+planner_server:
+  ros__parameters:
+    use_sim_time: true
+
+amcl:
+  ros__parameters:
+    use_sim_time: true
+
+# The behavior server reads the `local_costmap_raw` / `global_costmap_raw` topics
+# its collision checkers run on, and those are stamped with the simulation clock
+# like everything else the bridge carries. Upstream's block in nav2_params.yaml
+# already names the topics and the plugins; the clock and the command-velocity
+# type are overridden.
+behavior_server:
+  ros__parameters:
+    use_sim_time: true
+    # Same reason as `controller_server` above, reached through a different
+    # publisher: nav2_util::TwistPublisher stamps /cmd_vel by default, the robot
+    # subscribes to plain Twist, and the bridge forwards a topic by name under
+    # whatever type the writer used. Left true, the recovery branch publishes
+    # TwistStamped and the robot reads the header as `linear.x` - the spin turns
+    # nothing, and the behavior times out with "Exceeded time allowance before
+    # reaching the Spin goal" while /cmd_vel looks busy.
+    enable_stamped_cmd_vel: false
+
+controller_server:
+  ros__parameters:
+    use_sim_time: true
+    # nav2 1.5 publishes geometry_msgs/msg/TwistStamped on /cmd_vel by default
+    # (`enable_stamped_cmd_vel` defaults to true in nav2_util::TwistPublisher).
+    # The bridge forwards /cmd_vel by its *name*, so what travels to the robot
+    # is whatever this node writes into the shared-memory channel under the type
+    # the peer advertised - and the reference robot subscribes to plain Twist.
+    # Two types on one topic name is exactly what plain ROS2 would refuse to
+    # match, so the port pins the type instead of reinterpreting bytes: a
+    # TwistStamped payload read as a Twist starts with the header, so its
+    # `linear.x` decodes to a denormal near zero and the robot simply never
+    # moves - with no error anywhere.
+    enable_stamped_cmd_vel: false
+    # Upstream's file selects nav2_mppi_controller::MPPIController, and after
+    # this port MPPI is here too - its 1.5.1 sources no longer need xtensor,
+    # which is what used to keep it out (see the MPPI block below).
+    #
+    # RPP is a path follower: it takes the path and steers along it. DWB and
+    # MPPI are sampling controllers: they roll out a fan of candidate
+    # trajectories from the current pose and score each one with the critics
+    # listed below. Having all three is what makes the controller a choice
+    # rather than a constant.
+    #
+    # `nav2_graceful_controller` is the fourth shape: not a follower and not a
+    # sampler. Its control law is smooth by construction, so it needs no
+    # separate smoothing stage and no critic set - what it needs is room,
+    # because `slowdown_radius` / `deceleration_max` shape an approach to the
+    # goal rather than a turn at it.
+    #
+    # Which one drives is decided at run time, by the behavior tree's
+    # <ControllerSelector default_controller="FollowPath"
+    # topic_name="controller_selector"/>. The default keeps the demo on RPP;
+    # one publish switches it for the next FollowPath goal:
+    #
+    #   ros2.bat topic pub /controller_selector std_msgs/msg/String data=DWBFollowPath --once
+    #   ros2.bat topic pub /controller_selector std_msgs/msg/String data=MPPIFollowPath --once
+    #   ros2.bat topic pub /controller_selector std_msgs/msg/String data=GracefulFollowPath --once
+    #
+    # All four are `nav2_core::Controller` plugins and all four libraries are
+    # whole-archived into controller_server, so this list is the only thing that
+    # decides which ones the node is willing to instantiate.
+    controller_plugins: ["FollowPath", "DWBFollowPath", "MPPIFollowPath", "GracefulFollowPath"]
+    FollowPath:
+      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+      desired_linear_vel: 0.45
+      lookahead_dist: 0.55
+      min_lookahead_dist: 0.3
+      max_lookahead_dist: 0.9
+      use_velocity_scaled_lookahead_dist: false
+      min_approach_linear_velocity: 0.05
+      approach_velocity_scaling_dist: 0.6
+      use_collision_detection: true
+      max_allowed_time_to_collision_up_to_carrot: 1.0
+      use_regulated_linear_velocity_scaling: true
+      use_cost_regulated_linear_velocity_scaling: false
+      regulated_linear_scaling_min_radius: 0.9
+      regulated_linear_scaling_min_speed: 0.25
+      use_rotate_to_heading: true
+      rotate_to_heading_min_angle: 0.785
+      max_angular_accel: 2.0
+      rotate_to_heading_angular_vel: 0.8
+      transform_tolerance: 1.0
+
+    # DWB, tuned the way nav2's own example configuration tunes it - the numbers
+    # are upstream's, not invented here. Every one of them is read with the
+    # plugin id in front of it (`DWBFollowPath.max_vel_x`,
+    # `DWBFollowPath.sim_time`, ...), which is what `dwb_plugin_name_ + "."` in
+    # `dwb_core::DWBLocalPlanner::configure` spells out; writing them flat under
+    # the block is the same thing once the loader has flattened the file, and
+    # params_file.cpp joins nested keys with dots for exactly this.
+    #
+    # `critics` is the part that makes DWB a sampling controller rather than a
+    # trajectory generator. A name is resolved as
+    # `<namespace>::<name>Critic` against `default_critic_namespaces` (default
+    # `["dwb_critics"]`), so `BaseObstacle` means
+    # `dwb_critics::BaseObstacleCritic`, and each critic then reads its own
+    # parameters from `<plugin id>.<critic name>.*` - hence the dotted keys at
+    # the bottom. `RotateToGoal`, `GoalAlign` and `GoalDist` are the three that
+    # make it finish a goal in the right orientation rather than merely arrive
+    # near it.
+    DWBFollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      debug_trajectory_details: true
+      min_vel_x: 0.0
+      min_vel_y: 0.0
+      max_vel_x: 0.45
+      max_vel_y: 0.0
+      max_vel_theta: 1.0
+      min_speed_xy: 0.0
+      max_speed_xy: 0.45
+      min_speed_theta: 0.0
+      acc_lim_x: 2.5
+      acc_lim_y: 0.0
+      acc_lim_theta: 3.2
+      decel_lim_x: -2.5
+      decel_lim_y: 0.0
+      decel_lim_theta: -3.2
+      # How many samples per axis per rollout, and how far ahead to roll. The
+      # product is the number of trajectories scored on every control step.
+      vx_samples: 20
+      vy_samples: 5
+      vtheta_samples: 20
+      sim_time: 1.7
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 0.5
+      xy_goal_tolerance: 0.25
+      trans_stopped_velocity: 0.25
+      short_circuit_trajectory_evaluation: true
+      stateful: true
+      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign",
+                "PathAlign", "PathDist", "GoalDist"]
+      BaseObstacle.scale: 0.02
+      PathAlign.scale: 32.0
+      PathAlign.forward_point_distance: 0.1
+      GoalAlign.scale: 24.0
+      GoalAlign.forward_point_distance: 0.1
+      PathDist.scale: 32.0
+      GoalDist.scale: 24.0
+      RotateToGoal.scale: 32.0
+      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.lookahead_time: -1.0
+
+# Both of these are lifecycle servers with no timers of their own until a goal
+# arrives, but waypoint_follower's `NavigateToPose` client and the poses it
+# compares are stamped, so the clock has to match the rest of the graph.
+
+    # The upstream default controller, and the third entry in the list above.
+    # Its parameters are copied verbatim from nav2_bringup's nav2_params.yaml
+    # (the `FollowPath` block there is MPPI), so the tuning is the tuning
+    # upstream ships rather than something invented here. The batch size and
+    # the 56-step horizon are why MPPI costs more per cycle than DWB or RPP;
+    # `visualize` / `publish_optimal_trajectory` are on because the shim can
+    # carry the MarkerArray those publish like any other topic.
+    MPPIFollowPath:
+      plugin: "nav2_mppi_controller::MPPIController"
+      time_steps: 56
+      model_dt: 0.05
+      model_delay_vx: 0.0
+      model_delay_vy: 0.0
+      model_delay_wz: 0.0
+      batch_size: 2000
+      open_loop: false
+      ax_max: 3.0
+      ax_min: -3.0
+      ay_max: 3.0
+      ay_min: -3.0
+      az_max: 3.5
+      vx_std: 0.2
+      vy_std: 0.2
+      wz_std: 0.4
+      vx_max: 0.5
+      vx_min: -0.35
+      vy_max: 0.5
+      wz_max: 1.9
+      iteration_count: 1
+      temperature: 0.3
+      gamma: 0.015
+      visualize: true
+      publish_optimal_trajectory: true
+      regenerate_noises: true
+      motion_model: "diff_drive"
+      diff_drive:
+        plugin: "mppi::DiffDriveMotionModel"
+      TrajectoryVisualizer:
+        trajectory_step: 5
+        time_step: 3
+      TrajectoryValidator:
+        # The validator can be configured with additional parameters if needed.
+        plugin: "mppi::DefaultOptimalTrajectoryValidator"
+        collision_lookahead_time: 2.0  # Time to look ahead to check for collisions
+        consider_footprint: false  # Whether to consider the full robot's footprint (or circle) in trajectory validation collision checks
+      critics:
+        [
+          "ConstraintCritic",
+          "CostCritic",
+          "GoalCritic",
+          "GoalAngleCritic",
+          "PathAlignCritic",
+          "PathFollowCritic",
+          "PathAngleCritic",
+          "PreferForwardCritic",
+        ]
+      ConstraintCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 4.0
+      GoalCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        threshold_to_consider: 1.4
+      GoalAngleCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 3.0
+        threshold_to_consider: 0.5
+      PreferForwardCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        threshold_to_consider: 0.5
+      CostCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 3.81
+        near_collision_cost: 253
+        critical_cost: 300.0
+        consider_footprint: false
+        collision_cost: 1000000.0
+        near_goal_distance: 1.0
+        trajectory_point_step: 2
+      PathAlignCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 14.0
+        max_path_occupancy_ratio: 0.05
+        trajectory_point_step: 4
+        threshold_to_consider: 0.5
+        offset_from_furthest: 20
+        use_path_orientations: false
+      PathFollowCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        offset_from_furthest: 5
+        threshold_to_consider: 1.4
+      PathAngleCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 2.0
+        offset_from_furthest: 4
+        threshold_to_consider: 0.5
+        max_angle_to_furthest: 1.0
+        mode: 0
+      # TwirlingCritic:
+      #   enabled: true
+      #   twirling_cost_power: 1
+      #   twirling_cost_weight: 10.0
+
+    # The graceful controller, as its own entry in the plugin table.
+    #
+    # It is the one controller here that is neither a follower nor a sampler:
+    # the curvature it commands comes out of a smooth control law (k_phi /
+    # k_delta / beta / lambda below), which is why upstream pairs it with no
+    # smoother. `initial_rotation` / `prefer_final_rotation` keep the manoeuvre
+    # the same shape as RPP's, so the two can be compared directly.
+    GracefulFollowPath:
+      plugin: "nav2_graceful_controller::GracefulController"
+      # The reference robot tops out at 0.5 m/s (see nav2_shim_safety.yaml) and
+      # the demo drives at 0.45, so the control law picks between these two.
+      v_linear_min: 0.1
+      v_linear_max: 0.45
+      v_angular_max: 1.0
+      # Lookahead into the path: min on a tight corner, max on a straight.
+      min_lookahead: 0.25
+      max_lookahead: 0.9
+      # Where it comes from and where it ends up, the way RPP does it.
+      initial_rotation: true
+      prefer_final_rotation: true
+      # Its own footprint check against the local costmap, as upstream runs it.
+      use_collision_detection: true
+
+smoother_server:
+  ros__parameters:
+    use_sim_time: true
+
+waypoint_follower:
+  ros__parameters:
+    use_sim_time: true
+
+# Upstream's file is written to be rewritten by a launch file, which also
+# substitutes two placeholders on the way: `KEEPOUT_ZONE_ENABLED` and
+# `SPEED_ZONE_ENABLED` are words in the file and `True` or `False` by the time a
+# node sees them. Read as they stand they would be strings, and the costmap
+# filters that read them as booleans would abort the costmap they belong to. Both
+# are `use_keepout_zones` / `use_speed_zones` in navigation_launch.py; the port
+# has no keepout or speed mask server to feed those filters, so both are off
+# here, the way nav2's own system tests run them. The blocks repeat the nesting
+# the upstream file uses, which is what the loader matches.
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      keepout_filter:
+        enabled: false
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      keepout_filter:
+        enabled: false
+      speed_filter:
+        enabled: false
+
+# The BT action server hands these two to every behavior tree node it loads
+# (see nav2_behavior_tree/bt_action_server_impl.hpp). Upstream's 20 ms / 50 ms
+# assume a robot computer where a service round trip is microseconds; on this
+# port a round trip is a shared-memory publish plus the node's own work, and the
+# 42 ms measured for the first `follow_path` request already exceeds 20 ms.
+# What that looks like when it trips is a WARN in the navigator log and a
+# recovery branch that runs for no reason, so the budget is a second here.
+bt_navigator:
+  ros__parameters:
+    use_sim_time: true
+    default_server_timeout: 1000
+    default_cancel_timeout: 1000
+    # Upstream's default tree ends in a recovery round robin of Spin / Wait /
+    # BackUp, served by nav2_behaviors' behavior server - `behavior_server.exe`
+    # below. Those three leaves are back in the trees this port ships (the file
+    # headers say what else is and is not in them). They only work while the
+    # behavior server is up, and because a behavior tree is built when the
+    # navigator activates, a missing action server keeps the whole navigator
+    # from activating; that is why the manager's `node_names` lists the behavior
+    # server too.
+    default_nav_to_pose_bt_xml: "$(env NAV2_SHIM_BT_DIR)/navigate_to_pose.xml"
+    default_nav_through_poses_bt_xml: "$(env NAV2_SHIM_BT_DIR)/navigate_through_poses.xml"
+
+# nav2_bringup passes these from its launch file, so upstream's params file has
+# no lifecycle_manager block at all. `node_names` is a string array, and a
+# command line `-p` cannot spell one - hence a file.
+#
+# This is the whole reference stack: planner, controller, the BT navigator that
+# drives them, the behavior server its recovery branch sends to, the path
+# smoother and the waypoint navigator. bt_navigator needs the behavior trees to
+# be findable (see `bt_search_directories` and apps/bt_navigator_node.cpp) and
+# nothing else, so bringing all six up from one manager is what
+# `bridge\windows\nav2_stack.bat` does. Drop a name here to bring a subset up on
+# its own - but a subset without `behavior_server` leaves the recovery leaves of
+# both trees without an action server, and bt_navigator then will not activate.
+lifecycle_manager:
+  ros__parameters:
+    autostart: true
+    node_names:
+      ["controller_server", "planner_server", "bt_navigator", "behavior_server",
+       "smoother_server", "waypoint_follower"]
+    # The shim's bond is a no-op (nothing can crash without bringing the whole
+    # machine's shared memory down with it), so the crash-respawn machinery is
+    # pointless here; 0.0 turns the bond timer off instead of letting it tick.
+    bond_timeout: 0.0
+    attempt_respawn_reconnection: false

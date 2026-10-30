@@ -1,0 +1,487 @@
+﻿# .memories — 项目记忆
+
+本文件记录**跨会话需要记住的事实**：架构约束、已经踩过的坑、做过的决定及其理由。
+按时间倒序追加，最新的在最前面。
+
+约定与根 `README.md` 一致：`.md` 用 **LF** 换行 + **UTF-8 BOM**；
+`.bat` 用 **CRLF**；`.sh` 用 **LF**。
+
+### 本机环境（用户口述，随时可能变）
+
+| 项 | 位置 / 命令 |
+| --- | --- |
+| Shell | **PowerShell 7.6.9**，在 `C:\Program Files\PowerShell\7\pwsh.exe`。<br>系统自带的 `powershell.exe` 是 **5.1**（`C:\Windows\System32\WindowsPowerShell\v1.0\`）。<br>用户**不开 WSL** —— 不要用 `bash -c`、`wsl.exe` |
+| Python 虚拟环境 | `E:\venvs\py312\Scripts\Activate.ps1` |
+| 激活命令 | `& "E:\venvs\py312\Scripts\Activate.ps1"` |
+| 临时用清华源装包 | `pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple 包名` |
+| MSYS2 UCRT64 入口 | `D:\WindowsServer2025_1\software\MSYS2\ucrt64.exe` |
+| tmux | `D:\WindowsServer2025_1\software\psmux-v3.3.6-windows-x64\tmux.exe` |
+
+**Windows 侧一律用 `.ps1`，不用 `.bat`。** 用户明确要求。
+（原先写的四个 `.bat` 已删除：`加载模拟ROS环境变量.bat`、
+`Windows被连接服务进程.bat`、`sim_env.bat`、`win_bridge_service.bat`。）
+
+**验证脚本要用 PowerShell / Python，不要用 bash。** 这台机器上的
+`bash` 是 WSL 的 `bash.EXE`，但**没有装任何 WSL 发行版**，所以
+`bash -n xxx.sh` 只会打印「适用于 Linux 的 Windows 子系统没有已安装的分发版」。
+`.sh` 的语法检查改用 Python 做关键字配平（if/fi、for/done、case/esac，
+注意跳过 heredoc 体）。
+
+### `.ps1` 的编码：**必须 UTF-8 BOM**（2026-10-30 踩过）
+
+`Windows PowerShell 5.1` 读 `.ps1` 时，**没有 BOM 就按 ANSI（cp936）解**，
+于是：
+
+* 文件里的中文变乱码；
+* **文件名里的中文变乱码 → 「找不到文件」**（`dot-source` 直接报
+  `CommandNotFoundException`）；
+* 更隐蔽的是：**逻辑也一起坏了** —— 曾经
+  `$env:ROS2_BRIDGE_AGENT` 明明有兜底赋值却始终是空，
+  根因就是 5.1 把整个文件解码坏了。
+
+→ `start/*.ps1` 一律 **UTF-8 BOM + CRLF**。
+用 `python tools/fix_ps1_encoding.py start` 统一改。
+
+### 在 PowerShell 里验证「环境变量留住了没有」
+
+**不要**用 `cmd /c '... && echo %VAR%'` —— `%VAR%` 在**整条命令行解析时**
+就被展开了，比 `call` 早，看起来像「没生效」，其实是测试写法错。
+用延迟展开：
+
+```powershell
+cmd /v:on /c 'call start\sim_env.bat >nul & echo !ROS2_BRIDGE_AGENT!'
+```
+
+或者更直接：在 PowerShell 里点源 `.ps1` 后读 `$env:VAR`（推荐，
+因为 `.ps1` 就是 PowerShell 的原生入口）。
+
+**测试脚本要写成文件再 `-File` 执行**，不要把中文路径塞进
+`powershell -Command` —— bash → powershell 的命令行会把它打散。
+写成文件后用 `Get-ChildItem -Filter '*.ps1'` + ASCII 通配定位目标，
+中文路径就不经过命令行了。
+
+---
+
+## 2026-10-30 · `package.py`：把运行产物 + 启动脚本打成 zip
+
+仓库根的 `package.py`（`python package.py`）产出 `dist/cpu-nav2-<日期>.zip`。
+本机实测 **210 文件 / 211.8 MB → 54.9 MB**。
+
+### 设计原则：zip 是**仓库结构的子集**
+
+这一条最容易做错。启动脚本在运行时拼的是仓库相对路径：
+
+* `bridge_env.bat` 的 `ROS2_BRIDGE_BUILD = bridge/windows/build`
+* `NAV2_SHIM_SRC = nav2/nav2_extracted/navigation2-1.5.1`
+* `run_nav2_stack.py` 找 `nav2/ros2_shim/build/<exe>`
+* `start/加载模拟ROS环境变量.ps1` 点源 `bridge/windows/ros2.ps1`
+
+所以**不能把 exe 拍平到 `nav2/` 或 `bridge/`**——解压后谁也找不到谁。
+第一版就是这么错的，验证时才发现。现在所有路径都保持仓库原样。
+
+### 挑什么（`collect()` 里是白名单，不是 glob）
+
+| 进包 | 不进包 |
+| --- | --- |
+| `nav2/ros2_shim/build/` 里 `apps/` 对应的服务器 + 少量诊断工具 | `test_*`、`bench_*`（`--with-tests` 才带） |
+| `bridge/windows/build/{ros2,ros2_bridge_daemon}.exe` + **88 个 DLL** | 中间产物 `.obj/.a/CMakeFiles` |
+| `nav2/ros2_shim/config/**`（含 bt XML） | 96 MB 的 `nav2_extracted` 源码 |
+| `nav2_extracted` 里**只要 58 KB**：`nav2_bringup/params` + `nav2_bt_navigator/behavior_trees` | 其余上游源码 |
+| `bridge/ubuntu/**`、`bridge/scripts/**`、`start/**` | `code/Desktop/rubblish`、`.scratch`、`tools` |
+
+DLL 是必须的：桥的 exe **不是**静态链接，构建时
+（`bridge/windows/cmake/bundle_runtime.cmake`）已经把 MSYS2 运行时拷到 exe 旁边，
+打包器一并带上，所以目标机不需要 MSYS2。
+
+### 验证方式（打包器最容易「解压了但跑不起来」）
+
+1. `--list` 看文件清单和未压缩大小；
+2. 检查 zip 里存在脚本会去拼的每一条路径；
+3. **解压到临时目录**，从解压后的树直接跑 `map_saver_cli.exe` 和 `ros2.exe`
+   —— 本机实测两者都能启动（`map_saver_cli` 打出生命周期节点 banner），
+   88 个 DLL 都在，不依赖仓库。
+
+### 参数
+
+```
+python package.py                 # dist/cpu-nav2-<日期>.zip
+python package.py --list          # 只列，不写
+python package.py --with-tests    # 连 test_/bench_ 一起（体积大约翻倍）
+python package.py --no-ros2-agent # 不带 Ubuntu 侧的 ros2_grpc_sdk_agent
+python package.py --out x.zip --force
+```
+
+`dist/` 已加进 `.gitignore`（55 MB 的构建产物不该进仓库）。
+
+### 注意
+
+* zip 用**固定时间戳**（当天 00:00:00），同一份构建产出可复现的字节，
+  方便 `cmp` 比对；可执行位按 `0o755` 写进 `external_attr`，
+  在 Linux 上 `unzip` 出来仍可执行（`connector.sh` 用的是 `bash xxx.sh`，
+  不依赖执行位，但带上更稳）。
+* `nav2_extracted` 只带**参数和 BT**，所以包里 `nav2/nav2_extracted/...` 是残缺的
+  上游树——这是**故意的**，`NAV2_SHIM_SRC` 只需要这两个目录。
+* Windows 的 zip 里带的是 `ros2_grpc_sdk_agent.exe`（Windows 构建）；
+  Ubuntu 侧的真 ROS2 agent 要在机器人上自己 `build.py --with-ros2`。
+
+---
+
+## 2026-10-30 · 共享内存**不是**零拷贝；实测真实路径基准
+
+回答"这是不是零拷贝"：**不是**。一次发布有 4 次拷贝：
+
+```
+publish(msg) → serialize()           拷贝1 结构体→bytes   (publisher.hpp:56)
+             → memcpy 进共享槽        拷贝2 bytes→slot      (shm_transport.cpp:881)
+============== 进程边界（这里是共享，不是拷贝）==============
+subscribe()  → memcpy 出槽            拷贝3 slot→读者缓冲   (shm_transport.cpp:921)
+             → deserialize()         拷贝4 bytes→结构体     (subscription.hpp:135)
+```
+
+准确说法：**零系统调用（zero-syscall），不是零拷贝**。省下的是内核 socket/UDP 栈。
+
+新基准：`nav2/ros2_shim/tests/bench_real_path.cpp`（**不**注册 ctest）。
+`python nav2\ros2_shim\build.py bench_real_path` → 跑 `build\bench_real_path.exe`。
+它测**完整路径**（循环里真的 serialize/deserialize），另外有跨进程模式
+（父进程发布、子进程读并在那边反序列化）。
+
+本机实测（Release / 6 P-core）：
+
+| 载荷 | 线上大小 | 同进程 msg/s | 跨进程 msg/s | 延迟 p50 |
+| --- | --- | --- | --- | --- |
+| Twist | 48 B | 1.32 M | 1.40 M | 0.5 us |
+| Odometry | 709 B | 462 k | 483 k | 1.6 us |
+| LaserScan | 5813 B | 87 k | 88 k | 8.8 us |
+
+**跨进程 ≈ 同进程**，这是"共享内存本来就不为进程边界付钱"的最好证据。
+codec 本身：48 B 0.1 us / 709 B 0.3 us / 5813 B 2.3 us。
+
+**结论**：nav2 的 20–50 Hz 控制、10 Hz 激光对这个开销完全可以忽略
+（`/scan` 10 Hz 只占 0.009% 时间片）。真正值得优化的是
+`WriteArchive` **逐字段 `push_back` 且不 `reserve`**（`serialization.hpp:212`），
+大消息会反复扩容+拷贝；加 size 预估 + `reserve()` 是下一步。
+
+完整数据与解读：`.scratch/shim_transport_bench_2026-10-30.md`。
+
+**踩坑**：这个 `.cpp` 在 Windows 上是 **CRLF**，用 Python 往 C 字符串里写
+`\n` 时如果混了行尾，会把真换行塞进字符串字面量。改完要
+`python tools/check_docs.py`，并用字节级替换确认；记着 C 源码用 CRLF。
+
+---
+
+## 2026-10-30 · 合并 services / actions + 同名话题拆分（真机全 PASS）
+
+在上一条「接线器只合并话题」之上，把**服务、动作、同名话题冲突**一起处理了。
+
+### services / actions 合并
+
+`relay.py` 现在除了 `ListTopics`/`Subscribe`/`Publish`，还代理：
+
+| RPC | 做法 |
+| --- | --- |
+| `ListServices` / `GetServiceInfo` | 两个上游的并集；同名时**真 ROS2 赢**（仿真的服务都在 `/sim/` 下，实际不撞） |
+| `CallService` | 按 service 名字找到上游，原样转发请求/响应 |
+| `ListActions` / `GetActionInfo` | 两个上游的并集；同名时真 ROS2 赢 |
+| `SendActionGoal` | 转给拥有该 action 的上游；返回的 `goal_id` **加前缀** `sim:` / `real:` |
+| `ActionFeedback` / `GetActionResult` / `CancelActionGoal` | 从前缀解出上游，去掉前缀再代理 |
+
+**为什么要给 goal_id 加前缀**：两个上游各自发 uuid，可能撞；下游（Windows 守护进程）
+之后要"follow 这个 goal"，必须能无歧义地找回是哪个上游。`Relay.split_goal_id()` 是唯一
+的解析点（有单测）。
+
+**action 的 timeout**：`SendActionGoal` 的上游 agent 用**请求里的** `timeout_ms`
+（不是 RPC 的 deadline）等它自己的 action server 出现，默认 5000 ms。接线器必须把
+自己的预算**写回请求**，否则下游没设 `timeout_ms` 时，上游 5 秒就放弃，而服务器其实在。
+→ `DEFAULT_ACTION_TIMEOUT_S = 20`，且 `upstream_request.timeout_ms = timeout*1000`。
+
+### 同名话题冲突：`--collision prefer-sim|prefer-real`
+
+那台机器上真 ROS2 和仿真**都发** `/scan` `/odom` `/tf` `/tf_static` `/clock`。
+合并进同一个话题会让两台机器的数据交织，下游分不清。做法：
+
+* 赢家保住原名（`--collision prefer-sim` 时仿真保住 `/scan`）；
+* 输家改挂 `/<上游>/<话题>`（真 ROS2 的变成 `/real/scan`）；
+* **不丢数据**，只是分开。`compare_agents.py` 能看到三份表并排对。
+
+### 一个容易错的点：下行 publish 去「谁**消费**」，不是「谁发布」
+
+`/cmd_vel` 在真 ROS2 侧由 nav2 的 velocity smoother **发布**（pub=1），在仿真侧
+只有小车**订阅**（pub=0 sub=1）。如果把下行 `/cmd_vel` 路由给"发布者"，命令会进真
+机器人，仿真车**一步不动**（这个 bug 真出现过）。
+
+→ `_publish_back()` 的顺序：
+1. 某上游对该话题**只订阅不发布**（纯汇）→ 发给它（这才是"act on this"）；
+2. 否则发给话题的 owner；
+3. 否则发给仿真。
+
+单测 `test_a_command_goes_to_the_side_that_consumes_it` 锁死这条。
+
+### 真机暴露的两个基础设施 bug（都已修）
+
+1. **接线器 worker 池耗尽**：gRPC 的每条 `Subscribe` 流**常驻一个 worker**。
+   守护进程一次镜像几十个话题 → 32 个 worker 全被流占满，`ListTopics`/`ListServices`
+   这些一元调用排队 → 下游 `Deadline Exceeded`，整个 relay 像死了一样。
+   → `SERVER_MAX_WORKERS = 512`。
+2. **双绑定翻倍**：原来同时绑 `0.0.0.0:50060` 和 `127.0.0.1:50060`，等于两套
+   server/worker。通配地址本来就覆盖回环 → `serve()` 在 wildcard 时**不再**建回环 server。
+
+### 共享内存几何：2.5 GB → 600 MB（用户选的方案）
+
+合并后 Windows 要镜像 **80 个话题**，其中 31 个按名字匹配到 `map`/`costmap`/`voxel`
+拿到 **8 MB × 8 槽 = 64 MB** 一节，总计 **~2.4 GB**；这台机器只有 7.6 GB 内存，
+直接 `VirtualAlloc failed` / `CreateFileMapping failed (1455)`。
+
+实测最大消息是 `/global_costmap/costmap` 的 **528 KB**（不是 8 MB）。
+→ `bridge_env.bat` / `bridge_env.sh` 把几何改成 **512 KB / 2 MB / 64 KB**
+（`NAV2_SHM_SLOT_SIZE=524288`、`NAV2_SHM_LARGE_SLOT_SIZE=2097152`），总占用降到 **~600 MB**，
+大槽对 528 KB 仍有 4 倍余量。
+
+**注意**：`nav2/ros2_shim/include/rclcpp/shm_config.hpp` 里的**默认值没动**（还是 2 MB/8 MB），
+改的是 `bridge_env` 的覆盖值——这是文档写明的覆盖机制，也避免影响只跑 shim 的项目。
+槽几何一变，**守护进程和所有 nav2 节点必须一起重启**（已开着的通道保留旧布局）。
+
+### 验证脚本要加载 bridge_env
+
+`bridge/scripts/_bridge_env.py` 读 `bridge_env.bat` 的变量（写法照 `ros2.ps1` 的
+`Import-Ros2Env`）。**不能用 `cmd /c "call x.bat && set"`**：cmd 会给含引号的命令行
+重新加引号，`call "path"` 被转义坏掉。改用**临时 .bat 包装**（`call ...` + `set`）绕开引号。
+`check_daemon_vs_relay.py` / `check_cmd_vel_to_sim.py` 都用它，否则守护进程拿不到槽几何、
+退回 2 MB/8 MB 的默认值，又回到 2.4 GB。
+
+### 真机结果（2026-10-30，全 PASS）
+
+| 检查 | 结果 |
+| --- | --- |
+| `probe_merged_graph.py` | 合并图 100+ 话题、438 service、21 action |
+| `compare_agents.py` | `/scan` `/odom` `/clock` `/tf` 保住仿真计数；真 ROS2 的挂 `/real/*` |
+| `check_daemon_vs_relay.py` | 守护进程镜像成功，`ros2 topic echo /chatter` 逐条读出 |
+| `check_cmd_vel_to_sim.py` | 车从 0.0 → **0.600 m**，PASS |
+| `check_merged_service.py` | `/sim/reset`（仿真）返回车位；`/add_two_ints`（真 ROS2）2+40=42，PASS |
+| `check_merged_action.py` | `/sim/spin` accepted + SUCCEEDED（goal_id 带 `sim:`），PASS |
+| pytest | **82 passed**（74 原 + 8 relay） |
+
+### 已知限制（外部环境，不是代码问题）
+
+* 那台机器上**所有 action 的 `_action/` 服务在 DDS 图里都不存在**
+  （`ros2 service list | grep _action/` 为空），
+  连原生 `ros2 action send_goal /fibonacci` 都报 `rcl node's context is invalid`。
+  所以 `/fibonacci` 这类真 ROS2 action **本机就调不通**，接线器只能如实报 SKIP。
+  nav2 的 action 机制在那台机器上整体不可用（但服务、话题正常）。
+* `/particle_cloud`、`/cost_cloud`、`/cam_nav` 等类型在
+  `type_registry.cpp` 的表里没有 codec，Windows 侧会跳过（打 `no codec for type`）。
+* 中继是**两跳异步镜像**（延迟 ≈ 2×RTT），不是同步闭环。
+
+---
+
+## 2026-10-30 · 新增 `start/` 快速启动入口 + Ubuntu 侧中继 `ros2_link`
+
+### 为什么做这件事
+
+需求：一条链路里同时出现三个 ROS2 世界——**Ubuntu 真 ROS2**、**Ubuntu 仿真**、
+**Windows 兼容层 nav2**——并且要求
+(a) 真 ROS2 ↔ Windows 可通，(b) 仿真 ↔ 真 ROS2 可通，
+(c) 本机开发用回环，跨机仍要能连。
+
+### 关键架构事实（决定了方案）
+
+* `bridge_daemon.cpp` 是**单 peer** 模型：`connectToAgent()` 里
+  `peer_ = best.target()` 只取一个 agent（`bridge_daemon.cpp:624-662`）。
+  → 所以**不能**让 Windows 分别连两个 agent；必须有一个**合并入口**。
+* 发现**默认排除回环**（`gRPC/ros2_gRPC_sdk/config/ros2_gRPC_sdk.yaml:30-31`：
+  `include_self: false` / `include_loopback: false`），
+  `discovery.cpp:485-486` 还会把回环地址从候选里剔掉。
+  → 本机开发**必须显式给地址**（`ROS2_BRIDGE_AGENT=127.0.0.1:50060`）。
+* 两边的 payload **都是 CDR**（含 4 字节封装头），且
+  `graph.py:11` 明确 "no re-encoding happens on the hot path"。
+  → 中继可以**原样转发字节**，不需要认识消息结构，仿真没实现的类型也能过。
+* 共享内存通道是**单写者**（`bridge_daemon.cpp:713-719` 的注释）。
+  → 合并后的图上同一话题只允许一个来源写；上行话题（`/cmd_vel`）不能被镜像。
+
+### 做法：Ubuntu 侧中继（`bridge/ubuntu/ros2_link/`）
+
+`ros2_link/relay.py` 同时扮演 gRPC **客户端**（订阅两个上游 agent）和
+gRPC **服务端**（把合并后的图暴露给 Windows）。Windows 侧**一行都不用改**。
+
+端口（都可用环境变量覆盖）：
+
+| 角色 | 端口 | 环境变量 |
+| --- | --- | --- |
+| 仿真 agent | 50051 | `ROS2_LINK_SIM_PORT` |
+| 真 ROS2 agent | 50111 | `ROS2_LINK_REAL_PORT` |
+| 接线器对外 | 50060 | `ROS2_LINK_PORT` |
+
+### 踩到的两个坑（都已在代码里解决，注释写在对应位置）
+
+1. **回环回声**：中继把下游消息注入上游后，上游会**立刻把它送回中继自己的
+   订阅**，于是又被合并、又推给下游 → 无限回声。
+   解决：`_publish_back()` 注入**之前**把话题静音 `MUTE_S = 0.5` 秒，
+   `_publish_merged()` 在静音期内丢弃该话题的上行消息。
+2. **没有 publisher 的话题是「汇」不是「源」**：仿真只**订阅** `/cmd_vel`，
+   它在 `ListTopics` 里 `publisher_count == 0`。若照样镜像，每条命令都会原路返回。
+   解决：`_pump()` 只订阅 `publisher_count > 0` 的话题。
+   → 副作用是**合并后的图里 `/cmd_vel` 不出现**（除非对端也在发），
+   这与真实 DDS 语义一致（无 publisher 的话题不会出现在 `ros2 topic list`）。
+3. **合并图要主动登记话题**：`Graph.publish()` 是**懒创建**话题的，
+   只靠消息流动来创建的话，`ros2 topic list` 在数据流动前会答「没有话题」。
+   解决：`_pump()` 发现话题时立刻 `graph._ensure(name, type)`。
+
+### 新增文件
+
+```
+start/connector.sh                    连接器：up/down/status/check（Ubuntu 侧）
+start/加载模拟ROS环境变量.sh            source 一次，装好兼容层+仿真+接线器环境
+start/加载模拟ROS环境变量.ps1           PowerShell 版（**点源**，不是执行）
+start/Windows被连接服务进程.ps1         Windows 侧守护进程 start/run/status/stop
+bridge/ubuntu/ros2_link/relay.py       中继本体
+bridge/ubuntu/ros2_link/tests/test_relay.py  1 条用例（合并+不回声）
+tools/fix_ps1_encoding.py             把 start/*.ps1 统一成 UTF-8 BOM + CRLF
+```
+
+### Windows 侧怎么用（PowerShell）
+
+```powershell
+# 一次性点源（. 是必须的：执行不会把变量留在会话里）
+. E:\DesktopData\app\code\CPU\start\加载模拟ROS环境变量.ps1
+ros2 topic list -t
+
+# 守护进程
+.\start\Windows被连接服务进程.ps1 start
+.\start\Windows被连接服务进程.ps1 status
+.\start\Windows被连接服务进程.ps1 stop
+```
+
+跨机只需改地址，**不改结构**：
+
+```powershell
+$env:ROS2_BRIDGE_AGENT = '192.168.1.113:50060'
+. E:\DesktopData\app\code\CPU\start\加载模拟ROS环境变量.ps1
+```
+
+### `.bat` 为什么被删掉
+
+原本做了 `加载模拟ROS环境变量.bat` / `Windows被连接服务进程.bat` +
+两个 ASCII 转发器。删掉的理由：
+
+* **`.bat` 改不了 PowerShell 会话** —— `.bat` 跑在 cmd.exe 子进程里，
+  `set` 只影响那个子进程。用户在 PowerShell 里执行 `.bat`，
+  `echo %VAR%` 打得出来（那是 cmd 内部展开的），但 `ros2` 仍然
+  「不是内部或外部命令」。这正是仓库早就写过的：PowerShell 必须点源 `.ps1`。
+* `.bat` 的中文还要**按 cp936 存**才不乱码（cmd 按 OEM 代码页读 `.bat`），
+  这跟 `.md` 的 UTF-8 BOM 约定是**两套**编码，徒增心智负担。
+
+**结论：Windows 侧统一 `.ps1`（UTF-8 BOM），`.bat` 那套只留给
+`bridge\windows\` 里既有的文件。**
+
+### 怎么用
+
+```bash
+# Ubuntu
+bash start/connector.sh up -d          # 起中继（同时监听 0.0.0.0 与 127.0.0.1:50060）
+bash start/connector.sh check          # 查两个上游 agent 是否活着
+source start/加载模拟ROS环境变量.sh    # 装环境
+```
+
+### 别让工具调用卡住：`ros2 topic list` 会**自动拉起守护进程**
+
+`ros2`（`bridge\windows\ros2.ps1` 里的函数）在守护进程没跑时会
+**自己把它拉起来**，然后等 `ready` 文件，预算 `ROS2_BRIDGE_WAIT_MS`
+（默认 **30000 ms**）。**本机没有 Ubuntu、也没有接线器时，50060 端口
+没人监听 → 它会一直等到预算耗尽**，工具调用就挂在那里。
+
+本机验证时**一律先关掉自动拉起**：
+
+```powershell
+$env:ROS2_BRIDGE_AUTOSTART = '0'    # 不要顺手拉守护进程
+$env:ROS2_BRIDGE_WAIT_MS = '1500'   # 真要等就给个小的
+```
+
+或者干脆调 `ros2 bridge status`（只读图，不触发等待）。
+
+**验证脚本写进文件用 `-File` 执行**，并给命令留足余量；不要写
+`powershell -Command` 拼一长串（bash → powershell 的引号会被打散，
+而且一旦命令阻塞就没有第二次机会改）。
+
+### 本轮验证结论（2026-10-30）
+
+* `bridge/ubuntu/ros2_link/tests/test_relay.py`：**1 passed**；
+  连同原有仿真测试共 **75 passed**（`ros2_bridge_sim/tests` + `ros2_link/tests`），
+  从**仓库根目录**跑（`python -m pytest bridge/ubuntu/ros2_link/tests bridge/ubuntu/ros2_bridge_sim/tests -q`）。
+* `start/connector.sh` / `加载模拟ROS环境变量.sh` 的括号配平用 Python 查过（无 WSL，见上）。
+* `.ps1` 实测（pwsh 7.6.9 **和** powershell 5.1 都验过）：
+  - 点源后 `ROS2_BRIDGE_AGENT=127.0.0.1:50060`、`ROS2_LINK_PORT=50060`、
+    `ros2` 变成 **Function**（不是 exe），`ros2 topic list -t` 能把守护进程自动拉起来；
+  - `Windows被连接服务进程.ps1 status/stop/start` 全通，
+    `start` 幂等（已在跑就说 already running），`stop` 幂等（不在跑就说 not running）。
+
+### 真机端到端（2026-10-30，**已通过**）
+
+**Ubuntu 那台机器的真实地址是 `wang@192.168.0.153`**，不是仓库脚本里写的
+`ubuntu@192.168.1.113`（那是旧地址，现在连不上）。本机在 `192.168.0.157/24`。
+机器上有 ROS 2 Jazzy（798 个包，含 demo_nodes_cpp / action_tutorials_cpp）、
+12 核、tmux；`sudo -n` 免密；apt 源可用。
+
+跑通的三段：
+
+| 段 | 结果 |
+| --- | --- |
+| 机器人上：仿真 agent(50051) + 真 ROS2 agent(50111) → 接线器(50060) | 两个上游都连上（`ros_distro=sim` / `ros_distro=jazzy`） |
+| Windows → 接线器：守护进程镜像合并图 | **11 个话题**镜像进共享内存，`ros2 topic list -t` 打出 `/chatter` `/scan` `/odom` `/tf` `/map` … |
+| Windows → 接线器 → 仿真：`/cmd_vel` | 仿真车从 **x=4.208 → x=4.832（0.624 m）**，`RESULT: PASS` |
+
+新增脚本（都在 `bridge/scripts/`）：
+
+| 脚本 | 作用 |
+| --- | --- |
+| `sync_link_to_ubuntu.py` | 推 `ros2_bridge_sim` + `ros2_link` + `start/` + `gRPC/ros2_gRPC_sdk` + `tools/` 到机器人；`--force` 重发，`--no-venv` 跳过装依赖 |
+| `install_ubuntu_deps.py` | 装机器上的 venv 依赖；`--mirror` 用清华源（**从 pypi.org 装会超时**，7.4 MB 的 grpcio wheel 拉不下来） |
+| `check_ubuntu_link.py` | 在机器人上起仿真 agent + 接线器，打印两个上游的连接情况 |
+| `check_ubuntu_real_ros.py` | 在机器人上起 demo nodes + `ros2_grpc_sdk_agent --backend rclcpp` |
+| `probe_merged_graph.py` | 从 Windows 用 gRPC 问合并图（话题/服务/动作），可 `--watch` 跟一个话题 |
+| `compare_agents.py` | 并排打印 sim / real / merged 三份话题表，看合并对不对 |
+| `check_daemon_vs_relay.py` | **真守护进程**对接线器：起 daemon、等镜像、`ros2 topic echo /chatter` |
+| `check_cmd_vel_to_sim.py` | 反向：Windows 发 `/cmd_vel`，看仿真车有没有动（比位移） |
+
+**踩到的坑**：
+
+1. **接线器的 pump 线程会死**：`assert upstream.stub is not None` 在上游没起来时
+   直接抛 AssertionError，那半个合并图就**永久冻结**。
+   → 改成「没连上就重试」，断线时把 stub 置 None 让下一轮重连。
+2. **合并图必须主动登记话题**：`Graph.publish()` 懒创建，数据没流动前
+   `ros2 topic list` 答「没有话题」。
+3. **合并图必须报告上游的计数**：合并图自己没有端点，`publisher_count` 是 0。
+   而 Windows 守护进程**靠 `publisher_count` 决定镜像什么**
+   （`bridge_daemon.cpp:726`：`pub==0 && sub>0` 就跳过）。
+   → 接线器把两个上游的计数**相加**后报出来，`/clock` pub=2、`/scan` pub=2。
+4. **机器人上 venv 路径**：从 `bridge/ubuntu` 出发是 `../../.venv`，不是 `../.venv`。
+5. **SDK 的 build.py 要 `<repo>/tools`**（`_cores.py` / `_toolchain.py`），
+   少这个目录它连 import 都过不去。
+6. **机器人上要自己编 SDK**：`gRPC/ros2_gRPC_sdk/scripts/build.py --with-ros2`
+   （先 `apt install libgrpc++-dev protobuf-compiler-grpc`）。
+
+### 还没做的
+
+* **services / actions 没有合并**：合并图的 `ListServices` / `ListActions` 是空的。
+  上游的 service（`/add_two_ints`、`/probe_trigger`）和 action（`/fibonacci`、
+  `/sim/spin`）**Windows 侧看不到、也调不到**。接线器现在只合并话题。
+  → 这是下一个要补的（nav2 的 action 服务器在 Windows 侧自己跑，
+  但「Windows 调机器人的 action」这条路是断的）。
+* **`ros2 topic pub` 不带 `--once` 会一直发**，脚本里要用 Popen + terminate，
+  否则 `subprocess.run(timeout=...)` 直接超时。
+* 中继是**两跳异步镜像**（延迟 ≈ 2×RTT），不是同步闭环。
+* 合并图里**同名话题会混流**：那台机器上真 ROS2 和仿真都发 `/scan`、`/odom`、
+  `/tf`、`/clock`，合并后一个话题里两路数据交织。
+  这次验证选的是不重叠的 `/chatter`（真）和 `/map`（仿真）。
+  → 真要上线，得给两边的话题加前缀或做来源过滤。
+* **踩到的坑（已修）**：
+  1. `.ps1` **必须 UTF-8 BOM**（5.1 没 BOM 就按 cp936 解，整个文件连中文文件名
+     一起坏掉，表现为「文件不存在」和「变量没设上」）。
+  2. `.bat` 改不了 PowerShell 会话 → Windows 侧改用 `.ps1`。
+  3. 验证持久化**不要**用 `cmd /c '... && echo %VAR%'`：`%VAR%` 在整条命令行
+     解析时就展开了，比 `call` 早，看起来像「没生效」其实是测试写法错。
+     用 `cmd /v:on` + `!VAR!`，或者直接在 PowerShell 里读 `$env:VAR`。
+  4. 测试脚本写成**文件**再 `-File` 执行，别把中文路径塞进
+     `powershell -Command`：bash → powershell 的命令行会把它打散。
+     文件里用 `Get-ChildItem -Filter '*.ps1'` + ASCII 通配定位目标。
+  5. `.md`/`.sh`/`.py` 仍是 **LF**；`.ps1` 是 **UTF-8 BOM + CRLF**；
+     `.memories` 用 **UTF-8 BOM + LF**
+     （`tools/check_docs.py --quiet` 本轮 26 file / 0 error / 0 warning）。

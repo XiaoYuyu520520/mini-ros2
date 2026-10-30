@@ -1,0 +1,34 @@
+
+=== topic_list: Windows lists the Ubuntu topics (cold start)
+[bridge] stopping the daemon to force a cold start ...
+[PASS] topic_list (5.3 s) - 7 topics with types in 5.3 s (cold start)
+
+=== topic_info: Windows resolves /scan to the gRPC peer
+[PASS] topic_info (0.2 s) - reported as remote (bridged over gRPC)
+
+=== scan_rate: Mirrored /scan keeps its 10 Hz
+[PASS] scan_rate (6.3 s) - 9.42 Hz average over 54 samples
+
+=== uplink: Windows /cmd_vel moves the Ubuntu robot
+[PASS] uplink (3.6 s) - moved 0.62 m, /odom twist.linear.x=0.250
+
+=== nav2_demo: nav2 plans a path and drives to the goal
+[PASS] nav2_demo (22.8 s) - goal [10.025, -3.175] reached from [7.26626, 8.4874]: travelled 11.73 m, remaining 0.26 m, plan 264 waypoints
+
+=== slam: slam_toolbox maps a lap from the bridged /scan + /tf
+[slam] stopping the daemon and restarting it without --mirror /map ...
+[slam] starting slam_demo.bat ...
+[slam] mapping a closed lap: 4 x (2 m + 90 deg)
+[slam]   leg 1/4: drive exit 0, spin exit 0
+[slam]   leg 2/4: drive exit 0, spin exit 0
+[slam]   leg 3/4: drive exit 0, spin exit 0
+[slam]   leg 4/4: drive exit 0, spin exit 0
+[slam] serialize_map -> C:\Users\ADMINI~1\AppData\Local\Temp\acceptance-slam-32920-reload
+[slam] a second process, --mode localization, on that archive ...
+[slam] restoring the default daemon ...
+[PASS] slam (82.9 s) - 473x473 @ 0.050 m, 387 occupied / 41396 free / 181946 unknown; reloaded in a fresh process: 473x473, 442 occupied
+
+=== reset: putting the car back at the origin
+[done] /sim/reset
+
+6/6 checks passed; report: .scratch\acceptance_round12.json

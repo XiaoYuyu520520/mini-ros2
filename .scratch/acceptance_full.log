@@ -1,0 +1,32 @@
+
+=== topic_list: Windows lists the Ubuntu topics (cold start)
+[bridge] stopping the daemon to force a cold start ...
+[PASS] topic_list (2.1 s) - 7 topics with types in 2.1 s (cold start)
+
+=== topic_info: Windows resolves /scan to the gRPC peer
+[PASS] topic_info (0.3 s) - reported as remote (bridged over gRPC)
+
+=== scan_rate: Mirrored /scan keeps its 10 Hz
+[PASS] scan_rate (6.3 s) - 9.55 Hz average over 54 samples
+
+=== uplink: Windows /cmd_vel moves the Ubuntu robot
+[PASS] uplink (3.6 s) - moved 0.62 m, /odom twist.linear.x=0.250
+
+=== nav2_demo: nav2 plans a path and drives to the goal
+[PASS] nav2_demo (23.2 s) - goal [-3.975, -10.775] reached from [0.641051, 0.297888]: travelled 11.75 m, remaining 0.26 m, plan 275 waypoints
+
+=== slam: slam_toolbox maps a lap from the bridged /scan + /tf
+[slam] stopping the daemon and restarting it without --mirror /map ...
+[slam] starting slam_demo.bat ...
+[slam] mapping a closed lap: 4 x (2 m + 90 deg)
+[slam]   leg 1/4: drive exit 0, spin exit 0
+[slam]   leg 2/4: drive exit 0, spin exit 0
+[slam]   leg 3/4: drive exit 0, spin exit 0
+[slam]   leg 4/4: drive exit 0, spin exit 0
+[slam] restoring the default daemon ...
+[PASS] slam (62.8 s) - 473x473 @ 0.050 m, 401 occupied / 41043 free / 182285 unknown
+
+=== reset: putting the car back at the origin
+[done] /sim/reset
+
+6/6 checks passed; report: .scratch\acceptance_full.json

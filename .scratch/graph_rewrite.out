@@ -1,0 +1,20 @@
+[PASS] the registry wrote its file
+
+a rewrite lands while a reader is holding the graph
+[PASS] all 200 rewrites are in the file (0 lost)
+
+a rewrite waits out a reader that will not share the file
+[PASS] the greedy reader has the file
+[PASS] the rewrite landed once the reader let go
+
+a client polling the graph keeps sight of a service that is there
+[PASS] 20 polls, 0 saw the service missing
+
+a reader never sees a blank or half written graph
+[PASS] 570 reads, 0 missing or half written
+
+what a fresh reader sees is what was published last
+[PASS] the newest record is the one that is readable
+[PASS] and the records that were removed are gone
+
+all checks passed

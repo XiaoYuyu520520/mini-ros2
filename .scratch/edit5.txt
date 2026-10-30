@@ -1,0 +1,8 @@
+edited code\Desktop\racecar\src\racecar\package.xml
+Traceback (most recent call last):
+  File "C:\Users\ADMINI~1\AppData\Local\Temp\edit5.py", line 50, in <module>
+    t = load(P)
+        ^^^^^^^
+  File "C:\Users\ADMINI~1\AppData\Local\Temp\edit5.py", line 7, in load
+    assert b"\r\n" not in raw, p
+AssertionError: code\Desktop\racecar\src\racecar\launch\Run_nav.launch.py

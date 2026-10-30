@@ -1,0 +1,6759 @@
+linear: {x: 0.237321, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.107103}
+---
+linear: {x: 0.226559, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.102324}
+---
+linear: {x: 0.216387, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0978017}
+---
+linear: {x: 0.209909, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0949188}
+---
+linear: {x: 0.200385, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0906815}
+---
+linear: {x: 0.194385, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0880078}
+---
+linear: {x: 0.188563, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0854127}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.758947}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.4}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: -0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0.49991, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.56492}
+---
+linear: {x: 0.507312, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.58684}
+---
+linear: {x: 0.523115, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.44727}
+---
+linear: {x: 0.531282, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.47004}
+---
+linear: {x: 0.538173, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.48999}
+---
+linear: {x: 0.545132, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.51117}
+---
+linear: {x: 0.557551, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.1237}
+---
+linear: {x: 0.571792, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.77739}
+---
+linear: {x: 0.572057, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.783163}
+---
+linear: {x: 0.585161, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.434702}
+---
+linear: {x: 0.594853, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.151798}
+---
+linear: {x: 0.597896, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.061541}
+---
+linear: {x: 0.597007, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0799083}
+---
+linear: {x: 0.592567, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.19867}
+---
+linear: {x: 0.589534, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.272586}
+---
+linear: {x: 0.59593, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.108183}
+---
+linear: {x: 0.592863, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.180599}
+---
+linear: {x: 0.59061, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.231843}
+---
+linear: {x: 0.589126, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.262}
+---
+linear: {x: 0.596449, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0920642}
+---
+linear: {x: 0.594148, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.151704}
+---
+linear: {x: 0.592605, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.187018}
+---
+linear: {x: 0.591875, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.205495}
+---
+linear: {x: 0.599262, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0197032}
+---
+linear: {x: 0.595229, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.11042}
+---
+linear: {x: 0.595538, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.110662}
+---
+linear: {x: 0.597795, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0571173}
+---
+linear: {x: 0.599479, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.01325}
+---
+linear: {x: 0.597443, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0651106}
+---
+linear: {x: 0.596079, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.103624}
+---
+linear: {x: 0.599505, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0132098}
+---
+linear: {x: 0.598045, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0509836}
+---
+linear: {x: 0.596325, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0958933}
+---
+linear: {x: 0.595164, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.12315}
+---
+linear: {x: 0.597769, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0595095}
+---
+linear: {x: 0.599393, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0151437}
+---
+linear: {x: 0.598623, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0344108}
+---
+linear: {x: 0.597205, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0682639}
+---
+linear: {x: 0.596333, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0930427}
+---
+linear: {x: 0.599181, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0209631}
+---
+linear: {x: 0.59875, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0313108}
+---
+linear: {x: 0.597146, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0698513}
+---
+linear: {x: 0.596258, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.097489}
+---
+linear: {x: 0.599259, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0194885}
+---
+linear: {x: 0.598653, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0338195}
+---
+linear: {x: 0.595393, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.116684}
+---
+linear: {x: 0.598545, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0363266}
+---
+linear: {x: 0.598794, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0302213}
+---
+linear: {x: 0.597029, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0727485}
+---
+linear: {x: 0.595846, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.101783}
+---
+linear: {x: 0.597487, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0642602}
+---
+linear: {x: 0.599792, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00535355}
+---
+linear: {x: 0.591127, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.207026}
+---
+linear: {x: 0.598377, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0409426}
+---
+linear: {x: 0.595672, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.105293}
+---
+linear: {x: 0.598199, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.044153}
+---
+linear: {x: 0.599656, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00829726}
+---
+linear: {x: 0.598023, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0476561}
+---
+linear: {x: 0.595773, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.105526}
+---
+linear: {x: 0.59877, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0309714}
+---
+linear: {x: 0.599034, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0238407}
+---
+linear: {x: 0.597412, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0639413}
+---
+linear: {x: 0.596156, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0985811}
+---
+linear: {x: 0.599043, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0241745}
+---
+linear: {x: 0.598927, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0253623}
+---
+linear: {x: 0.599068, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0254719}
+---
+linear: {x: 0.59685, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0772904}
+---
+linear: {x: 0.599634, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00904618}
+---
+linear: {x: 0.598327, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0405109}
+---
+linear: {x: 0.598515, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.040662}
+---
+linear: {x: 0.597117, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0726584}
+---
+linear: {x: 0.599914, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00218278}
+---
+linear: {x: 0.598061, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0481693}
+---
+linear: {x: 0.59824, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.048316}
+---
+linear: {x: 0.597576, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0584688}
+---
+linear: {x: 0.594173, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.148052}
+---
+linear: {x: 0.599879, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00288319}
+---
+linear: {x: 0.599892, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00289275}
+---
+linear: {x: 0.596047, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.097547}
+---
+linear: {x: 0.598797, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0292372}
+---
+linear: {x: 0.592066, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.180013}
+---
+linear: {x: 0.599004, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0238066}
+---
+linear: {x: 0.594833, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.130427}
+---
+linear: {x: 0.597063, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.073493}
+---
+linear: {x: 0.595788, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.105385}
+---
+linear: {x: 0.597192, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0734708}
+---
+linear: {x: 0.599666, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00880521}
+---
+linear: {x: 0.598562, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0370303}
+---
+linear: {x: 0.596945, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0727891}
+---
+linear: {x: 0.594938, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.127083}
+---
+linear: {x: 0.591826, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.200669}
+---
+linear: {x: 0.595448, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.110252}
+---
+linear: {x: 0.595918, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.104955}
+---
+linear: {x: 0.598426, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0403221}
+---
+linear: {x: 0.599199, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0201432}
+---
+linear: {x: 0.597195, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.065237}
+---
+linear: {x: 0.599818, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00427623}
+---
+linear: {x: 0.592535, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.182611}
+---
+linear: {x: 0.59821, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0402774}
+---
+linear: {x: 0.597021, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0656782}
+---
+linear: {x: 0.596173, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0844224}
+---
+linear: {x: 0.59916, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0174646}
+---
+linear: {x: 0.599225, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.017499}
+---
+linear: {x: 0.599243, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0164344}
+---
+linear: {x: 0.598064, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0412123}
+---
+linear: {x: 0.596383, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0795296}
+---
+linear: {x: 0.598418, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0350115}
+---
+linear: {x: 0.599736, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00587631}
+---
+linear: {x: 0.592757, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.16728}
+---
+linear: {x: 0.599857, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00356986}
+---
+linear: {x: 0.59366, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.162844}
+---
+linear: {x: 0.59684, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0798974}
+---
+linear: {x: 0.599042, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0227404}
+---
+linear: {x: 0.599293, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0194445}
+---
+linear: {x: 0.595513, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.110335}
+---
+linear: {x: 0.598578, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0352799}
+---
+linear: {x: 0.599164, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0203549}
+---
+linear: {x: 0.597497, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0595821}
+---
+linear: {x: 0.596263, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0890182}
+---
+linear: {x: 0.595544, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.106216}
+---
+linear: {x: 0.595077, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.114829}
+---
+linear: {x: 0.599654, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00743761}
+---
+linear: {x: 0.599193, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0184901}
+---
+linear: {x: 0.599379, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0139612}
+---
+linear: {x: 0.598292, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0384475}
+---
+linear: {x: 0.597343, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0548509}
+---
+linear: {x: 0.598894, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0229527}
+---
+linear: {x: 0.599001, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0230123}
+---
+linear: {x: 0.599475, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0118707}
+---
+linear: {x: 0.598033, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.037175}
+---
+linear: {x: 0.593627, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.125418}
+---
+linear: {x: 0.594096, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.125723}
+---
+linear: {x: 0.596649, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0690872}
+---
+linear: {x: 0.598823, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0239614}
+---
+linear: {x: 0.599437, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0112788}
+---
+linear: {x: 0.597984, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0404243}
+---
+linear: {x: 0.592547, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.175506}
+---
+linear: {x: 0.599752, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00631005}
+---
+linear: {x: 0.598251, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0434909}
+---
+linear: {x: 0.597208, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0694667}
+---
+linear: {x: 0.596033, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.102716}
+---
+linear: {x: 0.598265, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0421115}
+---
+linear: {x: 0.599737, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00626562}
+---
+linear: {x: 0.598219, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0425012}
+---
+linear: {x: 0.597214, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0650476}
+---
+linear: {x: 0.597944, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0449026}
+---
+linear: {x: 0.599633, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0079042}
+---
+linear: {x: 0.599013, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0212762}
+---
+linear: {x: 0.595493, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.100029}
+---
+linear: {x: 0.597985, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0450436}
+---
+linear: {x: 0.599883, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00258413}
+---
+linear: {x: 0.594795, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.112738}
+---
+linear: {x: 0.597449, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0585422}
+---
+linear: {x: 0.598292, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0366963}
+---
+linear: {x: 0.599855, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00306103}
+---
+linear: {x: 0.596978, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0587026}
+---
+linear: {x: 0.596229, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0781611}
+---
+linear: {x: 0.599733, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00513641}
+---
+linear: {x: 0.598879, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0212354}
+---
+linear: {x: 0.596373, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0718331}
+---
+linear: {x: 0.596987, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0626618}
+---
+linear: {x: 0.598115, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0390329}
+---
+linear: {x: 0.599926, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00153633}
+---
+linear: {x: 0.598421, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0322617}
+---
+linear: {x: 0.592847, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.172315}
+---
+linear: {x: 0.599843, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00408436}
+---
+linear: {x: 0.595825, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0978782}
+---
+linear: {x: 0.598293, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0403122}
+---
+linear: {x: 0.598157, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0385487}
+---
+linear: {x: 0.597108, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0593417}
+---
+linear: {x: 0.597274, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0594353}
+---
+linear: {x: 0.596941, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0691067}
+---
+linear: {x: 0.599108, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0198504}
+---
+linear: {x: 0.599041, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0214163}
+---
+linear: {x: 0.597742, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0504491}
+---
+linear: {x: 0.598184, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0372914}
+---
+linear: {x: 0.595067, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.105644}
+---
+linear: {x: 0.599999, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 2.70543e-05}
+---
+linear: {x: 0.598792, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0240727}
+---
+linear: {x: 0.596053, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0824913}
+---
+linear: {x: 0.597413, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0535691}
+---
+linear: {x: 0.596495, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0725763}
+---
+linear: {x: 0.596131, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0802089}
+---
+linear: {x: 0.598018, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0427436}
+---
+linear: {x: 0.599613, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00838338}
+---
+linear: {x: 0.594263, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.127638}
+---
+linear: {x: 0.596815, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0698795}
+---
+linear: {x: 0.598868, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0244758}
+---
+linear: {x: 0.599102, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0221692}
+---
+linear: {x: 0.537225, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0199505}
+---
+linear: {x: 0.497162, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0185069}
+---
+linear: {x: 0.425734, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0159225}
+---
+linear: {x: 0.374747, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0140676}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.487271, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.51788}
+---
+linear: {x: 0.494472, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.53885}
+---
+linear: {x: 0.503218, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.56445}
+---
+linear: {x: 0.504234, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.53644}
+---
+linear: {x: 0.512946, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.56178}
+---
+linear: {x: 0.520307, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.58356}
+---
+linear: {x: 0.529239, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.61069}
+---
+linear: {x: 0.536781, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.63455}
+---
+linear: {x: 0.544403, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.66008}
+---
+linear: {x: 0.553607, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.69443}
+---
+linear: {x: 0.556695, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.70728}
+---
+linear: {x: 0.589323, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.408312}
+---
+linear: {x: 0.576246, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.778961}
+---
+linear: {x: 0.571213, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.838866}
+---
+linear: {x: 0.570617, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.751687}
+---
+linear: {x: 0.572051, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.639086}
+---
+linear: {x: 0.580168, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.471174}
+---
+linear: {x: 0.573595, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.579895}
+---
+linear: {x: 0.585014, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.361269}
+---
+linear: {x: 0.586186, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.295611}
+---
+linear: {x: 0.583715, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.347242}
+---
+linear: {x: 0.589692, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.219368}
+---
+linear: {x: 0.587567, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.27507}
+---
+linear: {x: 0.590599, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.194728}
+---
+linear: {x: 0.588432, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.243517}
+---
+linear: {x: 0.594841, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.111061}
+---
+linear: {x: 0.599852, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00317636}
+---
+linear: {x: 0.593248, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.138528}
+---
+linear: {x: 0.590828, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.19263}
+---
+linear: {x: 0.591368, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.193066}
+---
+linear: {x: 0.58926, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.235005}
+---
+linear: {x: 0.599511, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0106147}
+---
+linear: {x: 0.599906, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00187822}
+---
+linear: {x: 0.592798, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.150028}
+---
+linear: {x: 0.593321, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.158148}
+---
+linear: {x: 0.596293, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0819802}
+---
+linear: {x: 0.59872, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0292735}
+---
+linear: {x: 0.594502, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.128491}
+---
+linear: {x: 0.599172, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0196589}
+---
+linear: {x: 0.595279, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.107145}
+---
+linear: {x: 0.595522, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.111343}
+---
+linear: {x: 0.597714, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0528407}
+---
+linear: {x: 0.597448, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0607567}
+---
+linear: {x: 0.597456, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0550972}
+---
+linear: {x: 0.593821, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.139379}
+---
+linear: {x: 0.595176, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0996179}
+---
+linear: {x: 0.599711, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00606001}
+---
+linear: {x: 0.596061, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0841902}
+---
+linear: {x: 0.599668, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00691885}
+---
+linear: {x: 0.596914, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0642869}
+---
+linear: {x: 0.597838, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0415107}
+---
+linear: {x: 0.594943, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.100572}
+---
+linear: {x: 0.599696, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00614937}
+---
+linear: {x: 0.596569, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0682894}
+---
+linear: {x: 0.599542, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00938255}
+---
+linear: {x: 0.595979, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0855254}
+---
+linear: {x: 0.588198, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.252946}
+---
+linear: {x: 0.590823, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.184544}
+---
+linear: {x: 0.591341, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.184933}
+---
+linear: {x: 0.592204, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.185674}
+---
+linear: {x: 0.59967, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00685734}
+---
+linear: {x: 0.596298, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0786714}
+---
+linear: {x: 0.596665, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0789201}
+---
+linear: {x: 0.597103, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0637423}
+---
+linear: {x: 0.5974, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0639495}
+---
+linear: {x: 0.59858, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0289014}
+---
+linear: {x: 0.597499, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0521013}
+---
+linear: {x: 0.598519, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0311319}
+---
+linear: {x: 0.597922, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0421783}
+---
+linear: {x: 0.594627, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.113251}
+---
+linear: {x: 0.59931, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0145017}
+---
+linear: {x: 0.59574, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.093068}
+---
+linear: {x: 0.597114, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.057913}
+---
+linear: {x: 0.597385, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0580691}
+---
+linear: {x: 0.598621, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.028644}
+---
+linear: {x: 0.597291, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.055527}
+---
+linear: {x: 0.598906, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0235152}
+---
+linear: {x: 0.595603, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.094282}
+---
+linear: {x: 0.596208, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0853381}
+---
+linear: {x: 0.595697, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0935049}
+---
+linear: {x: 0.59939, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.013191}
+---
+linear: {x: 0.599027, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0196869}
+---
+linear: {x: 0.597497, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0517015}
+---
+linear: {x: 0.598174, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0373493}
+---
+linear: {x: 0.59057, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.206385}
+---
+linear: {x: 0.599837, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00344235}
+---
+linear: {x: 0.599857, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0034534}
+---
+linear: {x: 0.599707, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00603538}
+---
+linear: {x: 0.599736, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00618196}
+---
+linear: {x: 0.599645, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0075616}
+---
+linear: {x: 0.599605, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00788341}
+---
+linear: {x: 0.599642, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00790141}
+---
+linear: {x: 0.599632, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0075962}
+---
+linear: {x: 0.596753, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0683144}
+---
+linear: {x: 0.597873, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0420001}
+---
+linear: {x: 0.598069, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0421049}
+---
+linear: {x: 0.598954, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0209486}
+---
+linear: {x: 0.599096, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0192073}
+---
+linear: {x: 0.599796, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00406096}
+---
+linear: {x: 0.596551, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.069948}
+---
+linear: {x: 0.591162, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.171302}
+---
+linear: {x: 0.599546, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00954595}
+---
+linear: {x: 0.596358, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0779642}
+---
+linear: {x: 0.593726, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.139537}
+---
+linear: {x: 0.59967, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00735909}
+---
+linear: {x: 0.596397, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0835441}
+---
+linear: {x: 0.598105, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0427216}
+---
+linear: {x: 0.59863, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0310006}
+---
+linear: {x: 0.595632, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.100631}
+---
+linear: {x: 0.59857, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0302477}
+---
+linear: {x: 0.596005, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0877364}
+---
+linear: {x: 0.599104, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0185114}
+---
+linear: {x: 0.596067, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0801711}
+---
+linear: {x: 0.595404, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0878131}
+---
+linear: {x: 0.595815, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0880502}
+---
+linear: {x: 0.597388, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0532066}
+---
+linear: {x: 0.597487, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.053259}
+---
+linear: {x: 0.599762, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00475648}
+---
+linear: {x: 0.597004, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0607311}
+---
+linear: {x: 0.597982, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0406691}
+---
+linear: {x: 0.596975, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.057189}
+---
+linear: {x: 0.597296, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0573603}
+---
+linear: {x: 0.593373, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.138017}
+---
+linear: {x: 0.597639, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0507492}
+---
+linear: {x: 0.586672, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.271413}
+---
+linear: {x: 0.592226, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.16424}
+---
+linear: {x: 0.592687, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.164592}
+---
+linear: {x: 0.583401, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.349904}
+---
+linear: {x: 0.58348, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.340846}
+---
+linear: {x: 0.578509, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.45724}
+---
+linear: {x: 0.587365, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.290442}
+---
+linear: {x: 0.588017, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.269597}
+---
+linear: {x: 0.576771, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.495661}
+---
+linear: {x: 0.580566, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.416631}
+---
+linear: {x: 0.590126, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.231302}
+---
+linear: {x: 0.579757, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.436372}
+---
+linear: {x: 0.584325, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.340981}
+---
+linear: {x: 0.593439, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.153326}
+---
+linear: {x: 0.58853, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.28146}
+---
+linear: {x: 0.587706, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.272448}
+---
+linear: {x: 0.594604, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.107995}
+---
+linear: {x: 0.59074, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.189124}
+---
+linear: {x: 0.594642, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.11062}
+---
+linear: {x: 0.597698, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.047037}
+---
+linear: {x: 0.59354, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.134783}
+---
+linear: {x: 0.596316, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0732056}
+---
+linear: {x: 0.59923, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0154415}
+---
+linear: {x: 0.595021, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.101946}
+---
+linear: {x: 0.598456, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0319523}
+---
+linear: {x: 0.598876, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0229257}
+---
+linear: {x: 0.596794, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0641679}
+---
+linear: {x: 0.598254, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0367915}
+---
+linear: {x: 0.599058, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0195808}
+---
+linear: {x: 0.596943, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0635351}
+---
+linear: {x: 0.595311, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0937413}
+---
+linear: {x: 0.599804, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00398514}
+---
+linear: {x: 0.598052, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.038956}
+---
+linear: {x: 0.596395, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0707512}
+---
+linear: {x: 0.598598, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0290188}
+---
+linear: {x: 0.599002, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0207495}
+---
+linear: {x: 0.592262, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.167179}
+---
+linear: {x: 0.597122, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0587913}
+---
+linear: {x: 0.597712, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.048305}
+---
+linear: {x: 0.594849, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.116431}
+---
+linear: {x: 0.598595, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0276555}
+---
+linear: {x: 0.598938, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0235759}
+---
+linear: {x: 0.597389, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0567803}
+---
+linear: {x: 0.596234, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0802448}
+---
+linear: {x: 0.597883, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0478345}
+---
+linear: {x: 0.592908, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.164252}
+---
+linear: {x: 0.597949, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0520881}
+---
+linear: {x: 0.596336, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.090886}
+---
+linear: {x: 0.595317, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.116225}
+---
+linear: {x: 0.597808, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0569035}
+---
+linear: {x: 0.599951, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00118174}
+---
+linear: {x: 0.598153, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0449827}
+---
+linear: {x: 0.595653, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.109561}
+---
+linear: {x: 0.598622, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0342052}
+---
+linear: {x: 0.59903, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.024186}
+---
+linear: {x: 0.597338, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0648584}
+---
+linear: {x: 0.596351, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0922735}
+---
+linear: {x: 0.59904, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0244952}
+---
+linear: {x: 0.598634, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0349421}
+---
+linear: {x: 0.596987, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0735185}
+---
+linear: {x: 0.596925, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0761769}
+---
+linear: {x: 0.599617, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00934733}
+---
+linear: {x: 0.598351, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0393874}
+---
+linear: {x: 0.595648, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.109982}
+---
+linear: {x: 0.598811, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0296181}
+---
+linear: {x: 0.598533, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0366745}
+---
+linear: {x: 0.596766, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0808585}
+---
+linear: {x: 0.595537, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.109025}
+---
+linear: {x: 0.597521, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0647912}
+---
+linear: {x: 0.599765, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00562427}
+---
+linear: {x: 0.59426, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.141189}
+---
+linear: {x: 0.597862, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0531308}
+---
+linear: {x: 0.562826, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.159703}
+---
+linear: {x: 0.48234, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.149527}
+---
+linear: {x: 0.425642, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.132426}
+---
+linear: {x: 0.365432, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.114216}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.575829, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.490458}
+---
+linear: {x: 0.580372, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.393783}
+---
+linear: {x: 0.584832, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.306925}
+---
+linear: {x: 0.581735, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.376701}
+---
+linear: {x: 0.586859, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.274259}
+---
+linear: {x: 0.590908, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.187977}
+---
+linear: {x: 0.590429, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.185039}
+---
+linear: {x: 0.593927, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.116418}
+---
+linear: {x: 0.594472, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.11676}
+---
+linear: {x: 0.597696, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0481659}
+---
+linear: {x: 0.598153, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0419914}
+---
+linear: {x: 0.589425, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.225411}
+---
+linear: {x: 0.594105, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.124902}
+---
+linear: {x: 0.598117, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0404097}
+---
+linear: {x: 0.598305, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0405277}
+---
+linear: {x: 0.59825, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.041149}
+---
+linear: {x: 0.595487, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.106115}
+---
+linear: {x: 0.596079, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.106649}
+---
+linear: {x: 0.599498, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.012351}
+---
+linear: {x: 0.596876, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0734452}
+---
+linear: {x: 0.59781, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0521447}
+---
+linear: {x: 0.596494, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0758239}
+---
+linear: {x: 0.599732, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00574447}
+---
+linear: {x: 0.597418, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0564931}
+---
+linear: {x: 0.595416, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0982576}
+---
+linear: {x: 0.598624, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0277891}
+---
+linear: {x: 0.596699, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0654034}
+---
+linear: {x: 0.59848, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0311068}
+---
+linear: {x: 0.59916, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0172871}
+---
+linear: {x: 0.599192, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0173025}
+---
+linear: {x: 0.597091, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.062334}
+---
+linear: {x: 0.595515, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0941901}
+---
+linear: {x: 0.5991, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0178466}
+---
+linear: {x: 0.597398, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0506566}
+---
+linear: {x: 0.599621, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00697942}
+---
+linear: {x: 0.598621, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0250264}
+---
+linear: {x: 0.596992, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0569566}
+---
+linear: {x: 0.596392, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0715744}
+---
+linear: {x: 0.598535, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0300848}
+---
+linear: {x: 0.599844, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00303387}
+---
+linear: {x: 0.595615, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0891235}
+---
+linear: {x: 0.598366, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0328446}
+---
+linear: {x: 0.599345, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0132435}
+---
+linear: {x: 0.596032, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0821747}
+---
+linear: {x: 0.596503, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0764464}
+---
+linear: {x: 0.594844, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.110368}
+---
+linear: {x: 0.599264, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.016781}
+---
+linear: {x: 0.59846, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0351886}
+---
+linear: {x: 0.596204, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0874707}
+---
+linear: {x: 0.596042, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.094466}
+---
+linear: {x: 0.597716, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0567452}
+---
+linear: {x: 0.595464, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.101869}
+---
+linear: {x: 0.598641, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0308085}
+---
+linear: {x: 0.596568, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0724085}
+---
+linear: {x: 0.595879, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0917038}
+---
+linear: {x: 0.599559, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00923015}
+---
+linear: {x: 0.592727, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.158312}
+---
+linear: {x: 0.597328, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0538938}
+---
+linear: {x: 0.597687, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0495309}
+---
+linear: {x: 0.596456, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0759303}
+---
+linear: {x: 0.59967, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00654197}
+---
+linear: {x: 0.599707, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0065603}
+---
+linear: {x: 0.596739, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0666245}
+---
+linear: {x: 0.599038, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0194136}
+---
+linear: {x: 0.598971, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.020839}
+---
+linear: {x: 0.596176, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0794849}
+---
+linear: {x: 0.598643, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0284222}
+---
+linear: {x: 0.599264, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0151821}
+---
+linear: {x: 0.596113, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0790714}
+---
+linear: {x: 0.598852, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0235608}
+---
+linear: {x: 0.594247, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.123134}
+---
+linear: {x: 0.595249, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0981703}
+---
+linear: {x: 0.597001, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0669336}
+---
+linear: {x: 0.595659, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0948886}
+---
+linear: {x: 0.598535, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0333181}
+---
+linear: {x: 0.593295, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.156132}
+---
+linear: {x: 0.597149, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0686756}
+---
+linear: {x: 0.59457, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.13507}
+---
+linear: {x: 0.59938, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0157858}
+---
+linear: {x: 0.59678, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0739354}
+---
+linear: {x: 0.599749, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0056901}
+---
+linear: {x: 0.597554, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0516193}
+---
+linear: {x: 0.595033, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.110166}
+---
+linear: {x: 0.598607, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0290866}
+---
+linear: {x: 0.591919, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.175215}
+---
+linear: {x: 0.598292, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0396781}
+---
+linear: {x: 0.596725, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0744632}
+---
+linear: {x: 0.595521, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.095614}
+---
+linear: {x: 0.599756, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00491861}
+---
+linear: {x: 0.599779, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00492999}
+---
+linear: {x: 0.597055, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0601115}
+---
+linear: {x: 0.599339, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.013582}
+---
+linear: {x: 0.598892, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.02238}
+---
+linear: {x: 0.596096, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0826594}
+---
+linear: {x: 0.598648, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0282736}
+---
+linear: {x: 0.59932, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.014001}
+---
+linear: {x: 0.597632, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0487837}
+---
+linear: {x: 0.59749, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.051309}
+---
+linear: {x: 0.595499, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.096409}
+---
+linear: {x: 0.59383, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.129541}
+---
+linear: {x: 0.59837, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0364007}
+---
+linear: {x: 0.596854, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0703019}
+---
+linear: {x: 0.597366, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0610321}
+---
+linear: {x: 0.599867, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00302928}
+---
+linear: {x: 0.594612, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.129147}
+---
+linear: {x: 0.596182, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0999885}
+---
+linear: {x: 0.599669, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00770422}
+---
+linear: {x: 0.594412, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.127615}
+---
+linear: {x: 0.59797, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0468399}
+---
+linear: {x: 0.597427, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0517425}
+---
+linear: {x: 0.597465, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0564087}
+---
+linear: {x: 0.599213, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0164403}
+---
+linear: {x: 0.593648, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.141161}
+---
+linear: {x: 0.599893, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00248814}
+---
+linear: {x: 0.597137, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0619232}
+---
+linear: {x: 0.595327, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.106299}
+---
+linear: {x: 0.599132, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.017503}
+---
+linear: {x: 0.599419, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0132654}
+---
+linear: {x: 0.597502, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0520237}
+---
+linear: {x: 0.599783, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00445491}
+---
+linear: {x: 0.598376, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0334315}
+---
+linear: {x: 0.596617, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.071676}
+---
+linear: {x: 0.599289, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0151953}
+---
+linear: {x: 0.598663, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0280628}
+---
+linear: {x: 0.598366, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0321897}
+---
+linear: {x: 0.598517, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0322672}
+---
+linear: {x: 0.594473, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.120671}
+---
+linear: {x: 0.594818, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.109038}
+---
+linear: {x: 0.597222, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0632983}
+---
+linear: {x: 0.595837, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0928449}
+---
+linear: {x: 0.598032, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0466729}
+---
+linear: {x: 0.599535, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0108471}
+---
+linear: {x: 0.594981, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.120387}
+---
+linear: {x: 0.596171, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.100294}
+---
+linear: {x: 0.599395, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.014406}
+---
+linear: {x: 0.598449, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.036196}
+---
+linear: {x: 0.596276, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0857753}
+---
+linear: {x: 0.598747, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0257668}
+---
+linear: {x: 0.596374, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0766309}
+---
+linear: {x: 0.595881, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0937497}
+---
+linear: {x: 0.594762, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.116688}
+---
+linear: {x: 0.598891, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0263702}
+---
+linear: {x: 0.59616, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0828913}
+---
+linear: {x: 0.595935, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0946267}
+---
+linear: {x: 0.599953, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00100763}
+---
+linear: {x: 0.598339, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0335531}
+---
+linear: {x: 0.596906, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0630806}
+---
+linear: {x: 0.599156, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0173316}
+---
+linear: {x: 0.598867, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0233476}
+---
+linear: {x: 0.596216, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0800762}
+---
+linear: {x: 0.598999, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0213514}
+---
+linear: {x: 0.598863, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0238633}
+---
+linear: {x: 0.597207, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0586401}
+---
+linear: {x: 0.597516, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0538934}
+---
+linear: {x: 0.594767, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.12188}
+---
+linear: {x: 0.594937, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.106468}
+---
+linear: {x: 0.597099, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0660451}
+---
+linear: {x: 0.595677, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0963398}
+---
+linear: {x: 0.598266, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0411246}
+---
+linear: {x: 0.599293, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0164756}
+---
+linear: {x: 0.595196, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.117914}
+---
+linear: {x: 0.595793, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.110053}
+---
+linear: {x: 0.599531, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0114344}
+---
+linear: {x: 0.594136, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.143223}
+---
+linear: {x: 0.597728, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0560928}
+---
+linear: {x: 0.593963, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.149963}
+---
+linear: {x: 0.598962, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0241451}
+---
+linear: {x: 0.595494, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.10796}
+---
+linear: {x: 0.59424, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.127973}
+---
+linear: {x: 0.599901, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00230698}
+---
+linear: {x: 0.596497, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0733602}
+---
+linear: {x: 0.596839, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0735831}
+---
+linear: {x: 0.598974, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0223686}
+---
+linear: {x: 0.596292, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0739825}
+---
+linear: {x: 0.596499, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0740987}
+---
+linear: {x: 0.599002, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0208578}
+---
+linear: {x: 0.598953, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0219734}
+---
+linear: {x: 0.597393, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0536425}
+---
+linear: {x: 0.597413, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0549713}
+---
+linear: {x: 0.599612, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00830311}
+---
+linear: {x: 0.598505, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0314117}
+---
+linear: {x: 0.598405, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.031479}
+---
+linear: {x: 0.598552, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0315548}
+---
+linear: {x: 0.596227, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0766712}
+---
+linear: {x: 0.598454, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0293569}
+---
+linear: {x: 0.598619, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0294379}
+---
+linear: {x: 0.598756, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0295203}
+---
+linear: {x: 0.546719, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.027066}
+---
+linear: {x: 0.481336, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0239174}
+---
+linear: {x: 0.412229, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0205797}
+---
+linear: {x: 0.362888, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0181836}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0.497174, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.34901}
+---
+linear: {x: 0.504845, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.3688}
+---
+linear: {x: 0.51132, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.38564}
+---
+linear: {x: 0.523225, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.26099}
+---
+linear: {x: 0.530641, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.27454}
+---
+linear: {x: 0.549272, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.860243}
+---
+linear: {x: 0.553315, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.867333}
+---
+linear: {x: 0.558195, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.8763}
+---
+linear: {x: 0.572083, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.505761}
+---
+linear: {x: 0.574739, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.494068}
+---
+linear: {x: 0.57754, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.497014}
+---
+linear: {x: 0.58032, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.501014}
+---
+linear: {x: 0.582647, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.504825}
+---
+linear: {x: 0.585444, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.510465}
+---
+linear: {x: 0.598484, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0407775}
+---
+linear: {x: 0.598673, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0409675}
+---
+linear: {x: 0.598899, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0413135}
+---
+linear: {x: 0.584639, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.45644}
+---
+linear: {x: 0.577017, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.421411}
+---
+linear: {x: 0.578991, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.423561}
+---
+linear: {x: 0.577663, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.466552}
+---
+linear: {x: 0.584211, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.329422}
+---
+linear: {x: 0.586736, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.259423}
+---
+linear: {x: 0.584795, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.301926}
+---
+linear: {x: 0.590996, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.182404}
+---
+linear: {x: 0.588707, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.232486}
+---
+linear: {x: 0.594415, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.115029}
+---
+linear: {x: 0.592093, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.169024}
+---
+linear: {x: 0.589598, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.216922}
+---
+linear: {x: 0.595685, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.090234}
+---
+linear: {x: 0.597656, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0452584}
+---
+linear: {x: 0.598005, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0433361}
+---
+linear: {x: 0.595058, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.109242}
+---
+linear: {x: 0.597694, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0478457}
+---
+linear: {x: 0.597374, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0550583}
+---
+linear: {x: 0.599088, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0196225}
+---
+linear: {x: 0.599314, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.01382}
+---
+linear: {x: 0.599353, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0138382}
+---
+linear: {x: 0.597469, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0541097}
+---
+linear: {x: 0.597526, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0535012}
+---
+linear: {x: 0.59581, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0871124}
+---
+linear: {x: 0.595724, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0953789}
+---
+linear: {x: 0.597112, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0609931}
+---
+linear: {x: 0.597734, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0484439}
+---
+linear: {x: 0.59703, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0582589}
+---
+linear: {x: 0.59945, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0112917}
+---
+linear: {x: 0.596258, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0756525}
+---
+linear: {x: 0.596297, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0794781}
+---
+linear: {x: 0.592767, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.152277}
+---
+linear: {x: 0.593886, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.120639}
+---
+linear: {x: 0.598106, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0385568}
+---
+linear: {x: 0.594729, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.107459}
+---
+linear: {x: 0.599057, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0198691}
+---
+linear: {x: 0.597117, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0633457}
+---
+linear: {x: 0.598222, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0358702}
+---
+linear: {x: 0.598389, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0359617}
+---
+linear: {x: 0.596279, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0705035}
+---
+linear: {x: 0.596618, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0668377}
+---
+linear: {x: 0.59956, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0089424}
+---
+linear: {x: 0.596673, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0665676}
+---
+linear: {x: 0.599286, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0149892}
+---
+linear: {x: 0.595887, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0879535}
+---
+linear: {x: 0.597536, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0494384}
+---
+linear: {x: 0.598259, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0346222}
+---
+linear: {x: 0.598111, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0391843}
+---
+linear: {x: 0.595059, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.104312}
+---
+linear: {x: 0.596642, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0745473}
+---
+linear: {x: 0.599666, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00748654}
+---
+linear: {x: 0.599527, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00970086}
+---
+linear: {x: 0.598963, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0199595}
+---
+linear: {x: 0.599056, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0200035}
+---
+linear: {x: 0.598708, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0256308}
+---
+linear: {x: 0.59786, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0433841}
+---
+linear: {x: 0.597946, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0420206}
+---
+linear: {x: 0.598381, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0339446}
+---
+linear: {x: 0.597425, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0544028}
+---
+linear: {x: 0.597526, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0544601}
+---
+linear: {x: 0.597759, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0461114}
+---
+linear: {x: 0.598317, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0362372}
+---
+linear: {x: 0.595036, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.10884}
+---
+linear: {x: 0.599831, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00370367}
+---
+linear: {x: 0.599264, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0150442}
+---
+linear: {x: 0.597298, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0563319}
+---
+linear: {x: 0.598093, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0401908}
+---
+linear: {x: 0.598175, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0394197}
+---
+linear: {x: 0.597375, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0559874}
+---
+linear: {x: 0.599342, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0138679}
+---
+linear: {x: 0.59644, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0752925}
+---
+linear: {x: 0.599513, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0106106}
+---
+linear: {x: 0.599719, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00572782}
+---
+linear: {x: 0.596942, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0635163}
+---
+linear: {x: 0.598399, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0306915}
+---
+linear: {x: 0.598641, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0292888}
+---
+linear: {x: 0.599878, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0024635}
+---
+linear: {x: 0.596742, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0669764}
+---
+linear: {x: 0.598715, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0257516}
+---
+linear: {x: 0.598623, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0298694}
+---
+linear: {x: 0.598093, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0379285}
+---
+linear: {x: 0.598388, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0334699}
+---
+linear: {x: 0.599629, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00710777}
+---
+linear: {x: 0.599724, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.005931}
+---
+linear: {x: 0.599307, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0136854}
+---
+linear: {x: 0.597473, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0519044}
+---
+linear: {x: 0.597979, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0411375}
+---
+linear: {x: 0.595524, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0877879}
+---
+linear: {x: 0.597014, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0602557}
+---
+linear: {x: 0.599342, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0136432}
+---
+linear: {x: 0.596178, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0822771}
+---
+linear: {x: 0.598742, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.02695}
+---
+linear: {x: 0.594878, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.103135}
+---
+linear: {x: 0.599836, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00336596}
+---
+linear: {x: 0.595685, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0871081}
+---
+linear: {x: 0.599634, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00776992}
+---
+linear: {x: 0.597057, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0636353}
+---
+linear: {x: 0.597978, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0433672}
+---
+linear: {x: 0.596237, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0733234}
+---
+linear: {x: 0.595726, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0906022}
+---
+linear: {x: 0.599664, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00734458}
+---
+linear: {x: 0.598604, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0285048}
+---
+linear: {x: 0.595334, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0898587}
+---
+linear: {x: 0.596834, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0652454}
+---
+linear: {x: 0.596475, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0701812}
+---
+linear: {x: 0.595572, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0940453}
+---
+linear: {x: 0.597144, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0587857}
+---
+linear: {x: 0.598283, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0344064}
+---
+linear: {x: 0.598223, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0385614}
+---
+linear: {x: 0.59766, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0465391}
+---
+linear: {x: 0.598886, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0227107}
+---
+linear: {x: 0.595754, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0897804}
+---
+linear: {x: 0.59907, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0200061}
+---
+linear: {x: 0.598225, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.035015}
+---
+linear: {x: 0.594556, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.107552}
+---
+linear: {x: 0.598457, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0292416}
+---
+linear: {x: 0.594158, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.118972}
+---
+linear: {x: 0.594381, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.119113}
+---
+linear: {x: 0.595344, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0924772}
+---
+linear: {x: 0.599394, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0124193}
+---
+linear: {x: 0.597027, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0633954}
+---
+linear: {x: 0.594034, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.129456}
+---
+linear: {x: 0.599639, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00798449}
+---
+linear: {x: 0.596205, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.085629}
+---
+linear: {x: 0.596683, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0860118}
+---
+linear: {x: 0.598996, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0235975}
+---
+linear: {x: 0.595645, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.104397}
+---
+linear: {x: 0.599165, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0190647}
+---
+linear: {x: 0.597153, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0679819}
+---
+linear: {x: 0.599352, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0141462}
+---
+linear: {x: 0.595898, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0899168}
+---
+linear: {x: 0.597, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.062327}
+---
+linear: {x: 0.598131, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.038545}
+---
+linear: {x: 0.595782, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0837205}
+---
+linear: {x: 0.599096, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0182497}
+---
+linear: {x: 0.598055, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0361879}
+---
+linear: {x: 0.599004, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0186096}
+---
+linear: {x: 0.598963, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0208601}
+---
+linear: {x: 0.599533, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00868137}
+---
+linear: {x: 0.597626, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0457075}
+---
+linear: {x: 0.597889, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0403392}
+---
+linear: {x: 0.598115, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.040456}
+---
+linear: {x: 0.59408, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.124766}
+---
+linear: {x: 0.598275, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0354274}
+---
+linear: {x: 0.595437, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0952953}
+---
+linear: {x: 0.595971, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0956734}
+---
+linear: {x: 0.598201, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.036768}
+---
+linear: {x: 0.596921, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0634764}
+---
+linear: {x: 0.596747, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0635652}
+---
+linear: {x: 0.598381, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0320721}
+---
+linear: {x: 0.598483, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0307024}
+---
+linear: {x: 0.59974, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00495412}
+---
+linear: {x: 0.597482, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0488064}
+---
+linear: {x: 0.595122, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0978696}
+---
+linear: {x: 0.596579, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0737937}
+---
+linear: {x: 0.596961, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.062002}
+---
+linear: {x: 0.594072, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.118053}
+---
+linear: {x: 0.599813, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0037995}
+---
+linear: {x: 0.594717, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.100963}
+---
+linear: {x: 0.599978, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.000417763}
+---
+linear: {x: 0.597649, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0466641}
+---
+linear: {x: 0.595447, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0917585}
+---
+linear: {x: 0.599045, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0192667}
+---
+linear: {x: 0.595974, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0793173}
+---
+linear: {x: 0.598587, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.027824}
+---
+linear: {x: 0.598797, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0237165}
+---
+linear: {x: 0.596462, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0694603}
+---
+linear: {x: 0.598157, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0361047}
+---
+linear: {x: 0.599263, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.015044}
+---
+linear: {x: 0.594806, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0993293}
+---
+linear: {x: 0.585899, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.278845}
+---
+linear: {x: 0.587203, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.280053}
+---
+linear: {x: 0.577477, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.276331}
+---
+linear: {x: 0.511028, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.245383}
+---
+linear: {x: 0.451898, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.217751}
+---
+linear: {x: 0.419027, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.202379}
+---
+linear: {x: 0.359624, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.174523}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0.499326, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.49658}
+---
+linear: {x: 0.513495, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.38977}
+---
+linear: {x: 0.521366, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.41058}
+---
+linear: {x: 0.528007, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.42851}
+---
+linear: {x: 0.534715, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.44714}
+---
+linear: {x: 0.539899, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.36932}
+---
+linear: {x: 0.558701, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.847591}
+---
+linear: {x: 0.562666, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.855043}
+---
+linear: {x: 0.574349, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.608707}
+---
+linear: {x: 0.58351, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.394248}
+---
+linear: {x: 0.593275, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.135581}
+---
+linear: {x: 0.594035, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.136138}
+---
+linear: {x: 0.594669, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.136689}
+---
+linear: {x: 0.599048, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0248761}
+---
+linear: {x: 0.594963, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.104729}
+---
+linear: {x: 0.595159, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.104852}
+---
+linear: {x: 0.587796, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.282963}
+---
+linear: {x: 0.589114, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.284454}
+---
+linear: {x: 0.588181, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.30854}
+---
+linear: {x: 0.593428, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.1562}
+---
+linear: {x: 0.59552, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0884112}
+---
+linear: {x: 0.58946, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.215512}
+---
+linear: {x: 0.596033, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0866299}
+---
+linear: {x: 0.594815, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.110936}
+---
+linear: {x: 0.593996, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.125905}
+---
+linear: {x: 0.594289, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.127469}
+---
+linear: {x: 0.593778, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.136045}
+---
+linear: {x: 0.599657, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00804273}
+---
+linear: {x: 0.598646, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0310643}
+---
+linear: {x: 0.59621, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0769041}
+---
+linear: {x: 0.595655, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0865485}
+---
+linear: {x: 0.598788, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0251097}
+---
+linear: {x: 0.599843, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00333493}
+---
+linear: {x: 0.598607, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0290151}
+---
+linear: {x: 0.598715, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0290745}
+---
+linear: {x: 0.597697, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0499891}
+---
+linear: {x: 0.591311, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.195192}
+---
+linear: {x: 0.597839, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0460986}
+---
+linear: {x: 0.597433, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0548372}
+---
+linear: {x: 0.596616, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0749453}
+---
+linear: {x: 0.598272, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0376776}
+---
+linear: {x: 0.599659, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00747984}
+---
+linear: {x: 0.593608, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.145208}
+---
+linear: {x: 0.599733, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00574375}
+---
+linear: {x: 0.59902, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.019535}
+---
+linear: {x: 0.598468, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0305506}
+---
+linear: {x: 0.598611, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0306256}
+---
+linear: {x: 0.595215, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.111494}
+---
+linear: {x: 0.596411, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0774762}
+---
+linear: {x: 0.596491, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.075885}
+---
+linear: {x: 0.598126, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0375063}
+---
+linear: {x: 0.598302, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0376011}
+---
+linear: {x: 0.599463, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0119473}
+---
+linear: {x: 0.599658, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00747345}
+---
+linear: {x: 0.594672, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.119784}
+---
+linear: {x: 0.596747, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0720059}
+---
+linear: {x: 0.598429, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0342282}
+---
+linear: {x: 0.59983, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00372111}
+---
+linear: {x: 0.599082, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.020117}
+---
+linear: {x: 0.59827, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0371914}
+---
+linear: {x: 0.597682, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0488624}
+---
+linear: {x: 0.597319, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0566028}
+---
+linear: {x: 0.59678, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0704908}
+---
+linear: {x: 0.596466, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0777414}
+---
+linear: {x: 0.596114, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.083793}
+---
+linear: {x: 0.598344, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0337378}
+---
+linear: {x: 0.599365, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0127288}
+---
+linear: {x: 0.595452, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0855395}
+---
+linear: {x: 0.598242, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0346585}
+---
+linear: {x: 0.597862, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0422051}
+---
+linear: {x: 0.598059, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0423104}
+---
+linear: {x: 0.597787, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0483163}
+---
+linear: {x: 0.596081, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0887268}
+---
+linear: {x: 0.596927, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0700169}
+---
+linear: {x: 0.597526, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0518697}
+---
+linear: {x: 0.598691, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0270091}
+---
+linear: {x: 0.599679, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00665873}
+---
+linear: {x: 0.594331, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.120588}
+---
+linear: {x: 0.596511, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0746568}
+---
+linear: {x: 0.598202, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0378949}
+---
+linear: {x: 0.593156, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.147901}
+---
+linear: {x: 0.595745, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0926014}
+---
+linear: {x: 0.597955, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0438892}
+---
+linear: {x: 0.598175, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0417403}
+---
+linear: {x: 0.592844, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.171786}
+---
+linear: {x: 0.596271, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0883436}
+---
+linear: {x: 0.598977, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0238993}
+---
+linear: {x: 0.59873, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0297463}
+---
+linear: {x: 0.590515, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.207002}
+---
+linear: {x: 0.596316, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0747722}
+---
+linear: {x: 0.595796, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0853979}
+---
+linear: {x: 0.595425, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0912327}
+---
+linear: {x: 0.595681, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0913832}
+---
+linear: {x: 0.598078, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0432752}
+---
+linear: {x: 0.599747, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00572546}
+---
+linear: {x: 0.59287, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.14779}
+---
+linear: {x: 0.593508, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.134786}
+---
+linear: {x: 0.599958, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.000910609}
+---
+linear: {x: 0.59917, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0177559}
+---
+linear: {x: 0.598548, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0311034}
+---
+linear: {x: 0.592362, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.169074}
+---
+linear: {x: 0.593328, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.148037}
+---
+linear: {x: 0.599986, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00031746}
+---
+linear: {x: 0.599546, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0100062}
+---
+linear: {x: 0.593206, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.15453}
+---
+linear: {x: 0.599017, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0241831}
+---
+linear: {x: 0.599511, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0117828}
+---
+linear: {x: 0.599798, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00430384}
+---
+linear: {x: 0.599597, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00842298}
+---
+linear: {x: 0.599446, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0116001}
+---
+linear: {x: 0.599343, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0135202}
+---
+linear: {x: 0.593676, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.131308}
+---
+linear: {x: 0.594505, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.110024}
+---
+linear: {x: 0.585023, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.285561}
+---
+linear: {x: 0.585992, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.294326}
+---
+linear: {x: 0.595375, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.108702}
+---
+linear: {x: 0.585209, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.326506}
+---
+linear: {x: 0.590091, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.221326}
+---
+linear: {x: 0.582473, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.365927}
+---
+linear: {x: 0.588465, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.244816}
+---
+linear: {x: 0.579749, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.370824}
+---
+linear: {x: 0.580792, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.371843}
+---
+linear: {x: 0.579973, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.39294}
+---
+linear: {x: 0.586994, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.25673}
+---
+linear: {x: 0.585869, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.288607}
+---
+linear: {x: 0.581555, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.331086}
+---
+linear: {x: 0.588585, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.207226}
+---
+linear: {x: 0.587782, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.22472}
+---
+linear: {x: 0.587444, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.238289}
+---
+linear: {x: 0.594413, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.107293}
+---
+linear: {x: 0.591534, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.152691}
+---
+linear: {x: 0.591784, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.156342}
+---
+linear: {x: 0.596773, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0586053}
+---
+linear: {x: 0.595401, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0846406}
+---
+linear: {x: 0.594276, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.106785}
+---
+linear: {x: 0.597441, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0527475}
+---
+linear: {x: 0.581837, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.377685}
+---
+linear: {x: 0.57512, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.539603}
+---
+linear: {x: 0.577788, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.552442}
+---
+linear: {x: 0.580867, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.557734}
+---
+linear: {x: 0.59609, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0898347}
+---
+linear: {x: 0.595102, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.123059}
+---
+linear: {x: 0.593615, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.13349}
+---
+linear: {x: 0.597466, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0583573}
+---
+linear: {x: 0.598238, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0417527}
+---
+linear: {x: 0.598471, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0419406}
+---
+linear: {x: 0.599686, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00775538}
+---
+linear: {x: 0.599729, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.007791}
+---
+linear: {x: 0.596859, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0734463}
+---
+linear: {x: 0.593707, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.153477}
+---
+linear: {x: 0.588361, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.246344}
+---
+linear: {x: 0.598282, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0408863}
+---
+linear: {x: 0.592401, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.16785}
+---
+linear: {x: 0.599137, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.019569}
+---
+linear: {x: 0.593656, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.133946}
+---
+linear: {x: 0.599753, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00523972}
+---
+linear: {x: 0.597233, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0609644}
+---
+linear: {x: 0.597866, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.040842}
+---
+linear: {x: 0.597245, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0523505}
+---
+linear: {x: 0.59989, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00214233}
+---
+linear: {x: 0.599788, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00437363}
+---
+linear: {x: 0.595393, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0935437}
+---
+linear: {x: 0.594718, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.100527}
+---
+linear: {x: 0.598144, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0362761}
+---
+linear: {x: 0.590951, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.189694}
+---
+linear: {x: 0.588308, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.240196}
+---
+linear: {x: 0.58943, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.24121}
+---
+linear: {x: 0.590776, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.242686}
+---
+linear: {x: 0.598204, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0406106}
+---
+linear: {x: 0.598355, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0407116}
+---
+linear: {x: 0.59893, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0235468}
+---
+linear: {x: 0.599372, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0126733}
+---
+linear: {x: 0.596826, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0666703}
+---
+linear: {x: 0.597137, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0668705}
+---
+linear: {x: 0.598061, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0421947}
+---
+linear: {x: 0.597791, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0474592}
+---
+linear: {x: 0.597961, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0459379}
+---
+linear: {x: 0.597738, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.050297}
+---
+linear: {x: 0.597838, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0505059}
+---
+linear: {x: 0.598112, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0408426}
+---
+linear: {x: 0.597835, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0490998}
+---
+linear: {x: 0.594292, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.131948}
+---
+linear: {x: 0.595915, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.104417}
+---
+linear: {x: 0.594905, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.122271}
+---
+linear: {x: 0.596939, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.06843}
+---
+linear: {x: 0.594306, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.135902}
+---
+linear: {x: 0.596773, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0730917}
+---
+linear: {x: 0.594076, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.146705}
+---
+linear: {x: 0.596529, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0814241}
+---
+linear: {x: 0.594802, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.124765}
+---
+linear: {x: 0.596204, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0829841}
+---
+linear: {x: 0.599091, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0209749}
+---
+linear: {x: 0.599279, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0151961}
+---
+linear: {x: 0.587734, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.273418}
+---
+linear: {x: 0.580025, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.270577}
+---
+linear: {x: 0.513213, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.240242}
+---
+linear: {x: 0.440299, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.207127}
+---
+linear: {x: 0.378736, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.178968}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.8}
+---
+linear: {x: 0.505655, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.30282}
+---
+linear: {x: 0.510588, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.31505}
+---
+linear: {x: 0.515539, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.3274}
+---
+linear: {x: 0.521804, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.34323}
+---
+linear: {x: 0.533702, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.20438}
+---
+linear: {x: 0.539363, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.21775}
+---
+linear: {x: 0.555589, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.735237}
+---
+linear: {x: 0.560754, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.72519}
+---
+linear: {x: 0.564833, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.73173}
+---
+linear: {x: 0.568253, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.737579}
+---
+linear: {x: 0.571691, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.74396}
+---
+linear: {x: 0.574456, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.749568}
+---
+linear: {x: 0.577224, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.755977}
+---
+linear: {x: 0.58138, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.768082}
+---
+linear: {x: 0.58487, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.781473}
+---
+linear: {x: 0.589012, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.676269}
+---
+linear: {x: 0.560513, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.30957}
+---
+linear: {x: 0.565626, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.561832}
+---
+linear: {x: 0.568793, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.565781}
+---
+linear: {x: 0.574242, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.436182}
+---
+linear: {x: 0.567598, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.553298}
+---
+linear: {x: 0.568919, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.559204}
+---
+linear: {x: 0.57767, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.408825}
+---
+linear: {x: 0.578561, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.404752}
+---
+linear: {x: 0.57831, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.383611}
+---
+linear: {x: 0.58815, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.235372}
+---
+linear: {x: 0.587881, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.244168}
+---
+linear: {x: 0.588067, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.248891}
+---
+linear: {x: 0.588233, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.24919}
+---
+linear: {x: 0.595481, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0897743}
+---
+linear: {x: 0.595092, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.10093}
+---
+linear: {x: 0.596475, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0760044}
+---
+linear: {x: 0.59964, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00731365}
+---
+linear: {x: 0.599675, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00733099}
+---
+linear: {x: 0.593361, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.151102}
+---
+linear: {x: 0.599829, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00340804}
+---
+linear: {x: 0.597936, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0416123}
+---
+linear: {x: 0.595517, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.093568}
+---
+linear: {x: 0.592618, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.141307}
+---
+linear: {x: 0.595511, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0879247}
+---
+linear: {x: 0.593085, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.122733}
+---
+linear: {x: 0.593475, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.124328}
+---
+linear: {x: 0.59642, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0698219}
+---
+linear: {x: 0.598801, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0226174}
+---
+linear: {x: 0.597937, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0367589}
+---
+linear: {x: 0.598109, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0368331}
+---
+linear: {x: 0.599459, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0109588}
+---
+linear: {x: 0.595124, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0976837}
+---
+linear: {x: 0.587792, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.258165}
+---
+linear: {x: 0.588278, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.231541}
+---
+linear: {x: 0.592153, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.153646}
+---
+linear: {x: 0.589056, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.210458}
+---
+linear: {x: 0.590237, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.211408}
+---
+linear: {x: 0.587706, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.260656}
+---
+linear: {x: 0.588923, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.261841}
+---
+linear: {x: 0.590382, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.263579}
+---
+linear: {x: 0.593225, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.163898}
+---
+linear: {x: 0.593988, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.164664}
+---
+linear: {x: 0.590052, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.204727}
+---
+linear: {x: 0.596157, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0808873}
+---
+linear: {x: 0.593749, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.131127}
+---
+linear: {x: 0.594361, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.131585}
+---
+linear: {x: 0.597374, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0561744}
+---
+linear: {x: 0.59785, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.052465}
+---
+linear: {x: 0.597419, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0538543}
+---
+linear: {x: 0.594958, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.106958}
+---
+linear: {x: 0.593011, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.153824}
+---
+linear: {x: 0.597061, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0597788}
+---
+linear: {x: 0.597426, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0530825}
+---
+linear: {x: 0.597575, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0531654}
+---
+linear: {x: 0.596443, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0748251}
+---
+linear: {x: 0.59953, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00915615}
+---
+linear: {x: 0.597155, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0562694}
+---
+linear: {x: 0.59471, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.114114}
+---
+linear: {x: 0.593921, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.120075}
+---
+linear: {x: 0.597709, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0474457}
+---
+linear: {x: 0.593828, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.125682}
+---
+linear: {x: 0.586634, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.291356}
+---
+linear: {x: 0.592374, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.172613}
+---
+linear: {x: 0.597099, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0651388}
+---
+linear: {x: 0.598794, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0278597}
+---
+linear: {x: 0.59895, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.027975}
+---
+linear: {x: 0.599702, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00716609}
+---
+linear: {x: 0.599735, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00719057}
+---
+linear: {x: 0.597591, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0549824}
+---
+linear: {x: 0.597898, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.055218}
+---
+linear: {x: 0.599768, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00552596}
+---
+linear: {x: 0.599798, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00554915}
+---
+linear: {x: 0.597769, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0482992}
+---
+linear: {x: 0.594801, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.114536}
+---
+linear: {x: 0.595098, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0936749}
+---
+linear: {x: 0.593131, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.133197}
+---
+linear: {x: 0.591629, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.167866}
+---
+linear: {x: 0.59785, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0433948}
+---
+linear: {x: 0.595602, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0901476}
+---
+linear: {x: 0.599018, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0190364}
+---
+linear: {x: 0.59864, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.02442}
+---
+linear: {x: 0.598777, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0244791}
+---
+linear: {x: 0.598645, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0266296}
+---
+linear: {x: 0.596438, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0706463}
+---
+linear: {x: 0.595327, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0869824}
+---
+linear: {x: 0.598494, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0287513}
+---
+linear: {x: 0.594434, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.104639}
+---
+linear: {x: 0.597866, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0419644}
+---
+linear: {x: 0.587401, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.232464}
+---
+linear: {x: 0.581984, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.351614}
+---
+linear: {x: 0.585736, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.258435}
+---
+linear: {x: 0.586705, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.259207}
+---
+linear: {x: 0.595724, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0799746}
+---
+linear: {x: 0.596098, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0801783}
+---
+linear: {x: 0.593599, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.129025}
+---
+linear: {x: 0.598735, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0275267}
+---
+linear: {x: 0.599733, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0053314}
+---
+linear: {x: 0.599763, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00534655}
+---
+linear: {x: 0.599462, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0111102}
+---
+linear: {x: 0.597378, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0532373}
+---
+linear: {x: 0.597676, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0534176}
+---
+linear: {x: 0.598978, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0202918}
+---
+linear: {x: 0.599889, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00207052}
+---
+linear: {x: 0.599899, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00207453}
+---
+linear: {x: 0.599098, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.017366}
+---
+linear: {x: 0.599179, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.017404}
+---
+linear: {x: 0.598615, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0274896}
+---
+linear: {x: 0.598228, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0347011}
+---
+linear: {x: 0.597641, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0482588}
+---
+linear: {x: 0.594138, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.122192}
+---
+linear: {x: 0.597572, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0542093}
+---
+linear: {x: 0.5952, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0974947}
+---
+linear: {x: 0.596579, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0756333}
+---
+linear: {x: 0.598756, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0284064}
+---
+linear: {x: 0.597378, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0588697}
+---
+linear: {x: 0.598442, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0327014}
+---
+linear: {x: 0.599312, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0133091}
+---
+linear: {x: 0.592593, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.149417}
+---
+linear: {x: 0.59314, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.156626}
+---
+linear: {x: 0.596322, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.078674}
+---
+linear: {x: 0.598931, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0231584}
+---
+linear: {x: 0.594597, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.119489}
+---
+linear: {x: 0.595154, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.119933}
+---
+linear: {x: 0.595814, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0959965}
+---
+linear: {x: 0.59531, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.114939}
+---
+linear: {x: 0.598814, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0309531}
+---
+linear: {x: 0.598269, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0407375}
+---
+linear: {x: 0.597762, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0530201}
+---
+linear: {x: 0.597279, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0664108}
+---
+linear: {x: 0.597397, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0589339}
+---
+linear: {x: 0.599012, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0207846}
+---
+linear: {x: 0.599878, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00235673}
+---
+linear: {x: 0.59993, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00151566}
+---
+linear: {x: 0.599402, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.011956}
+---
+linear: {x: 0.59746, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0509215}
+---
+linear: {x: 0.598333, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0343594}
+---
+linear: {x: 0.597975, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0391194}
+---
+linear: {x: 0.598748, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0239208}
+---
+linear: {x: 0.597474, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0493691}
+---
+linear: {x: 0.594055, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.120482}
+---
+linear: {x: 0.598519, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0309065}
+---
+linear: {x: 0.5994, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0115414}
+---
+linear: {x: 0.599465, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0115722}
+---
+linear: {x: 0.596314, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0781744}
+---
+linear: {x: 0.597947, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0401281}
+---
+linear: {x: 0.597814, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0446739}
+---
+linear: {x: 0.598653, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0277348}
+---
+linear: {x: 0.595922, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0823952}
+---
+linear: {x: 0.589374, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.223426}
+---
+linear: {x: 0.594819, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.111272}
+---
+linear: {x: 0.588357, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.260239}
+---
+linear: {x: 0.588057, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.255781}
+---
+linear: {x: 0.571515, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.559548}
+---
+linear: {x: 0.574133, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.563149}
+---
+linear: {x: 0.574681, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.510581}
+---
+linear: {x: 0.577068, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.513739}
+---
+linear: {x: 0.570959, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.60333}
+---
+linear: {x: 0.578791, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.449436}
+---
+linear: {x: 0.580889, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.452121}
+---
+linear: {x: 0.582153, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.453853}
+---
+linear: {x: 0.574903, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.54327}
+---
+linear: {x: 0.583594, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.358666}
+---
+linear: {x: 0.582686, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.38434}
+---
+linear: {x: 0.5887, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.236556}
+---
+linear: {x: 0.587537, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.264871}
+---
+linear: {x: 0.586997, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.286547}
+---
+linear: {x: 0.595002, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.111508}
+---
+linear: {x: 0.591344, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.183289}
+---
+linear: {x: 0.598469, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0327522}
+---
+linear: {x: 0.598861, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.025962}
+---
+linear: {x: 0.599909, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00176077}
+---
+linear: {x: 0.597924, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0416354}
+---
+linear: {x: 0.596485, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0700392}
+---
+linear: {x: 0.594578, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0995421}
+---
+linear: {x: 0.599754, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00439711}
+---
+linear: {x: 0.598124, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.034693}
+---
+linear: {x: 0.594456, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.108957}
+---
+linear: {x: 0.597674, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0468911}
+---
+linear: {x: 0.597976, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0442333}
+---
+linear: {x: 0.594802, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.09677}
+---
+linear: {x: 0.599769, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00439913}
+---
+linear: {x: 0.595947, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0740112}
+---
+linear: {x: 0.594459, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.102573}
+---
+linear: {x: 0.593246, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.126743}
+---
+linear: {x: 0.59234, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.148427}
+---
+linear: {x: 0.584841, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.322526}
+---
+linear: {x: 0.586647, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.324521}
+---
+linear: {x: 0.524376, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.291044}
+---
+linear: {x: 0.488319, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.271537}
+---
+linear: {x: 0.43208, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.241099}
+---
+linear: {x: 0.372011, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.208504}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0.489171, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.6199}
+---
+linear: {x: 0.501127, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.44249}
+---
+linear: {x: 0.507953, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.46119}
+---
+linear: {x: 0.514856, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.48031}
+---
+linear: {x: 0.523212, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.50382}
+---
+linear: {x: 0.53028, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.52426}
+---
+linear: {x: 0.534061, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.41351}
+---
+linear: {x: 0.540684, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.43211}
+---
+linear: {x: 0.559416, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.05015}
+---
+linear: {x: 0.573926, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.641535}
+---
+linear: {x: 0.597632, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0487218}
+---
+linear: {x: 0.597905, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.048889}
+---
+linear: {x: 0.598133, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0490613}
+---
+linear: {x: 0.595455, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.117691}
+---
+linear: {x: 0.590433, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.247956}
+---
+linear: {x: 0.583742, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.342813}
+---
+linear: {x: 0.585343, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.344576}
+---
+linear: {x: 0.587266, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.347055}
+---
+linear: {x: 0.589197, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.232569}
+---
+linear: {x: 0.588432, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.248867}
+---
+linear: {x: 0.594772, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.117528}
+---
+linear: {x: 0.587772, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.286436}
+---
+linear: {x: 0.588176, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.276971}
+---
+linear: {x: 0.59416, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.126307}
+---
+linear: {x: 0.598355, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0329506}
+---
+linear: {x: 0.598854, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0248733}
+---
+linear: {x: 0.597319, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0570446}
+---
+linear: {x: 0.595086, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0915422}
+---
+linear: {x: 0.5956, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0918384}
+---
+linear: {x: 0.599857, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00277884}
+---
+linear: {x: 0.598563, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0273943}
+---
+linear: {x: 0.592621, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.148047}
+---
+linear: {x: 0.593016, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.140282}
+---
+linear: {x: 0.599179, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0172814}
+---
+linear: {x: 0.592961, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.1502}
+---
+linear: {x: 0.59909, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0199984}
+---
+linear: {x: 0.595137, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.110188}
+---
+linear: {x: 0.59704, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0660437}
+---
+linear: {x: 0.595015, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.121964}
+---
+linear: {x: 0.597784, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0568992}
+---
+linear: {x: 0.599689, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00803337}
+---
+linear: {x: 0.598938, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0268274}
+---
+linear: {x: 0.597958, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0504065}
+---
+linear: {x: 0.596844, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0724296}
+---
+linear: {x: 0.598363, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0347173}
+---
+linear: {x: 0.59461, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.12158}
+---
+linear: {x: 0.599741, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00542202}
+---
+linear: {x: 0.599266, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0153872}
+---
+linear: {x: 0.598511, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0306145}
+---
+linear: {x: 0.597971, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0417615}
+---
+linear: {x: 0.596399, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0766435}
+---
+linear: {x: 0.597915, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0445843}
+---
+linear: {x: 0.592806, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.157804}
+---
+linear: {x: 0.595272, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.102281}
+---
+linear: {x: 0.595779, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0974243}
+---
+linear: {x: 0.590821, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.222219}
+---
+linear: {x: 0.594762, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.125244}
+---
+linear: {x: 0.59809, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.046108}
+---
+linear: {x: 0.599432, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0134968}
+---
+linear: {x: 0.597574, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0563399}
+---
+linear: {x: 0.598681, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0286544}
+---
+linear: {x: 0.59407, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.134589}
+---
+linear: {x: 0.593419, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.149391}
+---
+linear: {x: 0.593976, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.149865}
+---
+linear: {x: 0.593732, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.148946}
+---
+linear: {x: 0.599509, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0107668}
+---
+linear: {x: 0.598697, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0286351}
+---
+linear: {x: 0.597851, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0472636}
+---
+linear: {x: 0.596226, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0859311}
+---
+linear: {x: 0.598265, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.038888}
+---
+linear: {x: 0.599949, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0011514}
+---
+linear: {x: 0.598787, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.026793}
+---
+linear: {x: 0.597851, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.047508}
+---
+linear: {x: 0.597072, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0597254}
+---
+linear: {x: 0.59719, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0606003}
+---
+linear: {x: 0.598911, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.023147}
+---
+linear: {x: 0.594179, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.13139}
+---
+linear: {x: 0.599052, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.022471}
+---
+linear: {x: 0.599539, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0109568}
+---
+linear: {x: 0.598507, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0347601}
+---
+linear: {x: 0.596731, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0709567}
+---
+linear: {x: 0.598492, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0322359}
+---
+linear: {x: 0.599898, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00214769}
+---
+linear: {x: 0.594815, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.109761}
+---
+linear: {x: 0.597021, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.06347}
+---
+linear: {x: 0.598931, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0224636}
+---
+linear: {x: 0.599035, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0225234}
+---
+linear: {x: 0.592646, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.160506}
+---
+linear: {x: 0.59315, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.149725}
+---
+linear: {x: 0.598975, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0208583}
+---
+linear: {x: 0.592943, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.148314}
+---
+linear: {x: 0.599576, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00957327}
+---
+linear: {x: 0.599603, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00958898}
+---
+linear: {x: 0.598843, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0273498}
+---
+linear: {x: 0.598318, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0398169}
+---
+linear: {x: 0.597531, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0505847}
+---
+linear: {x: 0.597475, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0518235}
+---
+linear: {x: 0.596673, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.070787}
+---
+linear: {x: 0.598077, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0410916}
+---
+linear: {x: 0.59524, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.105903}
+---
+linear: {x: 0.595666, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0946052}
+---
+linear: {x: 0.596204, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0830373}
+---
+linear: {x: 0.59636, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0831377}
+---
+linear: {x: 0.596916, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0705951}
+---
+linear: {x: 0.597445, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0586379}
+---
+linear: {x: 0.595723, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.102298}
+---
+linear: {x: 0.596977, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0709462}
+---
+linear: {x: 0.598666, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0277682}
+---
+linear: {x: 0.599298, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0143815}
+---
+linear: {x: 0.599809, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00384674}
+---
+linear: {x: 0.59975, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00504297}
+---
+linear: {x: 0.59943, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.011294}
+---
+linear: {x: 0.593961, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.118685}
+---
+linear: {x: 0.595016, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0982101}
+---
+linear: {x: 0.595476, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.098497}
+---
+linear: {x: 0.59007, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.222298}
+---
+linear: {x: 0.592487, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.169098}
+---
+linear: {x: 0.582858, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.363082}
+---
+linear: {x: 0.587723, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.262892}
+---
+linear: {x: 0.58053, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.390486}
+---
+linear: {x: 0.586454, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.275964}
+---
+linear: {x: 0.587229, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.27667}
+---
+linear: {x: 0.581225, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.371977}
+---
+linear: {x: 0.580492, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.407904}
+---
+linear: {x: 0.579804, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.428358}
+---
+linear: {x: 0.587661, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.26387}
+---
+linear: {x: 0.584284, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.319109}
+---
+linear: {x: 0.583834, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.332922}
+---
+linear: {x: 0.588329, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.211257}
+---
+linear: {x: 0.587769, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.224263}
+---
+linear: {x: 0.594786, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0984818}
+---
+linear: {x: 0.593262, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.122292}
+---
+linear: {x: 0.592311, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.143956}
+---
+linear: {x: 0.591545, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.160474}
+---
+linear: {x: 0.596887, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0564602}
+---
+linear: {x: 0.595639, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0801809}
+---
+linear: {x: 0.578977, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.416136}
+---
+linear: {x: 0.577624, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.433433}
+---
+linear: {x: 0.579652, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.435781}
+---
+linear: {x: 0.582089, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.438981}
+---
+linear: {x: 0.58413, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.441985}
+---
+linear: {x: 0.585355, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.444059}
+---
+linear: {x: 0.592232, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.152231}
+---
+linear: {x: 0.595906, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0813933}
+---
+linear: {x: 0.596286, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0816239}
+---
+linear: {x: 0.587329, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.244346}
+---
+linear: {x: 0.588701, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.245529}
+---
+linear: {x: 0.592586, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.148686}
+---
+linear: {x: 0.590764, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.188038}
+---
+linear: {x: 0.597202, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0583946}
+---
+linear: {x: 0.597366, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0584892}
+---
+linear: {x: 0.594755, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.118478}
+---
+linear: {x: 0.599048, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0215186}
+---
+linear: {x: 0.594957, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.108659}
+---
+linear: {x: 0.593004, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.153215}
+---
+linear: {x: 0.597096, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0710922}
+---
+linear: {x: 0.59836, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0337412}
+---
+linear: {x: 0.598637, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0292353}
+---
+linear: {x: 0.598834, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0230015}
+---
+linear: {x: 0.598377, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0332879}
+---
+linear: {x: 0.594053, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.122305}
+---
+linear: {x: 0.599499, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00986162}
+---
+linear: {x: 0.593029, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.147815}
+---
+linear: {x: 0.597194, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0613546}
+---
+linear: {x: 0.596551, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0703995}
+---
+linear: {x: 0.592901, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.142339}
+---
+linear: {x: 0.593699, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.142927}
+---
+linear: {x: 0.594478, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.114457}
+---
+linear: {x: 0.598797, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0257474}
+---
+linear: {x: 0.598676, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0265236}
+---
+linear: {x: 0.597945, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0412717}
+---
+linear: {x: 0.597918, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0421839}
+---
+linear: {x: 0.598442, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.032355}
+---
+linear: {x: 0.597262, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0572345}
+---
+linear: {x: 0.598851, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0246752}
+---
+linear: {x: 0.599755, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00493504}
+---
+linear: {x: 0.592799, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.152367}
+---
+linear: {x: 0.598573, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0295958}
+---
+linear: {x: 0.597452, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0521439}
+---
+linear: {x: 0.598897, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0222978}
+---
+linear: {x: 0.593567, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.136988}
+---
+linear: {x: 0.597749, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0468895}
+---
+linear: {x: 0.598227, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0365135}
+---
+linear: {x: 0.597903, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0442616}
+---
+linear: {x: 0.598449, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0306998}
+---
+linear: {x: 0.593976, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.128132}
+---
+linear: {x: 0.597649, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0479417}
+---
+linear: {x: 0.594631, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.115799}
+---
+linear: {x: 0.599284, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0163508}
+---
+linear: {x: 0.596525, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0777004}
+---
+linear: {x: 0.59901, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0219408}
+---
+linear: {x: 0.596784, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0745675}
+---
+linear: {x: 0.591153, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.191593}
+---
+linear: {x: 0.599408, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0124138}
+---
+linear: {x: 0.599466, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0124457}
+---
+linear: {x: 0.578581, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.331392}
+---
+linear: {x: 0.499459, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.287305}
+---
+linear: {x: 0.442104, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.255191}
+---
+linear: {x: 0.391038, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.226503}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.3}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.8}
+---
+linear: {x: 0.486657, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.37934}
+---
+linear: {x: 0.492753, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.37446}
+---
+linear: {x: 0.499271, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.39164}
+---
+linear: {x: 0.507164, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.41256}
+---
+linear: {x: 0.519293, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.29247}
+---
+linear: {x: 0.525389, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -1.30751}
+---
+linear: {x: 0.54416, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.907571}
+---
+linear: {x: 0.549282, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.916887}
+---
+linear: {x: 0.553586, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.925004}
+---
+linear: {x: 0.571385, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.527667}
+---
+linear: {x: 0.57287, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.529507}
+---
+linear: {x: 0.57584, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.533505}
+---
+linear: {x: 0.578825, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.537963}
+---
+linear: {x: 0.581324, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.54219}
+---
+linear: {x: 0.58383, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.547185}
+---
+linear: {x: 0.586841, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.555088}
+---
+linear: {x: 0.595517, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.137701}
+---
+linear: {x: 0.596278, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.138922}
+---
+linear: {x: 0.581141, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.539572}
+---
+linear: {x: 0.575407, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.46404}
+---
+linear: {x: 0.576999, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.46033}
+---
+linear: {x: 0.575935, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.498688}
+---
+linear: {x: 0.582688, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.358564}
+---
+linear: {x: 0.585803, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.275932}
+---
+linear: {x: 0.584005, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.315538}
+---
+linear: {x: 0.589921, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.198978}
+---
+linear: {x: 0.588214, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.241072}
+---
+linear: {x: 0.594351, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.118007}
+---
+linear: {x: 0.591757, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.17512}
+---
+linear: {x: 0.59422, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.111145}
+---
+linear: {x: 0.594767, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.108716}
+---
+linear: {x: 0.596926, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0590062}
+---
+linear: {x: 0.597257, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0591889}
+---
+linear: {x: 0.59446, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.121623}
+---
+linear: {x: 0.597288, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0559119}
+---
+linear: {x: 0.597841, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0441885}
+---
+linear: {x: 0.598698, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0278293}
+---
+linear: {x: 0.599616, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.00756379}
+---
+linear: {x: 0.597397, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0531492}
+---
+linear: {x: 0.597497, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0532017}
+---
+linear: {x: 0.597332, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0573512}
+---
+linear: {x: 0.596267, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0757449}
+---
+linear: {x: 0.595288, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.104417}
+---
+linear: {x: 0.597585, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0507674}
+---
+linear: {x: 0.597332, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0566884}
+---
+linear: {x: 0.596654, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0652546}
+---
+linear: {x: 0.599808, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00392937}
+---
+linear: {x: 0.595959, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0812221}
+---
+linear: {x: 0.592656, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.144966}
+---
+linear: {x: 0.59281, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.150482}
+---
+linear: {x: 0.594065, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.116492}
+---
+linear: {x: 0.598241, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0356252}
+---
+linear: {x: 0.594893, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.10156}
+---
+linear: {x: 0.599259, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0155205}
+---
+linear: {x: 0.59706, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0628636}
+---
+linear: {x: 0.59853, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0311488}
+---
+linear: {x: 0.597729, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0503241}
+---
+linear: {x: 0.59575, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0814496}
+---
+linear: {x: 0.596868, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0627408}
+---
+linear: {x: 0.599715, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00576837}
+---
+linear: {x: 0.596542, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0687658}
+---
+linear: {x: 0.599577, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00866145}
+---
+linear: {x: 0.596083, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0815779}
+---
+linear: {x: 0.599132, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0187248}
+---
+linear: {x: 0.598868, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0224014}
+---
+linear: {x: 0.597689, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0467146}
+---
+linear: {x: 0.594746, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.110175}
+---
+linear: {x: 0.596703, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0743106}
+---
+linear: {x: 0.599352, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0144309}
+---
+linear: {x: 0.599958, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.000849183}
+---
+linear: {x: 0.599311, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.013199}
+---
+linear: {x: 0.599372, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0132271}
+---
+linear: {x: 0.598941, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0209096}
+---
+linear: {x: 0.597687, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0466081}
+---
+linear: {x: 0.597955, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0416025}
+---
+linear: {x: 0.598412, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0331061}
+---
+linear: {x: 0.597514, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.051184}
+---
+linear: {x: 0.595671, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0860469}
+---
+linear: {x: 0.596846, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.064393}
+---
+linear: {x: 0.59929, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0149105}
+---
+linear: {x: 0.595937, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.088676}
+---
+linear: {x: 0.599077, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0200463}
+---
+linear: {x: 0.59864, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0270776}
+---
+linear: {x: 0.597856, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0444832}
+---
+linear: {x: 0.597794, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0452711}
+---
+linear: {x: 0.598595, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0301769}
+---
+linear: {x: 0.597065, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0621856}
+---
+linear: {x: 0.599177, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0179407}
+---
+linear: {x: 0.596836, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0665216}
+---
+linear: {x: 0.599167, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0180238}
+---
+linear: {x: 0.599913, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00173709}
+---
+linear: {x: 0.596687, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0670323}
+---
+linear: {x: 0.598067, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0368272}
+---
+linear: {x: 0.598274, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.036932}
+---
+linear: {x: 0.599494, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00996984}
+---
+linear: {x: 0.596428, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0729345}
+---
+linear: {x: 0.598868, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0229971}
+---
+linear: {x: 0.598932, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0230289}
+---
+linear: {x: 0.594581, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.10979}
+---
+linear: {x: 0.599893, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00221658}
+---
+linear: {x: 0.599037, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0183282}
+---
+linear: {x: 0.599139, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.018377}
+---
+linear: {x: 0.598351, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0323199}
+---
+linear: {x: 0.598502, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.032397}
+---
+linear: {x: 0.594526, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.118582}
+---
+linear: {x: 0.59525, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0944257}
+---
+linear: {x: 0.599487, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0107326}
+---
+linear: {x: 0.599517, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0107477}
+---
+linear: {x: 0.599161, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0170904}
+---
+linear: {x: 0.597342, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0552544}
+---
+linear: {x: 0.598156, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0387195}
+---
+linear: {x: 0.598079, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0413402}
+---
+linear: {x: 0.59903, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0195743}
+---
+linear: {x: 0.595918, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0837602}
+---
+linear: {x: 0.593316, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.139423}
+---
+linear: {x: 0.597728, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0523911}
+---
+linear: {x: 0.595079, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.106521}
+---
+linear: {x: 0.596927, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0686987}
+---
+linear: {x: 0.598844, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.027192}
+---
+linear: {x: 0.595374, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.11094}
+---
+linear: {x: 0.597847, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0471633}
+---
+linear: {x: 0.597002, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0662786}
+---
+linear: {x: 0.595826, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0888202}
+---
+linear: {x: 0.598991, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0214027}
+---
+linear: {x: 0.594877, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.102102}
+---
+linear: {x: 0.599937, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00127913}
+---
+linear: {x: 0.597084, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0580073}
+---
+linear: {x: 0.598292, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0337634}
+---
+linear: {x: 0.597497, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0465037}
+---
+linear: {x: 0.597714, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0466087}
+---
+linear: {x: 0.595928, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0800219}
+---
+linear: {x: 0.599238, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0149408}
+---
+linear: {x: 0.595286, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0926422}
+---
+linear: {x: 0.598126, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0352209}
+---
+linear: {x: 0.594621, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.106812}
+---
+linear: {x: 0.59854, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0283065}
+---
+linear: {x: 0.594378, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.110765}
+---
+linear: {x: 0.598388, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0327329}
+---
+linear: {x: 0.598134, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0387524}
+---
+linear: {x: 0.595163, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.104326}
+---
+linear: {x: 0.596023, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0922775}
+---
+linear: {x: 0.596424, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0800192}
+---
+linear: {x: 0.596797, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0802979}
+---
+linear: {x: 0.599093, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0206825}
+---
+linear: {x: 0.595935, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0966029}
+---
+linear: {x: 0.598159, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0434796}
+---
+linear: {x: 0.598549, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0336234}
+---
+linear: {x: 0.599418, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0125831}
+---
+linear: {x: 0.597375, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0579081}
+---
+linear: {x: 0.597346, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0580123}
+---
+linear: {x: 0.596336, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0733046}
+---
+linear: {x: 0.597079, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0576637}
+---
+linear: {x: 0.598207, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.035182}
+---
+linear: {x: 0.598371, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0352668}
+---
+linear: {x: 0.599603, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00750096}
+---
+linear: {x: 0.599624, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00750941}
+---
+linear: {x: 0.596762, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0657459}
+---
+linear: {x: 0.599009, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0189863}
+---
+linear: {x: 0.596745, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0615915}
+---
+linear: {x: 0.597034, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0617427}
+---
+linear: {x: 0.593299, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.139697}
+---
+linear: {x: 0.59765, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0505765}
+---
+linear: {x: 0.595427, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0946929}
+---
+linear: {x: 0.595869, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0949905}
+---
+linear: {x: 0.598454, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0332814}
+---
+linear: {x: 0.597137, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0573954}
+---
+linear: {x: 0.597458, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0575872}
+---
+linear: {x: 0.599898, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00197952}
+---
+linear: {x: 0.596811, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0638159}
+---
+linear: {x: 0.594326, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.115394}
+---
+linear: {x: 0.597181, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.05411}
+---
+linear: {x: 0.59488, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0997784}
+---
+linear: {x: 0.597047, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0618297}
+---
+linear: {x: 0.596925, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0621037}
+---
+linear: {x: 0.594631, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.110169}
+---
+linear: {x: 0.599773, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00448871}
+---
+linear: {x: 0.597073, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0600367}
+---
+linear: {x: 0.599606, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00749634}
+---
+linear: {x: 0.597135, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0552756}
+---
+linear: {x: 0.594957, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.100627}
+---
+linear: {x: 0.599226, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0157702}
+---
+linear: {x: 0.59578, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0808634}
+---
+linear: {x: 0.598726, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0248597}
+---
+linear: {x: 0.598634, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0271904}
+---
+linear: {x: 0.596425, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0695603}
+---
+linear: {x: 0.598311, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0328041}
+---
+linear: {x: 0.599026, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0193153}
+---
+linear: {x: 0.594676, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.100921}
+---
+linear: {x: 0.585947, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.270268}
+---
+linear: {x: 0.587103, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.279318}
+---
+linear: {x: 0.588406, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.280662}
+---
+linear: {x: 0.516457, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.247384}
+---
+linear: {x: 0.45672, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.219537}
+---
+linear: {x: 0.392993, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.189751}
+---
+linear: {x: 0.374653, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.181116}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 5.32008e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 4.39232e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 4.39463e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 3.95402e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 3.54514e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 3.54709e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 3.13112e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 2.7217e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 2.3598e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 2.02877e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.70565e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.70565e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.41083e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 1.41162e-07}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0274021}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0268076}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.02529}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0237912}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0223565}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0223689}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0208691}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0292851}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0264106}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0237499}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0211854}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0188162}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0170986}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0148351}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0128406}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0110763}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00937338}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00792167}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00792379}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00656984}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00657348}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00530057}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00408169}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0030509}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00206865}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0143222}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0148804}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.01478}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0176665}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0177766}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0163149}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0155796}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0148907}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0141737}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0134972}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0135046}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.012786}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0223886}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0219847}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0219774}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0215105}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0210023}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.020464}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.019898}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.019909}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0192719}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0186208}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0179495}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0172748}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0165651}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.02044}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0179227}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0155351}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0155394}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0132051}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0109263}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00893102}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00706451}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00537601}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00374704}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00374808}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00374808}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.000890255}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0683782}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.062756}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0573489}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0573807}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0518184}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0418488}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0375719}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.037592}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0332428}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0291083}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0254214}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0218194}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0184154}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0766694}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0767113}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0604804}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.060514}
+---
+linear: {x: 0.447469, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0528212}
+---
+linear: {x: 0.434012, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0444526}
+---
+linear: {x: 0.434012, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0444526}
+---
+linear: {x: 0.420794, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0370845}
+---
+linear: {x: 0.401666, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0352336}
+---
+linear: {x: 0.383309, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0336437}
+---
+linear: {x: 0.371812, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0326503}
+---
+linear: {x: 0.355085, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0312044}
+---
+linear: {x: 0.339109, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0298225}
+---
+linear: {x: 0.351216, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0170205}
+---
+linear: {x: 0.34068, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0165178}
+---
+linear: {x: 0.325192, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.015779}
+---
+linear: {x: 0.31056, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0150802}
+---
+linear: {x: 0.305901, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0148574}
+---
+linear: {x: 0.292067, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0141962}
+---
+linear: {x: 0.278717, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.013558}
+---
+linear: {x: 0.270356, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0131576}
+---
+linear: {x: 0.232, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0113184}
+---
+linear: {x: 0.221453, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0108122}
+---
+linear: {x: 0.214809, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0104929}
+---
+linear: {x: 0.214809, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0104929}
+---
+linear: {x: 0.208265, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0101784}
+---
+linear: {x: 0.202018, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00987778}
+---
+linear: {x: 0.195863, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.00958175}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.025, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.05}
+---
+linear: {x: 0.05, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.1}
+---
+linear: {x: 0.075, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0988512}
+---
+linear: {x: 0.1, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0904607}
+---
+linear: {x: 0.125, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.085038}
+---
+linear: {x: 0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0751731}
+---
+linear: {x: 0.175, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.067467}
+---
+linear: {x: 0.2, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0628337}
+---
+linear: {x: 0.225, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0556388}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0519354}
+---
+linear: {x: 0.275, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0454254}
+---
+linear: {x: 0.3, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0439709}
+---
+linear: {x: 0.325, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0427327}
+---
+linear: {x: 0.35, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.038601}
+---
+linear: {x: 0.375, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0355545}
+---
+linear: {x: 0.4, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.035194}
+---
+linear: {x: 0.425, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0331157}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.029119}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0274166}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0258519}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0257617}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0127093}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0124351}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0124236}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0118157}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0105153}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0259344}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0251026}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0250607}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0232362}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.02128}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0176529}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0160518}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0159515}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0132341}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0146648}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0146287}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0138185}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0129902}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0129413}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0113718}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0105607}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0104305}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0269838}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.026548}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.022479}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0203403}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0184078}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0166183}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0133317}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0118248}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0117804}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.043915}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0417381}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0416775}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0334144}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0331571}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0292894}
+---
+linear: {x: 0.425, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0107913}
+---
+linear: {x: 0.409534, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.396784, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.37198, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.348917, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.33486, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.016619}
+---
+linear: {x: 0.324394, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0171552}
+---
+linear: {x: 0.309326, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.016471}
+---
+linear: {x: 0.28545, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.015232}
+---
+linear: {x: 0.276529, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0147648}
+---
+linear: {x: 0.263684, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0140909}
+---
+linear: {x: 0.251433, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0134477}
+---
+linear: {x: 0.235797, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0126263}
+---
+linear: {x: 0.235797, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0126263}
+---
+linear: {x: 0.228488, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0122417}
+---
+linear: {x: 0.217878, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0116831}
+---
+linear: {x: 0.20106, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0107974}
+---
+linear: {x: 0.194524, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0104533}
+---
+linear: {x: 0.188492, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0101348}
+---
+linear: {x: 0.163492, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.138492, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.113492, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.0884923, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.0634923, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.0384923, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.0134923, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.025, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.05, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.075, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.1, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.125, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.15, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.175, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.2, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.225, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0126711}
+---
+linear: {x: 0.25, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0124419}
+---
+linear: {x: 0.275, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0138104}
+---
+linear: {x: 0.3, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0134987}
+---
+linear: {x: 0.325, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0144033}
+---
+linear: {x: 0.35, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0153319}
+---
+linear: {x: 0.375, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0151132}
+---
+linear: {x: 0.4, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0160869}
+---
+linear: {x: 0.425, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0179617}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0187017}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0186964}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0186909}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0161409}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0159531}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0134386}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0111467}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0152428}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0134777}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0357414}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0382198}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0345378}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0269303}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0234702}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0203246}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0174469}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0119882}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.01181}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0101192}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0115487}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0122787}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.012904}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0107975}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0124262}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0375738}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0522308}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0486632}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0485585}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0388852}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0344027}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0302858}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0262585}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0.0194388}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.45, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.425, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.410992, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0582419}
+---
+linear: {x: 0.410992, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0609959}
+---
+linear: {x: 0.398089, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0612319}
+---
+linear: {x: 0.373089, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0604044}
+---
+linear: {x: 0.348089, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0569441}
+---
+linear: {x: 0.339526, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0561121}
+---
+linear: {x: 0.323872, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0536201}
+---
+linear: {x: 0.308547, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0304738}
+---
+linear: {x: 0.298832, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0282217}
+---
+linear: {x: 0.285096, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0268632}
+---
+linear: {x: 0.271651, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0256114}
+---
+linear: {x: 0.254951, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0240637}
+---
+linear: {x: 0.242978, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.022954}
+---
+linear: {x: 0.231866, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0219217}
+---
+linear: {x: 0.224577, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0212448}
+---
+linear: {x: 0.207408, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0196487}
+---
+linear: {x: 0.200671, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.019023}
+---
+linear: {x: 0.191338, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0181539}
+---
+linear: {x: 0.191338, y: 0, z: 0}
+angular: {x: 0, y: 0, z: -0.0181539}
+---
+linear: {x: 0.166338, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.141338, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.116338, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.0913384, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.0663384, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.0413384, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0.0163384, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---
+linear: {x: 0, y: 0, z: 0}
+angular: {x: 0, y: 0, z: 0}
+---

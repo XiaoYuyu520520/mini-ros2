@@ -1,0 +1,87 @@
+# WARNING: this file also moves collision_monitor's output back to
+# `cmd_vel_monitored`. Under `nav2_stack.bat --safety` that CUTS the chain -
+# nothing writes `/cmd_vel` afterwards and the robot gets no command at all,
+# which looks like "the monitor stopped the robot" but is not. For the chain
+# mode use `.scratch\safety_stopall_chain.yaml`, which widens only the polygon.
+# See 03-validation.md, evidence 38.
+# Scratch copy of nav2_shim_safety.yaml with the stop polygon widened to a
+# 20 m box, so that whatever the laser currently sees is inside it. Used to
+# show the monitor's stop path rather than its forward path.
+# Parameters for the two nodes that sit between the controller and the wheels,
+# loaded on top of nav2_params.yaml and nav2_shim_overrides.yaml by
+# bridge\windows\nav2_safety.bat.
+#
+# They are a separate file rather than blocks in nav2_shim_overrides.yaml because
+# they are a separate *stack*: `nav2_stack.bat` does not start either node, and
+# nothing in the default chain reads these values.
+
+# nav2_velocity_smoother's topics are not parameters - it subscribes `cmd_vel`
+# and publishes `cmd_vel_smoothed`, both spelled out in velocity_smoother.cpp,
+# and upstream relies on a launch file to remap them. There is no remapping
+# here, so this node necessarily listens to the same `/cmd_vel` the controller
+# writes and puts its answer on `/cmd_vel_smoothed`, which nothing else writes.
+# That is what makes it safe to run alongside the working stack: the robot still
+# takes its orders from `/cmd_vel`, and `/cmd_vel_smoothed` is the same stream
+# after the acceleration limits below have been applied to it.
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: true
+    # Plain Twist, like the rest of the chain: the robot subscribes to `Twist`,
+    # and `nav2_util::TwistPublisher` would otherwise stamp the output.
+    enable_stamped_cmd_vel: false
+    smoothing_frequency: 20.0
+    scale_velocities: false
+    # Open loop: the smoothed value is derived from the previous *command*, not
+    # from `/odom`. Closed loop needs a wheel-odometry feedback type and a robot
+    # that reports its own velocity, which the simulated one does not.
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.45, 0.0, 1.0]
+    min_velocity: [-0.45, 0.0, -1.0]
+    max_accel: [0.5, 0.0, 1.0]
+    max_decel: [-0.5, 0.0, -1.0]
+    # Zero out commands below these, so a controller holding a tiny value does
+    # not leave the wheels creeping.
+    deadband_velocity: [0.01, 0.0, 0.01]
+    velocity_timeout: 1.0
+    odom_topic: /odom
+    odom_duration: 0.1
+
+# collision_monitor *does* take its topics from parameters, so its output can be
+# moved out of the way - and it has to be, because `/cmd_vel` already has a
+# writer (the controller). `cmd_vel_out_topic` is `/cmd_vel_monitored` here
+# rather than upstream's `/cmd_vel`; making this node the real path to the
+# wheels is a one-line change to that parameter once the controller's own
+# `cmd_vel` can be remapped elsewhere.
+collision_monitor:
+  ros__parameters:
+    use_sim_time: true
+    enable_stamped_cmd_vel: false
+    enabled: true
+    base_frame_id: base_link
+    odom_frame_id: odom
+    cmd_vel_in_topic: cmd_vel_smoothed
+    cmd_vel_out_topic: cmd_vel_monitored
+    state_topic: collision_monitor_state
+    transform_tolerance: 0.5
+    source_timeout: 2.0
+    base_shift_correction: true
+    stop_pub_timeout: 2.0
+    # One polygon: everything the laser can see inside 0.45 m ahead of
+    # `base_link`, half a metre wide. `action_type: stop` means the monitor
+    # publishes zero for as long as anything is in it.
+    polygons: ["PolygonStop"]
+    PolygonStop:
+      type: "polygon"
+      points: "[[20.0, 20.0], [20.0, -20.0], [-20.0, -20.0], [-20.0, 20.0]]"
+      action_type: "stop"
+      min_points: 4
+      visualize: true
+      polygon_pub_topic: "polygon_stop"
+      enabled: true
+    # The same laser the rest of the stack uses. `/scan` is what the bridge
+    # mirrors in from the robot and what both costmaps are built from.
+    observation_sources: ["scan"]
+    scan:
+      type: "scan"
+      topic: "scan"
+      enabled: true

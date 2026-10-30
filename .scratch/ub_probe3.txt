@@ -1,0 +1,4 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: kill -0 1773547 && echo SIM_ALIVE || echo SIM_DEAD; ss -lnt | grep 50051 || echo NOT_LISTENING; cat /proc/1773547/cmdline 2>/dev/null | tr '\0' ' '; echo
+SIM_ALIVE
+LISTEN 0      4096               *:50051            *:*          
+/home/ubuntu/code/CPU/.venv/bin/python -m ros2_bridge_sim.run_sim --no-console --port 50051 

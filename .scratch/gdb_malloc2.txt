@@ -1,0 +1,14 @@
+set pagination off
+set confirm off
+set height 0
+set width 0
+break malloc if ((unsigned long)$rcx) > 50000000
+commands
+silent
+printf "MALLOC>50MB size=%lu\n", (unsigned long)$rcx
+bt 6
+continue
+end
+continue
+detach
+quit

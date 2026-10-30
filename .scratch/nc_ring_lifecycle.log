@@ -1,0 +1,54 @@
+=== channel rings: who is handed the leftovers ===
+[test] the ring keeps what its previous writer left
+  ok   the writer published a byte
+  ok   the writer published a byte
+  ok   the writer published a byte
+  ok   the writer published a byte
+  ok   the writer published a byte
+  ok   a reader that does not seek is fed the whole ring (control)
+  ok   seek_to_latest() reports the five messages it skipped
+  ok   a reader that seeks is not fed the leftovers
+  ok   the writer published one more byte
+  ok   the same reader still sees the next message
+[test] a ring outlives the writer that filled it, while anyone holds it
+  ok   a writer filled a channel that somebody else holds
+  ok   the writer is gone and the message is still there for a later reader
+  ok   so a reader joining now does have something to skip
+  ok   a writer filled a channel nobody else holds
+  ok   with no holder left the section is gone, so there is nothing to be handed
+  ok   and the channel built in its place counts no messages
+[test] rclcpp::Service and rclcpp::Client skip the ring as they are built
+  ok   rclcpp::Service's constructor skips what the request ring already holds
+  FAIL rclcpp::Client's constructor skips the leftover answer
+  ok   a request sent after the constructors is answered
+  ok   and it is the only request this server was handed
+  FAIL with this server's answer
+[test] a second server of the same name is not handed the first one's requests
+  ok   the first server answered its own request
+  ok   the first server served exactly one request
+  ok   a request published while nothing polls is not served late
+  FAIL the second server was handed neither of the previous requests
+  FAIL the second server still answers a request of its own
+  FAIL and it served exactly that one
+[test] a second client of the same name does not read the first one's answer
+  ok   the first client got its own answer
+  ok   the first server served exactly once
+  ok   the second client got an answer
+  FAIL and it is this server's answer, not the previous client's
+  FAIL the second server served exactly once
+[test] a request published before the server existed is dropped, not delivered
+  FAIL the server was not handed the request that predates it
+  FAIL and that caller is still waiting rather than holding a late answer
+  ok   a request sent after the server is up is answered
+  FAIL and the server served exactly that one
+  ok   with this server's answer
+[test] a fresh client's requests are matched to their own answers
+  ok   all three requests were answered
+  ok   the server was handed three requests, not two or four
+  ok   the three payloads arrived in the order they were sent
+[test] 50 consecutive restarts of one service name
+  FAIL no round of 50 started with a request from an earlier round
+  FAIL every round was served exactly once, with its own answer
+  FAIL restarting a service name 50 times is clean (stale 49, unanswered 0, wrong 49)
+
+44 checks, 13 failure(s)

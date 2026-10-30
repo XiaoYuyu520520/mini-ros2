@@ -1,0 +1,21 @@
+patched code\Desktop\racecar\src\racecar\scripts\ai_第一个点后回终点.py
+  51 
+  52     def get_result_callback(self, future):
+  53         # 处理结果
+  54         result = future.result().result
+  55         self.get_logger().info('导航结果: {0}'.format(result))
+  56         # 如果导航完成，设置完成标志。结果面在 Humble 和 Jazzy 之间换过：Humble 的
+  57         # Result 里有 navigation_time，Jazzy（这套兼容层也是）用 error_code 代替它
+  58         # （navigation_time 现在只在 feedback 里），0 就是成功。两边都能读。
+  59         if hasattr(result, 'error_code'):
+  60             finished = result.error_code == 0
+  61         else:
+  62             finished = result.navigation_time.sec > 0
+  63         if finished:
+  64             self.fin_flag = True
+  65             # 重新发送目标以实现循环导航
+  66             self.send_goal(self.poses)
+  67 
+  68     def feedback_callback(self, feedback_msg):
+  69         # 处理反馈信息
+  70         feedback = feedback_msg.feedback

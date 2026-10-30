@@ -1,0 +1,343 @@
+### end_3_12.py  (117 lines)
+    72|         
+    73| 
+    74| def read_waypoints_from_csv(filename):
+    75|     waypoints = []
+    76|     with open(filename, 'r') as f:
+    77|         reader = csv.reader(f)
+    78|         for row in reader:
+    79|             if len(row) == 4:  # Ensure each row has x, y, z, w
+    80|                 waypoints.append({
+    81|                     "x": float(row[0]),
+    82|                     "y": float(row[1]),
+    83|                     "z": float(row[2]),
+    84|                     "w": float(row[3])
+    85|                 })
+    86|     return waypoints
+    87| 
+    88| def main(args=None):
+    89|     rclpy.init(args=args)
+    90| 
+    91|     client = NavThroughPosesClient()
+    92| 
+    93|     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+    94|     script_dir = os.path.dirname(os.path.abspath(__file__))
+    95| 
+    96|     # 从CSV文件读取导航点
+    97|     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'test.csv'))
+    98| 
+    99| 
+   100|     # 将导航点转换为 PoseStamped 消息
+   101|     poses = []
+   102|     for point in waypoints:
+   103|         pose = PoseStamped()
+   104|         pose.header.frame_id = 'map'
+   105|         pose.header.stamp.sec = 0
+   106|         pose.pose.position.x = point["x"]
+   107|         pose.pose.position.y = point["y"]
+   108|         pose.pose.position.z = point["z"]
+   109|         pose.pose.orientation.w = point["w"]
+   110|         poses.append(pose)
+   111| 
+   112|     client.send_goal(poses)
+   113| 
+   114|     rclpy.spin(client)
+   115| 
+   116| if __name__ == '__main__':
+   117|     main()
+
+### go copy.py  (128 lines)
+    88|         self.statusCB()
+    89| 
+    90|     def distance(self, kx, ky, gx, gy):
+    91|         return math.sqrt((kx - gx) ** 2 + (ky - gy) ** 2)
+    92| 
+    93| def main(args=None):
+    94|     rclpy.init(args=args)
+    95| 
+    96|     goalListX = []
+    97|     goalListY = []
+    98|     goalListZ = []
+    99|     goalListW = []
+   100| 
+   101|     map_frame = 'map'
+   102| 
+   103|     with open('test.csv', 'r') as f:
+   104|         reader = csv.reader(f)
+   105|         goalList = [list(map(float, cols)) for cols in reader]
+   106| 
+   107|     goalList = np.array(goalList)
+   108|     print("read suc!!")
+   109|     goalListX = goalList[:, 0]
+   110|     goalListY = goalList[:, 1]
+   111|     goalListZ = goalList[:, 2]
+   112|     goalListW = goalList[:, 3]
+   113| 
+   114|     if len(goalListX) == len(goalListY) and len(goalListY) >= 1:
+   115|         print("Multi Goals Executing...")
+   116|         mg = MultiGoals(goalListX, goalListY, goalListZ, goalListW, 1, map_frame)
+   117|         rclpy.spin(mg)
+   118|     else:
+   119|         print("Lengths of goal lists are not the same")
+   120| 
+   121|     mg.destroy_node()
+   122|     rclpy.shutdown()
+   123| 
+   124| if __name__ == '__main__':
+   125|     try:
+   126|         main()
+   127|     except KeyboardInterrupt:
+   128|         print("shutting down")
+
+### 一条路径+csv.py  (83 lines)
+    42|         self.get_logger().info('Received feedback: {0}'.format(feedback))
+    43| 
+    44| def read_waypoints_from_csv(filename):
+    45|     waypoints = []
+    46|     with open(filename, 'r') as f:
+    47|         reader = csv.reader(f)
+    48|         for row in reader:
+    49|             if len(row) == 4:  # Ensure each row has x, y, z, w
+    50|                 waypoints.append({
+    51|                     "x": float(row[0]),
+    52|                     "y": float(row[1]),
+    53|                     "z": float(row[2]),
+    54|                     "w": float(row[3])
+    55|                 })
+    56|     return waypoints
+    57| 
+    58| def main(args=None):
+    59|     rclpy.init(args=args)
+    60| 
+    61|     client = NavThroughPosesClient()
+    62| 
+    63|     # 从CSV文件读取导航点
+    64|     waypoints = read_waypoints_from_csv('test.csv')
+    65| 
+    66|     # 将导航点转换为 PoseStamped 消息
+    67|     poses = []
+    68|     for point in waypoints:
+    69|         pose = PoseStamped()
+    70|         pose.header.frame_id = 'map'
+    71|         pose.header.stamp.sec = 0
+    72|         pose.pose.position.x = point["x"]
+    73|         pose.pose.position.y = point["y"]
+    74|         pose.pose.position.z = point["z"]
+    75|         pose.pose.orientation.w = point["w"]
+    76|         poses.append(pose)
+    77| 
+    78|     client.send_goal(poses)
+    79| 
+    80|     rclpy.spin(client)
+    81| 
+    82| if __name__ == '__main__':
+    83|     main()
+
+### 会跳过几个点.py  (168 lines)
+   122|         # else if 
+   123| 
+   124| def read_waypoints_from_csv(filename):
+   125|     waypoints = []
+   126|     with open(filename, 'r') as f:
+   127|         reader = csv.reader(f)
+   128|         for row in reader:
+   129|             if len(row) == 4:  # Ensure each row has x, y, z, w
+   130|                 waypoints.append({
+   131|                     "x": float(row[0]),
+   132|                     "y": float(row[1]),
+   133|                     "z": float(row[2]),
+   134|                     "w": float(row[3])
+   135|                 })
+   136|     return waypoints
+   137| 
+   138| def main(args=None):
+   139|     rclpy.init(args=args)
+   140| 
+   141|     client = NavThroughPosesClient()
+   142| 
+   143|     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+   144|     script_dir = os.path.dirname(os.path.abspath(__file__))
+   145| 
+   146|     # 从CSV文件读取导航点
+   147|     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'test.csv'))
+   148|     # waypoints = read_waypoints_fr
+   149| 
+   150| 
+   151|     # 将导航点转换为 PoseStamped 消息
+   152|     poses = []
+   153|     for point in waypoints:
+   154|         pose = PoseStamped()
+   155|         pose.header.frame_id = 'map'
+   156|         pose.header.stamp.sec = 0
+   157|         pose.pose.position.x = point["x"]
+   158|         pose.pose.position.y = point["y"]
+   159|         pose.pose.position.z = point["z"]
+   160|         pose.pose.orientation.w = point["w"]
+   161|         poses.append(pose)
+   162| 
+   163|     client.send_goal(poses)
+   164| 
+   165|     rclpy.spin(client)
+   166| 
+   167| if __name__ == '__main__':
+   168|     main()
+
+### 终点不停.py  (105 lines)
+    44|         if feedback.distance_remaining > 0.0:
+    45|             self.get_logger().info(f'Distance to target: {feedback.distance_remaining:.2f} meters')
+    46|             # 如果距离目标点的距离小于 0.5 米，调用 stop 服务
+    47|             if feedback.distance_remaining < 1:
+    48|                 self.get_logger().info('Reached the target, stopping the robot.')
+    49|                 self.call_stop_service()
+    50| 
+    51|     def call_stop_service(self):
+    52|         stop_client = self.create_client(Trigger, 'stop')
+    53|         while not stop_client.wait_for_service(timeout_sec=1.0):
+    54|             self.get_logger().info('Service not available, waiting...')
+    55|         request = Trigger.Request()
+    56|         future = stop_client.call_async(request)
+    57|         future.add_done_callback(self.stop_response_callback)
+    58| 
+    59|     def stop_response_callback(self, future):
+    60|         response = future.result()
+    61|         if response.success:
+    62|             self.get_logger().info('Robot stopped successfully.')
+    63|         else:
+    64|             self.get_logger().info('Failed to stop the robot.')
+    65| 
+    66| def read_waypoints_from_csv(filename):
+    67|     waypoints = []
+    68|     with open(filename, 'r') as f:
+    69|         reader = csv.reader(f)
+    70|         for row in reader:
+    71|             if len(row) == 4:  # Ensure each row has x, y, z, w
+    72|                 waypoints.append({
+    73|                     "x": float(row[0]),
+    74|                     "y": float(row[1]),
+    75|                     "z": float(row[2]),
+    76|                     "w": float(row[3])
+    77|                 })
+    78|     return waypoints
+    79| 
+    80| def main(args=None):
+    81|     rclpy.init(args=args)
+    82| 
+    83|     client = NavThroughPosesClient()
+    84| 
+    85|     # 从CSV文件读取导航点
+    86|     waypoints = read_waypoints_from_csv('test.csv')
+    87| 
+    88|     # 将导航点转换为 PoseStamped 消息
+    89|     poses = []
+    90|     for point in waypoints:
+    91|         pose = PoseStamped()
+    92|         pose.header.frame_id = 'map'
+    93|         pose.header.stamp.sec = 0
+    94|         pose.pose.position.x = point["x"]
+    95|         pose.pose.position.y = point["y"]
+    96|         pose.pose.position.z = point["z"]
+    97|         pose.pose.orientation.w = point["w"]
+    98|         poses.append(pose)
+    99| 
+   100|     client.send_goal(poses)
+   101| 
+   102|     rclpy.spin(client)
+   103| 
+   104| if __name__ == '__main__':
+   105|     main()
+
+### 跑一圈以内.py  (117 lines)
+    72|         
+    73| 
+    74| def read_waypoints_from_csv(filename):
+    75|     waypoints = []
+    76|     with open(filename, 'r') as f:
+    77|         reader = csv.reader(f)
+    78|         for row in reader:
+    79|             if len(row) == 4:  # Ensure each row has x, y, z, w
+    80|                 waypoints.append({
+    81|                     "x": float(row[0]),
+    82|                     "y": float(row[1]),
+    83|                     "z": float(row[2]),
+    84|                     "w": float(row[3])
+    85|                 })
+    86|     return waypoints
+    87| 
+    88| def main(args=None):
+    89|     rclpy.init(args=args)
+    90| 
+    91|     client = NavThroughPosesClient()
+    92| 
+    93|     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+    94|     script_dir = os.path.dirname(os.path.abspath(__file__))
+    95| 
+    96|     # 从CSV文件读取导航点
+    97|     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'test.csv'))
+    98| 
+    99| 
+   100|     # 将导航点转换为 PoseStamped 消息
+   101|     poses = []
+   102|     for point in waypoints:
+   103|         pose = PoseStamped()
+   104|         pose.header.frame_id = 'map'
+   105|         pose.header.stamp.sec = 0
+   106|         pose.pose.position.x = point["x"]
+   107|         pose.pose.position.y = point["y"]
+   108|         pose.pose.position.z = point["z"]
+   109|         pose.pose.orientation.w = point["w"]
+   110|         poses.append(pose)
+   111| 
+   112|     client.send_goal(poses)
+   113| 
+   114|     rclpy.spin(client)
+   115| 
+   116| if __name__ == '__main__':
+   117|     main()
+
+### 重复载入完成圈数.py  (136 lines)
+    92|             self.car_cmd_vel_pub.publish(msg)
+    93| 
+    94| def read_waypoints_from_csv(filename):
+    95|     waypoints = []
+    96|     with open(filename, 'r') as f:
+    97|         reader = csv.reader(f)
+    98|         for row in reader:
+    99|             if len(row) == 4:  # Ensure each row has x, y, z, w
+   100|                 waypoints.append({
+   101|                     "x": float(row[0]),
+   102|                     "y": float(row[1]),
+   103|                     "z": float(row[2]),
+   104|                     "w": float(row[3])
+   105|                 })
+   106|     return waypoints
+   107| 
+   108| def main(args=None):
+   109|     rclpy.init(args=args)
+   110| 
+   111|     client = NavThroughPosesClient()
+   112| 
+   113|     # 从 CSV 文件读取导航点（相对脚本所在目录，避免旧绝对路径失效）
+   114|     script_dir = os.path.dirname(os.path.abspath(__file__))
+   115| 
+   116|     # 从CSV文件读取导航点
+   117|     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'test.csv'))
+   118| 
+   119|     # 将导航点转换为 PoseStamped 消息
+   120|     poses = []
+   121|     for point in waypoints:
+   122|         pose = PoseStamped()
+   123|         pose.header.frame_id = 'map'
+   124|         pose.header.stamp.sec = 0
+   125|         pose.pose.position.x = point["x"]
+   126|         pose.pose.position.y = point["y"]
+   127|         pose.pose.position.z = point["z"]
+   128|         pose.pose.orientation.w = point["w"]
+   129|         poses.append(pose)
+   130| 
+   131|     client.send_goal(poses)
+   132| 
+   133|     rclpy.spin(client)
+   134| 
+   135| if __name__ == '__main__':
+   136|     main()
+

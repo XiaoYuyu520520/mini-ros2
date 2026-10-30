@@ -1,0 +1,62 @@
+starts [2004] total 2159
+ 2004| ## 二十八、racecar 应用层接上兼容层之后，还开着什么（2026-09-19）
+ 2005| 
+ 2006| 证据 70 把 `code/Desktop/racecar/src/racecar/scripts/` 那 19 个脚本接进来了：13 个
+ 2007| `NavigateThroughPoses` 的 goal 字段从 Humble 的 `poses` 改成 Jazzy 的 `poses.goals`，7 处
+ 2008| `/home/davinci-mini/...` 换成相对脚本目录，另加 `racecar_ctl.py nav --map live` 和一条仿真房间
+ 2009| 用的 `sim_room12.csv`。下面按「会挡住谁」排**那次改动之后仍然开着的**。
+ 2010| 
+ 2011| ### 1. `test.csv` 不在仓库里，4 个脚本跑不起来
+ 2012| 
+ 2013| `end_3_12.py`、`会跳过几个点.py`、`跑一圈以内.py`、`重复载入完成圈数.py` 读的是
+ 2014| `<脚本目录>/test.csv`。车上原本有（老路径 `/home/davinci-mini/racecar/src/racecar/scripts/test.csv`），
+ 2015| 仓库里只带了 `ai_test.csv` / `ai_test1.csv` / `ai_test2.csv`。路径这一半已经修好，**文件那一半没有**，
+ 2016| 所以这 4 个脚本一跑就是 `FileNotFoundError`。
+ 2017| **成本**：从车上拷回来，或者把它们指向已经带进来的那三条航线之一。
+ 2018| 
+ 2019| ### 2. 12 个改了字段的脚本一个都没实跑
+ 2020| 
+ 2021| 证据 70 只跑了 `go.py`。其余 12 个改的是同一行、`compile()` 全过，但它们各自还有别的分支：
+ 2022| `Trigger` 服务调用（`/sim/reset`）、`self.poses` 重发、按 4 个一组分组推进、圈数计数。
+ 2023| 「编译过」和「跑得过」在这套兼容层上是两件事 —— 这一轮的第一个 bug 就是编译完全没问题、
+ 2024| 一序列化就炸。
+ 2025| **成本**：每个脚本对着 `sim_room12.csv` 各跑一次，看 result 里的 `waypoint_statuses`。
+ 2026| 
+ 2027| ### 3. ~~`nav2_simple_commander` 的结果面还没走完~~ **2026-09-19 走完了**
+ 2028| 
+ 2029| `go_2c.py` / `go copy_多点需要切换.py` 走 `BasicNavigator`。2026-09-19 把它的 action 面单独拉出来
+ 2030| 跑过（`.scratch/dbg6_counters.py`）：`BasicNavigator()` 构造（一次建起 17 个 `ActionClient`）、
+ 2031| `nav_pose_client.send_goal_async(goal)`、`rclpy.spin_until_future_complete` 等到 ack、goal handle 的
+ 2032| `accepted`，都跑得通。对照臂是同一个进程里另建一个只有单个 client 的普通 `Node`，两者结论一致。
+ 2033| 
+ 2034| **这一轮因此推翻了一条被写下来的错误结论。** `[ERROR] [basic_navigator]: NavigateToPose goal to
+ 2035| 1.178 -1.089 was rejected!` 原先被归因成「Python 客户端读 ack 的布局不对」，实测不是：
+ 2036| 
+ 2037| * `compute_path_to_pose`（planner_server，空闲）→ `accepted=True`，8 s 内拿到 ack；
+ 2038| * `navigate_to_pose`（bt_navigator，正在跑上一个 goal）→ `accepted=False`，而且 bt_navigator 日志里
+ 2039|   同一时刻确实写着 `Requested navigation from navigate_to_pose while another navigator is processing,
+ 2040|   rejecting request.`（这是 upstream 的行为，不是兼容层的）。
+ 2041| * 两端的环计数器对得上：`_goal_ack` 的 `published_count` 在 ack 返回时 +1，客户端的 `read_count`
+ 2042|   同步 +1；`_goal` 侧同样。
+ 2043| 
+ 2044| 也就是说客户端是对的，拒绝是真的。真正的缺陷在第十一节。
+ 2045| 
+ 2046| 结果面现在也跑完了（证据 74）：`setInitialPose` / `waitUntilNav2Active` / `goToPose`（`SUCCEEDED`，
+ 2047| 6.8 s）/ `getFeedback`（2.27 m → 1.04 m）/ `getResult` / `cancelTask`（`CANCELED`，0.3 s 后）/
+ 2048| `clearAllCostmaps` / `lifecycleShutdown`（10.6 s，管理器记 `Managed nodes have been shut down`）
+ 2049| 八条逐条过。**`go_2c.py` / `go copy_多点需要切换.py` 本身仍然没实跑**（那归上一条）。
+ 2050| 
+ 2051| 留下两条**不是兼容层的**新记录：
+ 2052| 
+ 2053| * **`BasicNavigator.initial_pose` 是默认构造的 `PoseStamped`，四元数 (0,0,0,0)**，而
+ 2054|   `nav2::validateMsg` 要求 `|‖q‖-1| < 1e-4`（`nav2_ros_common/validate_messages.hpp`）。
+ 2055|   所以 `waitUntilNav2Active()` 的默认 `localizer='amcl'` 那条路会**永远**循环下去：AMCL 每一轮
+ 2056|   都答 `Received initialpose message is malformed. Rejecting.`，`initial_pose_received` 永远不翻。
+ 2057|   先 `setInitialPose(pose)` 就好了（或者 `localizer='robot_localization'` 跳过这一半）。真 ROS2 上
+ 2058|   同样如此 —— 第二节的 A/B 就是为了证明这一点；
+ 2059| * **`spin_once(timeout_sec=N)` 只睡 1 ms**：`ros2py/executor.py` 的 `IDLE_SLEEP = 0.001`，而
+ 2060|   `_poll()` 把它当成 `min(IDLE_SLEEP, N)`。实测 `timeout_sec=1.0` 每调用 **1.6 ms**（差 625 倍）、
+ 2061|   `0.1` 差 133 倍。共享内存环没法 `wait`，这个上限本身是有意的，但后果是上游那种「等一条消息」
+ 2062|   的紧循环变成 ~600 Hz：上面那个坏掉的等待在 27 s 里写了 **2,058,378 字节**日志。写脚本时别把
+ 2063|   `spin_once(timeout_sec=...)` 当成睡眠用。
+ 2064| 

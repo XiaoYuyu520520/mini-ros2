@@ -1,0 +1,123 @@
+(base) root@davinci-mini:~/Desktop/code/node/testom3# python3 start.py
+Build skipped: dvpp_camera_producer is up to date
+Starting camera producer: ./dvpp_camera_producer
+Connecting to camera shared memory: dvpp_cam_nv12
+[CAM] Detected camera at /dev/video0
+[SHM] created: /dvpp_cam_nv12, size=618496
+[V4L2] driver: uvcvideo
+[V4L2] card  : USB 2.0 Camera: LRCP  HD60fps
+Camera shared memory connected
+Result shared memory created: yolo_result_shm
+Loading model: models/v5/best_yolov5_aipp.om
+[V4L2] Set format: 1280x720 MJPG
+[V4L2] streaming started, 4 buffers
+[INFO] Camera 1280x720 MJPG -> model 640x640 letterbox pad=(0,140) scale=0.5
+[INFO] acl init success
+[INFO] open device 0 success
+[INFO] load model models/v5/best_yolov5_aipp.om success
+[INFO] create model description success
+Model loaded, outputs: ['node_cat_14:0:output']
+HSV correction: True
+Running inference. Open another terminal: python3 view.py
+[DVPP] JPEGD + VPC ready
+[RUN] producer started. Press Ctrl+C to stop.
+[WARN] JPEG too small (likely truncated), size=40216 first_frame=1
+[WARN] JPEG too small (likely truncated), size=40152 first_frame=1
+[WARN] JPEG too small (likely truncated), size=40192 first_frame=1
+[WARN] JPEG too small (likely truncated), size=40232 first_frame=1
+[WARN] JPEG missing EOI marker (non-fatal), size=96184 first_frame=1
+[ERROR] acldvppJpegDecodeAsync failed, ret=100000 size=96184 first_bytes=ff d8 first_frame=1
+[WARN] JPEG missing EOI marker (non-fatal), size=96096 first_frame=1
+[WARN] JPEG missing EOI marker (non-fatal), size=96128 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=87864 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88168 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96448 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96240 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96216 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=87904 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=87896 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96168 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96328 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96184 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=87784 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=87960 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96352 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96072 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96136 first_frame=0
+INFER 13.7fps | cam 41.7fps | dvpp 18.3ms | infer 18.2ms | to_host 1.4ms | post+hsv 9.2ms | dets 3
+  line 0.469 orig_box=(1017,363,1051,378)
+  line 0.431 orig_box=(965,363,999,377)
+  line 0.406 orig_box=(914,365,947,378)
+[WARN] JPEG missing EOI marker (non-fatal), size=95816 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96000 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88056 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=87720 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96088 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96248 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96104 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=87984 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88368 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96264 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96456 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96224 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96080 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88016 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=87984 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96192 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96368 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96080 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96152 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96280 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88264 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96176 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96336 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96216 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=95992 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88008 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88072 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96360 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96328 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=95968 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96112 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88136 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88352 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=95968 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96320 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96008 first_frame=0
+INFER 33.8fps | cam 41.7fps | dvpp 18.9ms | infer 18.3ms | to_host 1.9ms | post+hsv 7.9ms | dets 3
+  line 0.476 orig_box=(1016,363,1050,377)
+  line 0.440 orig_box=(965,363,999,377)
+  line 0.420 orig_box=(913,365,947,378)
+[RUN] seq=60 cam_fps=41.6597 dvpp_ms=17.854 bytes=96008
+[WARN] JPEG missing EOI marker (non-fatal), size=96280 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96152 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96408 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88008 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96040 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96072 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96192 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88040 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=87920 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96240 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96232 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96576 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96064 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88176 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88144 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96000 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=95936 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96280 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96240 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96136 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96128 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88024 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=87904 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96296 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96016 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96008 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=88112 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96512 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96160 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96272 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=96168 first_frame=0
+[WARN] JPEG missing EOI marker (non-fatal), size=87664 first_frame=0

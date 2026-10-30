@@ -1,0 +1,12 @@
+[nav2_safety] logs: C:\Users\ADMINI~1\AppData\Local\Temp\nav2_safety
+[nav2_safety]   velocity_smoother -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_safety\velocity_smoother.log
+[nav2_safety]   collision_monitor -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_safety\collision_monitor.log
+[nav2_safety] velocity_smoother is active
+[nav2_safety] collision_monitor is active
+[nav2_safety] velocity_smoother:  /cmd_vel          -> /cmd_vel_smoothed
+[nav2_safety] collision_monitor:  /cmd_vel_smoothed -> /cmd_vel_monitored
+[nav2_safety] watch them with:
+[nav2_safety]   ros2.bat topic echo /cmd_vel_smoothed
+[nav2_safety]   ros2.bat topic echo /cmd_vel_monitored
+[nav2_safety] stop them with:  nav2_safety.bat stop
+0 was unexpected at this time.

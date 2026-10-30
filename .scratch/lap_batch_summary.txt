@@ -1,0 +1,33 @@
+
+===== lap batch 2026-09-19 08:12:46  laps=2 =====
+
+--- l00  重复载入完成圈数.py sim_room12.csv  --laps 2  exit=0 wall=159.2 s
+  goal accepted 1789776786.625321984, 18 waypoint report(s)
+  first waypoint ('1789776786.625321984', 1), last ('1789776940.335387648', 9)
+  wraps back to waypoint 1: 1
+  result 1789776945.646517760  wall=159.0 s  Navigation result: error_code=0 missed_waypoints=0
+  [ERROR]/[WARN] lines 2
+  | [WARN] [map_saver] Free threshold unspecified. Setting it to default value: 0.250000
+  | [WARN] [map_saver] Occupied threshold unspecified. Setting it to default value: 0.650000
+
+===== lap batch 2026-09-19 08:16:15  laps=2 =====
+
+--- l01  会跳过几个点.py sim_room12.csv  --laps 2  exit=0 wall=163.4 s
+  goal accepted 1789776996.009989376, 18 waypoint report(s)
+  first waypoint ('1789776996.009989376', 1), last ('1789777155.348986880', 9)
+  wraps back to waypoint 1: 1
+  result 1789777159.225891328  wall=163.2 s  Navigation result: error_code=0 missed_waypoints=0
+  [ERROR]/[WARN] lines 2
+  | [WARN] [map_saver] Free threshold unspecified. Setting it to default value: 0.250000
+  | [WARN] [map_saver] Occupied threshold unspecified. Setting it to default value: 0.650000
+
+===== lap batch 2026-09-19 08:19:19  laps=2 =====
+
+--- l02  ai_第一个点后回终点.py sim_room12.csv  --laps 2  exit=0 wall=159.5 s
+  goal accepted 1789777179.851107328, 18 waypoint report(s)
+  first waypoint ('1789777179.851107328', 1), last ('1789777333.921933056', 9)
+  wraps back to waypoint 1: 1
+  result 1789777339.124996608  wall=159.3 s  Navigation result: error_code=0 missed_waypoints=0
+  [ERROR]/[WARN] lines 2
+  | [WARN] [map_saver] Free threshold unspecified. Setting it to default value: 0.250000
+  | [WARN] [map_saver] Occupied threshold unspecified. Setting it to default value: 0.650000

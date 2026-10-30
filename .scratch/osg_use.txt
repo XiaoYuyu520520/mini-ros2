@@ -1,0 +1,82 @@
+carmenwrapper\carmenwrapper.cpp                        29  //static vars for the carmenwrapper
+carmenwrapper\carmenwrapper.cpp                        44  carmen_ipc_initialize(1,(char **)&name);
+carmenwrapper\carmenwrapper.cpp                        57  carmen_test_ipc_exit(err, "Could not define", CARMEN_LOCALIZE_GLOBALPOS_NAME);
+carmenwrapper\carmenwrapper.cpp                        62  carmen_test_ipc_exit(err, "Could not define", CARMEN_LOCALIZE_PARTICLE_NAME);
+carmenwrapper\carmenwrapper.cpp                        65  carmen_localize_subscribe_initialize_placename_message(NULL,
+carmenwrapper\carmenwrapper.cpp                        66  (carmen_handler_t)
+carmenwrapper\carmenwrapper.cpp                        67  carmen_localize_initialize_placename_handler,
+carmenwrapper\carmenwrapper.cpp                        73  carmen_test_ipc_exit(err, "Could not define",
+carmenwrapper\carmenwrapper.cpp                        78  carmen_test_ipc_exit(err, "Could not define", CARMEN_LOCALIZE_MAP_NAME);
+carmenwrapper\carmenwrapper.cpp                        82  carmen_test_ipc(err, "Could not subscribe", CARMEN_LOCALIZE_MAP_QUERY_NAME);
+carmenwrapper\carmenwrapper.cpp                        90  carmen_test_ipc_exit(err, "Could not define",
+carmenwrapper\carmenwrapper.cpp                        96  carmen_test_ipc(err, "Could not subscribe",
+carmenwrapper\carmenwrapper.cpp                       107  carmen_robot_subscribe_frontlaser_message(NULL, (carmen_handler_t)robot_frontlaser_handler, CARMEN_S
+carmenwrapper\carmenwrapper.cpp                       108  carmen_robot_subscribe_rearlaser_message(NULL, (carmen_handler_t)robot_rearlaser_handler, CARMEN_SUB
+carmenwrapper\carmenwrapper.cpp                       109  carmen_simulator_subscribe_truepos_message(NULL,(carmen_handler_t) simulator_truepos_handler, CARMEN
+carmenwrapper\carmenwrapper.cpp                       114  carmen_test_ipc_exit(err, "Could not subscribe",
+carmenwrapper\carmenwrapper.cpp                       119  carmen_test_ipc_exit(err, "Could not subscribe",
+carmenwrapper\carmenwrapper.cpp                       206  void CarmenWrapper::robot_frontlaser_handler(carmen_robot_laser_message* frontlaser) {
+carmenwrapper\carmenwrapper.cpp                       230  RangeReading reading=carmen2reading(*frontlaser);
+carmenwrapper\carmenwrapper.cpp                       234  void CarmenWrapper::robot_rearlaser_handler(carmen_robot_laser_message* rearlaser) {
+carmenwrapper\carmenwrapper.cpp                       258  RangeReading reading=carmen2reading(*rearlaser);
+carmenwrapper\carmenwrapper.cpp                       266  carmen_navigator_go_message msg;
+carmenwrapper\carmenwrapper.cpp                       272  sizeof(carmen_navigator_go_message));
+carmenwrapper\carmenwrapper.cpp                       275  carmen_test_ipc_return
+carmenwrapper\carmenwrapper.cpp                       283  carmen_navigator_stop_message msg;
+carmenwrapper\carmenwrapper.cpp                       289  sizeof(carmen_navigator_stop_message));
+carmenwrapper\carmenwrapper.cpp                       292  carmen_test_ipc_return
+carmenwrapper\carmenwrapper.cpp                       300  void CarmenWrapper::simulator_truepos_handler(carmen_simulator_truepos_message* truepos){
+carmenwrapper\carmenwrapper.cpp                       306  RangeReading CarmenWrapper::carmen2reading(const carmen_robot_laser_message& msg){
+carmenwrapper\carmenwrapper.cpp                       366  void CarmenWrapper::publish_globalpos(carmen_localize_summary_p summary)
+carmenwrapper\carmenwrapper.cpp                       369  static carmen_localize_globalpos_message globalpos;
+carmenwrapper\carmenwrapper.cpp                       372  globalpos.timestamp = carmen_get_time();
+carmenwrapper\carmenwrapper.cpp                       373  globalpos.host = carmen_get_host();
+carmenwrapper\carmenwrapper.cpp                       380  carmen_test_ipc_exit(err, "Could not publish",
+carmenwrapper\carmenwrapper.cpp                       387  void CarmenWrapper::publish_particles(carmen_localize_particle_filter_p filter,
+carmenwrapper\carmenwrapper.cpp                       388  carmen_localize_summary_p summary)
+carmenwrapper\carmenwrapper.cpp                       391  static carmen_localize_particle_message pmsg;
+carmenwrapper\carmenwrapper.cpp                       394  pmsg.timestamp = carmen_get_time();
+carmenwrapper\carmenwrapper.cpp                       395  pmsg.host = carmen_get_host();
+carmenwrapper\carmenwrapper.cpp                       399  pmsg.particles = (carmen_localize_particle_ipc_p)filter->particles;
+carmenwrapper\carmenwrapper.cpp                       401  carmen_test_ipc_exit(err, "Could not publish",
+carmenwrapper\carmenwrapper.cpp                       423  carmen_ipc_disconnect();
+carmenwrapper\carmenwrapper.cpp                       441  } carmen_robot_laser_message;
+carmenwrapper\carmenwrapper.cpp                       444  carmen_robot_laser_message CarmenWrapper::reading2carmen(const RangeReading& reading){
+carmenwrapper\carmenwrapper.cpp                       445  carmen_robot_laser_message frontlaser;
+carmenwrapper\carmenwrapper.cpp                       462  carmen_point_t CarmenWrapper::point2carmen (const OrientedPoint& p){
+carmenwrapper\carmenwrapper.cpp                       463  return (carmen_point_t){p.x,p.y,p.theta};
+carmenwrapper\carmenwrapper.cpp                       466  OrientedPoint CarmenWrapper::carmen2point (const carmen_point_t& p){
+carmenwrapper\carmenwrapper.h                          60  static carmen_robot_laser_message reading2carmen(const RangeReading& reading);
+carmenwrapper\carmenwrapper.h                          61  static RangeReading carmen2reading(const carmen_robot_laser_message& msg);
+carmenwrapper\carmenwrapper.h                          62  static carmen_point_t point2carmen (const OrientedPoint& p);
+carmenwrapper\carmenwrapper.h                          63  static OrientedPoint carmen2point (const carmen_point_t& p);
+carmenwrapper\carmenwrapper.h                          66  // carmen interaction
+carmenwrapper\carmenwrapper.h                          67  static void robot_frontlaser_handler(carmen_robot_laser_message* frontlaser);
+carmenwrapper\carmenwrapper.h                          68  static void robot_rearlaser_handler(carmen_robot_laser_message* frontlaser);
+carmenwrapper\carmenwrapper.h                          69  static void simulator_truepos_handler(carmen_simulator_truepos_message* truepos);
+carmenwrapper\carmenwrapper.h                          75  static void publish_globalpos(carmen_localize_summary_p summary);
+carmenwrapper\carmenwrapper.h                          76  static void publish_particles(carmen_localize_particle_filter_p filter,
+carmenwrapper\carmenwrapper.h                          77  carmen_localize_summary_p summary);
+carmenwrapper\carmenwrapper.h                         102  CarmenWrapper::init_carmen(argc, argv);
+gfs-carmen\gfs-carmen.cpp                              33  Example file for interfacing carmen, and gfs.
+gfs-carmen\gfs-carmen.cpp                              94  ConfigFile cfg(configfilename);
+gfs-carmen\gfs-carmen.cpp                             174  //loads from the carmen wrapper the laser and robot settings
+gridfastslam\gridslamprocessor.cpp                    252  cerr << "Attempting to load the new carmen log format" << endl;
+gui\gsp_thread.cpp                                     48  ConfigFile cfg(configfilename);
+gui\gsp_thread.cpp                                    169  CarmenConfiguration conf;
+gui\gsp_thread.cpp                                    180  input=new InputSensorStream(sensorMap, plainStream);
+gui\gsp_thread.cpp                                    183  input=new InputSensorStream(sensorMap, cin);
+gui\gsp_thread.cpp                                    299  cout << "FATAL ERROR: cannot run online without the carmen support" << endl;
+gui\gsp_thread.cpp                                    319  SensorLog * log=new SensorLog(gpt->sensorMap);
+gui\gsp_thread.cpp                                    635  OrientedPoint GridSlamProcessorThread::boundingBox(SensorLog* log, double& xmin, double& ymin, doubl
+gui\gsp_thread.h                                       99  OrientedPoint boundingBox(SensorLog* log, double& xmin, double& ymin, double& xmax, double& ymax) co
+gui\gsp_thread.h                                      164  InputSensorStream* input;
+gui\gsp_thread.h                                      172  //dirty carmen interface
+include\gmapping\sensor\sensor_range\rangesensor.h     11  friend class Configuration;
+include\gmapping\sensor\sensor_range\rangesensor.h     12  friend class CarmenConfiguration;
+scanmatcher\scanmatch_test.cpp                         56  cout << "\t -filename <value> : log filename in carmen format" << endl;
+scanmatcher\scanmatch_test.cpp                        112  CarmenConfiguration conf;
+scanmatcher\scanmatch_test.cpp                        119  InputSensorStream* input=0;
+scanmatcher\scanmatch_test.cpp                        124  input=new InputSensorStream(sensorMap, plainStream);
+scanmatcher\scanmatch_test.cpp                        127  input=new InputSensorStream(sensorMap, cin);
+scanmatcher\scanmatch_test.cpp                        132  SensorLog log(sensorMap);

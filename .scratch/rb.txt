@@ -1,0 +1,145 @@
+6171
+# -*- coding: utf-8 -*-
+"""Run mission scripts against the live stack, one at a time, the documented way.
+
+For every script: ``stop`` -> ``/sim/reset`` -> ``nav --map live`` -> ``run``.
+Each step lands in ``.scratch/e2e_batch_<tag>.log``; a per-script verdict is
+appended to ``.scratch/e2e_batch_summary.txt`` as it finishes, so a batch that
+is interrupted still leaves the finished runs readable.
+
+    python .scratch/run_mission_batch.py --spec "2:sim_room12.csv,12:sim_room12.csv"
+"""
+from __future__ import annotations
+
+import argparse
+import io
+import os
+import re
+import subprocess
+import sys
+import time
+
+ROOT = r"E:\DesktopData\app\code\CPU"
+PY = r"E:\venvs\py312\Scripts\python.exe"
+CTL = os.path.join(ROOT, "code", "Desktop", "racecar", "tools", "racecar_ctl.py")
+BAT = os.path.join(ROOT, "bridge", "windows", "ros2.bat")
+SCRIPTS = os.path.join(ROOT, "code", "Desktop", "racecar", "src", "racecar", "scripts")
+SCRATCH = os.path.join(ROOT, ".scratch")
+
+STAMP = re.compile(r"\[INFO\] \[(\d+\.\d+)\]\s+\[[^\]]+\]:\s+(.*)")
+
+
+def names():
+    return sorted(n for n in os.listdir(SCRIPTS) if n.endswith(".py"))
+
+
+def step(argv, fh, timeout):
+    """Run one command with its output appended to the log. Returns (code, wall)."""
+    fh.write("\n$ %s\n" % " ".join(str(a) for a in argv))
+    fh.flush()
+    started = time.time()
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    proc = subprocess.Popen([str(a) for a in argv], cwd=ROOT, stdout=fh,
+                            stderr=subprocess.STDOUT, env=env)
+    try:
+        code = proc.wait(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        proc.wait()
+        fh.write("\n!! killed after %s s\n" % timeout)
+        code = -9
+    wall = time.time() - started
+    fh.write("\n-- exit %s after %.1f s\n" % (code, wall))
+    fh.flush()
+    return code, wall
+
+
+def verdict(path):
+    """The few lines of a mission log that are evidence."""
+    lines = io.open(path, encoding="utf-8", errors="replace").read().splitlines()
+    accepted = None
+    feedback = []
+    result = None
+    noisy = []
+    for line in lines:
+        m = STAMP.match(line)
+        if not m:
+            if line.strip() and not line.startswith("-- ") and not line.startswith("$ "):
+                noisy.append(line)
+            continue
+        when, text = m.group(1), m.group(2)
+        if text.startswith("Goal accepted"):
+            accepted = when
+        elif text.startswith("Received feedback"):
+            remaining = re.search(r"number_of_poses_remaining=(\d+)", text)
+            dist = re.search(r"distance_remaining=([\d.eE+-]+)", text)
+            if remaining and dist:
+                feedback.append((int(remaining.group(1)), float(dist.group(1)),
+                                 text.count("waypoint_status=1")))
+        elif "result" in text.lower():
+            result = (when, text)
+    out = []
+    out.append("  log lines %d, feedback %d, goal accepted %s"
+               % (len(lines), len(feedback), accepted or "NO"))
+    if feedback:
+        out.append("  first feedback poses_remaining=%d distance=%.2f m passed=%d"
+                   % feedback[0])
+        out.append("  last  feedback poses_remaining=%d distance=%.2f m passed=%d"
+                   % feedback[-1])
+        out.append("  poses_remaining seen %s" % sorted({f[0] for f in feedback}))
+    if result:
+        waypoints = re.findall(r"waypoint_status=(\d+), waypoint_index=(\d+)", result[1])
+        code = re.search(r"error_code=(-?\d+)", result[1])
+        out.append("  result t=%s wall=%.1f s waypoints=%d statuses=%s error_code=%s"
+                   % (result[0], float(result[0]) - float(accepted) if accepted else -1.0,
+                      len(waypoints), sorted({s for s, _ in waypoints}),
+                      code.group(1) if code else "?"))
+    else:
+        out.append("  result: NONE")
+    for line in noisy[:4]:
+        out.append("  | %s" % line[:120])
+    out.append("  noisy lines %d" % len(noisy))
+    return out
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--spec", required=True,
+                        help="comma list of INDEX[:csv] into the sorted scripts listing")
+    parser.add_argument("--timeout", type=int, default=300, help="per script run")
+    parser.add_argument("--nav-timeout", type=int, default=420)
+    parser.add_argument("--stop-timeout", type=int, default=180)
+    args = parser.parse_args()
+
+    table = names()
+    spec = []
+    for item in args.spec.split(","):
+        item = item.strip()
+        if not item:
+            continue
+        index, _, csv = item.partition(":")
+        spec.append((int(index), csv.strip()))
+
+    summary = os.path.join(SCRATCH, "e2e_batch_summary.txt")
+    with io.open(summary, "a", encoding="utf-8", newline="\n") as sh:
+        sh.write("\n===== batch %s =====\n" % time.strftime("%Y-%m-%d %H:%M:%S"))
+        for index, csv in spec:
+            name = table[index]
+            tag = "s%02d" % index
+            log = os.path.join(SCRATCH, "e2e_batch_%s.log" % tag)
+            print("[batch] %s  %s  %s" % (tag, name, csv or "(no csv)"), flush=True)
+            argv = [name] + ([csv] if csv else [])
+            with io.open(log, "w", encoding="utf-8", newline="\n") as fh:
+                fh.write("# %s : %s %s\n" % (tag, name, csv))
+                step([PY, CTL, "stop"], fh, args.stop_timeout)
+                step(["cmd", "/c", BAT, "service", "call", "/sim/reset",
+                      "std_srvs/srv/Trigger"], fh, 120)
+                nav_code, _ = step([PY, CTL, "nav", "--map", "live"], fh, args.nav_timeout)
+                if nav_code != 0:
+                    fh.write("!! nav exited %s; running anyway\n" % nav_code)
+                run_code, wall = step([PY, CTL, "run"] + argv, fh, args.timeout)
+            sh.write("\n--- %s  %s %s  exit=%s wall=%.1f s\n"
+                     % (tag, name, csv or "", run_code, wall))
+            for line in verdict(log):
+                sh.write(line + "

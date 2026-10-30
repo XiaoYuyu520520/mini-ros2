@@ -1,0 +1,8 @@
+[nav2_docking_route] logs: C:\Users\ADMINI~1\AppData\Local\Temp\nav2_docking_route
+[nav2_docking_route]   docking_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_docking_route\docking_server.log
+[nav2_docking_route]   route_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_docking_route\route_server.log
+[nav2_docking_route] docking_server is active
+[nav2_docking_route] route_server is active
+[nav2_docking_route] docking_server:  DockRobot / UndockRobot on /docking_server
+[nav2_docking_route] route_server:    ComputeRoute / ComputeAndTrackRoute on /route_server
+[nav2_docking_route] stop them with:  nav2_docking_route.bat stop

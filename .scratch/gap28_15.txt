@@ -1,0 +1,21 @@
+### 15. 圈数分支（4 个脚本）现在只知道为什么没跑，还没改
+
+证据 77 实测出来：重发同一条航线不会真的跑第二圈（第二趟 0.1 s 回 `error_code=0`、9/9 通过，
+车一步没动）。证据 78 把成因查清了 —— **不是兼容层、也不是 `RemovePassedGoals`**：
+`controller_server` 的 goal checker 只看**路径的终点**（`config/nav.yaml` 的 `xy_goal_tolerance`
+是 1.0 m），而车正停在上趟的终点上，于是第二趟第一拍就 `Reached the goal!`，中间八个航点一个
+都不看。同一份机制也解释「不 `/sim/reset` 就 0.09 s 假成功」和「首尾相接的 CSV 走不动」——
+三条现象一个成因。
+
+能修，而且已经验过怎么修：**圈数走 `/follow_waypoints`**（`nav2_msgs/action/FollowWaypoints`，
+它一个航点一个航点地判到达，`number_of_loops = N` 就是走 N+1 遍）。同一条九点航线重发，
+第二趟真跑 110.6 s、九个点全过、无 `missed_waypoints`；`number_of_loops=1` 真的走两个来回
+（208.92 s，4167 条 feedback，`current_waypoint` 从 8 回到 0 又走一遍）。都是经兼容层跑的。
+
+**没做的是改那几个脚本本身**：`会跳过几个点.py`、`重复载入完成圈数.py`、`跑一圈以内.py`
+（其实是四个，`ai_第一个点后回终点.py` 是同一个闭环写法）是车上正在用的代码，把「重复发目标」
+换成 `FollowWaypoints` 会动到它们每一圈的行为；而且 `FollowWaypoints.number_of_loops` 是 Jazzy
+这一代才有的字段，车上的 action 定义这一轮没看过（Humble 那代只有 `poses`）。
+**成本**：先看车上的 `FollowWaypoints.action`，再把这四个脚本换成 `FollowWaypoints` 客户端，
+每个跑到第二圈为止各跑一遍。
+

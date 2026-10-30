@@ -1,0 +1,43 @@
+*** Begin Patch
+*** Update File: nav2/ros2_shim/include/tf2/buffer_core.hpp
+@@
+ #include <algorithm>
+ #include <chrono>
+ #include <cstddef>
++#include <cmath>
++#include <cstdio>
+ #include <map>
+@@
+   bool frameExists(const std::string & frame) const
+@@
+   }
++
++  // TEMPORARY DIAGNOSTIC: every sample the buffer holds, for one frame.
++  std::string dumpSamplesTemporarily() const
++  {
++    std::lock_guard<std::mutex> lock(mutex_);
++    std::string out;
++    for (const auto & entry : frames_) {
++      char head[256];
++      std::snprintf(
++        head, sizeof(head), "frame %s parent=%s static=%d samples=%zu\n",
++        entry.first.c_str(), entry.second.parent.c_str(),
++        entry.second.is_static ? 1 : 0, entry.second.samples.size());
++      out += head;
++      for (const auto & sample : entry.second.samples) {
++        const tf2::Vector3 origin = sample.transform.getOrigin();
++        const tf2::Quaternion q = sample.transform.getRotation();
++        const double yaw = std::atan2(
++          2.0 * (q.w() * q.z() + q.x() * q.y()),
++          1.0 - 2.0 * (q.y() * q.y() + q.z() * q.z()));
++        char line[256];
++        std::snprintf(
++          line, sizeof(line), "  t=%.4f origin=(%.4f,%.4f,%.4f) yaw=%.2f\n",
++          static_cast<double>(sample.stamp.time_since_epoch().count()) * 1e-9,
++          origin.x(), origin.y(), origin.z(), yaw * 180.0 / 3.141592653589793);
++        out += line;
++      }
++    }
++    return out;
++  }
+*** End Patch

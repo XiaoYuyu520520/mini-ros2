@@ -1,0 +1,51 @@
+--- a/lib/karto_sdk/src/Mapper.cpp
++++ b/lib/karto_sdk/src/Mapper.cpp
+@@ -2672,7 +2672,8 @@
+ void Mapper::SaveToFile(const std::string & filename)
+ {
+   printf("Save To File %s \n", filename.c_str());
+-  std::ofstream ofs(filename.c_str());
++  // PORT (ros2_shim): binary mode - a text-mode read stops at the first 0x1A.
++  std::ofstream ofs(filename.c_str(), std::ios::binary);
+   boost::archive::binary_oarchive oa(ofs, boost::archive::no_codecvt);
+   oa << BOOST_SERIALIZATION_NVP(*this);
+ }
+@@ -2680,7 +2681,11 @@
+ void Mapper::LoadFromFile(const std::string & filename)
+ {
+   printf("Load From File %s \n", filename.c_str());
+-  std::ifstream ifs(filename.c_str());
++  // PORT (ros2_shim): upstream opens in text mode, which on the UCRT ends the read
++  // at the first 0x1A byte. Boost's binary archive holds arbitrary bytes, so a pose
++  // graph written by serialize_map came back as `archive_exception: input stream
++  // error`. Binary mode for both halves of the round trip.
++  std::ifstream ifs(filename.c_str(), std::ios::binary);
+   boost::archive::binary_iarchive ia(ifs, boost::archive::no_codecvt);
+   ia >> BOOST_SERIALIZATION_NVP(*this);
+   m_Deserialized = true;
+
+--- a/lib/karto_sdk/include/karto_sdk/Karto.h
++++ b/lib/karto_sdk/include/karto_sdk/Karto.h
+@@ -6445,7 +6445,8 @@
+   void SaveToFile(const std::string & filename)
+   {
+     printf("Save To File\n");
+-    std::ofstream ofs(filename.c_str());
++    // PORT (ros2_shim): binary mode - a text-mode read stops at the first 0x1A.
++    std::ofstream ofs(filename.c_str(), std::ios::binary);
+     boost::archive::binary_oarchive oa(ofs, boost::archive::no_codecvt);
+     oa << BOOST_SERIALIZATION_NVP(*this);
+   }
+@@ -6457,7 +6458,11 @@
+   void LoadFromFile(const std::string & filename)
+   {
+     printf("Load From File\n");
+-    std::ifstream ifs(filename.c_str());
++    // PORT (ros2_shim): upstream opens in text mode, which on the UCRT ends the read
++    // at the first 0x1A byte. Boost's binary archive holds arbitrary bytes, so a pose
++    // graph written by serialize_map came back as `archive_exception: input stream
++    // error`. Binary mode for both halves of the round trip.
++    std::ifstream ifs(filename.c_str(), std::ios::binary);
+     boost::archive::binary_iarchive ia(ifs, boost::archive::no_codecvt);  // no second arg?
+     ia >> BOOST_SERIALIZATION_NVP(*this);
+   }

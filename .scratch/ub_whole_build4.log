@@ -1,0 +1,96 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: set -o pipefail
+source /opt/ros/jazzy/setup.bash
+cd ~/code/CPU/code/Desktop/racecar
+rm -rf build install log
+echo "--- clean tree ---"
+ls
+echo "--- colcon build, 6 workers ---"
+colcon build --parallel-workers 6 2>&1 | tail -40
+echo "CONCOLEXIT=${PIPESTATUS[0]}"
+echo "--- install tree ---"
+ls install 2>/dev/null
+ls install/openslam_gmapping/lib 2>/dev/null
+ls install/openslam_gmapping/include/gmapping/log 2>/dev/null
+--- clean tree ---
+gmapping.bat
+gmapping.sh
+map
+map.md
+nav.bat
+nav.sh
+README.md
+save.bat
+save.sh
+src
+tools
+--- colcon build, 6 workers ---
+/home/ubuntu/code/CPU/code/Desktop/racecar/install/openslam_gmapping/include/gmapping/particlefilter/particlefilter.h: In function ‘void rle(OutputIterator&, const Iterator&, const Iterator&)’:
+/home/ubuntu/code/CPU/code/Desktop/racecar/install/openslam_gmapping/include/gmapping/particlefilter/particlefilter.h:140:9: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  140 |         if (count>0)
+      |         ^~
+/home/ubuntu/code/CPU/code/Desktop/racecar/install/openslam_gmapping/include/gmapping/particlefilter/particlefilter.h:142:17: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  142 |                 out++;
+      |                 ^~~
+---
+Finished <<< slam_gmapping [20.4s]
+--- stderr: lslidar_driver
+CMake Warning (dev) at /usr/lib/x86_64-linux-gnu/cmake/pcl/Modules/FindFLANN.cmake:45 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable FLANN_ROOT is set to:
+
+    /usr
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:261 (find_package)
+  /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:306 (find_flann)
+  /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:570 (find_external_library)
+  CMakeLists.txt:21 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+/home/ubuntu/code/CPU/code/Desktop/racecar/src/lslidar_driver/src/lslidar_driver.cc: In member function ‘bool lslidar_driver::LslidarDriver::polling()’:
+/home/ubuntu/code/CPU/code/Desktop/racecar/src/lslidar_driver/src/lslidar_driver.cc:1379:24: warning: ‘void operator delete(void*, std::size_t)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+ 1379 |                 delete packet_bytes;
+      |                        ^~~~~~~~~~~~
+/home/ubuntu/code/CPU/code/Desktop/racecar/src/lslidar_driver/src/lslidar_driver.cc:1236:68: note: returned from ‘void* operator new [](std::size_t)’
+ 1236 |                 unsigned char *packet_bytes = new unsigned char[500];
+      |                                                                    ^
+---
+Finished <<< lslidar_driver [26.7s]
+
+Summary: 6 packages finished [41.3s]
+  2 packages had stderr output: lslidar_driver slam_gmapping
+CONCOLEXIT=0
+--- install tree ---
+COLCON_IGNORE
+local_setup.bash
+local_setup.ps1
+local_setup.sh
+_local_setup_util_ps1.py
+_local_setup_util_sh.py
+local_setup.zsh
+lslidar_driver
+lslidar_msgs
+nav2_waypoint_cycle
+openslam_gmapping
+racecar
+setup.bash
+setup.ps1
+setup.sh
+setup.zsh
+slam_gmapping
+libgridfastslam.a
+liblog.a
+libscanmatcher.a
+libsensor_base.a
+libsensor_odometry.a
+libsensor_range.a
+libutils.a
+carmenconfiguration.h
+configuration.h
+sensorlog.h
+sensorstream.h

@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+# A *genuine* ROS2 peer on the robot, next to `ros2_bridge_sim`.
+#
+# Everything the bridge ever measured was measured against `ros2_bridge_sim`, a
+# Python peer that speaks the proto but is not ROS2. This starts the real thing:
+#
+#   talker    demo_nodes_cpp/talker            -> /chatter   (std_msgs/msg/String)
+#   service   demo_nodes_py/add_two_ints_server-> /add_two_ints (example_interfaces/srv/AddTwoInts)
+#   trigger   ros2_peer_service.py            -> /probe_trigger (std_srvs/srv/Trigger)
+#   action    action_tutorials_cpp/fibonacci_action_server
+#                                              -> /fibonacci (example_interfaces/action/Fibonacci)
+#   agent     ros2_grpc_sdk_agent --backend rclcpp
+#                                              -> the gRPC face of that graph
+#
+# The agent is the piece the Windows daemon connects to, which is what turns
+# "the bridge talks to a simulator" into "the bridge talks to ROS2".
+#
+#   python bridge/scripts/ubuntu_ssh.py --file bridge/scripts/ubuntu_ros2_peer.sh -- status
+#   ... -- start          # all four
+#   ... -- stop
+#
+# Needs the ROS2 install from `ubuntu_ros2_setup.sh` and the agent built with
+# `gRPC/ros2_gRPC_sdk/scripts/build.py --with-ros2`.
+set -euo pipefail
+
+ROOT=${CPU_ROOT:-$HOME/code/CPU}
+PORT=${ROS2_PEER_PORT:-50111}
+BUILD=$ROOT/gRPC/ros2_gRPC_sdk/build/linux-x86_64
+AGENT=$BUILD/ros2_grpc_sdk_agent
+LOG_DIR=${ROS2_PEER_LOG_DIR:-/tmp/ros2_peer}
+SESSION_PREFIX=ros2peer_
+
+# The verb is captured before the shift: after it, `$1` is a *part* name, and a
+# loop that re-read the positional parameters would silently treat `start` as a
+# part and exit 2.
+action=${1:-}
+shift || true
+case "$action" in
+  start|stop) parts=${*:-talker service trigger action agent} ;;
+  status|logs) parts="talker service trigger action agent" ;;
+  *) echo "usage: $0 {start|stop|status|logs} [talker|service|trigger|action|agent]..." >&2; exit 2 ;;
+esac
+
+source_ros() {
+  set +u
+  # shellcheck disable=SC1091
+  . /opt/ros/jazzy/setup.bash
+  set -u
+}
+
+start_one() {
+  local part=$1 cmd=$2
+  local session="${SESSION_PREFIX}${part}"
+  if tmux has-session -t "$session" 2>/dev/null; then
+    echo "[ros2-peer] $part already running"
+    return 0
+  fi
+  mkdir -p "$LOG_DIR"
+  tmux new-session -d -s "$session" -c "$ROOT" \
+    "bash -lc 'source /opt/ros/jazzy/setup.bash && exec $cmd >$LOG_DIR/$part.log 2>&1'"
+  echo "[ros2-peer] $part started -> $LOG_DIR/$part.log"
+}
+
+stop_one() {
+  local part=$1
+  local session="${SESSION_PREFIX}${part}"
+  if tmux has-session -t "$session" 2>/dev/null; then
+    tmux kill-session -t "$session"
+    echo "[ros2-peer] $part stopped"
+  fi
+}
+
+status_one() {
+  local part=$1
+  local session="${SESSION_PREFIX}${part}"
+  if tmux has-session -t "$session" 2>/dev/null; then
+    echo "[ros2-peer] $part RUNNING"
+  else
+    echo "[ros2-peer] $part -"
+  fi
+}
+
+for part in $parts; do
+  case "$part" in
+    talker)  cmd="ros2 run demo_nodes_cpp talker" ;;
+    service) cmd="ros2 run demo_nodes_py add_two_ints_server" ;;
+    trigger) cmd="python3 $ROOT/bridge/scripts/ros2_peer_service.py" ;;
+    action)  cmd="ros2 run action_tutorials_cpp fibonacci_action_server" ;;
+    agent)
+      if [ ! -x "$AGENT" ]; then
+        echo "[ros2-peer] $AGENT missing: build it with" >&2
+        echo "  gRPC/ros2_gRPC_sdk/scripts/build.py --with-ros2" >&2
+        [ "$action" = start ] && exit 1
+        continue
+      fi
+      cmd="$AGENT 0.0.0.0:$PORT --backend rclcpp"
+      ;;
+    *) echo "[ros2-peer] unknown part: $part" >&2; exit 2 ;;
+  esac
+
+  case "$action" in
+    start)  start_one "$part" "$cmd" ;;
+    stop)   stop_one "$part" ;;
+    status) status_one "$part" ;;
+    logs)   echo "--- $part ---"; tail -n 5 "$LOG_DIR/$part.log" 2>/dev/null || echo "(no log)" ;;
+  esac
+done
+
+if [ "$action" = status ]; then
+  source_ros
+  echo "[ros2-peer] graph:"
+  timeout 10 ros2 topic list 2>/dev/null | sed "s/^/    /" || true
+  echo "[ros2-peer] agent port: $PORT"
+fi

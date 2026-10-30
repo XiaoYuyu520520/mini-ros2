@@ -1,0 +1,14 @@
+[map_saver] nav2\ros2_shim\config\nav2_map_server.yaml: 8 parameter(s) for node 'map_saver'
+[INFO] [map_saver] 
+	map_saver lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [map_saver] Creating
+[map_saver] 'map_saver' started with 8 parameter override(s)
+[map_saver] waiting for external lifecycle transitions on /map_saver/change_state
+[INFO] [map_saver] Configuring
+[INFO] [map_saver] Activating
+[INFO] [map_saver] Creating bond (map_saver) to lifecycle manager.
+[INFO] [map_saver] Configuring
+[INFO] [map_saver] Activating
+[INFO] [map_saver] Creating bond (map_saver) to lifecycle manager.

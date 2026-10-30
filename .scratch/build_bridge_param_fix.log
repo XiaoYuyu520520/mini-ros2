@@ -1,0 +1,13 @@
++ D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin\cmake.exe -S E:\DesktopData\app\code\CPU\bridge\windows -B E:\DesktopData\app\code\CPU\bridge\windows\build -G Ninja -DCMAKE_CXX_COMPILER=D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin\g++.exe -DCMAKE_BUILD_TYPE=Release
+-- Found RE2 via CMake.
+-- Configuring done (0.3s)
+-- Generating done (0.2s)
+-- Build files have been written to: E:/DesktopData/app/code/CPU/bridge/windows/build
++ cores 0,1,10,11,12,13 (pinned, mask 0x3C03)
++ D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin\cmake.exe --build E:\DesktopData\app\code\CPU\bridge\windows\build -- -j 6
+[1/6] Building CXX object CMakeFiles/ros2.dir/tools/ros2_cli.cpp.obj
+[2/6] Linking CXX executable ros2.exe
+[3/6] Building CXX object CMakeFiles/bridge_action_roundtrip.dir/tests/action_roundtrip.cpp.obj
+[4/6] Linking CXX executable bridge_action_roundtrip.exe
+[5/6] Building CXX object CMakeFiles/bridge_service_roundtrip.dir/tests/service_roundtrip.cpp.obj
+[6/6] Linking CXX executable bridge_service_roundtrip.exe

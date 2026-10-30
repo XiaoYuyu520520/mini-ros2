@@ -1,0 +1,451 @@
+goal:
+distance: 20
+goal accepted (goal id 1)
+feedback:
+travelled: 0.05
+remaining: 19.95
+feedback:
+travelled: 0.09
+remaining: 19.91
+feedback:
+travelled: 0.14
+remaining: 19.86
+feedback:
+travelled: 0.19
+remaining: 19.81
+feedback:
+travelled: 0.24
+remaining: 19.76
+feedback:
+travelled: 0.29
+remaining: 19.71
+feedback:
+travelled: 0.325
+remaining: 19.675
+feedback:
+travelled: 0.375
+remaining: 19.625
+feedback:
+travelled: 0.425
+remaining: 19.575
+feedback:
+travelled: 0.475
+remaining: 19.525
+feedback:
+travelled: 0.525
+remaining: 19.475
+feedback:
+travelled: 0.56
+remaining: 19.44
+feedback:
+travelled: 0.61
+remaining: 19.39
+feedback:
+travelled: 0.66
+remaining: 19.34
+feedback:
+travelled: 0.71
+remaining: 19.29
+feedback:
+travelled: 0.76
+remaining: 19.24
+feedback:
+travelled: 0.8
+remaining: 19.2
+feedback:
+travelled: 0.85
+remaining: 19.15
+feedback:
+travelled: 0.9
+remaining: 19.1
+feedback:
+travelled: 0.95
+remaining: 19.05
+feedback:
+travelled: 1
+remaining: 19
+feedback:
+travelled: 1.05
+remaining: 18.95
+feedback:
+travelled: 1.09
+remaining: 18.91
+feedback:
+travelled: 1.14
+remaining: 18.86
+feedback:
+travelled: 1.19
+remaining: 18.81
+feedback:
+travelled: 1.24
+remaining: 18.76
+feedback:
+travelled: 1.29
+remaining: 18.71
+feedback:
+travelled: 1.325
+remaining: 18.675
+feedback:
+travelled: 1.375
+remaining: 18.625
+feedback:
+travelled: 1.425
+remaining: 18.575
+feedback:
+travelled: 1.475
+remaining: 18.525
+feedback:
+travelled: 1.525
+remaining: 18.475
+feedback:
+travelled: 1.56
+remaining: 18.44
+feedback:
+travelled: 1.61
+remaining: 18.39
+feedback:
+travelled: 1.66
+remaining: 18.34
+feedback:
+travelled: 1.71
+remaining: 18.29
+feedback:
+travelled: 1.76
+remaining: 18.24
+feedback:
+travelled: 1.8
+remaining: 18.2
+feedback:
+travelled: 1.85
+remaining: 18.15
+feedback:
+travelled: 1.9
+remaining: 18.1
+feedback:
+travelled: 1.95
+remaining: 18.05
+feedback:
+travelled: 2
+remaining: 18
+feedback:
+travelled: 2.05
+remaining: 17.95
+feedback:
+travelled: 2.095
+remaining: 17.905
+feedback:
+travelled: 2.145
+remaining: 17.855
+feedback:
+travelled: 2.195
+remaining: 17.805
+feedback:
+travelled: 2.245
+remaining: 17.755
+feedback:
+travelled: 2.295
+remaining: 17.705
+feedback:
+travelled: 2.33
+remaining: 17.67
+feedback:
+travelled: 2.38
+remaining: 17.62
+feedback:
+travelled: 2.43
+remaining: 17.57
+feedback:
+travelled: 2.48
+remaining: 17.52
+feedback:
+travelled: 2.53
+remaining: 17.47
+feedback:
+travelled: 2.565
+remaining: 17.435
+feedback:
+travelled: 2.615
+remaining: 17.385
+feedback:
+travelled: 2.665
+remaining: 17.335
+feedback:
+travelled: 2.715
+remaining: 17.285
+feedback:
+travelled: 2.765
+remaining: 17.235
+feedback:
+travelled: 2.8
+remaining: 17.2
+feedback:
+travelled: 2.85
+remaining: 17.15
+feedback:
+travelled: 2.9
+remaining: 17.1
+feedback:
+travelled: 2.95
+remaining: 17.05
+feedback:
+travelled: 3
+remaining: 17
+feedback:
+travelled: 3.05
+remaining: 16.95
+feedback:
+travelled: 3.09
+remaining: 16.91
+feedback:
+travelled: 3.14
+remaining: 16.86
+feedback:
+travelled: 3.19
+remaining: 16.81
+feedback:
+travelled: 3.24
+remaining: 16.76
+feedback:
+travelled: 3.29
+remaining: 16.71
+feedback:
+travelled: 3.325
+remaining: 16.675
+feedback:
+travelled: 3.375
+remaining: 16.625
+feedback:
+travelled: 3.425
+remaining: 16.575
+feedback:
+travelled: 3.475
+remaining: 16.525
+feedback:
+travelled: 3.525
+remaining: 16.475
+feedback:
+travelled: 3.56
+remaining: 16.44
+feedback:
+travelled: 3.61
+remaining: 16.39
+feedback:
+travelled: 3.66
+remaining: 16.34
+feedback:
+travelled: 3.71
+remaining: 16.29
+feedback:
+travelled: 3.76
+remaining: 16.24
+feedback:
+travelled: 3.805
+remaining: 16.195
+feedback:
+travelled: 3.855
+remaining: 16.145
+feedback:
+travelled: 3.905
+remaining: 16.095
+feedback:
+travelled: 3.955
+remaining: 16.045
+feedback:
+travelled: 4.005
+remaining: 15.995
+feedback:
+travelled: 4.05
+remaining: 15.95
+feedback:
+travelled: 4.095
+remaining: 15.905
+feedback:
+travelled: 4.145
+remaining: 15.855
+feedback:
+travelled: 4.195
+remaining: 15.805
+feedback:
+travelled: 4.245
+remaining: 15.755
+feedback:
+travelled: 4.295
+remaining: 15.705
+feedback:
+travelled: 4.33
+remaining: 15.67
+feedback:
+travelled: 4.38
+remaining: 15.62
+feedback:
+travelled: 4.43
+remaining: 15.57
+feedback:
+tr[ros2] no result within 30.0 s - the action is still running or the bridge lost the robot
+avelled: 4.48
+remaining: 15.52
+feedback:
+travelled: 4.53
+remaining: 15.47
+feedback:
+travelled: 4.565
+remaining: 15.435
+feedback:
+travelled: 4.615
+remaining: 15.385
+feedback:
+travelled: 4.665
+remaining: 15.335
+feedback:
+travelled: 4.715
+remaining: 15.285
+feedback:
+travelled: 4.765
+remaining: 15.235
+feedback:
+travelled: 4.805
+remaining: 15.195
+feedback:
+travelled: 4.855
+remaining: 15.145
+feedback:
+travelled: 4.905
+remaining: 15.095
+feedback:
+travelled: 4.955
+remaining: 15.045
+feedback:
+travelled: 5.005
+remaining: 14.995
+feedback:
+travelled: 5.05
+remaining: 14.95
+feedback:
+travelled: 5.085
+remaining: 14.915
+feedback:
+travelled: 5.135
+remaining: 14.865
+feedback:
+travelled: 5.185
+remaining: 14.815
+feedback:
+travelled: 5.235
+remaining: 14.765
+feedback:
+travelled: 5.285
+remaining: 14.715
+feedback:
+travelled: 5.32
+remaining: 14.68
+feedback:
+travelled: 5.37
+remaining: 14.63
+feedback:
+travelled: 5.42
+remaining: 14.58
+feedback:
+travelled: 5.47
+remaining: 14.53
+feedback:
+travelled: 5.52
+remaining: 14.48
+feedback:
+travelled: 5.555
+remaining: 14.445
+feedback:
+travelled: 5.605
+remaining: 14.395
+feedback:
+travelled: 5.655
+remaining: 14.345
+feedback:
+travelled: 5.705
+remaining: 14.295
+feedback:
+travelled: 5.755
+remaining: 14.245
+feedback:
+travelled: 5.8
+remaining: 14.2
+feedback:
+travelled: 5.845
+remaining: 14.155
+feedback:
+travelled: 5.895
+remaining: 14.105
+feedback:
+travelled: 5.945
+remaining: 14.055
+feedback:
+travelled: 5.995
+remaining: 14.005
+feedback:
+travelled: 6.045
+remaining: 13.955
+feedback:
+travelled: 6.08
+remaining: 13.92
+feedback:
+travelled: 6.13
+remaining: 13.87
+feedback:
+travelled: 6.18
+remaining: 13.82
+feedback:
+travelled: 6.23
+remaining: 13.77
+feedback:
+travelled: 6.28
+remaining: 13.72
+feedback:
+travelled: 6.315
+remaining: 13.685
+feedback:
+travelled: 6.365
+remaining: 13.635
+feedback:
+travelled: 6.415
+remaining: 13.585
+feedback:
+travelled: 6.465
+remaining: 13.535
+feedback:
+travelled: 6.515
+remaining: 13.485
+feedback:
+travelled: 6.55
+remaining: 13.45
+feedback:
+travelled: 6.6
+remaining: 13.4
+feedback:
+travelled: 6.65
+remaining: 13.35
+feedback:
+travelled: 6.7
+remaining: 13.3
+feedback:
+travelled: 6.75
+remaining: 13.25
+feedback:
+travelled: 6.8
+remaining: 13.2
+feedback:
+travelled: 6.84
+remaining: 13.16
+feedback:
+travelled: 6.89
+remaining: 13.11
+feedback:
+travelled: 6.94
+remaining: 13.06
+feedback:
+travelled: 6.99
+remaining: 13.01
+feedback:
+travelled: 7.04
+remaining: 12.96
+feedback:
+travelled: 7.075
+remaining: 12.925

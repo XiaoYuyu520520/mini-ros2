@@ -1,0 +1,4 @@
+01-architecture.md: bytes=25266 crlf=0 lone_lf=289 bom=True badctl=[]
+02-running.md: bytes=66431 crlf=0 lone_lf=1070 bom=True badctl=[]
+03-validation.md: bytes=272745 crlf=0 lone_lf=4348 bom=True badctl=[]
+04-gaps.md: bytes=79725 crlf=0 lone_lf=787 bom=True badctl=[]

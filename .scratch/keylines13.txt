@@ -1,0 +1,138 @@
+     33         self._send_goal_future.add_done_callback(self.goal_response_callback)
+     50         if self.completed_laps >= self.target_laps and self.is_paused == True:
+     51             rclpy.shutdown()
+     53         #     self.send_goal(self.poses)
+     54             # self.completed_laps += 1
+     56         #     rclpy.shutdown()
+     77         if feedback.distance_remaining < 0.5 and not self.is_paused and not self.lap_completed:
+     79             self.completed_laps += 1
+     81             self.send_goal(self.poses)
+     83             self.lap_completed = True  # 设置一圈完成标志位
+     84             self.get_logger().info(f'+++++++++++++++++Completed {self.completed_laps} laps.++++++++++++++++++++++')
+     86         if self.completed_laps >= self.target_laps:
+     88             self.get_logger().info('Reached the target number of laps, stopping the robot.')
+     92             self.car_cmd_vel_pub.publish(twist)
+     95         if feedback.distance_remaining > 1.0 and self.lap_completed:
+     96             self.lap_completed = False  # 重置一圈完成标志位
+     99                 # self.get_logger().info('Continuing to next lap.')
+    100                 # 创建一个定时器，在 4 秒后重置 lap_completed
+    101                 # self.timer = self.create_timer(4.0, self.reset_lap_completed)
+    104         # if feedback.distance_remaining > 1.0 and self.lap_completed:
+    105         #     # 这里不再直接重置 lap_completed，而是依赖定时器
+    108     # def reset_lap_completed(self):
+    110     #     self.lap_completed = False
+    111     #     self.get_logger().info('Reset lap completed flag.')
+    113     #     self.timer.cancel()
+    122             self.car_cmd_vel_pub.publish(msg)
+    165     poses = []
+    174         poses.append(pose)
+    176     client.send_goal(poses)
+==================== 跑一圈以内.py
+     15         super().__init__('nav_through_poses_client')
+     16         self._action_client = ActionClient(self, NavigateThroughPoses, 'navigate_through_poses')
+     18         self.car_cmd_vel_pub = self.create_publisher(Twist, '/car_cmd_vel', 10)
+     22     def send_goal(self, poses):
+     24         goal_msg.poses.goals = poses
+     27         self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+     28         self._send_goal_future.add_done_callback(self.goal_response_callback)
+     44         # rclpy.shutdown()
+     58                 self.car_cmd_vel_pub.publish(twist)
+     67         #     self.car_cmd_vel_pub.publish(twist)
+     71             self.car_cmd_vel_pub.publish(msg)
+    114     poses = []
+    123         poses.append(pose)
+    125     client.send_goal(poses)
+==================== 重复载入完成圈数.py
+     15         super().__init__('nav_through_poses_client')
+     16         self._action_client = ActionClient(self, NavigateThroughPoses, 'navigate_through_poses')
+     18         self.car_cmd_vel_pub = self.create_publisher(Twist, '/car_cmd_vel', 10)
+     21         self.completed_laps = -1  # 已完成的圈数
+     22         self.target_laps = 3     # 目标圈数
+     23         self.poses = []          # 保存路径点列表
+     24         self.lap_completed = False  # 标志位，用于判断一圈是否完成
+     26     def send_goal(self, poses):
+     27         self.poses = poses  # 保存路径点列表
+     29         goal_msg.poses.goals = poses
+     32         self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+     33         self._send_goal_future.add_done_callback(self.goal_response_callback)
+     50         if self.completed_laps >= self.target_laps and self.is_paused == True:
+     51             rclpy.shutdown()
+     53         #     self.send_goal(self.poses)
+     54             # self.completed_laps += 1
+     56         #     rclpy.shutdown()
+     65         if feedback.distance_remaining < 0.3 and not self.is_paused and not self.lap_completed :
+     67             self.completed_laps += 1
+     69             self.send_goal(self.poses)
+     71             self.lap_completed = True  # 设置一圈完成标志位
+     72             self.get_logger().info(f'+++++++++++++++++Completed {self.completed_laps} laps.++++++++++++++++++++++')
+     74             if self.completed_laps >= self.target_laps:
+     76                 self.get_logger().info('Reached the target number of laps, stopping the robot.')
+     80                 self.car_cmd_vel_pub.publish(twist)
+     83                 self.get_logger().info('Continuing to next lap.')
+     86         if feedback.distance_remaining > 1.0 and self.lap_completed:
+     87             self.lap_completed = False  # 重置一圈完成标志位
+     93             self.car_cmd_vel_pub.publish(msg)
+    133     poses = []
+    142         poses.append(pose)
+    144     client.send_goal(poses)
+==================== ai_第一个点后回终点.py
+     14         super().__init__('nav_through_poses_client')
+     16         self._action_client = ActionClient(self, NavigateThroughPoses, 'navigate_through_poses')
+     20         self.car_cmd_vel_pub = self.create_publisher(Twist, '/car_cmd_vel', 10)
+     27     def send_goal(self, poses):
+     30         goal_msg.poses.goals = poses
+     35         self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+     36         self._send_goal_future.add_done_callback(self.goal_response_callback)
+     59             self.send_goal(self.poses)
+     74                 self.car_cmd_vel_pub.publish(twist)
+     79             self.car_cmd_vel_pub.publish(msg)
+    108     poses = []
+    117         poses.append(pose)
+    118     client.poses = poses  # 保存 poses 到 client 中
+    120     client.send_goal(poses)
+==================== detct.py
+     14         super().__init__('nav_through_poses_clientq')
+     16         self._action_client = ActionClient(self, NavigateThroughPoses, 'navigate_through_poses')
+     20         self.car_cmd_vel_pub = self.create_publisher(Twist, '/car_cmd_vel', 10)
+     24         self.current_group_index = 0  # 当前组索引
+     28     def send_goal(self, poses):
+     31         goal_msg.poses.goals = poses
+     36         self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+     37         self._send_goal_future.add_done_callback(self.goal_response_callback)
+     57         # self.current_group_index += 1
+     58         # self.get_logger().info('current_group_index get_result_callbac{self.current_group_index}______________________
+     60         # if self.current_group_index < len(self.groups):
+     61         #     self.send_goal(self.groups[self.current_group_index])
+     67         #     self.car_cmd_vel_pub.publish(twist)
+     80                     self.car_cmd_vel_pub.publish(twist)
+     91     #             self.current_group_index += 1
+     92     #             self.get_logger().info('current_group_index feedback_callback{self.current_group_index}_______________
+     93     #             if self.current_group_index < len(self.groups):
+     94     #                 self.send_goal(self.groups[self.current_group_index])
+    100     #                 self.car_cmd_vel_pub.publish(twist)
+    110             self.car_cmd_vel_pub.publish(msg)
+    151         poses = []
+    160             poses.append(pose)
+    161         client.groups.append(poses)
+    165         client.send_goal(client.groups[0])
+==================== go copy.py
+     18         self.pub = self.create_publisher(PoseStamped, '/goal_pose', 10)
+     21         self.pub_final = self.create_publisher(Float64, '/arrfinal', 1)
+     35         self.count = 0
+     42         # Timer to continuously publish goals
+     43         self.timer = self.create_timer(1.0, self.publish_goal)
+     45     def publish_goal(self):
+     47             self.get_logger().info("All goals have been published.")
+     48             self.timer.cancel()
+     57             self.pub.publish(self.goalMsg)
+     62         if msg.poses:
+     65             self.timer.cancel()
+     84                 self.timer.reset()
+     85                 self.publish_goal()
+    138     mg.destroy_node()
+    139     rclpy.shutdown()
+==================== go_2c.py
+     35         while not navigator.isTaskComplete():
+     43         while not navigator.isTaskComplete():
+     49                     navigator.cancelTask()  # 显式取消当前任务
+     58             print(f"Goal to waypoint {idx + 1} was canceled!")

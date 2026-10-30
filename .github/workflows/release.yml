@@ -1,0 +1,195 @@
+# Build the release packages for both platforms and publish them.
+#
+# The packages are produced here rather than on a developer's machine, so
+# what a user downloads is exactly what CI built from this commit. The
+# archive names are fixed (`mini-ros2-<platform>-x86_64-<version>.<ext>`)
+# and `package.py` is the only thing that decides what goes into them.
+#
+# Two kinds of trigger:
+#
+#   * a tag `v*` publishes a GitHub Release with both archives attached;
+#   * `workflow_dispatch` (or any other push) only uploads the archives as
+#     workflow artifacts, which is what you want while iterating.
+#
+# The vendored third-party sources are fetched, not committed (they are under
+# `nav2/third_party/dl/`, which is in `.gitignore`), so every job starts with
+# `fetch_deps.py` - it tries several mirrors in turn, which is what makes the
+# job survive a runner that cannot reach github.com directly.
+
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to name the archives with (default: the commit)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # The gate: build and test both platforms. A package is only made from a
+  # tree that passed its own test suite.
+  # ---------------------------------------------------------------------------
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows
+            runner: windows-latest
+            sdk_key: windows-x86_64
+          - platform: linux
+            runner: ubuntu-latest
+            sdk_key: linux-x86_64
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        shell: ${{ matrix.platform == 'windows' && 'pwsh' || 'bash' }}
+    env:
+      PYTHONUTF8: "1"
+      CPU_VERSION: ${{ github.event.inputs.version || github.ref_name || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The two vendored source trees the shim links against are not in version
+      # control (`nav2/third_party/dl/` is in `.gitignore`), so every job has
+      # to fetch them. `fetch_deps.py` tries several mirrors in turn, which is
+      # what makes this step survive a runner that cannot reach github.com.
+      - name: fetch the vendored build dependencies
+        run: python nav2/third_party/dl/fetch_deps.py
+
+      # Windows: the UCRT64 prefix carries gRPC/protobuf/abseil, the same
+      # packages the bridge links against on a development machine.
+      - name: windows toolchain
+        if: matrix.platform == 'windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: false
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-ninja
+            mingw-w64-ucrt-x86_64-grpc
+            mingw-w64-ucrt-x86_64-protobuf
+            mingw-w64-ucrt-x86_64-yaml-cpp
+            mingw-w64-ucrt-x86_64-boost
+            mingw-w64-ucrt-x86_64-eigen3
+
+      # Linux: Eigen and Boost for the shim, gRPC/protobuf/yaml-cpp for the
+      # bridge. Nothing here is ROS2 - the compatibility layer replaces it.
+      - name: linux dependencies
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build zlib1g-dev \
+            libeigen3-dev libboost-dev libboost-serialization-dev \
+            libboost-thread-dev libboost-system-dev libboost-atomic-dev \
+            libboost-chrono-dev libboost-date-time-dev \
+            libgrpc++-dev libprotobuf-dev protobuf-compiler \
+            protobuf-compiler-grpc libyaml-cpp-dev
+
+      - name: toolchain resolution
+        run: python tools/_toolchain.py
+
+      # `-j 2` on a two-core runner: more only thrashes the page file.
+      - name: shim build entry point
+        run: python nav2/ros2_shim/build.py --jobs 2
+
+      - name: shim ctest
+        run: python tools/run_ctest.py shim
+
+      - name: shm ctest
+        run: python tools/run_ctest.py shm
+
+      - name: bridge build entry point + ctest
+        run: python bridge/scripts/build_bridge.py --test --jobs 2
+
+      - name: gRPC SDK build entry point + ctest
+        run: python gRPC/ros2_gRPC_sdk/scripts/build.py --test --jobs 2
+
+      # The fifth test tree: the simulator's pytest suite.
+      - name: simulator pytest tree
+        run: |
+          python -m pip install --disable-pip-version-check pytest rosbags -r bridge/ubuntu/ros2_bridge_sim/requirements.txt
+          python tools/run_ctest.py sim
+
+      # The four gates that need neither a compiler nor a robot.
+      - name: docs, structure, scratch references and vendored patches
+        run: |
+          python tools/check_docs.py
+          python tools/check_structure.py
+          python tools/find_scratch_refs.py --check
+          python nav2/patches/verify_patch.py
+
+      # The release archive. The name is decided here and nowhere else.
+      - name: package
+        run: python package.py --platform ${{ matrix.platform }} --version "$CPU_VERSION" --force
+
+      - name: show the package
+        run: python -c "import os; [print(f'{os.path.getsize(os.path.join('dist', f)) / 1e6:.1f} MB  {f}') for f in sorted(os.listdir('dist'))]"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mini-ros2-${{ matrix.platform }}-${{ env.CPU_VERSION }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # Publish a GitHub Release, but only for a tag. A pull request gets the
+  # archives as workflow artifacts and nothing more.
+  # ---------------------------------------------------------------------------
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: list the archives
+        run: ls -l artifacts
+
+      # A checksum next to the archives: a user can verify the download
+      # without trusting the release page.
+      - name: checksums
+        run: |
+          cd artifacts
+          sha256sum ./* > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: publish the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          body: |
+            ROS2 + nav2 on Windows, without ROS2 and without DDS.
+
+            * `mini-ros2-windows-x86_64-*.zip` - the Windows build; unpack it and
+              run `start/加载模拟ROS环境变量.ps1` (PowerShell) or
+              `start/connector.sh` (Linux). No MSYS2 and no ROS2 needed.
+            * `mini-ros2-linux-x86_64-*.tar.gz` - the Linux build.
+
+            `SHA256SUMS.txt` holds the checksums. See `GETTING_STARTED.md` for
+            what this does and does not do, and `bridge/docs/04-gaps.md` for the
+            list of what is still missing.

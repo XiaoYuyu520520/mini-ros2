@@ -1,0 +1,381 @@
+Breakpoint 1 at 0x14006d6d7
+<function, no debug info> _ZN5karto6Mapper10SaveToFileERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE;
+Successfully created breakpoint 1.
+[New Thread 33052.0x1cf8]
+[New Thread 33052.0x79c8]
+[New Thread 33052.0x7b88]
+[New Thread 33052.0x7604]
+[New Thread 33052.0x7300]
+  archive: C:\Users\ADMINI~1\AppData\Local\Temp/slam_serialize_roundtrip
+  phase 1: map one lap, then serialize it
+Registering sensor: [Custom Described Lidar]
+
+Thread 1 hit Breakpoint 1, 0x00007ff7cccad6d7 in karto::Mapper::SaveToFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) ()
+
+===== HIT 1 =====
+#0  0x00007ff7cccad6d7 in karto::Mapper::SaveToFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) ()
+#1  0x00007ff7ccc789d4 in serialization::write<std::shared_ptr<rclcpp_lifecycle::LifecycleNode> > (filename="C:\\Users\\ADMINI~1\\AppData\\Local\\Temp/slam_serialize_roundtrip", mapper=..., dataset=..., node=...) at E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/serialization.hpp:47
+#2  slam_toolbox::SlamToolbox::serializePoseGraphCallback (this=<optimized out>, request_header=..., req=..., resp=std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response> (use count 3, weak count 0) = {...}) at E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_common.cpp:975
+#3  0x00007ff7cce5a714 in std::__invoke_impl<bool, bool (slam_toolbox::SlamToolbox::*&)(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>), slam_toolbox::SlamToolbox*&, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&> (__f=<optimized out>, __t=<optimized out>) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:76
+#4  std::__invoke<bool (slam_toolbox::SlamToolbox::*&)(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>), slam_toolbox::SlamToolbox*&, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&> (__fn=<optimized out>) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:98
+#5  std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>::__call<bool, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&, 0ull, 1ull, 2ull, 3ull>(std::tuple<std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&>&&, std::_Index_tuple<0ull, 1ull, 2ull, 3ull>) (this=<optimized out>, __args=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/functional:541
+#6  std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>::operator()<std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>, 0, bool>(this std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&) (__self=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/functional:645
+#7  rclcpp::Node::create_service<slam_toolbox::srv::SerializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)#1}::operator()(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>) (__closure=<optimized out>, header=..., request=..., response=...) at E:/DesktopData/app/code/CPU/nav2/ros2_shim/include/rclcpp/node.hpp:616
+#8  std::__invoke_impl<void, rclcpp::Node::create_service<slam_toolbox::srv::SerializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)#1}&, std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response> >(std::__invoke_other, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&, std::shared_ptr<rmw_request_id_s>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&&) (__f=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:63
+#9  std::__invoke_r<void, rclcpp::Node::create_service<slam_toolbox::srv::SerializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)#1}&, std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response> >(std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&, std::shared_ptr<rmw_request_id_s>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&&) (__fn=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:113
+#10 std::_Function_handler<void (std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>), rclcpp::Node::create_service<slam_toolbox::srv::SerializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)#1}>::_M_invoke(std::_Any_data const&, std::shared_ptr<rmw_request_id_s>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&&) (__functor=..., __args#0=..., __args#1=..., __args#2=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/std_function.h:295
+#11 0x00007ff7ccd67d46 in std::function<void(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>::operator() (this=0x8850e8, __args#0=std::shared_ptr<rmw_request_id_s> (empty) = {...}, __args#1=std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request> (empty) = {...}, __args#2=std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response> (empty) = {...}) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/std_function.h:581
+[Thread 33052.0x7b88 exited with code 0]
+[Thread 33052.0x7604 exited with code 0]
+[Thread 33052.0x7300 exited with code 0]
+  before serializing: 239 map messages, 160x120, 279 occupied cells
+Save To File C:\Users\ADMINI~1\AppData\Local\Temp/slam_serialize_roundtrip.posegraph 
+Mapper <- Module
+Mapper <- m_pSequentialScanMatcher
+Mapper <- m_pGraph
+MapperGraph <- Graph; Graph <- m_Edges; Graph <- m_Vertices
+MapperGraph <- m_pMapper; MapperGraph <- m_pLoopScanMatcher; MapperGraph <- m_pTraversal
+Mapper <- m_pMapperSensorManager
+MapperSensorManager <- m_ScanManagers; MapperSensorManager <- m_Scans
+Mapper <- m_Listeners
+**Finished serializing Mapper**
+Save To File
+**Serializing Dataset**
+Dataset <- m_SensorNameLookup
+Dataset <- m_Data
+Dataset <- m_Lasers
+Dataset <- m_pDatasetInfo
+**Finished serializing Dataset**
+  serialize_map -> result 0
+  on disk: C:\Users\ADMINI~1\AppData\Local\Temp/slam_serialize_roundtrip.posegraph 28270382 bytes, C:\Users\ADMINI~1\AppData\Local\Temp/slam_serialize_roundtrip.data 661958 bytes
+Unregistering sensor: Custom Described Lidar
+[Thread 33052.0x79c8 exited with code 0]
+[New Thread 33052.0x46cc]
+[New Thread 33052.0x8a1c]
+[New Thread 33052.0x8ac0]
+[New Thread 33052.0x7dc4]
+
+Thread 1 hit Breakpoint 1, 0x00007ff7cccad6d7 in karto::Mapper::SaveToFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) ()
+
+===== HIT 2 =====
+#0  0x00007ff7cccad6d7 in karto::Mapper::SaveToFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) ()
+#1  0x00007ff7ccc789d4 in serialization::write<std::shared_ptr<rclcpp_lifecycle::LifecycleNode> > (filename="C:\\Users\\ADMINI~1\\AppData\\Local\\Temp/slam_serialize_roundtrip", mapper=..., dataset=..., node=...) at E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/serialization.hpp:47
+#2  slam_toolbox::SlamToolbox::serializePoseGraphCallback (this=<optimized out>, request_header=..., req=..., resp=std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response> (use count 3, weak count 0) = {...}) at E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_common.cpp:975
+#3  0x00007ff7cce5a714 in std::__invoke_impl<bool, bool (slam_toolbox::SlamToolbox::*&)(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>), slam_toolbox::SlamToolbox*&, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&> (__f=<optimized out>, __t=<optimized out>) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:76
+#4  std::__invoke<bool (slam_toolbox::SlamToolbox::*&)(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>), slam_toolbox::SlamToolbox*&, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&> (__fn=<optimized out>) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:98
+#5  std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>::__call<bool, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&, 0ull, 1ull, 2ull, 3ull>(std::tuple<std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&>&&, std::_Index_tuple<0ull, 1ull, 2ull, 3ull>) (this=<optimized out>, __args=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/functional:541
+#6  std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>::operator()<std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>, 0, bool>(this std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&) (__self=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/functional:645
+#7  rclcpp::Node::create_service<slam_toolbox::srv::SerializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)#1}::operator()(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>) (__closure=<optimized out>, header=..., request=..., response=...) at E:/DesktopData/app/code/CPU/nav2/ros2_shim/include/rclcpp/node.hpp:616
+#8  std::__invoke_impl<void, rclcpp::Node::create_service<slam_toolbox::srv::SerializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)#1}&, std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response> >(std::__invoke_other, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&, std::shared_ptr<rmw_request_id_s>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&&) (__f=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:63
+#9  std::__invoke_r<void, rclcpp::Node::create_service<slam_toolbox::srv::SerializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)#1}&, std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response> >(std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&, std::shared_ptr<rmw_request_id_s>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&&) (__fn=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:113
+#10 std::_Function_handler<void (std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>), rclcpp::Node::create_service<slam_toolbox::srv::SerializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)#1}>::_M_invoke(std::_Any_data const&, std::shared_ptr<rmw_request_id_s>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>&&, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>&&) (__functor=..., __args#0=..., __args#1=..., __args#2=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/std_function.h:295
+#11 0x00007ff7ccd67d46 in std::function<void(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response>)>::operator() (this=0xcaae858, __args#0=std::shared_ptr<rmw_request_id_s> (empty) = {...}, __args#1=std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Request> (empty) = {...}, __args#2=std::shared_ptr<slam_toolbox::srv::SerializePoseGraph::Response> (empty) = {...}) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/std_function.h:581
+  phase 2: a fresh node deserializes that archive
+Save To File C:\Users\ADMINI~1\AppData\Local\Temp/slam_serialize_roundtrip.posegraph 
+Mapper <- Module
+Mapper <- m_pSequentialScanMatcher
+Mapper <- m_pGraph
+Mapper <- m_pMapperSensorManager
+Mapper <- m_Listeners
+**Finished serializing Mapper**
+Save To File
+**Serializing Dataset**
+Dataset <- m_SensorNameLookup
+Dataset <- m_Data
+Dataset <- m_Lasers
+Dataset <- m_pDatasetInfo
+**Finished serializing Dataset**
+Load From File C:\Users\ADMINI~1\AppData\Local\Temp/slam_serialize_roundtrip.posegraph 
+Mapper <- Module
+Mapper <- m_pSequentialScanMatcher
+Mapper <- m_pGraph
+Mapper <- m_pMapperSensorManager
+Mapper <- m_Listeners
+**Finished serializing Mapper**
+[TMPDBG] Mapper::LoadFromFile after read: graph=0000000000000000 sensors=0000000000000000 initialized=0
+Load From File
+**Serializing Dataset**
+Dataset <- m_SensorNameLookup
+Dataset <- m_Data
+Dataset <- m_Lasers
+Dataset <- m_pDatasetInfo
+**Finished serializing Dataset**
+[TMPDBG] Dataset::LoadFromFile after read: data=0 lasers=0 lookup=0
+[TMPDBG] entry mapper=0000000052e07e70 graph=0000000000000000 sensors=0000000000000000 initialized=-1
+[TMPDBG] dataset=0000000052e07db0 lasers=0 data=0
+
+Thread 1 received signal SIGSEGV, Segmentation fault.
+slam_toolbox::SlamToolbox::loadSerializedPoseGraph (this=this@entry=0x88a5b0, mapper=std::unique_ptr<karto::Mapper> = {...}, dataset=std::unique_ptr<karto::Dataset> = {...}) at E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_common.cpp:1002
+1002	  for (auto & kv : mapper->GetGraph()->GetVertices()) {
+
+===== HIT 3 =====
+#0  slam_toolbox::SlamToolbox::loadSerializedPoseGraph (this=this@entry=0x88a5b0, mapper=std::unique_ptr<karto::Mapper> = {...}, dataset=std::unique_ptr<karto::Dataset> = {...}) at E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_common.cpp:1002
+#1  0x00007ff7ccc79213 in slam_toolbox::SlamToolbox::deserializePoseGraphCallback (this=0x88a5b0, request_header=..., req=std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request> (use count 4, weak count 0) = {...}, resp=...) at E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_common.cpp:1100
+#2  0x00007ff7ccc5dac1 in slam_toolbox::SynchronousSlamToolbox::deserializePoseGraphCallback(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>) ()
+#3  0x00007ff7cce5a914 in std::__invoke_impl<bool, bool (slam_toolbox::SlamToolbox::*&)(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>), slam_toolbox::SlamToolbox*&, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>&> (__f=<optimized out>, __t=<optimized out>) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:76
+#4  std::__invoke<bool (slam_toolbox::SlamToolbox::*&)(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>), slam_toolbox::SlamToolbox*&, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>&> (__fn=<optimized out>) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:98
+#5  std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>::__call<bool, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>&, 0ull, 1ull, 2ull, 3ull>(std::tuple<std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>&>&&, std::_Index_tuple<0ull, 1ull, 2ull, 3ull>) (this=<optimized out>, __args=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/functional:541
+#6  std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>::operator()<std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>, 0, bool>(this std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>&, std::shared_ptr<rmw_request_id_s>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>&) (__self=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/functional:645
+#7  rclcpp::Node::create_service<slam_toolbox::srv::DeserializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)#1}::operator()(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>) (__closure=<optimized out>, header=..., request=..., response=...) at E:/DesktopData/app/code/CPU/nav2/ros2_shim/include/rclcpp/node.hpp:616
+#8  std::__invoke_impl<void, rclcpp::Node::create_service<slam_toolbox::srv::DeserializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)#1}&, std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response> >(std::__invoke_other, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>&&, std::shared_ptr<rmw_request_id_s>&&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>&&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>&&) (__f=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:63
+#9  std::__invoke_r<void, rclcpp::Node::create_service<slam_toolbox::srv::DeserializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)#1}&, std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response> >(std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>&&, std::shared_ptr<rmw_request_id_s>&&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>&&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>&&) (__fn=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/invoke.h:113
+#10 std::_Function_handler<void (std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>), rclcpp::Node::create_service<slam_toolbox::srv::DeserializePoseGraph, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Bind<bool (slam_toolbox::SlamToolbox::*(slam_toolbox::SlamToolbox*, std::_Placeholder<1>, std::_Placeholder<2>, std::_Placeholder<3>))(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>&&)::{lambda(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)#1}>::_M_invoke(std::_Any_data const&, std::shared_ptr<rmw_request_id_s>&&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>&&, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>&&) (__functor=..., __args#0=..., __args#1=..., __args#2=...) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/std_function.h:295
+#11 0x00007ff7ccd682f1 in std::function<void(std::shared_ptr<rmw_request_id_s>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request>, std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response>)>::operator() (this=0x2f96e78, __args#0=std::shared_ptr<rmw_request_id_s> (empty) = {...}, __args#1=std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Request> (empty) = {...}, __args#2=std::shared_ptr<slam_toolbox::srv::DeserializePoseGraph::Response> (empty) = {...}) at D:/WindowsServer2025_1/software/MSYS2/ucrt64/include/c++/16.2.0/bits/std_function.h:581
+
+Thread 1 received signal SIGSEGV, Segmentation fault.
+slam_toolbox::SlamToolbox::loadSerializedPoseGraph (this=this@entry=0x88a5b0, mapper=std::unique_ptr<karto::Mapper> = {...}, dataset=std::unique_ptr<karto::Dataset> = {...}) at E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_common.cpp:1002
+1002	  for (auto & kv : mapper->GetGraph()->GetVertices()) {
+
+[STDERR]
+[INFO] [slam_toolbox] Configuring
+[INFO] [slam_toolbox] Using solver plugin solver_plugins::CeresSolver
+[INFO] [slam_toolbox] EigenPoseGraphSolver: configured with 50 max iterations.
+[INFO] [slam_toolbox] Activating
+[DEBUG] [slam_toolbox] laser base_footprint's pose wrt base: 0.000 0.000 0.000 0.000
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 1
+[DEBUG] [slam_toolbox] Graph size: 2
+[DEBUG] [slam_toolbox] Graph size: 2
+[DEBUG] [slam_toolbox] Graph size: 2
+[DEBUG] [slam_toolbox] Graph size: 2
+[DEBUG] [slam_toolbox] Graph size: 2
+[DEBUG] [slam_toolbox] Graph size: 2
+[DEBUG] [slam_toolbox] Graph size: 2
+[DEBUG] [slam_toolbox] Graph size: 2
+[DEBUG] [slam_toolbox] Graph size: 2
+[DEBUG] [slam_toolbox] Graph size: 2
+[DEBUG] [slam_toolbox] Graph size: 3
+[DEBUG] [slam_toolbox] Graph size: 3
+[DEBUG] [slam_toolbox] Graph size: 3
+[DEBUG] [slam_toolbox] Graph size: 3
+[DEBUG] [slam_toolbox] Graph size: 4
+[DEBUG] [slam_toolbox] Graph size: 4
+[DEBUG] [slam_toolbox] Graph size: 4
+[DEBUG] [slam_toolbox] Graph size: 4
+[DEBUG] [slam_toolbox] Graph size: 4
+[DEBUG] [slam_toolbox] Graph size: 5
+[DEBUG] [slam_toolbox] Graph size: 5
+[DEBUG] [slam_toolbox] Graph size: 5
+[DEBUG] [slam_toolbox] Graph size: 5
+[DEBUG] [slam_toolbox] Graph size: 5
+[DEBUG] [slam_toolbox] Graph size: 6
+[DEBUG] [slam_toolbox] Graph size: 6
+[DEBUG] [slam_toolbox] Graph size: 6
+[DEBUG] [slam_toolbox] Graph size: 6
+[DEBUG] [slam_toolbox] Graph size: 7
+[DEBUG] [slam_toolbox] Graph size: 7
+[DEBUG] [slam_toolbox] Graph size: 7
+[DEBUG] [slam_toolbox] Graph size: 7
+[DEBUG] [slam_toolbox] Graph size: 7
+[DEBUG] [slam_toolbox] Graph size: 8
+[DEBUG] [slam_toolbox] Graph size: 8
+[DEBUG] [slam_toolbox] Graph size: 8
+[DEBUG] [slam_toolbox] Graph size: 8
+[DEBUG] [slam_toolbox] Graph size: 8
+[DEBUG] [slam_toolbox] Graph size: 9
+[DEBUG] [slam_toolbox] Graph size: 9
+[DEBUG] [slam_toolbox] Graph size: 9
+[DEBUG] [slam_toolbox] Graph size: 9
+[DEBUG] [slam_toolbox] Graph size: 10
+[DEBUG] [slam_toolbox] Graph size: 10
+[DEBUG] [slam_toolbox] Graph size: 10
+[DEBUG] [slam_toolbox] Graph size: 10
+[DEBUG] [slam_toolbox] Graph size: 10
+[DEBUG] [slam_toolbox] Graph size: 11
+[DEBUG] [slam_toolbox] Graph size: 11
+[DEBUG] [slam_toolbox] Graph size: 11
+[DEBUG] [slam_toolbox] Graph size: 11
+[DEBUG] [slam_toolbox] Graph size: 11
+[DEBUG] [slam_toolbox] Graph size: 12
+[DEBUG] [slam_toolbox] Graph size: 12
+[DEBUG] [slam_toolbox] Graph size: 12
+[DEBUG] [slam_toolbox] Graph size: 12
+[DEBUG] [slam_toolbox] Graph size: 13
+[DEBUG] [slam_toolbox] Graph size: 13
+[DEBUG] [slam_toolbox] Graph size: 13
+[DEBUG] [slam_toolbox] Graph size: 13
+[DEBUG] [slam_toolbox] Graph size: 13
+[DEBUG] [slam_toolbox] Graph size: 14
+[DEBUG] [slam_toolbox] Graph size: 14
+[DEBUG] [slam_toolbox] Graph size: 14
+[DEBUG] [slam_toolbox] Graph size: 14
+[DEBUG] [slam_toolbox] Graph size: 14
+[DEBUG] [slam_toolbox] Graph size: 15
+[DEBUG] [slam_toolbox] Graph size: 15
+[DEBUG] [slam_toolbox] Graph size: 15
+[DEBUG] [slam_toolbox] Graph size: 15
+[DEBUG] [slam_toolbox] Graph size: 15
+[DEBUG] [slam_toolbox] Graph size: 16
+[DEBUG] [slam_toolbox] Graph size: 16
+[DEBUG] [slam_toolbox] Graph size: 16
+[DEBUG] [slam_toolbox] Graph size: 16
+[DEBUG] [slam_toolbox] Graph size: 17
+[DEBUG] [slam_toolbox] Graph size: 17
+[DEBUG] [slam_toolbox] Graph size: 17
+[DEBUG] [slam_toolbox] Graph size: 17
+[DEBUG] [slam_toolbox] Graph size: 17
+[DEBUG] [slam_toolbox] Graph size: 18
+[DEBUG] [slam_toolbox] Graph size: 18
+[DEBUG] [slam_toolbox] Graph size: 18
+[DEBUG] [slam_toolbox] Graph size: 18
+[DEBUG] [slam_toolbox] Graph size: 18
+[DEBUG] [slam_toolbox] Graph size: 19
+[DEBUG] [slam_toolbox] Graph size: 19
+[DEBUG] [slam_toolbox] Graph size: 19
+[DEBUG] [slam_toolbox] Graph size: 19
+[DEBUG] [slam_toolbox] Graph size: 20
+[DEBUG] [slam_toolbox] Graph size: 20
+[DEBUG] [slam_toolbox] Graph size: 20
+[DEBUG] [slam_toolbox] Graph size: 20
+[DEBUG] [slam_toolbox] Graph size: 20
+[DEBUG] [slam_toolbox] Graph size: 21
+[DEBUG] [slam_toolbox] Graph size: 21
+[DEBUG] [slam_toolbox] Graph size: 21
+[DEBUG] [slam_toolbox] Graph size: 21
+[DEBUG] [slam_toolbox] Graph size: 21
+[DEBUG] [slam_toolbox] Graph size: 22
+[DEBUG] [slam_toolbox] Graph size: 22
+[DEBUG] [slam_toolbox] Graph size: 22
+[DEBUG] [slam_toolbox] Graph size: 22
+[DEBUG] [slam_toolbox] Graph size: 22
+[DEBUG] [slam_toolbox] Graph size: 23
+[DEBUG] [slam_toolbox] Graph size: 23
+[DEBUG] [slam_toolbox] Graph size: 23
+[DEBUG] [slam_toolbox] Graph size: 23
+[DEBUG] [slam_toolbox] Graph size: 24
+[DEBUG] [slam_toolbox] Graph size: 24
+[DEBUG] [slam_toolbox] Graph size: 24
+[DEBUG] [slam_toolbox] Graph size: 24
+[DEBUG] [slam_toolbox] Graph size: 24
+[DEBUG] [slam_toolbox] Graph size: 25
+[DEBUG] [slam_toolbox] Graph size: 25
+[DEBUG] [slam_toolbox] Graph size: 25
+[DEBUG] [slam_toolbox] Graph size: 25
+[DEBUG] [slam_toolbox] Graph size: 25
+[DEBUG] [slam_toolbox] Graph size: 26
+[DEBUG] [slam_toolbox] Graph size: 26
+[DEBUG] [slam_toolbox] Graph size: 26
+[DEBUG] [slam_toolbox] Graph size: 26
+[DEBUG] [slam_toolbox] Graph size: 27
+[DEBUG] [slam_toolbox] Graph size: 27
+[DEBUG] [slam_toolbox] Graph size: 27
+[DEBUG] [slam_toolbox] Graph size: 27
+[DEBUG] [slam_toolbox] Graph size: 27
+[DEBUG] [slam_toolbox] Graph size: 28
+[DEBUG] [slam_toolbox] Graph size: 28
+[DEBUG] [slam_toolbox] Graph size: 28
+[DEBUG] [slam_toolbox] Graph size: 28
+[DEBUG] [slam_toolbox] Graph size: 29
+[DEBUG] [slam_toolbox] Graph size: 29
+[DEBUG] [slam_toolbox] Graph size: 29
+[DEBUG] [slam_toolbox] Graph size: 29
+[DEBUG] [slam_toolbox] Graph size: 29
+[DEBUG] [slam_toolbox] Graph size: 30
+[DEBUG] [slam_toolbox] Graph size: 30
+[DEBUG] [slam_toolbox] Graph size: 30
+[DEBUG] [slam_toolbox] Graph size: 30
+[DEBUG] [slam_toolbox] Graph size: 30
+[DEBUG] [slam_toolbox] Graph size: 31
+[DEBUG] [slam_toolbox] Graph size: 31
+[DEBUG] [slam_toolbox] Graph size: 31
+[DEBUG] [slam_toolbox] Graph size: 31
+[DEBUG] [slam_toolbox] Graph size: 31
+[DEBUG] [slam_toolbox] Graph size: 32
+[DEBUG] [slam_toolbox] Graph size: 32
+[DEBUG] [slam_toolbox] Graph size: 32
+[DEBUG] [slam_toolbox] Graph size: 32
+[DEBUG] [slam_toolbox] Graph size: 32
+[DEBUG] [slam_toolbox] Graph size: 33
+[DEBUG] [slam_toolbox] Graph size: 33
+[DEBUG] [slam_toolbox] Graph size: 33
+[DEBUG] [slam_toolbox] Graph size: 33
+[DEBUG] [slam_toolbox] Graph size: 34
+[DEBUG] [slam_toolbox] Graph size: 34
+[DEBUG] [slam_toolbox] Graph size: 34
+[DEBUG] [slam_toolbox] Graph size: 34
+[DEBUG] [slam_toolbox] Graph size: 34
+[DEBUG] [slam_toolbox] Graph size: 35
+[DEBUG] [slam_toolbox] Graph size: 35
+[DEBUG] [slam_toolbox] Graph size: 35
+[DEBUG] [slam_toolbox] Graph size: 35
+[DEBUG] [slam_toolbox] Graph size: 36
+[DEBUG] [slam_toolbox] Graph size: 36
+[DEBUG] [slam_toolbox] Graph size: 36
+[DEBUG] [slam_toolbox] Graph size: 36
+[DEBUG] [slam_toolbox] Graph size: 36
+[DEBUG] [slam_toolbox] Graph size: 37
+[DEBUG] [slam_toolbox] Graph size: 37
+[DEBUG] [slam_toolbox] Graph size: 37
+[DEBUG] [slam_toolbox] Graph size: 37
+[DEBUG] [slam_toolbox] Graph size: 37
+[DEBUG] [slam_toolbox] Graph size: 38
+[DEBUG] [slam_toolbox] Graph size: 38
+[DEBUG] [slam_toolbox] Graph size: 38
+[DEBUG] [slam_toolbox] Graph size: 38
+[DEBUG] [slam_toolbox] Graph size: 39
+[DEBUG] [slam_toolbox] Graph size: 39
+[DEBUG] [slam_toolbox] Graph size: 39
+[DEBUG] [slam_toolbox] Graph size: 39
+[DEBUG] [slam_toolbox] Graph size: 39
+[DEBUG] [slam_toolbox] Graph size: 40
+[DEBUG] [slam_toolbox] Graph size: 40
+[DEBUG] [slam_toolbox] Graph size: 40
+[DEBUG] [slam_toolbox] Graph size: 40
+[DEBUG] [slam_toolbox] Graph size: 40
+[DEBUG] [slam_toolbox] Graph size: 41
+[DEBUG] [slam_toolbox] Graph size: 41
+[DEBUG] [slam_toolbox] Graph size: 41
+[DEBUG] [slam_toolbox] Graph size: 41
+[DEBUG] [slam_toolbox] Graph size: 42
+[DEBUG] [slam_toolbox] Graph size: 42
+[DEBUG] [slam_toolbox] Graph size: 42
+[DEBUG] [slam_toolbox] Graph size: 42
+[DEBUG] [slam_toolbox] Graph size: 42
+[DEBUG] [slam_toolbox] Graph size: 43
+[DEBUG] [slam_toolbox] Graph size: 43
+[DEBUG] [slam_toolbox] Graph size: 43
+[DEBUG] [slam_toolbox] Graph size: 43
+[DEBUG] [slam_toolbox] Graph size: 43
+[DEBUG] [slam_toolbox] Graph size: 44
+[DEBUG] [slam_toolbox] Graph size: 44
+[DEBUG] [slam_toolbox] Graph size: 44
+[DEBUG] [slam_toolbox] Graph size: 44
+[DEBUG] [slam_toolbox] Graph size: 44
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[DEBUG] [slam_toolbox] Graph size: 45
+[INFO] [slam_toolbox] Configuring
+[INFO] [slam_toolbox] Using solver plugin solver_plugins::CeresSolver
+[INFO] [slam_toolbox] EigenPoseGraphSolver: configured with 50 max iterations.
+[INFO] [slam_toolbox] Activating
+[DEBUG] [slam_toolbox] DeserializePoseGraph: Successfully read file.

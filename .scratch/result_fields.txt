@@ -1,0 +1,44 @@
+== ai_第一个点后回终点.py
+     57         if result.navigation_time.sec > 0:
+
+==== ai_first_point: get_result_callback ====
+  52     def get_result_callback(self, future):
+  53         # 处理结果
+  54         result = future.result().result
+  55         self.get_logger().info('导航结果: {0}'.format(result))
+  56         # 如果导航完成，设置完成标志
+  57         if result.navigation_time.sec > 0:
+  58             self.fin_flag = True
+  59             # 重新发送目标以实现循环导航
+  60             self.send_goal(self.poses)
+  61 
+  62     def feedback_callback(self, feedback_msg):
+  63         # 处理反馈信息
+  64         feedback = feedback_msg.feedback
+  65         if feedback.distance_remaining > 0.0:
+  66             self.get_logger().info(f'到目标的距离: {feedback.distance_remaining:.2f} 米')
+  67             self.distance_remaining = feedback.distance_remaining
+  68             # 如果距离目标点的距离小于 0.5 米且未暂停，停止机器人
+  69             if feedback.distance_remaining < 0.5 and not self.is_paused:
+  70                 self.get_logger().info('到达目标点，停止机器人。')
+  71                 self.is_paused = True  # 设置标志位为暂停状态
+  72                 twist = Twist()
+  73                 twist.linear.x = 0.0
+  74                 twist.angular.z = 0.0
+  75                 self.car_cmd_vel_pub.publish(twist)
+  76 
+  77     def cmd_vel_callback(self, msg):
+  78         # 如果剩余距离大于 0.5 米且未暂停，正常转发速度命令
+  79         if self.distance_remaining is not None and self.distance_remaining > 0.5 and not self.is_paused:
+  80             self.car_cmd_vel_pub.publish(msg)
+  81 
+  82 def read_waypoints_from_csv(filename):
+  83     # 从 CSV 文件读取导航点
+  84     waypoints = []
+  85     with open(filename, 'r') as f:
+  86         reader = csv.reader(f)
+  87         for row in reader:
+  88             if len(row) == 4:  # 确保每行有 x, y, z, w
+  89                 waypoints.append({
+  90                     "x": float(row[0]),
+  91                     "y": float(row[1]),

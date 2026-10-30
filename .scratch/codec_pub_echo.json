@@ -1,0 +1,74 @@
+[
+  {
+    "topic": "/codec_check/0",
+    "type": "std_msgs/msg/Empty",
+    "decoded": true,
+    "echo": ""
+  },
+  {
+    "topic": "/codec_check/1",
+    "type": "geometry_msgs/msg/PointStamped",
+    "decoded": true,
+    "echo": "header:\n  stamp: 0.000000000\n  frame_id: \"map\"\npoint: {x: 1.5, y: -2.25, z: 0.125}"
+  },
+  {
+    "topic": "/codec_check/2",
+    "type": "nav2_msgs/msg/SpeedLimit",
+    "decoded": true,
+    "echo": "header:\n  stamp: 0.000000000\n  frame_id: \"odom\"\npercentage: true\nspeed_limit: 0.35"
+  },
+  {
+    "topic": "/codec_check/3",
+    "type": "nav2_msgs/msg/CostmapUpdate",
+    "decoded": true,
+    "echo": "header:\n  stamp: 0.000000000\n  frame_id: \"odom\"\nx: 1\ny: 2\nsize_x: 3\nsize_y: 2\ndata: [6 cells]"
+  },
+  {
+    "topic": "/codec_check/4",
+    "type": "map_msgs/msg/OccupancyGridUpdate",
+    "decoded": true,
+    "echo": "header:\n  stamp: 0.000000000\n  frame_id: \"map\"\nx: 2\ny: 3\nwidth: 4\nheight: 3\ndata: [4 cells, 1 occupied, 2 free, 1 unknown]"
+  },
+  {
+    "topic": "/codec_check/5",
+    "type": "nav2_msgs/msg/CostmapFilterInfo",
+    "decoded": true,
+    "echo": "header:\n  stamp: 0.000000000\n  frame_id: \"map\"\ntype: 1\nfilter_mask_topic: \"/keepout_mask\"\nbase: 0\nmultiplier: -1"
+  },
+  {
+    "topic": "/codec_check/6",
+    "type": "nav2_msgs/msg/VoxelGrid",
+    "decoded": true,
+    "echo": "header:\n  stamp: 0.000000000\n  frame_id: \"odom\"\nsize: {x: 16, y: 16, z: 4}\nresolutions: {x: 0.05, y: 0.05, z: 0.2}\norigin: {x: 1, y: 2, z: 0}\ndata: [0 words, 0 voxels set]"
+  },
+  {
+    "topic": "/codec_check/7",
+    "type": "nav2_msgs/msg/TrackingFeedback",
+    "decoded": true,
+    "echo": "header:\n  stamp: 0.000000000\n  frame_id: \"odom\"\nposition_tracking_error: 0.05\nheading_tracking_error: 0.125\ncurrent_path_index: 7\nrobot_pose: {x: 0, y: 0}\ndistance_to_goal: 3.5\nspeed: 0.4\nremaining_path_length: 4.25"
+  },
+  {
+    "topic": "/codec_check/8",
+    "type": "nav2_msgs/msg/CollisionMonitorState",
+    "decoded": true,
+    "echo": "action_type: 2 (slowdown)\npolygon_name: \"StopPolygon\""
+  },
+  {
+    "topic": "/codec_check/9",
+    "type": "rcl_interfaces/msg/Log",
+    "decoded": true,
+    "echo": "stamp: 0.000000000\nlevel: 20 (INFO)\nname: \"planner_server\"\nmsg: \"hello rosout\"\nfile: \"planner_server.cpp\" line 417 function: \"computeControl\""
+  },
+  {
+    "topic": "/codec_check/10",
+    "type": "rcl_interfaces/msg/ParameterEvent",
+    "decoded": true,
+    "echo": "stamp: 0.000000000\nnode: \"/controller_server\""
+  },
+  {
+    "topic": "/codec_check/11",
+    "type": "visualization_msgs/msg/Marker",
+    "decoded": true,
+    "echo": "header:\n  stamp: 0.000000000\n  frame_id: \"odom\"\nns: \"slowdown\" id: 3\ntype: LINE_STRIP, action: ADD\npose: {x: 1.25, y: -0.5, z: 0}\nscale: {x: 0.1, y: 0.2, z: 1}\ncolor: {r: 1, g: 0, b: 0, a: 0.5}\npoints: [0]\ntext: \"slow\""
+  }
+]

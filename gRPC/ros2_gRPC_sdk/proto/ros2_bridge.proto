@@ -1,0 +1,247 @@
+syntax = "proto3";
+
+package ros2bridge;
+
+// Cross-platform ROS2 <-> gRPC bridge.
+//
+// A lightweight "agent" runs next to a ROS2 graph (Linux or Windows) and
+// exposes the graph over gRPC. Any other machine on the LAN (Windows or
+// Linux) can then list topics, subscribe to topics and publish to topics
+// without needing a local ROS2 installation.
+service Ros2Bridge {
+  // Liveness/version handshake.
+  rpc Ping(PingRequest) returns (PingResponse);
+
+  // Enumerate the topics currently present in the ROS2 graph.
+  rpc ListTopics(ListTopicsRequest) returns (ListTopicsResponse);
+
+  // Describe a single topic (resolves its type from the ROS2 graph).
+  rpc GetTopicInfo(GetTopicInfoRequest) returns (TopicInfo);
+
+  // Server-streaming subscription. The server pushes every message that is
+  // received on the requested topic until the client cancels the RPC.
+  rpc Subscribe(SubscribeRequest) returns (stream Message);
+
+  // --- services -----------------------------------------------------------
+  rpc ListServices(ListServicesRequest) returns (ListServicesResponse);
+  rpc GetServiceInfo(GetServiceInfoRequest) returns (ServiceInfo);
+  // One request/response round trip against a service in the remote graph.
+  // The payload is opaque bytes in the requested encoding: the caller owns
+  // the request/response schema, the bridge only transports it.
+  rpc CallService(CallServiceRequest) returns (CallServiceResponse);
+
+  // --- actions ------------------------------------------------------------
+  rpc ListActions(ListActionsRequest) returns (ListActionsResponse);
+  rpc GetActionInfo(GetActionInfoRequest) returns (ActionInfo);
+  // Hands a goal to an action server. Returns as soon as the goal has been
+  // accepted or rejected; follow the goal with ActionFeedback.
+  rpc SendActionGoal(SendActionGoalRequest) returns (SendActionGoalResponse);
+  // Server-streaming follow-up: feedback messages while the goal runs, then
+  // exactly one terminal message carrying the result at the end.
+  rpc ActionFeedback(ActionFeedbackRequest) returns (stream ActionFeedbackMessage);
+  // Polls for the result of a goal that was started with SendActionGoal.
+  rpc GetActionResult(GetActionResultRequest) returns (GetActionResultResponse);
+  rpc CancelActionGoal(CancelActionGoalRequest) returns (CancelActionGoalResponse);
+
+  // Publish a single message onto a ROS2 topic.
+  rpc Publish(PublishRequest) returns (PublishResponse);
+}
+
+message PingRequest {
+  string payload = 1;
+}
+
+message PingResponse {
+  string payload = 1;
+  string agent_version = 2;
+  string ros_distro = 3;
+}
+
+message ListTopicsRequest {
+  // Optional regular expression filter applied to topic names.
+  string name_filter = 1;
+}
+
+message TopicInfo {
+  string name = 1;
+  string type = 2;
+  int32 publisher_count = 3;
+  int32 subscriber_count = 4;
+}
+
+message ListTopicsResponse {
+  repeated TopicInfo topics = 1;
+}
+
+message GetTopicInfoRequest {
+  string name = 1;
+}
+
+message SubscribeRequest {
+  string topic = 1;
+  // Optional. When empty the agent resolves the type from the graph.
+  string type = 2;
+  // Optional. When > 0 the agent drops every message that arrives faster
+  // than this period (milliseconds). 0 means "no throttling".
+  int32 throttle_ms = 3;
+}
+
+message Message {
+  string topic = 1;
+  string type = 2;
+  // Serialized payload. For real ROS2 graphs this is a CDR-encoded
+  // `rclcpp::SerializedMessage` (including the 4 byte encapsulation header).
+  bytes data = 3;
+  string encoding = 4;
+  // Source timestamp in nanoseconds since the Unix epoch (0 when unknown).
+  int64 stamp_ns = 5;
+  uint64 sequence = 6;
+}
+
+message PublishRequest {
+  string topic = 1;
+  string type = 2;
+  bytes data = 3;
+  string encoding = 4;
+}
+
+message PublishResponse {
+  bool accepted = 1;
+  string error = 2;
+}
+
+// A service advertised in a ROS2 graph.
+message ServiceInfo {
+  string name = 1;
+  string type = 2;
+  // "local" for a service served on the agent's own machine, otherwise the
+  // peer it was announced by.
+  string source = 3;
+  int32 request_size_hint = 4;
+}
+
+message ListServicesRequest {
+  // Optional regular expression filter applied to service names.
+  string name_filter = 1;
+}
+
+message ListServicesResponse {
+  repeated ServiceInfo services = 1;
+}
+
+message GetServiceInfoRequest {
+  string name = 1;
+}
+
+message CallServiceRequest {
+  string name = 1;
+  // Optional. When empty the agent resolves the type from its graph.
+  string type = 2;
+  // Serialized request. `encoding` says how to read it.
+  bytes request = 3;
+  // "cdr" (default), "shim" (the Windows compatibility layer's own layout) or
+  // "empty" for a service whose request has no fields.
+  string encoding = 4;
+  // Give up after this long. 0 picks the agent default.
+  int32 timeout_ms = 5;
+}
+
+message CallServiceResponse {
+  bool success = 1;
+  // Set when `success` is false.
+  string error = 2;
+  bytes response = 3;
+  string encoding = 4;
+  // Wall clock the call took, for the caller's own diagnostics.
+  int64 elapsed_ns = 5;
+}
+
+// An action advertised in a ROS2 graph.
+message ActionInfo {
+  string name = 1;
+  string type = 2;
+  string source = 3;
+}
+
+message ListActionsRequest {
+  string name_filter = 1;
+  // Only report actions that currently have at least one server.
+  bool only_active = 2;
+}
+
+message ListActionsResponse {
+  repeated ActionInfo actions = 1;
+}
+
+message GetActionInfoRequest {
+  string name = 1;
+}
+
+// How a goal is doing. Mirrors action_msgs/msg/GoalStatus values so the wire
+// stays readable next to ROS2's own ActionStatus codes.
+enum GoalStatusCode {
+  GOAL_STATUS_UNKNOWN = 0;
+  GOAL_STATUS_ACCEPTED = 1;
+  GOAL_STATUS_EXECUTING = 2;
+  GOAL_STATUS_CANCELING = 3;
+  GOAL_STATUS_SUCCEEDED = 4;
+  GOAL_STATUS_CANCELED = 5;
+  GOAL_STATUS_ABORTED = 6;
+  GOAL_STATUS_REJECTED = 7;
+}
+
+message SendActionGoalRequest {
+  string name = 1;
+  string type = 2;
+  bytes goal = 3;
+  string encoding = 4;
+  int32 timeout_ms = 5;
+}
+
+message SendActionGoalResponse {
+  bool accepted = 1;
+  string error = 2;
+  // Handle for GetActionResult / ActionFeedback / CancelActionGoal.
+  string goal_id = 3;
+}
+
+message ActionFeedbackRequest {
+  string name = 1;
+  string goal_id = 2;
+}
+
+message ActionFeedbackMessage {
+  string name = 1;
+  string goal_id = 2;
+  bytes feedback = 3;
+  string encoding = 4;
+  GoalStatusCode status = 5;
+  // Only set on a terminal status.
+  bytes result = 6;
+  string error = 7;
+}
+
+message GetActionResultRequest {
+  string name = 1;
+  string goal_id = 2;
+  int32 timeout_ms = 3;
+}
+
+message GetActionResultResponse {
+  bool success = 1;
+  string error = 2;
+  bytes result = 3;
+  string encoding = 4;
+  GoalStatusCode status = 5;
+}
+
+message CancelActionGoalRequest {
+  string name = 1;
+  string goal_id = 2;
+  int32 timeout_ms = 3;
+}
+
+message CancelActionGoalResponse {
+  bool accepted = 1;
+  string error = 2;
+}

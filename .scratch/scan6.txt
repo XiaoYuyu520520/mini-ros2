@@ -1,0 +1,100 @@
+### end_3_12.py
+     3| import rclpy
+     4| from rclpy.action import ActionClient
+     5| from rclpy.node import Node
+     6| from nav2_msgs.action import NavigateThroughPoses
+     7| from geometry_msgs.msg import PoseStamped, Twist
+     8| import csv
+     9| import os
+    10| from std_srvs.srv import Trigger  # 导入 Trigger 服务
+    74| def read_waypoints_from_csv(filename):
+    77|         reader = csv.reader(f)
+    88| def main(args=None):
+    89|     rclpy.init(args=args)
+    94|     script_dir = os.path.dirname(os.path.abspath(__file__))
+    97|     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'test.csv'))
+### go copy.py
+     3| import rclpy
+     4| from rclpy.node import Node
+     5| from geometry_msgs.msg import PoseStamped
+     6| from nav_msgs.msg import Odometry, Path
+     7| from std_msgs.msg import Float64
+     8| import csv
+     9| import numpy as np
+    10| import math
+    93| def main(args=None):
+    94|     rclpy.init(args=args)
+   103|     with open('test.csv', 'r') as f:
+   104|         reader = csv.reader(f)
+### 一条路径+csv.py
+     3| import rclpy
+     4| from rclpy.action import ActionClient
+     5| from rclpy.node import Node
+     6| from nav2_msgs.action import NavigateThroughPoses
+     7| from geometry_msgs.msg import PoseStamped
+     8| import csv
+     9| import numpy as np
+    44| def read_waypoints_from_csv(filename):
+    47|         reader = csv.reader(f)
+    58| def main(args=None):
+    59|     rclpy.init(args=args)
+    64|     waypoints = read_waypoints_from_csv('test.csv')
+### 会跳过几个点.py
+     3| import rclpy
+     4| from rclpy.action import ActionClient
+     5| from rclpy.node import Node
+     6| from nav2_msgs.action import NavigateThroughPoses
+     7| from geometry_msgs.msg import PoseStamped, Twist
+     8| import csv
+     9| import os
+    10| from std_srvs.srv import Trigger  # 导入 Trigger 服务
+   124| def read_waypoints_from_csv(filename):
+   127|         reader = csv.reader(f)
+   138| def main(args=None):
+   139|     rclpy.init(args=args)
+   144|     script_dir = os.path.dirname(os.path.abspath(__file__))
+   147|     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'test.csv'))
+   148|     # waypoints = read_waypoints_fr
+### 终点不停.py
+     3| import rclpy
+     4| from rclpy.action import ActionClient
+     5| from rclpy.node import Node
+     6| from nav2_msgs.action import NavigateThroughPoses
+     7| from geometry_msgs.msg import PoseStamped
+     8| import csv
+     9| from std_srvs.srv import Trigger  # 导入 Trigger 服务
+    66| def read_waypoints_from_csv(filename):
+    69|         reader = csv.reader(f)
+    80| def main(args=None):
+    81|     rclpy.init(args=args)
+    86|     waypoints = read_waypoints_from_csv('test.csv')
+### 跑一圈以内.py
+     3| import rclpy
+     4| from rclpy.action import ActionClient
+     5| from rclpy.node import Node
+     6| from nav2_msgs.action import NavigateThroughPoses
+     7| from geometry_msgs.msg import PoseStamped, Twist
+     8| import csv
+     9| import os
+    10| from std_srvs.srv import Trigger  # 导入 Trigger 服务
+    74| def read_waypoints_from_csv(filename):
+    77|         reader = csv.reader(f)
+    88| def main(args=None):
+    89|     rclpy.init(args=args)
+    94|     script_dir = os.path.dirname(os.path.abspath(__file__))
+    97|     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'test.csv'))
+### 重复载入完成圈数.py
+     3| import rclpy
+     4| from rclpy.action import ActionClient
+     5| from rclpy.node import Node
+     6| from nav2_msgs.action import NavigateThroughPoses
+     7| from geometry_msgs.msg import PoseStamped, Twist
+     8| import csv
+     9| import os
+    10| from std_srvs.srv import Trigger  # 导入 Trigger 服务
+    94| def read_waypoints_from_csv(filename):
+    97|         reader = csv.reader(f)
+   108| def main(args=None):
+   109|     rclpy.init(args=args)
+   114|     script_dir = os.path.dirname(os.path.abspath(__file__))
+   117|     waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'test.csv'))

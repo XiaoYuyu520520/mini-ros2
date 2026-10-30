@@ -1,0 +1,9 @@
+log lines              : 2295
+goal accepted          : 1789767964.0758877
+feedback messages      : 2175
+distance walk          : 15.34 m -> 0.32 m  (min 0.03 m)
+feedbacks under 1 m    : 114, first at t=1789768029.4219658
+stop-service lines     : 1
+    t=1789768034.463153  [WARN] [1789768034.463152896] [nav_through_poses_client]: no `stop` service in this graph: the robot is not being stopped
+result                 : t=1789768037.8599215  wall=73.8 s  waypoints=9 statuses=['1'] error_code=0
+VERDICT: the script came back instead of hanging on the missing `stop` service

@@ -1,0 +1,14 @@
+set pagination off
+set confirm off
+set height 0
+set width 0
+break __cxa_throw
+commands
+silent
+printf "THROW\n"
+bt 6
+continue
+end
+continue
+detach
+quit

@@ -1,0 +1,31 @@
+[New Thread 22400.0x2a70]
+[New Thread 22400.0x6f78]
+[New Thread 22400.0x361c]
+[New Thread 22400.0x4bf8]
+[New Thread 22400.0x1668]
+[New Thread 22400.0x6228]
+[New Thread 22400.0x4a3c]
+[New Thread 22400.0x34e8]
+Catchpoint 1 (throw)
+[Thread 22400.0x34e8 exited with code 0]
+[Switching to Thread 22400.0x4bf8]
+
+Thread 5 hit Catchpoint 1 (exception thrown), 0x00007ff773445ea7 in __cxa_throw ()
+=== bad_alloc thrown ===
+#0  0x00007ff773445ea7 in __cxa_throw ()
+#1  0x00007ff773334ca2 in tf2::BufferCore::composeUpTo(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::chrono::time_point<std::chrono::_V2::system_clock, std::chrono::duration<long long, std::ratio<1ll, 1000000000ll> > > const&) const ()
+#2  0x00007ff773158e27 in tf2::BufferCore::lookupTransform(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::chrono::time_point<std::chrono::_V2::system_clock, std::chrono::duration<long long, std::ratio<1ll, 1000000000ll> > > const&, std::chrono::duration<long long, std::ratio<1ll, 1000000000ll> > const&) const [clone .isra.0] ()
+#3  0x00007ff773310fa1 in tf2_ros::MessageFilter<sensor_msgs::msg::LaserScan>::transformable(tf2_ros::MessageFilter<sensor_msgs::msg::LaserScan>::Shared&, std::shared_ptr<sensor_msgs::msg::LaserScan const> const&) ()
+#4  0x00007ff7733f2718 in std::_Function_handler<void (std::shared_ptr<sensor_msgs::msg::LaserScan const> const&), tf2_ros::MessageFilter<sensor_msgs::msg::LaserScan>::connect<message_filters::Subscriber<sensor_msgs::msg::LaserScan, rclcpp_lifecycle::LifecycleNode> >(message_filters::Subscriber<sensor_msgs::msg::LaserScan, rclcpp_lifecycle::LifecycleNode>&)::{lambda(std::shared_ptr<sensor_msgs::msg::LaserScan const> const&)#1}>::_M_invoke(std::_Any_data const&, std::shared_ptr<sensor_msgs::msg::LaserScan const> const&) ()
+#5  0x00007ff7733f824a in std::_Function_handler<void (std::shared_ptr<sensor_msgs::msg::LaserScan const>), rclcpp::Subscription<sensor_msgs::msg::LaserScan, std::allocator<void> >::Subscription<message_filters::Subscriber<sensor_msgs::msg::LaserScan, rclcpp_lifecycle::LifecycleNode>::subscribe<std::shared_ptr<rclcpp_lifecycle::LifecycleNode> >(std::shared_ptr<rclcpp_lifecycle::LifecycleNode>, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, rclcpp::QoS const&, rclcpp::SubscriptionOptions const&)::{lambda(std::shared_ptr<sensor_msgs::msg::LaserScan const>)#1}>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::shared_ptr<shm_transport::ShmChannel>, rclcpp::QoS const&, message_filters::Subscriber<sensor_msgs::msg::LaserScan, rclcpp_lifecycle::LifecycleNode>::subscribe<std::shared_ptr<rclcpp_lifecycle::LifecycleNode> >(std::shared_ptr<rclcpp_lifecycle::LifecycleNode>, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, rclcpp::QoS const&, rclcpp::SubscriptionOptions const&)::{lambda(std::shared_ptr<sensor_msgs::msg::LaserScan const>)#1}&&, unsigned int)::{lambda(std::shared_ptr<sensor_msgs::msg::LaserScan const>)#1}>::_M_invoke(std::_Any_data const&, std::shared_ptr<sensor_msgs::msg::LaserScan const>&&) ()
+#6  0x00007ff7732d9436 in rclcpp::Subscription<sensor_msgs::msg::LaserScan, std::allocator<void> >::poll() ()
+#7  0x00007ff7731ad2a8 in rclcpp::Node::spin_entities(rclcpp::CallbackGroup const*) [clone .constprop.0] ()
+#8  0x00007ff77330c3b5 in rclcpp::Executor::spin() ()
+#9  0x00007ff77340f28d in std::thread::_State_impl<std::thread::_Invoker<std::tuple<nav2::NodeThread::NodeThread(std::shared_ptr<rclcpp::node_interfaces::NodeBaseInterface>)::{lambda()#1}> > >::_M_run() ()
+#10 0x00007ff77344619f in execute_native_thread_routine ()
+#11 0x00007ff773271bad in pthread_create_wrapper ()
+#12 0x00007ff9876437b0 in wcsrchr () from C:\Windows\System32\ucrtbase.dll
+#13 0x00007ff988d8e987 in KERNEL32!BaseThreadInitThunk () from C:\Windows\System32\kernel32.dll
+#14 0x00007ff98a14c53c in ntdll!RtlUserThreadStart () from C:\Windows\SYSTEM32\ntdll.dll
+#15 0x0000000000000000 in ?? ()
+[Inferior 1 (process 22400) detached]

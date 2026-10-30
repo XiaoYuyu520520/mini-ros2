@@ -1,0 +1,54 @@
+[04:04:28] /codec_check/0                     std_msgs/msg/Empty                         decoded
+[04:04:34] /codec_check/1                     geometry_msgs/msg/PointStamped             decoded
+[04:04:34]       header:
+[04:04:34]         stamp: 0.000000000
+[04:04:34]         frame_id: "map"
+[04:04:34]       point: {x: 1.5, y: -2.25, z: 0.125}
+[04:04:40] /codec_check/2                     nav2_msgs/msg/SpeedLimit                   decoded
+[04:04:40]       header:
+[04:04:40]         stamp: 0.000000000
+[04:04:40]         frame_id: "odom"
+[04:04:40]       percentage: true
+[04:04:47] /codec_check/3                     nav2_msgs/msg/CostmapUpdate                decoded
+[04:04:47]       header:
+[04:04:47]         stamp: 0.000000000
+[04:04:47]         frame_id: "odom"
+[04:04:47]       x: 1
+[04:04:53] /codec_check/4                     map_msgs/msg/OccupancyGridUpdate           decoded
+[04:04:53]       header:
+[04:04:53]         stamp: 0.000000000
+[04:04:53]         frame_id: "map"
+[04:04:53]       x: 2
+[04:04:59] /codec_check/5                     nav2_msgs/msg/CostmapFilterInfo            decoded
+[04:04:59]       header:
+[04:04:59]         stamp: 0.000000000
+[04:04:59]         frame_id: "map"
+[04:04:59]       type: 1
+[04:05:06] /codec_check/6                     nav2_msgs/msg/VoxelGrid                    decoded
+[04:05:06]       header:
+[04:05:06]         stamp: 0.000000000
+[04:05:06]         frame_id: "odom"
+[04:05:06]       size: {x: 16, y: 16, z: 4}
+[04:05:12] /codec_check/7                     nav2_msgs/msg/TrackingFeedback             decoded
+[04:05:12]       header:
+[04:05:12]         stamp: 0.000000000
+[04:05:12]         frame_id: "odom"
+[04:05:12]       position_tracking_error: 0.05
+[04:05:18] /codec_check/8                     nav2_msgs/msg/CollisionMonitorState        decoded
+[04:05:18]       action_type: 2 (slowdown)
+[04:05:18]       polygon_name: "StopPolygon"
+[04:05:25] /codec_check/9                     rcl_interfaces/msg/Log                     decoded
+[04:05:25]       stamp: 0.000000000
+[04:05:25]       level: 20 (INFO)
+[04:05:25]       name: "planner_server"
+[04:05:25]       msg: "hello rosout"
+[04:05:31] /codec_check/10                    rcl_interfaces/msg/ParameterEvent          decoded
+[04:05:31]       stamp: 0.000000000
+[04:05:31]       node: "/controller_server"
+[04:05:38] /codec_check/11                    visualization_msgs/msg/Marker              decoded
+[04:05:38]       header:
+[04:05:38]         stamp: 0.000000000
+[04:05:38]         frame_id: "odom"
+[04:05:38]       ns: "slowdown" id: 3
+[04:05:38] 
+[04:05:38] 12 of 12 types published and read back

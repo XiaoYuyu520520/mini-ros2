@@ -1,0 +1,16 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: cat ~/.ros2_bridge_sim.pid 2>/dev/null; ps -o pid,etime,cmd -p \ 2>/dev/null; echo ---; tail -3 ~/sim.log
+1773547
+错误：improper list
+
+用法：
+ ps [选项]
+
+ Try 'ps --help <simple|list|output|threads|misc|all>'
+  or 'ps --help <s|l|o|t|m|a>'
+ for additional help text.
+
+如需了解更多细节，请阅读 ps(1)。
+---
+2026-09-19 07:35:42,375 INFO    ros2_bridge_sim.services: service /sim/reset: back to the origin
+2026-09-19 07:36:33,403 WARNING ros2_bridge_sim.sim: cmd_vel watchdog: no command for 0.52 s, stopping the car (trip 29)
+2026-09-19 07:37:18,363 WARNING ros2_bridge_sim.sim: cmd_vel watchdog: no command for 0.51 s, stopping the car (trip 30)

@@ -1,0 +1,33 @@
+shim_run: use_sim_time from the environment: 1
+PROBE the node sees 169 service(s), 71 topic(s)
+PROBE for waitUntilNav2Active amcl/get_state                                   ['lifecycle_msgs/srv/GetState']
+PROBE for waitUntilNav2Active bt_navigator/get_state                           ['lifecycle_msgs/srv/GetState']
+PROBE for clearAllCostmaps   local_costmap/clear_entirely_local_costmap       ['nav2_msgs/srv/ClearEntireCostmap']
+PROBE for clearAllCostmaps   global_costmap/clear_entirely_global_costmap     ['nav2_msgs/srv/ClearEntireCostmap']
+PROBE for lifecycleShutdown  lifecycle_manager/manage_nodes                   ['nav2_msgs/srv/ManageLifecycleNodes']
+PROBE topic amcl_pose                                        ['geometry_msgs/msg/PoseWithCovarianceStamped']
+PROBE topic initialpose                                      ['geometry_msgs/msg/PoseWithCovarianceStamped']
+PROBE topic navigate_to_pose/_action/status                  ['action_msgs/msg/GoalStatusArray']
+PROBE topic cmd_vel                                          ['geometry_msgs/msg/Twist']
+PROBE default initial_pose           NOTE  accepted=False (the class' own default, quaternion 0,0,0,0)
+[INFO] [1789766469.328706816] [basic_navigator]: Publishing Initial Pose
+PROBE setInitialPose                 PASS  pose with w=1 -> amcl_pose arrived=True
+[INFO] [1789766474.861138944] [basic_navigator]: Nav2 is ready for use!
+PROBE waitUntilNav2Active            PASS  4.0 s
+PROBE goToPose (2.0, -1.0, -0.1601822430069672, 0.9870874576374967)
+[INFO] [1789766474.864272384] [basic_navigator]: Navigating to goal: 2.0 -1.0...
+PROBE goToPose(1)                    PASS  TaskResult.SUCCEEDED in 6.8 s, 23 polls
+PROBE getFeedback                    PASS  first 2.27 m -> last 1.04 m
+PROBE getResult                      PASS  TaskResult.SUCCEEDED
+PROBE task error (0, '')
+PROBE goToPose (3.5, -1.5, -0.584710284663765, 0.8112421851755608) then cancelTask
+[INFO] [1789766481.719707136] [basic_navigator]: Navigating to goal: 3.5 -1.5...
+[INFO] [1789766487.967510016] [basic_navigator]: Canceling current task.
+PROBE cancelTask                     PASS  TaskResult.CANCELED 0.3 s after the cancel
+PROBE task error (0, '')
+PROBE clearAllCostmaps               PASS  0.0 s
+[INFO] [1789766488.315611648] [basic_navigator]: Shutting down lifecycle nodes based on lifecycle_manager.
+[INFO] [1789766488.317935616] [basic_navigator]: Shutting down /lifecycle_manager/manage_nodes
+PROBE lifecycleShutdown              PASS  10.6 s
+
+PROBE total 9 step(s): 8 pass, 0 fail, 1 other, 31.2 s

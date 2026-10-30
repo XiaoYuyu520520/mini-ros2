@@ -1,0 +1,10 @@
+usage: run_slam_demo.py [node options]
+
+  Every option is handed to slam_bridge_node; the ones worth knowing are the
+  node's own -p NAME:=VALUE, --params-file FILE, --mode async|sync and
+  --duration S. It runs in the foreground: Ctrl+C (or --duration) ends it.
+
+  -p base_frame:=base_link is preset, and withdrawn when the arguments carry
+  base_frame themselves or bring a --params-file; NAV2_SLAM_PARAMS overrides
+  the preset outright, NAV2_SLAM_EXE the binary.
+

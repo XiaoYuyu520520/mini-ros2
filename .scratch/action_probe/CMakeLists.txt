@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.16)
+project(action_probe CXX)
+set(CMAKE_CXX_STANDARD 17)
+find_package(rclcpp REQUIRED)
+find_package(rmw REQUIRED)
+find_package(rosidl_runtime_cpp REQUIRED)
+add_executable(action_probe probe.cpp)
+target_link_libraries(action_probe rclcpp::rclcpp)
+add_executable(action_probe2 probe2.cpp)
+target_link_libraries(action_probe2 rclcpp::rclcpp rmw::rmw
+  rosidl_runtime_cpp::rosidl_runtime_cpp)

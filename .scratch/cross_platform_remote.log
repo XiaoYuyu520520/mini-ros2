@@ -1,0 +1,10 @@
+[check] pushing 7704 files, 215.6 MB
+pushed
+[check] remote shim: build entry point            PASS  (4.2s)
+[check] remote shim: ctest                        PASS  (273.2s)
+[check] remote shm: ctest                         PASS  (1.1s)
+[check] remote bridge: build entry point + ctest  PASS  (4.0s)
+[check] remote bridge: control entry point        PASS  (0.2s)
+[check] remote grpc sdk: build entry point + ctest PASS  (2.2s)
+
+[check] both halves green (6 steps)

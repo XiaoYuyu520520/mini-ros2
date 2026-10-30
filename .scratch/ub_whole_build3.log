@@ -1,0 +1,90 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: set -o pipefail
+source /opt/ros/jazzy/setup.bash
+cd ~/code/CPU/code/Desktop/racecar
+rm -rf build install log
+echo "--- clean tree ---"
+ls
+echo "--- colcon build, 6 workers ---"
+colcon build --parallel-workers 6 2>&1 | tail -40
+echo "CONCOLEXIT=${PIPESTATUS[0]}"
+echo "--- install tree ---"
+ls install 2>/dev/null
+ls install/openslam_gmapping/lib 2>/dev/null
+ls install/openslam_gmapping/include/gmapping/log 2>/dev/null
+--- clean tree ---
+gmapping.bat
+gmapping.sh
+map
+map.md
+nav.bat
+nav.sh
+README.md
+save.bat
+save.sh
+src
+tools
+--- colcon build, 6 workers ---
+Starting >>> lslidar_msgs
+Starting >>> nav2_waypoint_cycle
+Starting >>> openslam_gmapping
+Finished <<< nav2_waypoint_cycle [1.53s]
+Starting >>> racecar
+Finished <<< racecar [3.46s]
+Finished <<< openslam_gmapping [6.81s]
+Starting >>> slam_gmapping
+Finished <<< lslidar_msgs [10.2s]
+Starting >>> lslidar_driver
+--- stderr: lslidar_driver
+CMake Error at CMakeLists.txt:21 (find_package):
+  By not providing "FindPCL.cmake" in CMAKE_MODULE_PATH this project has
+  asked CMake to find a package configuration file provided by "PCL", but
+  CMake did not find one.
+
+  Could not find a package configuration file provided by "PCL" with any of
+  the following names:
+
+    PCLConfig.cmake
+    pcl-config.cmake
+
+  Add the installation prefix of "PCL" to CMAKE_PREFIX_PATH or set "PCL_DIR"
+  to a directory containing one of the above files.  If "PCL" provides a
+  separate development package or SDK, be sure it has been installed.
+
+
+---
+Failed   <<< lslidar_driver [1.21s, exited with code 1]
+Aborted  <<< slam_gmapping [17.8s]
+
+Summary: 4 packages finished [24.8s]
+  1 package failed: lslidar_driver
+  1 package aborted: slam_gmapping
+  2 packages had stderr output: lslidar_driver slam_gmapping
+CONCOLEXIT=1
+--- install tree ---
+COLCON_IGNORE
+local_setup.bash
+local_setup.ps1
+local_setup.sh
+_local_setup_util_ps1.py
+_local_setup_util_sh.py
+local_setup.zsh
+lslidar_driver
+lslidar_msgs
+nav2_waypoint_cycle
+openslam_gmapping
+racecar
+setup.bash
+setup.ps1
+setup.sh
+setup.zsh
+libgridfastslam.a
+liblog.a
+libscanmatcher.a
+libsensor_base.a
+libsensor_odometry.a
+libsensor_range.a
+libutils.a
+carmenconfiguration.h
+configuration.h
+sensorlog.h
+sensorstream.h

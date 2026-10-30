@@ -1,0 +1,62 @@
+============================== s00 112 lines
+  File "E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\shim_run.py", line 143, in main
+    runpy.run_path(str(script), run_name="__main__")
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\scripts\ai_��һ�������յ�.py", line 125, in <module>
+    main()
+  File "E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\scripts\ai_��һ�������յ�.py", line 122, in main
+    rclpy.spin(client)
+  File "E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\rclpy\__init__.py", line 135, in spin
+    executors.spin(node, executor)
+  File "E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\ros2py\executor.py", line 130, in spin
+    executor.spin()
+  File "E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\ros2py\executor.py", line 68, in spin
+    self._poll(None)
+  File "E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\ros2py\executor.py", line 74, in _poll
+    handled += node.poll()
+               ^^^^^^^^^^^
+  File "E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\ros2py\node.py", line 480, in poll
+    handled += subscription.poll()
+               ^^^^^^^^^^^^^^^^^^^
+  File "E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\ros2py\node.py", line 207, in poll
+    self.callback(message)
+  File "E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\scripts\ai_��һ�������յ�.py", line 78, in cmd_vel_callback
+    if self.distance_remaining > 0.5 and not self.is_paused:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: '>' not supported between instances of 'NoneType' and 'float'
+
+-- exit 1 after 0.7 s
+
+============================== s01 84 lines
+[nav2_stack] logs: C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack
+[nav2_stack] starting map_server  (E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml)
+[nav2_stack]   map_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\map_server.log
+[nav2_stack] map_server is active
+[nav2_stack] map_server -> /map  (it is the only writer of it)
+[nav2_stack] starting amcl_bridge_node  (map -> odom)
+[nav2_stack] starting planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower
+[nav2_stack]   planner_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\planner_server.log
+[nav2_stack]   controller_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\controller_server.log
+[nav2_stack]   bt_navigator -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\bt_navigator.log
+[nav2_stack]   behavior_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\behavior_server.log
+[nav2_stack]   smoother_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\smoother_server.log
+[nav2_stack]   waypoint_follower -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\waypoint_follower.log
+[nav2_stack] starting lifecycle_manager
+[nav2_stack] planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower are active
+[nav2_stack] the stack is running; stop it with:  python bridge/scripts/run_nav2_stack.py stop
+
+-- exit 0 after 16.4 s
+
+$ E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\code\Desktop\racecar\tools\racecar_ctl.py run detct.py
+[racecar] the shim graph has a /clock publisher: use_sim_time:=true
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\shim_run.py --sim-time E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\scripts\detct.py
+shim_run: use_sim_time from the environment: 1
+[INFO] [1789769065.580761344] [nav_through_poses_clientq]: Ŀ���ѽ��� :)
+[INFO] [1789769099.817458176] [nav_through_poses_clientq]: �������: Result(error_code=307, error_msg='GridBasedplugin failed to plan from (-0.10, -0.04) [q: 0.00, 0.00, 0.71, 0.71] (yaw: 1.57) to (5.20, 1.18) [q: 0.00, 0.00, 0.00, 0.39] (yaw: 0.00): "exceeded maximum iterations"', waypoint_statuses=[WaypointStatus(waypoint_status=3, waypoint_index=0, waypoint_pose=PoseStamped(header=Header(stamp=Time(sec=0, nanosec=0), frame_id='map'), pose=Pose(position=Point(x=5.202912330627441, y=1.1775161027908325, z=-0.9204859402029413), orientation=Quaternion(x=0.0, y=0.0, z=0.0, w=0.39077568231494036))), error_code=0, error_msg=''), WaypointStatus(waypoint_status=3, waypoint_index=1, waypoint_pose=PoseStamped(header=Header(stamp=Time(sec=0, nanosec=0), frame_id='map'), pose=Pose(position=Point(x=3.0820279121398926, y=-0.29641222953796387, z=0.9751099329636406), orientation=Quaternion(x=0.0, y=0.0, z=0.0, w=0.22172193990591957))), error_code=0, error_msg=''), WaypointStatus(waypoint_status=3, waypoint_index=2, waypoint_pose=PoseStamped(header=Header(stamp=Time(sec=0, nanosec=0), frame_id='map'), pose=Pose(position=Point(x=0.0, y=-0.8, z=0.9999982953623612), orientation=Quaternion(x=0.0, y=0.0, z=0.0, w=0.001846421504385871))), error_code=0, error_msg=''), WaypointStatus(waypoint_status=3, waypoint_index=3, waypoint_pose=PoseStamped(header=Header(stamp=Time(sec=0, nanosec=0), frame_id='map'), pose=Pose(position=Point(x=0.0, y=0.0, z=0.0), orientation=Quaternion(x=0.0, y=0.0, z=0.0, w=0.0))), error_code=0, error_msg='')])
+
+!! killed after 300 s
+
+-- exit -9 after 300.0 s
+

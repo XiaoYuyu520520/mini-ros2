@@ -1,0 +1,63 @@
+[bt_navigator] E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\nav.yaml: 24 parameter(s) for node 'bt_navigator'
+[INFO] [bt_navigator] 
+	bt_navigator lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [bt_navigator] Creating
+[bt_navigator] 'bt_navigator' started with 24 parameter override(s)
+[bt_navigator] waiting for external lifecycle transitions on /bt_navigator/change_state
+[INFO] [bt_navigator] Configuring
+[INFO] [bt_navigator] Creating navigator id navigate_to_pose of type nav2_bt_navigator::NavigateToPoseNavigator
+[WARN] [bt_navigator] error_code_name_prefixes parameters were not set. Using default values of: assisted_teleop backup compute_path dock_robot drive_on_heading follow_object follow_path nav_thru_poses nav_to_pose spin undock_robot wait
+Make sure these match your BT and there are not other sources of error codes youreported to your application
+[INFO] [bt_navigator_navigate_to_pose_rclcpp_node] 
+	bt_navigator_navigate_to_pose_rclcpp_node lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [bt_navigator] Creating navigator id navigate_through_poses of type nav2_bt_navigator::NavigateThroughPosesNavigator
+[WARN] [bt_navigator] error_code_name_prefixes parameters were not set. Using default values of: assisted_teleop backup compute_path dock_robot drive_on_heading follow_object follow_path nav_thru_poses nav_to_pose spin undock_robot wait
+Make sure these match your BT and there are not other sources of error codes youreported to your application
+[INFO] [bt_navigator_navigate_through_poses_rclcpp_node] 
+	bt_navigator_navigate_through_poses_rclcpp_node lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [bt_navigator] Activating
+[INFO] [bt_navigator] Created BT from ID: NavigateToPoseWReplanning
+[INFO] [bt_navigator] Created BT from ID: NavigateThroughPosesWReplanning
+[INFO] [bt_navigator] Creating bond (bt_navigator) to lifecycle manager.
+[INFO] [bt_navigator] Begin navigating from current location (0.00, 0.00) to (2.00, -1.00)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (1.21, -0.50) to (3.50, -1.50)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (2.60, -1.18) to (4.00, -3.00)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (3.49, -2.49) to (2.50, -4.00)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (2.41, -3.97) to (1.20, -3.00)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (1.03, -3.01) to (0.50, -1.50)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (0.40, -1.54) to (0.00, -0.50)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (-0.67, -0.40) to (-1.50, -0.20)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (-0.67, -0.40) to (-2.50, -1.20)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (-2.66, -1.17) to (2.00, -1.00)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (1.06, -1.05) to (3.50, -1.50)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (2.59, -1.37) to (4.00, -3.00)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (3.42, -2.33) to (2.50, -4.00)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (2.34, -3.92) to (1.20, -3.00)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (1.08, -3.03) to (0.50, -1.50)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (0.42, -1.51) to (0.00, -0.50)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (-0.67, -0.05) to (-1.50, -0.20)
+[INFO] [bt_navigator] Goal succeeded
+[INFO] [bt_navigator] Begin navigating from current location (-0.67, -0.05) to (-2.50, -1.20)
+[INFO] [bt_navigator] Goal succeeded

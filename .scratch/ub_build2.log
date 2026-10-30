@@ -1,0 +1,74 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: cd ~/code/CPU/code/Desktop/racecar
+echo "== maps dir =="
+ls -l src/racecar/maps/
+echo "== du =="
+du -sh src/racecar/maps src/racecar/map map 2>/dev/null
+echo "== build racecar + waypoint_cycle =="
+source /opt/ros/jazzy/setup.bash
+colcon build --packages-select racecar nav2_waypoint_cycle --parallel-workers 6 2>&1 | tail -25
+echo "== install tree =="
+ls install/racecar/share/racecar 2>/dev/null
+ls install/racecar/lib/racecar 2>/dev/null | head -25
+echo "== python import check =="
+source install/setup.bash
+python3 -c "import nav2_msgs.action, nav2_simple_commander, std_srvs.srv; print('imports ok')" 2>&1 | tail -3
+ros2 pkg prefix racecar 2>&1 | tail -2
+== maps dir ==
+总计 15632
+-rw-rw-r-- 1 ubuntu ubuntu 16000054  3月 30  2025 ceshi1.pgm
+-rw-rw-r-- 1 ubuntu ubuntu      136  9月 19 05:54 ceshi1.yaml
+== du ==
+16M	src/racecar/maps
+512K	src/racecar/map
+1.4M	map
+== build racecar + waypoint_cycle ==
+Starting >>> nav2_waypoint_cycle
+Finished <<< nav2_waypoint_cycle [1.16s]
+Starting >>> racecar
+Finished <<< racecar [2.50s]
+
+Summary: 2 packages finished [3.80s]
+== install tree ==
+cmake
+config
+environment
+hook
+launch
+local_setup.bash
+local_setup.dsv
+local_setup.sh
+local_setup.zsh
+map
+maps
+package.bash
+package.dsv
+package.ps1
+package.sh
+package.xml
+package.zsh
+rviz
+第二个点nav2打断，然后转圈圈.py
+会跳过几个点.py
+跑一圈以内.py
+人工智能赛道初始版本代码.py
+一条路径+csv.py
+终点不停.py
+重复载入完成圈数.py
+ai_第一个点后回终点.py
+ai_test1.csv
+ai_test2.csv
+ai_test.csv
+detct.py
+end_3_12.py
+get.py
+go_2c.py
+go一条路径.py
+goal_l.py
+go copy_多点需要切换.py
+go copy.py
+go.py
+sim_room12.csv
+== python import check ==
+not found: "/home/ubuntu/code/CPU/code/Desktop/racecar/install/openslam_gmapping/share/openslam_gmapping/local_setup.bash"
+imports ok
+/home/ubuntu/code/CPU/code/Desktop/racecar/install/racecar

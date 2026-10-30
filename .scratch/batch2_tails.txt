@@ -1,0 +1,146 @@
+========================== s04 132
+[INFO] [1789772814.991801600] [multi_goals]: Received valid plan.
+
+[INFO] [1789772816.037596160] [multi_goals]: Received valid plan.
+
+[INFO] [1789772817.100980224] [multi_goals]: Received valid plan.
+
+[INFO] [1789772818.162133248] [multi_goals]: Received valid plan.
+
+[INFO] [1789772850.715366912] [multi_goals]: Received valid plan.
+
+[INFO] [1789772851.788790528] [multi_goals]: Received valid plan.
+
+[INFO] [1789772852.844053504] [multi_goals]: Received valid plan.
+
+[INFO] [1789772853.898193408] [multi_goals]: Received valid plan.
+
+[INFO] [1789772855.530757888] [multi_goals]: Received valid plan.
+
+[INFO] [1789772856.587925504] [multi_goals]: Received valid plan.
+
+[INFO] [1789772857.637875456] [multi_goals]: Received valid plan.
+
+[INFO] [1789772859.039798272] [multi_goals]: Received valid plan.
+
+[INFO] [1789772860.106885120] [multi_goals]: Received valid plan.
+
+[INFO] [1789772861.166081024] [multi_goals]: Received valid plan.
+
+[INFO] [1789772862.209634816] [multi_goals]: Received valid plan.
+
+[INFO] [1789772863.256941056] [multi_goals]: Received valid plan.
+
+[INFO] [1789772864.653695488] [multi_goals]: Received valid plan.
+
+[INFO] [1789772865.699688448] [multi_goals]: Received valid plan.
+
+[INFO] [1789772866.747108096] [multi_goals]: Received valid plan.
+
+[INFO] [1789772867.806486272] [multi_goals]: Received valid plan.
+
+[INFO] [1789772868.867666432] [multi_goals]: Received valid plan.
+
+[INFO] [1789772869.929661440] [multi_goals]: Received valid plan.
+
+[INFO] [1789772871.008630784] [multi_goals]: Received valid plan.
+
+[INFO] [1789772872.070842880] [multi_goals]: Received valid plan.
+
+[INFO] [1789772873.116805888] [multi_goals]: Received valid plan.
+
+
+========================== s07 129
+Distance to goal: 1.47 meters
+
+Distance to goal: 1.31 meters
+
+Distance to goal: 1.11 meters
+
+Reached waypoint 2: (2.531, -2.07)
+
+Sending goal to point (4.18, -3.071)
+
+Distance to goal: 2.92 meters
+
+Distance to goal: 2.92 meters
+
+Distance to goal: 2.77 meters
+
+Distance to goal: 2.66 meters
+
+Distance to goal: 2.59 meters
+
+Distance to goal: 2.39 meters
+
+Distance to goal: 2.31 meters
+
+Distance to goal: 2.23 meters
+
+Distance to goal: 2.02 meters
+
+Distance to goal: 1.88 meters
+
+Distance to goal: 1.77 meters
+
+Distance to goal: 1.70 meters
+
+Distance to goal: 1.52 meters
+
+Distance to goal: 1.37 meters
+
+Distance to goal: 1.23 meters
+
+Distance to goal: 1.10 meters
+
+Reached waypoint 3: (4.18, -3.071)
+
+All waypoints completed!
+
+
+-- exit 0 after 32.1 s
+
+========================== s05 87
+[nav2_stack]   planner_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\planner_server.log
+
+[nav2_stack]   controller_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\controller_server.log
+
+[nav2_stack]   bt_navigator -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\bt_navigator.log
+
+[nav2_stack]   behavior_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\behavior_server.log
+
+[nav2_stack]   smoother_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\smoother_server.log
+
+[nav2_stack]   waypoint_follower -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\waypoint_follower.log
+
+[nav2_stack] starting lifecycle_manager
+
+[nav2_stack] planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower are active
+
+[nav2_stack] the stack is running; stop it with:  python bridge/scripts/run_nav2_stack.py stop
+
+
+-- exit 0 after 16.5 s
+
+$ E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\code\Desktop\racecar\tools\racecar_ctl.py run go copy_多点需要切换.py
+[racecar] the shim graph has a /clock publisher: use_sim_time:=true
+
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\shim_run.py --sim-time E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\scripts\go copy_多点需要切换.py
+
+shim_run: use_sim_time from the environment: 1
+
+[INFO] [1789772850.679105792] [basic_navigator]: Navigating to goal: 1.178 -1.089...
+
+[INFO] [1789772855.494696192] [basic_navigator]: Navigating to goal: 2.531 -2.07...
+
+[INFO] [1789772864.620154624] [basic_navigator]: Navigating to goal: 4.18 -3.071...
+
+[INFO] [1789772875.068334848] [basic_navigator]: Shutting down lifecycle nodes based on lifecycle_manager.
+
+[INFO] [1789772875.073323520] [basic_navigator]: Shutting down /lifecycle_manager/manage_nodes
+
+
+!! killed after 240 s
+
+-- exit -9 after 240.0 s
+

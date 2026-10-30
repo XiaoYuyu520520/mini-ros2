@@ -1,0 +1,32 @@
+LEN 21554
+defs: ['_action_parts', 'Seq', 'Arr', 'alignment_of', 'spec_alignment', 'encode', '_write', '_write_field', '_write_sequence', '_write_array', 'decode', '_read', '_read_field', 'make_time', 'make_header', 'yaw_to_quaternion', 'quaternion_to_yaw', 'make_pose', 'make_twist', 'make_transform_stamped', 'diagonal36', '_as_str']
+tem, "%s[%d]" % (where, index))
+
+
+# --------------------------------------------------------------------------
+# Decoding
+# --------------------------------------------------------------------------
+
+def decode(data: bytes | bytearray | memoryview, type_name: str) -> dict:
+    """Decode CDR bytes (with encapsulation header) into a dict."""
+    reader = CdrReader(data)
+    message = _read(reader, type_name)
+    if not reader.at_end:
+        raise CdrError("%d trailing byte(s) after %s" % (reader.remaining, type_name))
+    return message
+
+
+def _read(reader: CdrReader, type_name: str) -> dict:
+    fields = SCHEMAS.get(type_name)
+    if fields is None:
+        raise UnsupportedType(type_name)
+    return {name: _read_field(reader, spec, "%s.%s" % (type_name, name)) for name, spec in fields}
+
+
+def _read_field(reader: CdrReader, spec: Any, where: str) -> Any:
+    if isinstance(spec, tuple):
+        if spec[0] == "seq":
+            count = reader.sequence_length()
+            if isinstance(spec[1], str) and spec[1] in PRIMITIVES:
+                return reader.prim_array(spec[1], count)
+     

@@ -1,0 +1,93 @@
+$ ros2 node list
+/lifecycle_manager
+/ros2_bridge_daemon
+/vector_object_server
+[exit 0]
+
+$ ros2 topic list -t
+/clock [rosgraph_msgs/msg/Clock]
+/cmd_vel [geometry_msgs/msg/Twist]
+/lifecycle_manager/managed_nodes_activated [std_msgs/msg/Bool]
+/map [nav_msgs/msg/OccupancyGrid]
+/odom [nav_msgs/msg/Odometry]
+/parameter_events [rcl_interfaces/msg/ParameterEvent]
+/scan [sensor_msgs/msg/LaserScan]
+/tf [tf2_msgs/msg/TFMessage]
+/tf_static [tf2_msgs/msg/TFMessage]
+/vo_map [nav_msgs/msg/OccupancyGrid]
+[exit 0]
+
+$ ros2 topic info vo_map
+Type: nav_msgs/msg/OccupancyGrid
+
+Publisher count: 1
+Subscription count: 0
+Source: local (shared memory)
+[exit 0]
+
+$ ros2 service list
+/lifecycle_manager/describe_parameters
+/lifecycle_manager/get_parameter_types
+/lifecycle_manager/get_parameters
+/lifecycle_manager/is_active
+/lifecycle_manager/list_parameters
+/lifecycle_manager/manage_nodes
+/lifecycle_manager/set_parameters
+/lifecycle_manager/set_parameters_atomically
+/sim/enable
+/sim/pause
+/sim/reset
+/sim/resume
+/sim/set_initial_pose
+/sim/set_paused
+/sim/status
+/vector_object_server/add_shapes
+/vector_object_server/change_state
+/vector_object_server/describe_parameters
+/vector_object_server/get_available_states
+/vector_object_server/get_available_transitions
+/vector_object_server/get_parameter_types
+/vector_object_server/get_parameters
+/vector_object_server/get_shapes
+/vector_object_server/get_state
+/vector_object_server/list_parameters
+/vector_object_server/remove_shapes
+/vector_object_server/set_parameters
+/vector_object_server/set_parameters_atomically
+[exit 0]
+
+===== vector_object_server.exe stdout =====
+[vector_object_server] E:\DesktopData\app\code\CPU\nav2\nav2_extracted\navigation2-1.5.1\nav2_map_server\params\vector_object_server_params.yaml: 38 parameter(s) for node 'vector_object_server'
+[INFO] [vector_object_server] 
+	vector_object_server lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[vector_object_server] 'vector_object_server' started with 39 parameter override(s)
+[vector_object_server] waiting for external lifecycle transitions on /vector_object_server/change_state
+[INFO] [vector_object_server] Configuring
+[INFO] [vector_object_server] [Poly] No UUID is specified for shape. Generating a new one: 38a7e8b5-4e67-4523-b4c5-6104da694105
+[INFO] [vector_object_server] [Circle] No UUID is specified for shape. Generating a new one: 6ebf1bf4-56bd-4276-84ae-38cf7073cb25
+[INFO] [vector_object_server] Activating
+[INFO] [vector_object_server] Publishing map once
+[INFO] [vector_object_server] Creating bond (vector_object_server) to lifecycle manager.
+[INFO] [vector_object_server] Running Nav2 LifecycleNode rcl preshutdown (vector_object_server)
+[INFO] [vector_object_server] Deactivating
+[INFO] [vector_object_server] Destroying bond (vector_object_server) to lifecycle manager.
+[INFO] [vector_object_server] Cleaning up
+[INFO] [vector_object_server] Destroying bond (vector_object_server) to lifecycle manager.
+[INFO] [vector_object_server] Destroying
+
+===== lifecycle_manager.exe stdout =====
+[lifecycle_manager] E:\DesktopData\app\code\CPU\.scratch\vo_lifecycle.yaml: 8 parameter(s) for node 'lifecycle_manager'
+[INFO] [lifecycle_manager] Creating
+[lifecycle_manager] 'lifecycle_manager' started with 8 parameter override(s)
+[INFO] [lifecycle_manager] [34m[1mCreating and initializing lifecycle publishers[0m[0m
+[INFO] [lifecycle_manager] [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[INFO] [lifecycle_manager] [34m[1mCreating and initializing lifecycle service servers[0m[0m
+[INFO] [lifecycle_manager] [34m[1mStarting managed nodes bringup...[0m[0m
+[INFO] [lifecycle_manager] [34m[1mConfiguring vector_object_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mActivating vector_object_server[0m[0m
+[INFO] [lifecycle_manager] [34m[1mManaged nodes are active[0m[0m
+[INFO] [lifecycle_manager] Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager)
+[INFO] [lifecycle_manager] Destroying lifecycle_manager
+

@@ -1,0 +1,66 @@
+edited Run_nav.launch.py, eol=CRLF
+   1| import os
+   2| from ament_index_python.packages import get_package_share_directory
+   3| from launch_ros.actions import Node
+   4| from launch import LaunchDescription
+   5| from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+   6| from launch.launch_description_sources import PythonLaunchDescriptionSource
+   7| from launch.substitutions import LaunchConfiguration
+   8| 
+   9| def generate_launch_description():
+  10|     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+  11| 
+  12|         
+  13|     # nav_dir = get_package_share_directory('racecar')
+  14|     # nav_launchr = os.path.join(nav_dir, 'launch')
+  15| 
+  16|     racecar_dir = get_package_share_directory('racecar')
+  17|     racecar_launchr = os.path.join(racecar_dir, 'launch')
+  18| 
+  19|     # 默认地图取自包自己的 share 目录（CMakeLists 把 map/ 装了进去），不再是真机上那条
+  20|     # /root/Desktop/racecar/... 绝对路径 —— 那条只在车上的源码树里成立，装完之后
+  21|     # `ros2 launch` 是找不到这个文件的。`racecar_ctl.py nav` 无论怎样都会传 `map:=`，
+  22|     # 这里管的是裸启动那一次。
+  23|     map_file = LaunchConfiguration(
+  24|         'map',
+  25|         default=os.path.join(racecar_dir, 'map', 'ai_map.yaml')
+  26|     )
+  27|  
+  28|     param_dir = os.path.join(racecar_dir, 'config')
+  29|     param_file = LaunchConfiguration('params', default=os.path.join(
+  30|         param_dir, 'nav.yaml'))
+  31| 
+  32| 
+  33|     return LaunchDescription([
+  34|         DeclareLaunchArgument(
+  35|             'map',
+  36|             default_value=map_file,
+  37|             description='Full path to map file to load'),
+  38| 
+  39|         DeclareLaunchArgument(
+  40|             'params',
+  41|             default_value=param_file,
+  42|             description='Full path to param file to load'),
+  43|         Node(
+  44|             name='waypoint_cycle',
+  45|             package='nav2_waypoint_cycle',
+  46|             executable='nav2_waypoint_cycle',
+  47|         ),
+  48| 
+  49|         IncludeLaunchDescription(
+  50|             PythonLaunchDescriptionSource(
+  51|                 [racecar_launchr, '/bringup_launch.py']),
+  52|             launch_arguments={
+  53|                 'map': map_file,
+  54|                 'use_sim_time': use_sim_time,
+  55|                 'params_file': param_file}.items(),
+  56|         ),
+  57| 
+  58|     ])
+  59| 
+  60| 
+  61| 
+  62| # 上面那条坑已经修掉了：`os.path.join(map_dir, '/某绝对路径')` 里，后一个参数以 / 开头时
+  63| # `os.path.join` 会把前面的全部丢掉，于是不管 map_dir 是什么都指向那个绝对路径 —— 而且指的
+  64| # 还是**源码目录**，不是 install 目录。现在 map 和 params 两个默认值都取 share 目录下的相对位置。
+  65| 

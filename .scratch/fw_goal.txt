@@ -1,0 +1,9 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: sed -n '1,8p' /opt/ros/jazzy/share/nav2_msgs/action/FollowWaypoints.action
+#goal definition
+uint32 number_of_loops
+uint32 goal_index 0
+geometry_msgs/PoseStamped[] poses
+---
+#result definition
+
+# Error codes

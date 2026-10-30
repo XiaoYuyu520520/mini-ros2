@@ -1,0 +1,238 @@
+==============================================================================
+### code\Desktop\racecar\src\nav2_waypoint_cycle\setup.py
+   1| from setuptools import setup
+   2| 
+   3| package_name = 'nav2_waypoint_cycle'
+   4| 
+   5| setup(
+   6|     name=package_name,
+   7|     version='0.0.0',
+   8|     packages=[package_name],
+   9|     data_files=[
+  10|         ('share/ament_index/resource_index/packages',
+  11|             ['resource/' + package_name]),
+  12|         ('share/' + package_name, ['package.xml']),
+  13|     ],
+  14|     install_requires=['setuptools'],
+  15|     zip_safe=True,
+  16|     maintainer='noah',
+  17|     maintainer_email='noah@todo.todo',
+  18|     description='TODO: Package description',
+  19|     license='TODO: License declaration',
+  20|     tests_require=['pytest'],
+  21|     entry_points={
+  22|         'console_scripts': [
+  23|             'nav2_waypoint_cycle = nav2_waypoint_cycle.waypoint_cycle:main'
+  24|         ],
+  25|     },
+  26| )
+==============================================================================
+### code\Desktop\racecar\src\racecar\launch\bringup_launch.py
+   1| # Copyright (c) 2018 Intel Corporation
+   2| #
+   3| # Licensed under the Apache License, Version 2.0 (the "License");
+   4| # you may not use this file except in compliance with the License.
+   5| # You may obtain a copy of the License at
+   6| #
+   7| #     http://www.apache.org/licenses/LICENSE-2.0
+   8| #
+   9| # Unless required by applicable law or agreed to in writing, software
+  10| # distributed under the License is distributed on an "AS IS" BASIS,
+  11| # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  12| # See the License for the specific language governing permissions and
+  13| # limitations under the License.
+  14| 
+  15| import os
+  16| 
+  17| from ament_index_python.packages import get_package_share_directory
+  18| 
+  19| from launch import LaunchDescription
+  20| from launch.actions import (DeclareLaunchArgument, GroupAction,
+  21|                             IncludeLaunchDescription, SetEnvironmentVariable)
+  22| from launch.conditions import IfCondition
+  23| from launch.launch_description_sources import PythonLaunchDescriptionSource
+  24| from launch.substitutions import LaunchConfiguration, PythonExpression
+  25| from launch_ros.actions import Node
+  26| from launch_ros.actions import PushRosNamespace
+  27| from launch_ros.descriptions import ParameterFile
+  28| from nav2_common.launch import RewrittenYaml, ReplaceString
+  29| 
+  30| 
+  31| def generate_launch_description():
+  32|     # Get the launch directory
+  33|     bringup_dir = get_package_share_directory('nav2_bringup')
+  34|     launch_dir = os.path.join(bringup_dir, 'launch')
+  35| 
+  36|     # Create the launch configuration variables
+  37|     namespace = LaunchConfiguration('namespace')
+  38|     use_namespace = LaunchConfiguration('use_namespace')
+  39|     slam = LaunchConfiguration('slam')
+  40|     map_yaml_file = LaunchConfiguration('map')
+  41|     use_sim_time = LaunchConfiguration('use_sim_time')
+  42|     params_file = LaunchConfiguration('params_file')
+  43|     autostart = LaunchConfiguration('autostart')
+  44|     use_composition = LaunchConfiguration('use_composition')
+  45|     use_respawn = LaunchConfiguration('use_respawn')
+  46|     log_level = LaunchConfiguration('log_level')
+  47| 
+  48| 
+  49|     lifecycle_nodes = [
+  50|         # 'controller_server',
+  51|         # 'smoother_server',
+  52|         'planner_server',
+  53|         # 'behavior_server',
+  54|         'bt_navigator',
+  55|         # 'waypoint follower'
+  56|         # 'velocity smoother'
+  57|         
+  58|         # Map fully qualified names
+  59|     ]   
+  60| 
+  61| 
+  62| 
+  63|     # Map fully qualified names to relative ones so the node's namespace can be prepended.
+  64|     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
+  65|     # https://github.com/ros/geometry2/issues/32
+  66|     # https://github.com/ros/robot_state_publisher/pull/30
+  67|     # TODO(orduno) Substitute with `PushNodeRemapping`
+  68|     #              https://github.com/ros2/launch_ros/issues/56
+  69|     remappings = [('/tf', 'tf'),
+  70|                   ('/tf_static', 'tf_static')]
+  71| 
+  72|     # Create our own temporary YAML files that include substitutions
+  73|     param_substitutions = {
+  74|         'use_sim_time': use_sim_time,
+  75|         'yaml_filename': map_yaml_file}
+  76| 
+  77|     # Only it applys when `use_namespace` is True.
+  78|     # '<robot_namespace>' keyword shall be replaced by 'namespace' launch argument
+  79|     # in config file 'nav2_multirobot_params.yaml' as a default & example.
+  80|     # User defined config file should contain '<robot_namespace>' keyword for the replacements.
+  81| 
+  82|     configured_params = ParameterFile(
+  83|         RewrittenYaml(
+  84|             source_file=params_file,
+  85|             root_key=namespace,
+  86|             param_rewrites=param_substitutions,
+  87|             convert_types=True),
+  88|         allow_substs=True)
+  89| 
+  90|     stdout_linebuf_envvar = SetEnvironmentVariable(
+  91|         'RCUTILS_LOGGING_BUFFERED_STREAM', '1')
+  92| 
+  93|     declare_namespace_cmd = DeclareLaunchArgument(
+  94|         'namespace',
+  95|         default_value='',
+  96|         description='Top-level namespace')
+  97| 
+  98|     declare_use_namespace_cmd = DeclareLaunchArgument(
+  99|         'use_namespace',
+ 100|         default_value='false',
+ 101|         description='Whether to apply a namespace to the navigation stack')
+ 102| 
+ 103|     declare_slam_cmd = DeclareLaunchArgument(
+ 104|         'slam',
+ 105|         default_value='False',
+ 106|         description='Whether run a SLAM')
+ 107| 
+ 108|     declare_map_yaml_cmd = DeclareLaunchArgument(
+ 109|         'map',
+ 110|         description='Full path to map yaml file to load')
+ 111| 
+ 112|     declare_use_sim_time_cmd = DeclareLaunchArgument(
+ 113|         'use_sim_time',
+ 114|         default_value='false',
+ 115|         description='Use simulation (Gazebo) clock if true')
+ 116| 
+ 117|     declare_params_file_cmd = DeclareLaunchArgument(
+ 118|         'params_file',
+ 119|         default_value=os.path.join(bringup_dir, 'params', 'nav2_params.yaml'),
+ 120|         description='Full path to the ROS2 parameters file to use for all launched nodes')
+ 121| 
+ 122|     declare_autostart_cmd = DeclareLaunchArgument(
+ 123|         'autostart', default_value='true',
+ 124|         description='Automatically startup the nav2 stack')
+ 125| 
+ 126|     declare_use_composition_cmd = DeclareLaunchArgument(
+ 127|         'use_composition', default_value='True',
+ 128|         description='Whether to use composed bringup')
+ 129| 
+ 130|     declare_use_respawn_cmd = DeclareLaunchArgument(
+ 131|         'use_respawn', default_value='False',
+ 132|         description='Whether to respawn if a node crashes. Applied when composition is disabled.')
+ 133| 
+ 134|     declare_log_level_cmd = DeclareLaunchArgument(
+ 135|         'log_level', default_value='info',
+ 136|         description='log level')
+ 137| 
+ 138|     # Specify the actions
+ 139|     bringup_cmd_group = GroupAction([
+ 140|         PushRosNamespace(
+ 141|             condition=IfCondition(use_namespace),
+ 142|             namespace=namespace),
+ 143| 
+ 144|         Node(
+ 145|             condition=IfCondition(use_composition),
+ 146|             name='nav2_container',
+ 147|             package='rclcpp_components',
+ 148|             executable='component_container_isolated',
+ 149|             parameters=[configured_params, {'autostart': autostart}],
+ 150|             arguments=['--ros-args', '--log-level', log_level],
+ 151|             remappings=remappings,
+ 152|             output='screen'),
+ 153| 
+ 154|         IncludeLaunchDescription(
+ 155|             PythonLaunchDescriptionSource(os.path.join(launch_dir, 'slam_launch.py')),
+ 156|             condition=IfCondition(slam),
+ 157|             launch_arguments={'namespace': namespace,
+ 158|                               'use_sim_time': use_sim_time,
+ 159|                               'autostart': autostart,
+ 160|                               'use_respawn': use_respawn,
+ 161|                               'params_file': params_file}.items()),
+ 162| 
+ 163|         IncludeLaunchDescription(
+ 164|             PythonLaunchDescriptionSource(os.path.join(launch_dir,
+ 165|                                                        'localization_launch.py')),
+ 166|             condition=IfCondition(PythonExpression(['not ', slam])),
+ 167|             launch_arguments={'namespace': namespace,
+ 168|                               'map': map_yaml_file,
+ 169|                               'use_sim_time': use_sim_time,
+ 170|                               'autostart': autostart,
+ 171|                               'params_file': params_file,
+ 172|                               'use_composition': use_composition,
+ 173|                               'use_respawn': use_respawn,
+ 174|                               'container_name': 'nav2_container'}.items()),
+ 175| 
+ 176|         IncludeLaunchDescription(
+ 177|             PythonLaunchDescriptionSource(os.path.join(launch_dir, 'navigation_launch.py')),
+ 178|             launch_arguments={'namespace': namespace,
+ 179|                               'use_sim_time': use_sim_time,
+ 180|                               'autostart': autostart,
+ 181|                               'params_file': params_file,
+ 182|                               'use_composition': use_composition,
+ 183|                               'use_respawn': use_respawn,
+ 184|                               'container_name': 'nav2_container'}.items()),
+ 185|     ])
+ 186| 
+ 187|     # Create the launch description and populate
+ 188|     ld = LaunchDescription()
+ 189| 
+ 190|     # Set environment variables
+ 191|     ld.add_action(stdout_linebuf_envvar)
+ 192| 
+ 193|     # Declare the launch options
+ 194|     ld.add_action(declare_namespace_cmd)
+ 195|     ld.add_action(declare_use_namespace_cmd)
+ 196|     ld.add_action(declare_slam_cmd)
+ 197|     ld.add_action(declare_map_yaml_cmd)
+ 198|     ld.add_action(declare_use_sim_time_cmd)
+ 199|     ld.add_action(declare_params_file_cmd)
+ 200|     ld.add_action(declare_autostart_cmd)
+ 201|     ld.add_action(declare_use_composition_cmd)
+ 202|     ld.add_action(declare_use_respawn_cmd)
+ 203|     ld.add_action(declare_log_level_cmd)
+ 204| 
+ 205|     # Add the actions to launch all of the navigation nodes
+ 206|     ld.add_action(bringup_cmd_group)
+ 207| 
+ 208|     return ld

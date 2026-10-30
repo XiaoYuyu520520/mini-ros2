@@ -1,0 +1,69 @@
+[ubuntu_ssh] ubuntu@192.168.1.113: set -o pipefail
+source /opt/ros/jazzy/setup.bash
+cd ~/code/CPU/code/Desktop/racecar
+rm -rf build install log
+echo "--- clean tree ---"
+ls
+echo "--- colcon build, 6 workers ---"
+colcon build --parallel-workers 6 2>&1 | tail -40
+echo "CONCOLEXIT=${PIPESTATUS[0]}"
+echo "--- install tree ---"
+ls install 2>/dev/null
+ls install/openslam_gmapping/lib 2>/dev/null
+ls install/openslam_gmapping/include/gmapping/log 2>/dev/null
+--- clean tree ---
+gmapping.bat
+gmapping.sh
+map
+map.md
+nav.bat
+nav.sh
+README.md
+save.bat
+save.sh
+src
+tools
+--- colcon build, 6 workers ---
+Starting >>> lslidar_msgs
+Starting >>> nav2_waypoint_cycle
+Starting >>> openslam_gmapping
+Finished <<< nav2_waypoint_cycle [4.55s]
+Starting >>> racecar
+--- stderr: openslam_gmapping
+/home/ubuntu/code/CPU/code/Desktop/racecar/src/openslam_gmapping/log/sensorlog.cpp: In member function ‘GMapping::OrientedPoint GMapping::SensorLog::boundingBox(double&, double&, double&, double&) const’:
+/home/ubuntu/code/CPU/code/Desktop/racecar/src/openslam_gmapping/log/sensorlog.cpp:129:49: error: cannot ‘dynamic_cast’ ‘reading’ (of type ‘const class GMapping::SensorReading*’) to type ‘const class GMapping::OdometryReading*’ (source type is not polymorphic)
+  129 |                 const OdometryReading* odometry=dynamic_cast<const OdometryReading*> (reading);
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/ubuntu/code/CPU/code/Desktop/racecar/src/openslam_gmapping/log/sensorlog.cpp:135:50: error: cannot ‘dynamic_cast’ ‘reading’ (of type ‘const class GMapping::SensorReading*’) to type ‘const class GMapping::RangeReading*’ (source type is not polymorphic)
+  135 |                 const RangeReading* rangeReading=dynamic_cast<const RangeReading*> (reading);
+      |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+gmake[2]: *** [log/CMakeFiles/log.dir/build.make:90：log/CMakeFiles/log.dir/sensorlog.cpp.o] 错误 1
+gmake[2]: *** 正在等待未完成的任务....
+gmake[1]: *** [CMakeFiles/Makefile2:412：log/CMakeFiles/log.dir/all] 错误 2
+gmake[1]: *** 正在等待未完成的任务....
+gmake: *** [Makefile:146：all] 错误 2
+---
+Failed   <<< openslam_gmapping [5.88s, exited with code 2]
+Aborted  <<< lslidar_msgs [6.79s]
+Aborted  <<< racecar [2.88s]
+
+Summary: 1 package finished [7.65s]
+  1 package failed: openslam_gmapping
+  2 packages aborted: lslidar_msgs racecar
+  1 package had stderr output: openslam_gmapping
+  2 packages not processed
+CONCOLEXIT=2
+--- install tree ---
+COLCON_IGNORE
+local_setup.bash
+local_setup.ps1
+local_setup.sh
+_local_setup_util_ps1.py
+_local_setup_util_sh.py
+local_setup.zsh
+nav2_waypoint_cycle
+openslam_gmapping
+setup.bash
+setup.ps1
+setup.sh
+setup.zsh

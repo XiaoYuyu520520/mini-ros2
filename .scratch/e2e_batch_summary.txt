@@ -1,0 +1,179 @@
+
+===== batch 2026-09-19 06:03:03 =====
+
+--- s02  end_3_12.py sim_room12.csv  exit=1 wall=0.3 s
+  log lines 110, feedback 0, goal accepted 1789769002.312943360
+  result: NONE
+  | # s02 : end_3_12.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] nothing was running
+  | request:
+  noisy lines 93
+
+--- s15  跑一圈以内.py sim_room12.csv  exit=1 wall=0.7 s
+  log lines 111, feedback 0, goal accepted 1789769023.439427584
+  result: NONE
+  | # s15 : 跑一圈以内.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 94
+
+--- s00  ai_第一个点后回终点.py   exit=1 wall=0.7 s
+  log lines 111, feedback 0, goal accepted NO
+  result: NONE
+  | # s00 : ai_第一个点后回终点.py 
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 94
+
+--- s01  detct.py   exit=-9 wall=300.0 s
+  log lines 83, feedback 0, goal accepted NO
+  result t=1789769099.817458176 wall=-1.0 s waypoints=4 statuses=['3'] error_code=307
+  | # s01 : detct.py 
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64
+
+===== batch 2026-09-19 06:10:40 =====
+
+--- s02  end_3_12.py sim_room12.csv  exit=0 wall=73.6 s
+  log lines 2398, feedback 0, goal accepted 1789769460.142320896
+  result t=1789769533.488856576 wall=73.3 s waypoints=9 statuses=['1'] error_code=0
+  | # s02 : end_3_12.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 63
+
+--- s00  ai_第一个点后回终点.py sim_room12.csv  exit=1 wall=76.3 s
+  log lines 2512, feedback 0, goal accepted NO
+  result t=1789769629.445866240 wall=-1.0 s waypoints=9 statuses=['1'] error_code=0
+  | # s00 : ai_第一个点后回终点.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 91
+
+--- s11  人工智能赛道初始版本代码.py sim_room12.csv  exit=-9 wall=240.0 s
+  log lines 3136, feedback 0, goal accepted 1789769653.367593472
+  result t=1789769750.449330432 wall=97.1 s waypoints=9 statuses=['1', '3'] error_code=106
+  | # s11 : 人工智能赛道初始版本代码.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64
+
+===== batch 2026-09-19 06:18:27 =====
+
+--- s15  跑一圈以内.py sim_room12.csv  exit=-9 wall=240.0 s
+  log lines 2397, feedback 0, goal accepted 1789769927.877840640
+  result t=1789770001.161029888 wall=73.3 s waypoints=9 statuses=['1'] error_code=0
+  | # s15 : 跑一圈以内.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64
+
+--- s01  detct.py sim_room12.csv  exit=-9 wall=240.0 s
+  log lines 1316, feedback 0, goal accepted NO
+  result t=1789770226.948912640 wall=-1.0 s waypoints=4 statuses=['1'] error_code=0
+  | # s01 : detct.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64
+
+--- s13  第二个点nav2打断，然后转圈圈.py sim_room12.csv  exit=-9 wall=240.0 s
+  log lines 1330, feedback 0, goal accepted NO
+  result t=1789770488.318682624 wall=-1.0 s waypoints=4 statuses=['1'] error_code=0
+  | # s13 : 第二个点nav2打断，然后转圈圈.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64
+
+===== batch 2026-09-19 06:32:43 =====
+
+--- s00  ai_第一个点后回终点.py sim_room12.csv  exit=-9 wall=300.0 s
+  log lines 8067, feedback 0, goal accepted NO
+  result t=1789771083.232261376 wall=-1.0 s waypoints=9 statuses=['1'] error_code=0
+  | # s00 : ai_第一个点后回终点.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64
+
+===== batch 2026-09-19 06:38:03 =====
+
+--- s16  重复载入完成圈数.py sim_room12.csv  exit=-9 wall=600.0 s
+  log lines 2413, feedback 0, goal accepted 1789771104.422108928
+  result t=1789771178.007200768 wall=73.6 s waypoints=9 statuses=['1'] error_code=0
+  | # s16 : 重复载入完成圈数.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64
+
+--- s12  会跳过几个点.py sim_room12.csv  exit=-9 wall=600.0 s
+  log lines 605, feedback 0, goal accepted 1789771725.068987392
+  result t=1789771797.946394368 wall=72.9 s waypoints=9 statuses=['1'] error_code=0
+  | # s12 : 会跳过几个点.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64
+
+===== batch 2026-09-19 07:00:43 =====
+
+--- s09  go一条路径.py   exit=0 wall=49.3 s
+  log lines 1632, feedback 1551, goal accepted 1789772463.504354816
+  first feedback poses_remaining=3 distance=0.00 m passed=0
+  last  feedback poses_remaining=1 distance=0.17 m passed=2
+  poses_remaining seen [1, 2, 3]
+  result t=1789772512.584975104 wall=49.1 s waypoints=3 statuses=['1'] error_code=0
+  | # s09 : go一条路径.py 
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 63
+
+--- s04  go copy.py sim_room12.csv  exit=-9 wall=240.0 s
+  log lines 89, feedback 0, goal accepted NO
+  result: NONE
+  | # s04 : go copy.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64
+
+--- s07  go_2c.py   exit=0 wall=32.1 s
+  log lines 128, feedback 0, goal accepted NO
+  result: NONE
+  | # s07 : go_2c.py 
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 107
+
+--- s05  go copy_多点需要切换.py   exit=-9 wall=240.0 s
+  log lines 86, feedback 0, goal accepted NO
+  result: NONE
+  | # s05 : go copy_多点需要切换.py 
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64
+
+===== batch 2026-09-19 07:13:06 =====
+
+--- s08  goal_l.py sim_room12.csv  exit=-9 wall=240.0 s
+  log lines 1312, feedback 0, goal accepted NO
+  result t=1789773246.224112640 wall=-1.0 s waypoints=4 statuses=['1'] error_code=0
+  | # s08 : goal_l.py sim_room12.csv
+  | [racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+  | [nav2_stack] stopping the previous stack
+  | [nav2_stack] stopped
+  noisy lines 64

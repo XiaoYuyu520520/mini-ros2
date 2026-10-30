@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\ADMINI~1\AppData\Local\Temp\gk3.py", line 5, in <module>
+    io.open(r"E:\DesktopData\app\code\CPU\.scratch\pyprocs.txt","w",encoding="utf-8").write(ps.stdout)
+    ^^
+NameError: name 'io' is not defined. Did you mean: 'id'? Or did you forget to import 'io'?

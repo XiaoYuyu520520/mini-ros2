@@ -1,0 +1,48 @@
+=== 1. restart the daemon without /map, so SLAM owns the map ===
+[ros2_bridge] stopping daemon
+[ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+--- topic list -t ---
+/clock [rosgraph_msgs/msg/Clock]
+/cmd_vel [geometry_msgs/msg/Twist]
+/odom [nav_msgs/msg/Odometry]
+/scan [sensor_msgs/msg/LaserScan]
+/tf [tf2_msgs/msg/TFMessage]
+/tf_static [tf2_msgs/msg/TFMessage]
+=== 2. put the car back at the origin ===
+request:
+(empty)
+response:
+success: true
+message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+=== 3. slam_toolbox on the Windows side ===
+slam_demo.bat pid 35996
+=== 4. drive the car around a square ===
+  leg 1 drive: result: SUCCEEDED
+  leg 1 turn : result: SUCCEEDED
+  leg 2 drive: result: SUCCEEDED
+  leg 2 turn : result: SUCCEEDED
+  leg 3 drive: result: SUCCEEDED
+  leg 3 turn : result: SUCCEEDED
+  leg 4 drive: result: SUCCEEDED
+  leg 4 turn : result: SUCCEEDED
+request:
+(empty)
+response:
+success: true
+message: "x=0.129 y=-0.150 theta=0.097 cmd=(0.00, 0.00) paused=false"
+=== 5. pull /slam_map out of shared memory ===
+'map_dump.exe' is not recognized as an internal or external command,
+operable program or batch file.
+=== 6. what the node itself logged ===
+[slam_bridge_node] /tf_static carries the laser frame
+[INFO] [slam_toolbox] Configuring
+[INFO] [slam_toolbox] Using solver plugin solver_plugins::CeresSolver
+[INFO] [slam_toolbox] EigenPoseGraphSolver: configured with 50 max iterations.
+[INFO] [slam_toolbox] Activating
+[slam_bridge_node] sync active: /scan -> /slam_map, base_link frame, resolution 0.0500, map every 10.0 s, scan buffer 10, with scan matching, with loop closing
+[WARN] [slam_toolbox] maximum laser range setting (25.0 m) exceeds the capabilities of the used Lidar (12.0 m)
+Registering sensor: [Custom Described Lidar]
+Unregistering sensor: Custom Described Lidar
+
+=== 7. stop the daemon ===
+[ros2_bridge] stopping daemon

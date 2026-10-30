@@ -1,0 +1,255 @@
+# Copyright (c) 2019 Open Source Robotics Foundation, Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#
+#    * Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#
+#    * Neither the name of the copyright holder nor the names of its
+#      contributors may be used to endorse or promote products derived from
+#      this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+
+from geometry_msgs.msg import TransformStamped
+import pytest
+import rclpy
+from tf2_ros import ConnectivityException
+from tf2_ros import ExtrapolationException
+from tf2_ros import LookupException
+from tf2_ros.buffer import Buffer
+from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
+from tf2_ros.static_transform_listener import StaticTransformListener
+from tf2_ros.transform_broadcaster import TransformBroadcaster
+from tf2_ros.transform_listener import TransformListener
+
+
+def build_transform(target_frame, source_frame, stamp, translation_x=42.0):
+    transform = TransformStamped()
+    transform.header.frame_id = target_frame
+    transform.header.stamp = stamp
+    transform.child_frame_id = source_frame
+
+    transform.transform.translation.x = translation_x
+    transform.transform.translation.y = -3.14
+    transform.transform.translation.z = 0.0
+    transform.transform.rotation.w = 1.0
+    transform.transform.rotation.x = 0.0
+    transform.transform.rotation.y = 0.0
+    transform.transform.rotation.z = 0.0
+
+    return transform
+
+
+class TestBroadcasterAndListener:
+
+    @classmethod
+    def setup_class(cls):
+        rclpy.init()
+
+        cls.buffer = Buffer()
+        cls.node = rclpy.create_node('test_broadcaster_listener')
+        cls.broadcaster = TransformBroadcaster(cls.node)
+        cls.static_broadcaster = StaticTransformBroadcaster(cls.node)
+        cls.listener = TransformListener(
+            buffer=cls.buffer, node=cls.node, spin_thread=False)
+        cls.static_listener = StaticTransformListener(
+            buffer=cls.buffer, node=cls.node, spin_thread=False)
+
+        cls.executor = rclpy.executors.SingleThreadedExecutor()
+        cls.executor.add_node(cls.node)
+
+    @classmethod
+    def teardown_class(cls):
+        cls.executor.remove_node(cls.node)
+        cls.node.destroy_node()
+        rclpy.shutdown()
+
+    def setup_method(self, method):
+        self.buffer = Buffer()
+        self.listener.buffer = self.buffer
+        self.static_listener.buffer = self.buffer
+
+    def broadcast_transform(self, target_frame, source_frame, time_stamp):
+        broadcast_transform = build_transform(
+            target_frame=target_frame, source_frame=source_frame, stamp=time_stamp)
+
+        self.broadcaster.sendTransform(broadcast_transform)
+
+        self.executor.spin_once()
+
+        return broadcast_transform
+
+    def broadcast_static_transform(self, target_frame, source_frame, time_stamp,
+                                   translation_x=42.0):
+        broadcast_transform = build_transform(
+            target_frame=target_frame, source_frame=source_frame, stamp=time_stamp,
+            translation_x=translation_x)
+
+        self.static_broadcaster.sendTransform(broadcast_transform)
+
+        self.executor.spin_once()
+
+        return broadcast_transform
+
+    def test_extrapolation_exception(self):
+        self.broadcast_transform(
+            target_frame='foo', source_frame='bar',
+            time_stamp=rclpy.time.Time(seconds=0.3, nanoseconds=0).to_msg())
+
+        self.broadcast_transform(
+            target_frame='foo', source_frame='bar',
+            time_stamp=rclpy.time.Time(seconds=0.2, nanoseconds=0).to_msg())
+
+        with pytest.raises(ExtrapolationException) as excinfo:
+            self.buffer.lookup_transform(
+                target_frame='foo', source_frame='bar',
+                time=rclpy.time.Time(seconds=0.1, nanoseconds=0).to_msg())
+
+        assert 'Lookup would require extrapolation into the past' in str(excinfo.value)
+
+        with pytest.raises(ExtrapolationException) as excinfo:
+            self.buffer.lookup_transform(
+                target_frame='foo', source_frame='bar',
+                time=rclpy.time.Time(seconds=0.4, nanoseconds=0).to_msg())
+
+        assert 'Lookup would require extrapolation into the future' in str(excinfo.value)
+
+    def static_transform_listener_rclpy_node(self):
+        node = rclpy.create_node('test_broadcaster_listener')
+        buffer = Buffer()
+
+        tfl = StaticTransformListener(buffer=buffer, node=node, spin_thread=False)
+        assert tfl == self.static_listener
+
+    def test_broadcaster_and_listener(self):
+        time_stamp = rclpy.time.Time(seconds=1, nanoseconds=0).to_msg()
+
+        broadcasted_transform = self.broadcast_transform(
+            target_frame='foo', source_frame='bar', time_stamp=time_stamp)
+
+        listened_transform = self.buffer.lookup_transform(
+            target_frame='foo', source_frame='bar', time=time_stamp)
+
+        assert broadcasted_transform == listened_transform
+
+        # Execute a coroutine
+        listened_transform_async = None
+        coro = self.buffer.lookup_transform_async(
+            target_frame='foo', source_frame='bar', time=time_stamp)
+        try:
+            coro.send(None)
+        except StopIteration as e:
+            # The coroutine finished; store the result
+            coro.close()
+            listened_transform_async = e.value
+
+        assert broadcasted_transform == listened_transform_async
+
+    def test_static_broadcaster_and_listener(self):
+        def compare_transforms(received_tf, expected_tf):
+            assert expected_tf.header.frame_id == received_tf.header.frame_id
+            assert expected_tf.child_frame_id == received_tf.child_frame_id
+            assert expected_tf.transform.translation == received_tf.transform.translation
+            assert expected_tf.transform.rotation == received_tf.transform.rotation
+
+        def lookup_with_retry(target, source, time_obj, expected_x, timeout_total=5.0):
+            """Poll the buffer until the transform matches the expected X value."""
+            start_time = self.node.get_clock().now()
+            timeout_duration = rclpy.duration.Duration(seconds=timeout_total)
+            last_exception = None
+
+            while (self.node.get_clock().now() - start_time) < timeout_duration:
+                try:
+                    tf = self.buffer.lookup_transform(target, source, time_obj)
+                    if abs(tf.transform.translation.x - expected_x) < 1e-3:
+                        return tf
+                except (LookupException, ConnectivityException,
+                        ExtrapolationException) as e:
+                    last_exception = e
+                self.executor.spin_once(timeout_sec=0.05)
+            if last_exception:
+                raise last_exception
+            return self.buffer.lookup_transform(target, source, time_obj)
+
+        # broadcasting initial static transformation
+        broadcasted_tf = self.broadcast_static_transform(
+            target_frame='foo', source_frame='bar',
+            time_stamp=rclpy.time.Time(seconds=1.1, nanoseconds=0).to_msg())
+
+        listened_tf = self.buffer.lookup_transform(
+            target_frame='foo', source_frame='bar',
+            time=rclpy.time.Time(seconds=1.5, nanoseconds=0).to_msg())
+
+        listened_tf = lookup_with_retry(
+            target='foo', source='bar',
+            time_obj=rclpy.time.Time(seconds=1.5, nanoseconds=0).to_msg(),
+            expected_x=42.0)
+
+        assert broadcasted_tf.header.stamp.sec == 1
+        assert broadcasted_tf.header.stamp.nanosec == 100000000
+
+        assert listened_tf.header.stamp.sec == 1
+        assert listened_tf.header.stamp.nanosec == 500000000
+
+        compare_transforms(received_tf=listened_tf, expected_tf=broadcasted_tf)
+
+        # updating a previously sent transform
+        broadcasted_updated_tf = self.broadcast_static_transform(
+            target_frame='foo', source_frame='bar',
+            time_stamp=rclpy.time.Time(seconds=2.1, nanoseconds=0).to_msg(),
+            translation_x=24.0)
+
+        listened_updated_tf = lookup_with_retry(
+            target='foo', source='bar',
+            time_obj=rclpy.time.Time(seconds=2.5, nanoseconds=0).to_msg(),
+            expected_x=24.0)
+
+        assert broadcasted_updated_tf.header.stamp.sec == 2
+        assert broadcasted_updated_tf.header.stamp.nanosec == 100000000
+
+        assert listened_updated_tf.header.stamp.sec == 2
+        assert listened_updated_tf.header.stamp.nanosec == 500000000
+
+        compare_transforms(received_tf=listened_updated_tf, expected_tf=broadcasted_updated_tf)
+
+        # adding another transform (clearing the listener buffer since the broadcaster is expected
+        # to repeat the first transform)
+        self.buffer.clear()
+
+        broadcasted_second_tf = self.broadcast_static_transform(
+            target_frame='foo', source_frame='qux',
+            time_stamp=rclpy.time.Time(seconds=3.1, nanoseconds=0).to_msg())
+
+        listened_first_tf = lookup_with_retry('foo', 'bar',
+                                              rclpy.time.Time(seconds=3.5).to_msg(),
+                                              expected_x=24.0)
+        listened_second_tf = lookup_with_retry('foo', 'qux',
+                                               rclpy.time.Time(seconds=3.5).to_msg(),
+                                               expected_x=10.0)
+
+        assert listened_first_tf.header.stamp.sec == 3
+        assert listened_first_tf.header.stamp.nanosec == 500000000
+
+        compare_transforms(received_tf=listened_first_tf, expected_tf=broadcasted_updated_tf)
+
+        assert listened_second_tf.header.stamp.sec == 3
+        assert listened_second_tf.header.stamp.nanosec == 500000000
+
+        compare_transforms(received_tf=listened_second_tf, expected_tf=broadcasted_second_tf)

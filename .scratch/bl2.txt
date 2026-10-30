@@ -1,0 +1,35 @@
+  72|     # Create our own temporary YAML files that include substitutions
+  73|     param_substitutions = {
+  74|         'use_sim_time': use_sim_time,
+  75|         'yaml_filename': map_yaml_file}
+  76| 
+  77|     # Only it applys when `use_namespace` is True.
+  78|     # '<robot_namespace>' keyword shall be replaced by 'namespace' launch argument
+  79|     # in config file 'nav2_multirobot_params.yaml' as a default & example.
+  80|     # User defined config file should contain '<robot_namespace>' keyword for the replacements.
+  81| 
+  82|     configured_params = ParameterFile(
+  83|         RewrittenYaml(
+  84|             source_file=params_file,
+  85|             root_key=namespace,
+  86|             param_rewrites=param_substitutions,
+  87|             convert_types=True),
+  88|         allow_substs=True)
+  89| 
+  90|     stdout_linebuf_envvar = SetEnvironmentVariable(
+  91|         'RCUTILS_LOGGING_BUFFERED_STREAM', '1')
+  92| 
+  93|     declare_namespace_cmd = DeclareLaunchArgument(
+  94|         'namespace',
+  95|         default_value='',
+  96|         description='Top-level namespace')
+  97| 
+  98|     declare_use_namespace_cmd = DeclareLaunchArgument(
+  99|         'use_namespace',
+ 100|         default_value='false',
+ 101|         description='Whether to apply a namespace to the navigation stack')
+ 102| 
+ 103|     declare_slam_cmd = DeclareLaunchArgument(
+ 104|         'slam',
+ 105|         default_value='False',
+ 106|         description='Whether run a SLAM')

@@ -1,0 +1,4 @@
+rounds 2000, reader opens 31828
+write temp      775.52 ms total
+MoveFileEx ok   340.82 ms over 1079   | fail   207.94 ms over 921
+Replace ok     1170.82 ms over 921   | fail     0.00 ms over 0

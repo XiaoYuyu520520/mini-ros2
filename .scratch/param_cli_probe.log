@@ -1,0 +1,15 @@
+[03:41:14] === daemon, default mirrors ===
+[03:41:14] [ros2_bridge] starting daemon --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[03:41:16] topics: /clock /cmd_vel /map /odom /scan /tf /tf_static
+[03:41:16] === a localisation node to set parameters on ===
+[03:41:26] === a list through `ros2 param set` ===
+[03:41:26] set  -> Set parameter successful
+[03:41:26] get  -> DoubleArray value is: [1.5, -2.5, 0.25]
+[03:41:26] === a name that merely contains brackets ===
+[03:41:26] set  -> Set parameter successful
+[03:41:27] get  -> String value is: C:/maps/a[2]/walls.yaml
+[03:41:27] === an empty list is still refused, with the reason ===
+[03:41:27] set  -> [ros2] cannot read '[]': an empty list has no element type (`rcl_interfaces` has no not-set array); write a list with at least one value in it
+[03:41:27] === cleanup ===
+[03:41:27] topics: /clock /cmd_vel /initialpose /map /odom /scan /tf /tf_static
+saved .scratch\param_cli_probe.out

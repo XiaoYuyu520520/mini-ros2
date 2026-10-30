@@ -1,0 +1,409 @@
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [11, 49] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.003725600
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [11, 49] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000400100
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [11, 49] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.003020900
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [11, 49] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000455300
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [11, 49] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.002564800
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [11, 49] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000459400
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Received request for goal acceptance
+[DEBUG] [controller_server] [follow_path] [ActionServer] Receiving a new goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] Executing goal asynchronously.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Executing the goal...
+[INFO] [controller_server] Received a goal, begin computing control effort.
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] Providing path to the controller MPPIFollowPath
+[DEBUG] [controller_server] Path end point is (2.55, 0.00)
+[DEBUG] [controller_server] Publishing velocity at time 7718.20
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [11, 49] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000466400
+[DEBUG] [controller_server] Publishing velocity at time 7718.24
+[DEBUG] [controller_server] Publishing velocity at time 7718.30
+[DEBUG] [controller_server] Publishing velocity at time 7718.36
+[DEBUG] [controller_server] Publishing velocity at time 7718.40
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [11, 50] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000424100
+[DEBUG] [controller_server] Publishing velocity at time 7718.44
+[DEBUG] [controller_server] Publishing velocity at time 7718.48
+[DEBUG] [controller_server] Publishing velocity at time 7718.56
+[DEBUG] [controller_server] Publishing velocity at time 7718.60
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [10, 49] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000432400
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Publishing velocity at time 7718.64
+[DEBUG] [controller_server] Publishing velocity at time 7718.70
+[DEBUG] [controller_server] Publishing velocity at time 7718.74
+[DEBUG] [controller_server] Publishing velocity at time 7718.80
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [10, 50] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000437600
+[DEBUG] [controller_server] Publishing velocity at time 7718.86
+[DEBUG] [controller_server] Publishing velocity at time 7718.90
+[DEBUG] [controller_server] Publishing velocity at time 7718.94
+[DEBUG] [controller_server] Publishing velocity at time 7718.98
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [10, 50] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000398500
+[DEBUG] [controller_server] Publishing velocity at time 7719.00
+[DEBUG] [controller_server] Publishing velocity at time 7719.04
+[DEBUG] [controller_server] Publishing velocity at time 7719.08
+[DEBUG] [controller_server] Publishing velocity at time 7719.14
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [10, 49] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.003290600
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Received request for goal acceptance
+[DEBUG] [controller_server] [follow_path] [ActionServer] Receiving a new goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] An older goal is active, moving the new goal to a pending slot.
+[INFO] [controller_server] Passing new path to controller.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Cancelling the previous goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] Preempted goal
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] Providing path to the controller MPPIFollowPath
+[DEBUG] [controller_server] Path end point is (2.55, 0.00)
+[DEBUG] [controller_server] Publishing velocity at time 7719.20
+[DEBUG] [controller_server] Publishing velocity at time 7719.24
+[DEBUG] [controller_server] Publishing velocity at time 7719.28
+[DEBUG] [controller_server] Publishing velocity at time 7719.34
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [9, 50] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000367800
+[DEBUG] [controller_server] Publishing velocity at time 7719.38
+[DEBUG] [controller_server] Publishing velocity at time 7719.44
+[DEBUG] [controller_server] Publishing velocity at time 7719.48
+[DEBUG] [controller_server] Publishing velocity at time 7719.54
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [7, 50] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000465100
+[DEBUG] [controller_server] Publishing velocity at time 7719.58
+[DEBUG] [controller_server] Publishing velocity at time 7719.64
+[DEBUG] [controller_server] Publishing velocity at time 7719.70
+[DEBUG] [controller_server] Publishing velocity at time 7719.74
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [5, 50] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000460500
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Publishing velocity at time 7719.78
+[DEBUG] [controller_server] Publishing velocity at time 7719.84
+[DEBUG] [controller_server] Publishing velocity at time 7719.88
+[DEBUG] [controller_server] Publishing velocity at time 7719.94
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [3, 49] y: [11, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.003653000
+[DEBUG] [controller_server] Publishing velocity at time 7719.98
+[DEBUG] [controller_server] Publishing velocity at time 7720.00
+[DEBUG] [controller_server] Publishing velocity at time 7720.02
+[DEBUG] [controller_server] Publishing velocity at time 7720.08
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [2, 49] y: [11, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000477900
+[DEBUG] [controller_server] Publishing velocity at time 7720.14
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Received request for goal acceptance
+[DEBUG] [controller_server] [follow_path] [ActionServer] Receiving a new goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] An older goal is active, moving the new goal to a pending slot.
+[INFO] [controller_server] Passing new path to controller.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Cancelling the previous goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] Preempted goal
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] Providing path to the controller MPPIFollowPath
+[DEBUG] [controller_server] Path end point is (2.55, 0.00)
+[DEBUG] [controller_server] Publishing velocity at time 7720.18
+[DEBUG] [controller_server] Publishing velocity at time 7720.24
+[DEBUG] [controller_server] Publishing velocity at time 7720.28
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 49] y: [12, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000382500
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Publishing velocity at time 7720.32
+[DEBUG] [controller_server] Publishing velocity at time 7720.38
+[DEBUG] [controller_server] Publishing velocity at time 7720.44
+[DEBUG] [controller_server] Publishing velocity at time 7720.46
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000398200
+[DEBUG] [controller_server] Publishing velocity at time 7720.52
+[DEBUG] [controller_server] Publishing velocity at time 7720.58
+[DEBUG] [controller_server] Publishing velocity at time 7720.64
+[DEBUG] [controller_server] Publishing velocity at time 7720.68
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 49] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.002967400
+[DEBUG] [controller_server] Publishing velocity at time 7720.74
+[DEBUG] [controller_server] Publishing velocity at time 7720.78
+[DEBUG] [controller_server] Publishing velocity at time 7720.82
+[DEBUG] [controller_server] Publishing velocity at time 7720.88
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [11, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000360500
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Publishing velocity at time 7720.94
+[DEBUG] [controller_server] Publishing velocity at time 7720.98
+[DEBUG] [controller_server] Publishing velocity at time 7721.00
+[DEBUG] [controller_server] Publishing velocity at time 7721.02
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [11, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000448700
+[DEBUG] [controller_server] Publishing velocity at time 7721.06
+[DEBUG] [controller_server] Publishing velocity at time 7721.12
+[DEBUG] [controller_server] Publishing velocity at time 7721.18
+[DEBUG] [controller_server] Publishing velocity at time 7721.22
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [11, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000469800
+[DEBUG] [controller_server] Publishing velocity at time 7721.26
+[DEBUG] [controller_server] Publishing velocity at time 7721.32
+[DEBUG] [controller_server] Publishing velocity at time 7721.36
+[DEBUG] [controller_server] Publishing velocity at time 7721.42
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 49] y: [11, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.003186200
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Publishing velocity at time 7721.46
+[DEBUG] [controller_server] Publishing velocity at time 7721.52
+[DEBUG] [controller_server] Publishing velocity at time 7721.56
+[DEBUG] [controller_server] Publishing velocity at time 7721.62
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [10, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000415600
+[DEBUG] [controller_server] Publishing velocity at time 7721.68
+[DEBUG] [controller_server] Publishing velocity at time 7721.72
+[DEBUG] [controller_server] Publishing velocity at time 7721.76
+[DEBUG] [controller_server] Publishing velocity at time 7721.82
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 49] y: [10, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000385300
+[DEBUG] [controller_server] Publishing velocity at time 7721.88
+[DEBUG] [controller_server] Publishing velocity at time 7721.92
+[DEBUG] [controller_server] Publishing velocity at time 7721.98
+[DEBUG] [controller_server] Publishing velocity at time 7722.00
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Received request for goal acceptance
+[DEBUG] [controller_server] [follow_path] [ActionServer] Receiving a new goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] An older goal is active, moving the new goal to a pending slot.
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 49] y: [10, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000368400
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[INFO] [controller_server] Passing new path to controller.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Cancelling the previous goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] Preempted goal
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] Providing path to the controller MPPIFollowPath
+[DEBUG] [controller_server] Path end point is (2.55, 0.00)
+[DEBUG] [controller_server] Publishing velocity at time 7722.04
+[DEBUG] [controller_server] Publishing velocity at time 7722.08
+[DEBUG] [controller_server] Publishing velocity at time 7722.14
+[DEBUG] [controller_server] Publishing velocity at time 7722.18
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [9, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.003598600
+[DEBUG] [controller_server] Publishing velocity at time 7722.22
+[DEBUG] [controller_server] Publishing velocity at time 7722.28
+[DEBUG] [controller_server] Publishing velocity at time 7722.34
+[DEBUG] [controller_server] Publishing velocity at time 7722.38
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [8, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000793800
+[DEBUG] [controller_server] Publishing velocity at time 7722.44
+[DEBUG] [controller_server] Publishing velocity at time 7722.48
+[DEBUG] [controller_server] Publishing velocity at time 7722.52
+[DEBUG] [controller_server] Publishing velocity at time 7722.58
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [9, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000486700
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Publishing velocity at time 7722.64
+[DEBUG] [controller_server] Publishing velocity at time 7722.68
+[DEBUG] [controller_server] Publishing velocity at time 7722.72
+[DEBUG] [controller_server] Publishing velocity at time 7722.78
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [8, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000497400
+[DEBUG] [controller_server] Publishing velocity at time 7722.84
+[DEBUG] [controller_server] Publishing velocity at time 7722.88
+[DEBUG] [controller_server] Publishing velocity at time 7722.94
+[DEBUG] [controller_server] Publishing velocity at time 7722.98
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 49] y: [7, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.004299100
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Received request for goal acceptance
+[DEBUG] [controller_server] [follow_path] [ActionServer] Receiving a new goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] An older goal is active, moving the new goal to a pending slot.
+[DEBUG] [controller_server] Publishing velocity at time 7723.00
+[INFO] [controller_server] Passing new path to controller.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Cancelling the previous goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] Preempted goal
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] Providing path to the controller MPPIFollowPath
+[DEBUG] [controller_server] Path end point is (2.55, 0.00)
+[DEBUG] [controller_server] Publishing velocity at time 7723.02
+[DEBUG] [controller_server] Publishing velocity at time 7723.08
+[DEBUG] [controller_server] Publishing velocity at time 7723.12
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 49] y: [8, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000421900
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Publishing velocity at time 7723.16
+[DEBUG] [controller_server] Publishing velocity at time 7723.22
+[DEBUG] [controller_server] Publishing velocity at time 7723.26
+[DEBUG] [controller_server] Publishing velocity at time 7723.32
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [7, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000529000
+[DEBUG] [controller_server] Publishing velocity at time 7723.38
+[DEBUG] [controller_server] Publishing velocity at time 7723.42
+[DEBUG] [controller_server] Publishing velocity at time 7723.48
+[DEBUG] [controller_server] Publishing velocity at time 7723.54
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [7, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000507900
+[DEBUG] [controller_server] Publishing velocity at time 7723.58
+[DEBUG] [controller_server] Publishing velocity at time 7723.62
+[DEBUG] [controller_server] Publishing velocity at time 7723.66
+[DEBUG] [controller_server] Publishing velocity at time 7723.72
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [7, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.003931500
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Publishing velocity at time 7723.78
+[DEBUG] [controller_server] Publishing velocity at time 7723.82
+[DEBUG] [controller_server] Publishing velocity at time 7723.88
+[DEBUG] [controller_server] Publishing velocity at time 7723.92
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 49] y: [6, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000454900
+[DEBUG] [controller_server] Publishing velocity at time 7723.98
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Received request for goal acceptance
+[DEBUG] [controller_server] [follow_path] [ActionServer] Receiving a new goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] An older goal is active, moving the new goal to a pending slot.
+[INFO] [controller_server] Passing new path to controller.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Cancelling the previous goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] Preempted goal
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] Providing path to the controller MPPIFollowPath
+[DEBUG] [controller_server] Path end point is (2.55, 0.00)
+[DEBUG] [controller_server] Publishing velocity at time 7724.00
+[DEBUG] [controller_server] Publishing velocity at time 7724.02
+[DEBUG] [controller_server] Publishing velocity at time 7724.06
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [7, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000437400
+[DEBUG] [controller_server] Publishing velocity at time 7724.12
+[DEBUG] [controller_server] Publishing velocity at time 7724.18
+[DEBUG] [controller_server] Publishing velocity at time 7724.22
+[DEBUG] [controller_server] Publishing velocity at time 7724.26
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [6, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000465000
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Publishing velocity at time 7724.32
+[DEBUG] [controller_server] Publishing velocity at time 7724.36
+[DEBUG] [controller_server] Publishing velocity at time 7724.40
+[DEBUG] [controller_server] Publishing velocity at time 7724.46
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [5, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.003484900
+[DEBUG] [controller_server] Publishing velocity at time 7724.52
+[DEBUG] [controller_server] Publishing velocity at time 7724.56
+[DEBUG] [controller_server] Publishing velocity at time 7724.62
+[DEBUG] [controller_server] Publishing velocity at time 7724.66
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [6, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000429100
+[DEBUG] [controller_server] Publishing velocity at time 7724.72
+[DEBUG] [controller_server] Publishing velocity at time 7724.76
+[DEBUG] [controller_server] Publishing velocity at time 7724.82
+[DEBUG] [controller_server] Publishing velocity at time 7724.86
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [5, 49]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000468300
+[DEBUG] [local_costmap] Publish costmap at local_costmap
+[DEBUG] [controller_server] Publishing velocity at time 7724.90
+[DEBUG] [controller_server] Publishing velocity at time 7724.96
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Received request for goal acceptance
+[DEBUG] [controller_server] [follow_path] [ActionServer] Receiving a new goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] An older goal is active, moving the new goal to a pending slot.
+[INFO] [controller_server] Passing new path to controller.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Cancelling the previous goal
+[DEBUG] [controller_server] [follow_path] [ActionServer] Preempted goal
+[DEBUG] [controller_server] Selected controller: MPPIFollowPath.
+[DEBUG] [controller_server] Providing path to the controller MPPIFollowPath
+[DEBUG] [controller_server] Path end point is (2.55, 0.00)
+[DEBUG] [controller_server] Publishing velocity at time 7725.00
+[DEBUG] [controller_server] Publishing velocity at time 7725.02
+[DEBUG] [local_costmap] Updating map...
+[DEBUG] [nav2_costmap_2d] Updating area x: [0, 50] y: [6, 50]
+[DEBUG] [local_costmap] Publishing footprint
+[DEBUG] [local_costmap] Map update time: 0.000457300
+[DEBUG] [controller_server] Publishing velocity at time 7725.06
+[DEBUG] [controller_server] Publishing velocity at time 7725.10
+[INFO] [controller_server] Reached the goal!
+[DEBUG] [controller_server] Controller succeeded, setting result
+[INFO] [controller_server] Optimizer reset
+[DEBUG] [controller_server] [follow_path] [ActionServer] Setting succeed on current goal.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Blocking processing of new goal handles.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Done processing available goals.
+[DEBUG] [controller_server] [follow_path] [ActionServer] Worker thread done.

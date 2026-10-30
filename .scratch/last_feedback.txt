@@ -1,0 +1,24 @@
+== s12: 518 feedback lines
+    [INFO] [1789771797.870524928] [nav_through_poses_client]: Distance to target: 0.15 meters
+    [INFO] [1789771797.901145344] [nav_through_poses_client]: Distance to target: 0.15 meters
+    [INFO] [1789771797.931353088] [nav_through_poses_client]: Distance to target: 0.15 meters
+    first: [INFO] [1789771725.162420224] [nav_through_poses_client]: Distance to target: 15.31 meters
+    first: [INFO] [1789771727.882292480] [nav_through_poses_client]: Distance to target: 14.79 meters
+== s16: 2324 feedback lines
+    [INFO] [1789771177.927512064] [nav_through_poses_client]: Distance to target: 0.15 meters
+    [INFO] [1789771177.959754240] [nav_through_poses_client]: Distance to target: 0.15 meters
+    [INFO] [1789771177.989978112] [nav_through_poses_client]: Distance to target: 0.15 meters
+    first: [INFO] [1789771104.500643328] [nav_through_poses_client]: Distance to target: 15.34 meters
+    first: [INFO] [1789771104.532009216] [nav_through_poses_client]: Distance to target: 15.34 meters
+== s15: 2313 feedback lines
+    [INFO] [1789770001.082145792] [nav_through_poses_client]: Distance to target: 0.13 meters
+    [INFO] [1789770001.114712320] [nav_through_poses_client]: Distance to target: 0.13 meters
+    [INFO] [1789770001.145218816] [nav_through_poses_client]: Distance to target: 0.13 meters
+    first: [INFO] [1789769927.971560704] [nav_through_poses_client]: Distance to target: 15.34 meters
+    first: [INFO] [1789769928.002347008] [nav_through_poses_client]: Distance to target: 15.34 meters
+== s00: 3759 feedback lines
+    [INFO] [1789771083.950816512] [nav_through_poses_client]: 到目标的距离: 17.74 米
+    [INFO] [1789771084.218134784] [nav_through_poses_client]: 到目标的距离: 17.74 米
+    [INFO] [1789771084.404093952] [nav_through_poses_client]: 到目标的距离: 17.74 米
+    first: [INFO] [1789770783.624232192] [nav_through_poses_client]: 到目标的距离: 15.34 米
+    first: [INFO] [1789770783.656752384] [nav_through_poses_client]: 到目标的距离: 15.34 米

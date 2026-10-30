@@ -1,0 +1,519 @@
+[build] cores 0,1,10,11,12,13 (mask 0x3C03, pinned), jobs 6
+>>> D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin\cmake.exe -S E:\DesktopData\app\code\CPU\nav2\ros2_shim -B E:\DesktopData\app\code\CPU\nav2\ros2_shim\build -G Ninja -DCMAKE_CXX_COMPILER=D:/WindowsServer2025_1/software/MSYS2/ucrt64/bin/g++.exe -DCMAKE_BUILD_TYPE=Release
+-- Configuring done (0.4s)
+-- Generating done (0.5s)
+-- Build files have been written to: E:/DesktopData/app/code/CPU/nav2/ros2_shim/build
+>>> D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin\cmake.exe --build E:\DesktopData\app\code\CPU\nav2\ros2_shim\build -- -j 6
+[1/391] Building CXX object CMakeFiles/nav2_util_core.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_util/src/path_utils.cpp.obj
+[2/391] Building CXX object CMakeFiles/nav2_util_core.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_util/src/odometry_utils.cpp.obj
+[3/391] Building CXX object CMakeFiles/nav2_util_core.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_util/src/costmap.cpp.obj
+[4/391] Building CXX object CMakeFiles/nav2_util_core.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_util/src/robot_utils.cpp.obj
+[5/391] Building CXX object CMakeFiles/nav2_util_core.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_util/src/lifecycle_service_client.cpp.obj
+[6/391] Linking CXX static library libnav2_util_core.a
+[7/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/asymmetric_inflation_layer.cpp.obj
+[8/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/costmap_filters/costmap_filter.cpp.obj
+[9/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/costmap_filters/keepout_filter.cpp.obj
+[10/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/costmap_filters/binary_filter.cpp.obj
+[11/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/costmap_filters/speed_filter.cpp.obj
+[12/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/denoise_layer.cpp.obj
+[13/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/inflation_layer.cpp.obj
+[14/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/legacy_inflation_layer.cpp.obj
+[15/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/plugin_container_layer.cpp.obj
+[16/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/range_sensor_layer.cpp.obj
+[17/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/static_layer.cpp.obj
+[18/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/obstacle_layer.cpp.obj
+[19/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/plugins/voxel_layer.cpp.obj
+[20/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/costmap_layer.cpp.obj
+[21/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/clear_costmap_service.cpp.obj
+[22/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/costmap_subscriber.cpp.obj
+[23/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/costmap_2d_publisher.cpp.obj
+[24/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/costmap_topic_collision_checker.cpp.obj
+[25/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/footprint.cpp.obj
+[26/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/footprint_collision_checker.cpp.obj
+[27/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/footprint_subscriber.cpp.obj
+[28/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/layer.cpp.obj
+[29/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/layered_costmap.cpp.obj
+[30/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/costmap_2d_ros.cpp.obj
+[31/391] Building CXX object CMakeFiles/nav2_costmap_2d.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_costmap_2d/src/observation_buffer.cpp.obj
+[32/391] Linking CXX static library libnav2_costmap_2d.a
+[33/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_append_goal_pose_to_goals_action_cpp.cpp.obj
+[34/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_behavior_tree/src/behavior_tree_engine.cpp.obj
+[35/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_assisted_teleop_cancel_node_cpp.cpp.obj
+[36/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_assisted_teleop_action_cpp.cpp.obj
+[37/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_back_up_action_cpp.cpp.obj
+[38/391] Building CXX object slam_toolbox_port/CMakeFiles/kartoSlamToolbox.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/src/Mapper.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/src/Mapper.cpp:36:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[39/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_back_up_cancel_node_cpp.cpp.obj
+[40/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_check_pose_occupancy_action_cpp.cpp.obj
+[41/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_check_stop_status_action_cpp.cpp.obj
+[42/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_clear_costmap_service_cpp.cpp.obj
+[43/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_compute_and_track_route_cancel_node_cpp.cpp.obj
+[44/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_compute_and_track_route_action_cpp.cpp.obj
+[45/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_compute_path_through_poses_action_cpp.cpp.obj
+[46/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_compute_route_action_cpp.cpp.obj
+[47/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_compute_path_to_pose_action_cpp.cpp.obj
+[48/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_concatenate_paths_action_cpp.cpp.obj
+[49/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_controller_cancel_node_cpp.cpp.obj
+[50/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_controller_selector_node_cpp.cpp.obj
+[51/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_extract_route_nodes_as_goals_action_cpp.cpp.obj
+[52/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_drive_on_heading_cancel_node_cpp.cpp.obj
+[53/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_drive_on_heading_action_cpp.cpp.obj
+[54/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_follow_object_cancel_node_cpp.cpp.obj
+[55/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_follow_object_action_cpp.cpp.obj
+[56/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_get_current_pose_action_cpp.cpp.obj
+[57/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_get_next_few_goals_action_cpp.cpp.obj
+[58/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_follow_path_action_cpp.cpp.obj
+[59/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_get_pose_from_path_action_cpp.cpp.obj
+[60/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_goal_checker_selector_node_cpp.cpp.obj
+[61/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_path_handler_selector_node_cpp.cpp.obj
+[62/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_navigate_through_poses_action_cpp.cpp.obj
+[63/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_planner_selector_node_cpp.cpp.obj
+[64/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_navigate_to_pose_action_cpp.cpp.obj
+[65/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_progress_checker_selector_node_cpp.cpp.obj
+[66/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_reinitialize_global_localization_service_cpp.cpp.obj
+[67/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_remove_passed_goals_action_cpp.cpp.obj
+[68/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_smoother_selector_node_cpp.cpp.obj
+[69/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_remove_in_collision_goals_action_cpp.cpp.obj
+[70/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_smooth_path_action_cpp.cpp.obj
+[71/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_spin_action_cpp.cpp.obj
+[72/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_spin_cancel_node_cpp.cpp.obj
+[73/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_toggle_collision_monitor_service_cpp.cpp.obj
+[74/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_truncate_path_action_cpp.cpp.obj
+[75/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_truncate_path_local_action_cpp.cpp.obj
+[76/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_wait_cancel_node_cpp.cpp.obj
+[77/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_wait_action_cpp.cpp.obj
+[78/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/action_validate_path_action_cpp.cpp.obj
+[79/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_are_error_codes_present_condition_cpp.cpp.obj
+[80/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_are_poses_near_condition_cpp.cpp.obj
+[81/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_distance_traveled_condition_cpp.cpp.obj
+[82/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_globally_updated_goal_condition_cpp.cpp.obj
+[83/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_initial_pose_received_condition_cpp.cpp.obj
+[84/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_goal_updated_condition_cpp.cpp.obj
+[85/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_goal_reached_condition_cpp.cpp.obj
+[86/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_is_battery_charging_condition_cpp.cpp.obj
+[87/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_is_battery_low_condition_cpp.cpp.obj
+[88/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_is_goal_nearby_condition_cpp.cpp.obj
+[89/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_is_within_path_tracking_bounds_condition_cpp.cpp.obj
+[90/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_is_stuck_condition_cpp.cpp.obj
+[91/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_time_expired_condition_cpp.cpp.obj
+[92/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_path_expiring_timer_condition_cpp.cpp.obj
+[93/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_transform_available_condition_cpp.cpp.obj
+[94/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_would_a_controller_recovery_help_condition_cpp.cpp.obj
+[95/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_would_a_planner_recovery_help_condition_cpp.cpp.obj
+[96/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_would_a_route_recovery_help_condition_cpp.cpp.obj
+[97/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/condition_would_a_smoother_recovery_help_condition_cpp.cpp.obj
+[98/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/control_pause_resume_controller_cpp.cpp.obj
+[99/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/decorator_distance_controller_cpp.cpp.obj
+[100/391] Building CXX object CMakeFiles/nav_2d_utils.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/nav_2d_utils/src/conversions.cpp.obj
+[101/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/decorator_goal_updated_controller_cpp.cpp.obj
+[102/391] Linking CXX static library slam_toolbox_port\libkartoSlamToolbox.a
+[103/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/decorator_path_longer_on_approach_cpp.cpp.obj
+[104/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/decorator_speed_controller_cpp.cpp.obj
+[105/391] Building CXX object CMakeFiles/nav2_behavior_tree.dir/bt_node_registry/decorator_goal_updater_node_cpp.cpp.obj
+[106/391] Building CXX object CMakeFiles/nav2_navfn_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_navfn_planner/src/navfn.cpp.obj
+[107/391] Building CXX object CMakeFiles/nav2_graceful_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_graceful_controller/src/graceful_controller.cpp.obj
+[108/391] Building CXX object CMakeFiles/nav2_graceful_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_graceful_controller/src/parameter_handler.cpp.obj
+[109/391] Linking CXX static library libnav_2d_utils.a
+[110/391] Linking CXX static library libnav2_behavior_tree.a
+[111/391] Building CXX object CMakeFiles/nav2_navfn_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_navfn_planner/src/navfn_planner.cpp.obj
+[112/391] Linking CXX static library libnav2_graceful_controller.a
+[113/391] Building CXX object CMakeFiles/dwb_core.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_core/src/trajectory_utils.cpp.obj
+[114/391] Building CXX object CMakeFiles/nav2_navfn_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_navfn_planner/src/parameter_handler.cpp.obj
+[115/391] Building CXX object CMakeFiles/dwb_core.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_core/src/dwb_local_planner.cpp.obj
+[116/391] Building CXX object CMakeFiles/dwb_core.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_core/src/publisher.cpp.obj
+[117/391] Building CXX object slam_toolbox_port/CMakeFiles/slam_toolbox_solver_plugins.dir/src/eigen_pose_graph_solver.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/slam_toolbox_port/include/solver_plugins/eigen_pose_graph_solver.hpp:34,
+                 from E:/DesktopData/app/code/CPU/nav2/slam_toolbox_port/src/eigen_pose_graph_solver.cpp:1:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[118/391] Building CXX object CMakeFiles/opennav_docking.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_docking/opennav_docking/src/pose_filter.cpp.obj
+[119/391] Building CXX object CMakeFiles/opennav_docking.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_docking/opennav_docking/src/controller.cpp.obj
+[120/391] Building CXX object CMakeFiles/opennav_docking.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_docking/opennav_docking/src/dock_database.cpp.obj
+[121/391] Linking CXX static library slam_toolbox_port\libslam_toolbox_solver_plugins.a
+[122/391] Building CXX object CMakeFiles/opennav_docking.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_docking/opennav_docking/src/parameter_handler.cpp.obj
+[123/391] Building CXX object CMakeFiles/opennav_docking.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_docking/opennav_docking/src/navigator.cpp.obj
+[124/391] Building CXX object CMakeFiles/opennav_docking.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_docking/opennav_docking/src/docking_server.cpp.obj
+[125/391] Building CXX object slam_toolbox_port/CMakeFiles/slam_toolbox_common.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/map_saver.cpp.obj
+[126/391] Building CXX object CMakeFiles/opennav_docking.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_docking/opennav_docking/src/simple_non_charging_dock.cpp.obj
+[127/391] Building CXX object CMakeFiles/opennav_docking.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_docking/opennav_docking/src/simple_charging_dock.cpp.obj
+[128/391] Linking CXX static library libnav2_navfn_planner.a
+[129/391] Building CXX object CMakeFiles/nav2_smac_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/costmap_downsampler.cpp.obj
+[130/391] Building CXX object CMakeFiles/nav2_smac_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/collision_checker.cpp.obj
+[131/391] Building CXX object slam_toolbox_port/CMakeFiles/slam_toolbox_common.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/loop_closure_assistant.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/loop_closure_assistant.hpp:36,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/loop_closure_assistant.cpp:22:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[132/391] Building CXX object slam_toolbox_port/CMakeFiles/slam_toolbox_common.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_common.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_common.hpp:49,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_common.cpp:23:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[133/391] Building CXX object CMakeFiles/nav2_smac_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/node_2d.cpp.obj
+[134/391] Building CXX object CMakeFiles/nav2_smac_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/distance_heuristic.cpp.obj
+[135/391] Building CXX object slam_toolbox_port/CMakeFiles/slam_toolbox_common.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/laser_utils.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/laser_utils.hpp:29,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/laser_utils.cpp:24:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[136/391] Building CXX object slam_toolbox_port/CMakeFiles/slam_toolbox_common.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_mapper.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_mapper.hpp:28,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_mapper.cpp:22:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[137/391] Building CXX object CMakeFiles/nav2_smac_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/node_hybrid.cpp.obj
+[138/391] Building CXX object CMakeFiles/nav2_smac_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/obstacle_heuristic.cpp.obj
+[139/391] Building CXX object CMakeFiles/nav2_smac_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/node_lattice.cpp.obj
+[140/391] Building CXX object CMakeFiles/nav2_smac_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/smoother.cpp.obj
+[141/391] Building CXX object CMakeFiles/nav2_smac_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/smac_planner_2d.cpp.obj
+[142/391] Building CXX object CMakeFiles/nav2_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_planner/src/parameter_handler.cpp.obj
+[143/391] Building CXX object CMakeFiles/nav2_smac_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/smac_planner_lattice.cpp.obj
+[144/391] Building CXX object CMakeFiles/nav2_smac_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smac_planner/src/smac_planner_hybrid.cpp.obj
+[145/391] Building CXX object CMakeFiles/nav2_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_controller/plugins/adaptive_tolerance_goal_checker.cpp.obj
+[146/391] Building CXX object CMakeFiles/nav2_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_controller/plugins/axis_goal_checker.cpp.obj
+[147/391] Building CXX object CMakeFiles/nav2_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_controller/plugins/feasible_path_handler.cpp.obj
+[148/391] Building CXX object CMakeFiles/nav2_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_controller/plugins/pose_progress_checker.cpp.obj
+[149/391] Building CXX object CMakeFiles/nav2_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_controller/plugins/position_goal_checker.cpp.obj
+[150/391] Building CXX object CMakeFiles/nav2_planner.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_planner/src/planner_server.cpp.obj
+[151/391] Building CXX object CMakeFiles/nav2_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_controller/plugins/simple_goal_checker.cpp.obj
+[152/391] Building CXX object CMakeFiles/nav2_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_controller/plugins/simple_progress_checker.cpp.obj
+[153/391] Building CXX object CMakeFiles/nav2_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_controller/plugins/stopped_goal_checker.cpp.obj
+[154/391] Building CXX object CMakeFiles/nav2_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_controller/src/parameter_handler.cpp.obj
+[155/391] Building CXX object CMakeFiles/nav2_regulated_pure_pursuit_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_regulated_pure_pursuit_controller/src/parameter_handler.cpp.obj
+[156/391] Building CXX object CMakeFiles/nav2_regulated_pure_pursuit_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_regulated_pure_pursuit_controller/src/collision_checker.cpp.obj
+[157/391] Linking CXX static library libdwb_core.a
+[158/391] Building CXX object CMakeFiles/nav2_regulated_pure_pursuit_controller.dir/70b3164da34494781738970eeadb9572/navigation2-1.5.1/nav2_regulated_pure_pursuit_controller/src/regulated_pure_pursuit_controller.cpp.obj
+[159/391] Building CXX object CMakeFiles/nav2_rotation_shim_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_rotation_shim_controller/src/nav2_rotation_shim_controller.cpp.obj
+[160/391] Building CXX object CMakeFiles/nav2_rotation_shim_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_rotation_shim_controller/src/parameter_handler.cpp.obj
+[161/391] Building CXX object CMakeFiles/nav2_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_controller/src/controller_server.cpp.obj
+[162/391] Building CXX object CMakeFiles/dwb_plugins.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_plugins/src/kinematic_parameters.cpp.obj
+[163/391] Building CXX object CMakeFiles/dwb_plugins.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_plugins/src/limited_accel_generator.cpp.obj
+[164/391] Building CXX object CMakeFiles/dwb_plugins.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_plugins/src/xy_theta_iterator.cpp.obj
+[165/391] Building CXX object CMakeFiles/dwb_plugins.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_plugins/src/standard_traj_generator.cpp.obj
+[166/391] Building CXX object CMakeFiles/dwb_critics.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_critics/src/base_obstacle.cpp.obj
+[167/391] Building CXX object CMakeFiles/dwb_critics.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_critics/src/goal_align.cpp.obj
+[168/391] Building CXX object CMakeFiles/dwb_critics.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_critics/src/goal_dist.cpp.obj
+[169/391] Building CXX object CMakeFiles/dwb_critics.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_critics/src/map_grid.cpp.obj
+[170/391] Building CXX object CMakeFiles/dwb_critics.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_critics/src/obstacle_footprint.cpp.obj
+[171/391] Building CXX object CMakeFiles/dwb_critics.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_critics/src/oscillation.cpp.obj
+[172/391] Building CXX object CMakeFiles/dwb_critics.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_critics/src/path_align.cpp.obj
+[173/391] Building CXX object CMakeFiles/dwb_critics.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_critics/src/path_dist.cpp.obj
+[174/391] Building CXX object CMakeFiles/dwb_critics.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_critics/src/prefer_forward.cpp.obj
+[175/391] Building CXX object CMakeFiles/dwb_critics.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_critics/src/twirling.cpp.obj
+[176/391] Building CXX object CMakeFiles/dwb_critics.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_dwb_controller/dwb_critics/src/rotate_to_goal.cpp.obj
+[177/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/controller.cpp.obj
+[178/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critic_manager.cpp.obj
+[179/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critics/constraint_critic.cpp.obj
+[180/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critics/cost_critic.cpp.obj
+[181/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critics/goal_angle_critic.cpp.obj
+[182/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critics/goal_critic.cpp.obj
+[183/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critics/obstacles_critic.cpp.obj
+[184/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critics/path_align_critic.cpp.obj
+[185/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critics/path_angle_critic.cpp.obj
+[186/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critics/path_follow_critic.cpp.obj
+[187/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critics/prefer_forward_critic.cpp.obj
+[188/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critics/twirling_critic.cpp.obj
+[189/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/noise_generator.cpp.obj
+[190/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/motion_models.cpp.obj
+[191/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/critics/velocity_deadband_critic.cpp.obj
+[192/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/parameters_handler.cpp.obj
+[193/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/trajectory_validators/optimal_trajectory_validator.cpp.obj
+[194/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/optimizer.cpp.obj
+[195/391] Building CXX object CMakeFiles/nav2_mppi_controller.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_mppi_controller/src/trajectory_visualizer.cpp.obj
+[196/391] Building CXX object CMakeFiles/nav2_smoother.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smoother/src/simple_smoother.cpp.obj
+[197/391] Building CXX object CMakeFiles/nav2_smoother.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smoother/src/savitzky_golay_smoother.cpp.obj
+[198/391] Building CXX object CMakeFiles/nav2_behaviors.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_behaviors/plugins/assisted_teleop.cpp.obj
+[199/391] Building CXX object CMakeFiles/nav2_behaviors.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_behaviors/plugins/back_up.cpp.obj
+[200/391] Building CXX object CMakeFiles/nav2_smoother.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_smoother/src/nav2_smoother.cpp.obj
+[201/391] Building CXX object CMakeFiles/nav2_behaviors.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_behaviors/plugins/drive_on_heading.cpp.obj
+[202/391] Building CXX object CMakeFiles/nav2_behaviors.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_behaviors/plugins/spin.cpp.obj
+[203/391] Building CXX object CMakeFiles/nav2_behaviors.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_behaviors/plugins/wait.cpp.obj
+[204/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/circle.cpp.obj
+[205/391] Building CXX object CMakeFiles/nav2_behaviors.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_behaviors/src/behavior_server.cpp.obj
+[206/391] Building CXX object CMakeFiles/nav2_velocity_smoother.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_velocity_smoother/src/velocity_smoother.cpp.obj
+[207/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/costmap.cpp.obj
+[208/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/exclusion_zone.cpp.obj
+[209/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/collision_detector_node.cpp.obj
+[210/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/collision_monitor_node.cpp.obj
+[211/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/pointcloud.cpp.obj
+[212/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/polygon_source.cpp.obj
+[213/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/polygon.cpp.obj
+[214/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/range.cpp.obj
+[215/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/scan.cpp.obj
+[216/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/velocity_polygon.cpp.obj
+[217/391] Building CXX object CMakeFiles/nav2_collision_monitor.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_collision_monitor/src/source.cpp.obj
+[218/391] Building CXX object CMakeFiles/nav2_waypoint_follower.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_waypoint_follower/plugins/wait_at_waypoint.cpp.obj
+[219/391] Building CXX object CMakeFiles/nav2_waypoint_follower.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_waypoint_follower/plugins/input_at_waypoint.cpp.obj
+[220/391] Building CXX object CMakeFiles/nav2_waypoint_follower.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_waypoint_follower/src/parameter_handler.cpp.obj
+[221/391] Building CXX object CMakeFiles/nav2_lifecycle_manager.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_lifecycle_manager/src/lifecycle_manager_client.cpp.obj
+[222/391] Linking CXX static library libopennav_docking.a
+[223/391] Building CXX object CMakeFiles/nav2_lifecycle_manager.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_lifecycle_manager/src/lifecycle_manager.cpp.obj
+[224/391] Building CXX object CMakeFiles/nav2_waypoint_follower.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_waypoint_follower/src/waypoint_follower.cpp.obj
+[225/391] Building CXX object CMakeFiles/nav2_bt_navigator.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_bt_navigator/src/bt_navigator.cpp.obj
+[226/391] Building CXX object CMakeFiles/opennav_docking_bt.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_docking/opennav_docking_bt/src/dock_robot.cpp.obj
+[227/391] Building CXX object CMakeFiles/nav2_bt_navigator.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_bt_navigator/src/navigators/navigate_through_poses.cpp.obj
+[228/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/edge_scorer.cpp.obj
+[229/391] Building CXX object CMakeFiles/nav2_bt_navigator.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_bt_navigator/src/navigators/navigate_to_pose.cpp.obj
+[230/391] Building CXX object CMakeFiles/opennav_docking_bt.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_docking/opennav_docking_bt/src/undock_robot.cpp.obj
+[231/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/goal_intent_extractor.cpp.obj
+[232/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/graph_loader.cpp.obj
+[233/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/node_spatial_tree.cpp.obj
+[234/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/graph_saver.cpp.obj
+[235/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/operations_manager.cpp.obj
+[236/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/path_converter.cpp.obj
+[237/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/edge_cost_functions/costmap_scorer.cpp.obj
+[238/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/edge_cost_functions/distance_scorer.cpp.obj
+[239/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/edge_cost_functions/dynamic_edges_scorer.cpp.obj
+[240/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/edge_cost_functions/goal_orientation_scorer.cpp.obj
+[241/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/edge_cost_functions/penalty_scorer.cpp.obj
+[242/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/edge_cost_functions/semantic_scorer.cpp.obj
+[243/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/edge_cost_functions/start_pose_orientation_scorer.cpp.obj
+[244/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/edge_cost_functions/time_scorer.cpp.obj
+[245/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/graph_file_loaders/geojson_graph_file_loader.cpp.obj
+[246/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/graph_file_savers/geojson_graph_file_saver.cpp.obj
+[247/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/route_operations/adjust_speed_limit.cpp.obj
+[248/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/route_operations/rerouting_service.cpp.obj
+[249/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/route_operations/collision_monitor.cpp.obj
+[250/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/route_operations/time_marker.cpp.obj
+[251/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/route_planner.cpp.obj
+[252/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/plugins/route_operations/trigger_event.cpp.obj
+[253/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/route_tracker.cpp.obj
+[254/391] Building CXX object CMakeFiles/nav2_map_server.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_map_server/src/map_io.cpp.obj
+[255/391] Building CXX object CMakeFiles/nav2_map_server.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_map_server/src/costmap_filter_info/costmap_filter_info_server.cpp.obj
+[256/391] Building CXX object CMakeFiles/nav2_route.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/src/route_server.cpp.obj
+[257/391] Building CXX object CMakeFiles/nav2_map_server.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_map_server/src/map_saver/map_saver.cpp.obj
+[258/391] Building CXX object CMakeFiles/nav2_amcl.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_amcl/src/amcl_node.cpp.obj
+[259/391] Linking CXX static library slam_toolbox_port\libslam_toolbox_common.a
+[260/391] Building CXX object CMakeFiles/nav2_map_server.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_map_server/src/map_server/map_server.cpp.obj
+[261/391] Building CXX object CMakeFiles/nav2_map_server.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_map_server/src/vo_server/vector_object_shapes.cpp.obj
+[262/391] Building CXX object CMakeFiles/nav2_map_server.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_map_server/src/vo_server/vector_object_server.cpp.obj
+[263/391] Building CXX object slam_toolbox_port/CMakeFiles/slam_toolbox_async.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_async.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_common.hpp:49,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_async.hpp:24,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_async.cpp:21:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[264/391] Building CXX object CMakeFiles/tf_probe.dir/tests/tf_probe.cpp.obj
+[265/391] Building CXX object slam_toolbox_port/CMakeFiles/slam_toolbox_sync.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_sync.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_common.hpp:49,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_sync.hpp:25,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_sync.cpp:20:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[266/391] Building CXX object slam_toolbox_port/CMakeFiles/slam_toolbox_localization.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_localization.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_common.hpp:49,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_localization.hpp:23,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_localization.cpp:21:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[267/391] Building CXX object CMakeFiles/map_dump.dir/tests/map_dump.cpp.obj
+[268/391] Linking CXX static library libnav2_smac_planner.a
+[269/391] Building CXX object CMakeFiles/test_shim_node.dir/tests/test_shim_node.cpp.obj
+[270/391] Building CXX object CMakeFiles/test_shim_compile.dir/tests/test_shim_compile.cpp.obj
+[271/391] Building CXX object CMakeFiles/amcl_probe.dir/tests/amcl_probe.cpp.obj
+[272/391] Building CXX object CMakeFiles/test_tf_time.dir/tests/tf_time.cpp.obj
+[273/391] Building CXX object CMakeFiles/tf_listener_probe.dir/tests/tf_listener_probe.cpp.obj
+[274/391] Building CXX object CMakeFiles/nav2_bridge_demo.dir/apps/nav2_bridge_demo.cpp.obj
+[275/391] Linking CXX static library libnav2_planner.a
+[276/391] Building CXX object CMakeFiles/test_nav2_ros_common.dir/tests/test_nav2_ros_common.cpp.obj
+[277/391] Linking CXX static library libnav2_rotation_shim_controller.a
+[278/391] Linking CXX static library libnav2_regulated_pure_pursuit_controller.a
+[279/391] Building CXX object CMakeFiles/test_tf_buffer_lookup.dir/tests/tf_buffer_lookup.cpp.obj
+[280/391] Linking CXX static library libnav2_controller.a
+[281/391] Linking CXX static library libdwb_plugins.a
+[282/391] Linking CXX static library libnav2_smoother.a
+[283/391] Linking CXX static library libdwb_critics.a
+[284/391] Linking CXX static library libnav2_velocity_smoother.a
+[285/391] Linking CXX static library libnav2_behaviors.a
+[286/391] Linking CXX static library libnav2_lifecycle_manager.a
+[287/391] Linking CXX static library libnav2_waypoint_follower.a
+[288/391] Linking CXX static library libnav2_mppi_controller.a
+[289/391] Linking CXX static library libopennav_docking_bt.a
+[290/391] Linking CXX static library libnav2_bt_navigator.a
+[291/391] Linking CXX static library libnav2_collision_monitor.a
+[292/391] Building CXX object CMakeFiles/scan_path_probe.dir/tests/scan_path_probe.cpp.obj
+[293/391] Linking CXX static library libnav2_route.a
+[294/391] Building CXX object CMakeFiles/test_e2e.dir/tests/test_e2e.cpp.obj
+[295/391] Building CXX object CMakeFiles/planner_server.dir/apps/planner_server_node.cpp.obj
+[296/391] Building CXX object CMakeFiles/controller_server.dir/apps/controller_server_node.cpp.obj
+[297/391] Building CXX object CMakeFiles/smoother_server.dir/apps/smoother_server_node.cpp.obj
+[298/391] Building CXX object CMakeFiles/waypoint_follower.dir/apps/waypoint_follower_node.cpp.obj
+[299/391] Building CXX object CMakeFiles/bt_navigator.dir/apps/bt_navigator_node.cpp.obj
+[300/391] Building CXX object CMakeFiles/behavior_server.dir/apps/behavior_server_node.cpp.obj
+[301/391] Building CXX object CMakeFiles/velocity_smoother.dir/apps/velocity_smoother_node.cpp.obj
+[302/391] Building CXX object CMakeFiles/collision_monitor.dir/apps/collision_monitor_node.cpp.obj
+[303/391] Building CXX object CMakeFiles/lifecycle_manager.dir/apps/lifecycle_manager_node.cpp.obj
+[304/391] Building CXX object CMakeFiles/docking_server.dir/apps/docking_server_node.cpp.obj
+[305/391] Building CXX object CMakeFiles/route_server.dir/apps/route_server_node.cpp.obj
+[306/391] Linking CXX static library libnav2_amcl.a
+[307/391] Building CXX object CMakeFiles/amcl.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_amcl/src/main.cpp.obj
+[308/391] Linking CXX static library libnav2_map_server.a
+[309/391] Building CXX object CMakeFiles/nav2_goal.dir/apps/nav2_goal.cpp.obj
+[310/391] Building CXX object CMakeFiles/bt_smoke.dir/apps/bt_smoke.cpp.obj
+[311/391] Building CXX object CMakeFiles/test_lifecycle_services.dir/tests/lifecycle_services.cpp.obj
+[312/391] Building CXX object CMakeFiles/amcl_bridge_node.dir/apps/amcl_bridge_node.cpp.obj
+[313/391] Building CXX object CMakeFiles/nav2_waypoints.dir/apps/nav2_waypoints.cpp.obj
+[314/391] Building CXX object CMakeFiles/map_server.dir/apps/map_server_node.cpp.obj
+[315/391] Building CXX object CMakeFiles/map_saver.dir/apps/map_saver_node.cpp.obj
+[316/391] Building CXX object CMakeFiles/costmap_filter_info_server.dir/apps/costmap_filter_info_server_node.cpp.obj
+[317/391] Building CXX object CMakeFiles/vector_object_server.dir/apps/vector_object_server_node.cpp.obj
+[318/391] Building CXX object CMakeFiles/map_saver_cli.dir/E_/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_map_server/src/map_saver/main_cli.cpp.obj
+[319/391] Building CXX object CMakeFiles/test_parameter_event_handler.dir/tests/parameter_event_handler.cpp.obj
+[320/391] Building CXX object CMakeFiles/test_clock.dir/tests/clock.cpp.obj
+[321/391] Building CXX object CMakeFiles/test_map_io.dir/tests/map_io.cpp.obj
+[322/391] Building CXX object CMakeFiles/test_remap.dir/tests/remap.cpp.obj
+[323/391] Building CXX object CMakeFiles/test_param_args.dir/tests/param_args.cpp.obj
+[324/391] Linking CXX static library slam_toolbox_port\libslam_toolbox_async.a
+[325/391] Building CXX object CMakeFiles/test_parameter_service.dir/tests/parameter_service.cpp.obj
+[326/391] Linking CXX static library slam_toolbox_port\libslam_toolbox_sync.a
+[327/391] Building CXX object CMakeFiles/test_parameter_events.dir/tests/parameter_events.cpp.obj
+[328/391] Building CXX object CMakeFiles/parameter_events_probe.dir/tests/parameter_events_probe.cpp.obj
+[329/391] Linking CXX static library slam_toolbox_port\libslam_toolbox_localization.a
+[330/391] Building CXX object CMakeFiles/test_channel_ring_lifecycle.dir/tests/channel_ring_lifecycle.cpp.obj
+[331/391] Building CXX object slam_toolbox_port/CMakeFiles/test_eigen_pose_graph_solver.dir/tests/test_eigen_pose_graph_solver.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/slam_toolbox_port/tests/test_eigen_pose_graph_solver.cpp:19:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[332/391] Building CXX object slam_toolbox_port/CMakeFiles/async_slam_toolbox_node.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_async_node.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_common.hpp:49,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_async.hpp:24,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_async_node.cpp:21:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[333/391] Building CXX object slam_toolbox_port/CMakeFiles/sync_slam_toolbox_node.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_sync_node.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_common.hpp:49,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_sync.hpp:25,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_sync_node.cpp:21:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[334/391] Linking CXX executable tf_probe.exe
+[335/391] Linking CXX executable map_dump.exe
+[336/391] Building CXX object slam_toolbox_port/CMakeFiles/localization_slam_toolbox_node.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_localization_node.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_common.hpp:49,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_localization.hpp:23,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/slam_toolbox_localization_node.cpp:21:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[337/391] Linking CXX executable test_shim_compile.exe
+[338/391] Linking CXX executable test_shim_node.exe
+[339/391] Linking CXX executable test_nav2_ros_common.exe
+[340/391] Linking CXX executable tf_listener_probe.exe
+[341/391] Linking CXX executable amcl_probe.exe
+[342/391] Linking CXX executable test_navfn_planning.exe
+[343/391] Linking CXX executable nav2_bridge_demo.exe
+[344/391] Linking CXX executable test_tf_time.exe
+[345/391] Linking CXX executable test_tf_buffer_lookup.exe
+[346/391] Linking CXX executable scan_path_probe.exe
+[347/391] Linking CXX executable test_e2e.exe
+[348/391] Building CXX object slam_toolbox_port/CMakeFiles/slam_bridge_node.dir/apps/slam_bridge_node.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_common.hpp:49,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_async.hpp:24,
+                 from E:/DesktopData/app/code/CPU/nav2/slam_toolbox_port/apps/slam_bridge_node.cpp:15:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[349/391] Linking CXX executable planner_server.exe
+[350/391] Building CXX object slam_toolbox_port/CMakeFiles/merge_maps_kinematic.dir/E_/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/merge_maps_kinematic.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/merge_maps_kinematic.hpp:41,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/src/merge_maps_kinematic.cpp:21:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[351/391] Building CXX object slam_toolbox_port/CMakeFiles/test_slam_mapping.dir/tests/test_slam_mapping.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_common.hpp:49,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_sync.hpp:25,
+                 from E:/DesktopData/app/code/CPU/nav2/slam_toolbox_port/tests/test_slam_mapping.cpp:11:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[352/391] Linking CXX executable controller_server.exe
+[353/391] Linking CXX executable waypoint_follower.exe
+[354/391] Linking CXX executable velocity_smoother.exe
+[355/391] Linking CXX executable smoother_server.exe
+[356/391] Linking CXX executable behavior_server.exe
+[357/391] Linking CXX executable lifecycle_manager.exe
+[358/391] Linking CXX executable collision_monitor.exe
+[359/391] Linking CXX executable nav2_goal.exe
+[360/391] Building CXX object slam_toolbox_port/CMakeFiles/test_slam_serialization.dir/tests/test_slam_serialization.cpp.obj
+In file included from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/toolbox_types.hpp:31,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_common.hpp:49,
+                 from E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/include/slam_toolbox/slam_toolbox_sync.hpp:25,
+                 from E:/DesktopData/app/code/CPU/nav2/slam_toolbox_port/tests/test_slam_serialization.cpp:46:
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h: In member function 'virtual void karto::CorrelationGrid::CalculateKernel()':
+E:/DesktopData/app/code/CPU/nav2/third_party/slam_toolbox/lib/karto_sdk/include/karto_sdk/Mapper.h:1259:70: warning: arithmetic between floating-point type 'kt_double' {aka 'double'} and enumeration type 'karto::GridStates' is deprecated [-Wdeprecated-enum-float-conversion]
+ 1259 |         kt_int32u kernelValue = static_cast<kt_int32u>(math::Round(z * GridStates_Occupied));
+      |                                                                    ~~^~~~~~~~~~~~~~~~~~~~~
+[361/391] Linking CXX executable docking_server.exe
+[362/391] Linking CXX executable nav2_waypoints.exe
+[363/391] Linking CXX executable route_server.exe
+[364/391] Linking CXX executable test_lifecycle_services.exe
+[365/391] Linking CXX executable amcl.exe
+[366/391] Linking CXX executable amcl_bridge_node.exe
+[367/391] Linking CXX executable map_server.exe
+[368/391] Linking CXX executable costmap_filter_info_server.exe
+[369/391] Linking CXX executable vector_object_server.exe
+[370/391] Linking CXX executable map_saver.exe
+[371/391] Linking CXX executable bt_smoke.exe
+[372/391] Linking CXX executable map_saver_cli.exe
+[373/391] Linking CXX executable bt_navigator.exe
+[374/391] Linking CXX executable test_parameter_event_handler.exe
+[375/391] Linking CXX executable test_clock.exe
+[376/391] Linking CXX executable test_remap.exe
+[377/391] Linking CXX executable test_param_args.exe
+[378/391] Linking CXX executable test_map_io.exe
+[379/391] Linking CXX executable test_parameter_service.exe
+[380/391] Linking CXX executable parameter_events_probe.exe
+[381/391] Linking CXX executable test_parameter_events.exe
+[382/391] Linking CXX executable test_channel_ring_lifecycle.exe
+[383/391] Linking CXX executable slam_toolbox_port\test_eigen_pose_graph_solver.exe
+[384/391] Linking CXX executable slam_toolbox_port\merge_maps_kinematic.exe
+[385/391] Linking CXX executable slam_toolbox_port\async_slam_toolbox_node.exe
+[386/391] Linking CXX executable slam_toolbox_port\slam_bridge_node.exe
+[387/391] Linking CXX executable slam_toolbox_port\sync_slam_toolbox_node.exe
+[388/391] Linking CXX executable slam_toolbox_port\localization_slam_toolbox_node.exe
+[389/391] Linking CXX executable slam_toolbox_port\test_slam_mapping.exe
+[390/391] Linking CXX executable slam_toolbox_port\test_laser_points.exe
+[391/391] Linking CXX executable slam_toolbox_port\test_slam_serialization.exe

@@ -1,0 +1,177 @@
+{
+  "generated_at": "2026-09-17T05:16:27+0800",
+  "host": "WIN-UB1HRT8QI4S",
+  "passed": 6,
+  "failed": 0,
+  "checks": [
+    {
+      "check": "topic_list",
+      "title": "Windows lists the Ubuntu topics (cold start)",
+      "ok": true,
+      "seconds": 5.28,
+      "detail": "7 topics with types in 5.3 s (cold start)",
+      "data": {
+        "cold_start": true,
+        "seconds": 5.28,
+        "topics": {
+          "/clock": "rosgraph_msgs/msg/Clock",
+          "/cmd_vel": "geometry_msgs/msg/Twist",
+          "/map": "nav_msgs/msg/OccupancyGrid",
+          "/odom": "nav_msgs/msg/Odometry",
+          "/scan": "sensor_msgs/msg/LaserScan",
+          "/tf": "tf2_msgs/msg/TFMessage",
+          "/tf_static": "tf2_msgs/msg/TFMessage"
+        },
+        "missing": [],
+        "wrong_type": {}
+      }
+    },
+    {
+      "check": "topic_info",
+      "title": "Windows resolves /scan to the gRPC peer",
+      "ok": true,
+      "seconds": 0.25,
+      "detail": "reported as remote (bridged over gRPC)",
+      "data": {
+        "remote": true,
+        "type_ok": true
+      }
+    },
+    {
+      "check": "scan_rate",
+      "title": "Mirrored /scan keeps its 10 Hz",
+      "ok": true,
+      "seconds": 6.3,
+      "detail": "9.42 Hz average over 54 samples",
+      "data": {
+        "samples": 54,
+        "average_hz": 9.417,
+        "min_hz": 8.74,
+        "max_hz": 10.028
+      }
+    },
+    {
+      "check": "uplink",
+      "title": "Windows /cmd_vel moves the Ubuntu robot",
+      "ok": true,
+      "seconds": 3.58,
+      "detail": "moved 0.62 m, /odom twist.linear.x=0.250",
+      "data": {
+        "before": [
+          7.0306,
+          7.8258
+        ],
+        "after": [
+          7.2697,
+          8.3925
+        ],
+        "moved_m": 0.6151,
+        "odom_twist_linear_x": 0.25
+      }
+    },
+    {
+      "check": "nav2_demo",
+      "title": "nav2 plans a path and drives to the goal",
+      "ok": true,
+      "seconds": 22.8,
+      "detail": "goal [10.025, -3.175] reached from [7.26626, 8.4874]: travelled 11.73 m, remaining 0.26 m, plan 264 waypoints",
+      "data": {
+        "reached": true,
+        "reason": "",
+        "elapsed_s": 22.5085,
+        "map_source": "union",
+        "map": {
+          "width": 480,
+          "height": 480,
+          "resolution": 0.05,
+          "lethal": 12066,
+          "inscribed": 13548,
+          "unknown": 0
+        },
+        "scan": {
+          "scans": 8,
+          "beams": 360,
+          "free_marks": 401766,
+          "occupied_marks": 1862
+        },
+        "plan": {
+          "waypoints": 264,
+          "length_m": 13.6678,
+          "last_replan_waypoints": 16,
+          "last_replan_length_m": 0.770711
+        },
+        "goal": [
+          10.025,
+          -3.175
+        ],
+        "start_pose": [
+          7.26626,
+          8.4874
+        ],
+        "final_pose": [
+          9.98587,
+          -2.91929,
+          -1.42615
+        ],
+        "travelled_m": 11.7264,
+        "remaining_m": 0.258686,
+        "messages": {
+          "map": 22,
+          "scan": 212,
+          "odom": 1060
+        }
+      }
+    },
+    {
+      "check": "slam",
+      "title": "slam_toolbox maps a lap from the bridged /scan + /tf",
+      "ok": true,
+      "seconds": 82.86,
+      "detail": "473x473 @ 0.050 m, 387 occupied / 41396 free / 181946 unknown; reloaded in a fresh process: 473x473, 442 occupied",
+      "data": {
+        "lap_legs": 4,
+        "map": {
+          "returncode": 0,
+          "frames": 4,
+          "frame_id": "map",
+          "width": 473,
+          "height": 473,
+          "resolution": 0.05,
+          "origin": [
+            -11.727,
+            -11.813
+          ],
+          "occupied": 387,
+          "free": 41396,
+          "unknown": 181946
+        },
+        "pgm": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\acceptance-slam-32920.pgm",
+        "node_log": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\acceptance-slam-32920.log",
+        "reload": {
+          "archive": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\acceptance-slam-32920-reload",
+          "files": {
+            ".posegraph": true,
+            ".data": true
+          },
+          "map": {
+            "returncode": 0,
+            "frames": 1,
+            "frame_id": "map",
+            "width": 473,
+            "height": 473,
+            "resolution": 0.05,
+            "origin": [
+              -11.727,
+              -11.813
+            ],
+            "occupied": 442,
+            "free": 45442,
+            "unknown": 177845
+          },
+          "pgm": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\acceptance-slam-32920.reload.pgm",
+          "node_log": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\acceptance-slam-32920.reload.log"
+        }
+      }
+    }
+  ]
+}

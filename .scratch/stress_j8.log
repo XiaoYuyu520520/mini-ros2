@@ -1,0 +1,17 @@
+ctest -j 8, 10 rounds, pinned to cores 0,1,10,11,12,13 (mask 0x3C03)
+[  1/10]   20.8s  FAIL ros2_shim_graph_rewrite  96% tests passed, 1 tests failed out of 27
+[  2/10]   20.3s  ok  100% tests passed out of 27
+[  3/10]   19.9s  FAIL slam_toolbox_mapping  96% tests passed, 1 tests failed out of 27
+[  4/10]   17.6s  ok  100% tests passed out of 27
+[  5/10]   15.4s  ok  100% tests passed out of 27
+[  6/10]   22.1s  ok  100% tests passed out of 27
+[  7/10]   18.5s  ok  100% tests passed out of 27
+[  8/10]   16.7s  ok  100% tests passed out of 27
+[  9/10]  900.0s  ok  
+[ 10/10]   14.7s  ok  100% tests passed out of 27
+
+7/10 rounds clean, 3 rounds with a failed test
+test                                          runs  failed    worst s
+slam_toolbox_mapping                            10       1       15.6
+ros2_shim_graph_rewrite                         10       1       11.6
+wrote E:\DesktopData\app\code\CPU\.scratch\ctest_stress.json

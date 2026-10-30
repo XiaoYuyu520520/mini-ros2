@@ -1,0 +1,32 @@
+[slam] stopping the daemon and restarting it without --mirror /map ...
+[slam] starting slam_demo.bat ...
+[slam] mapping a closed lap: 4 x (2 m + 90 deg)
+[slam]   leg 1/4: drive exit 0, spin exit 0
+[slam]   leg 2/4: drive exit 0, spin exit 0
+[slam]   leg 3/4: drive exit 0, spin exit 0
+[slam]   leg 4/4: drive exit 0, spin exit 0
+[slam] restoring the default daemon ...
+
+==== RESULT ====
+ok=True  seconds=65.1
+detail: 473x473 @ 0.050 m, 384 occupied / 40992 free / 182353 unknown
+data: {
+  "lap_legs": 4,
+  "map": {
+    "returncode": 0,
+    "frames": 4,
+    "frame_id": "map",
+    "width": 473,
+    "height": 473,
+    "resolution": 0.05,
+    "origin": [
+      -11.722,
+      -11.813
+    ],
+    "occupied": 384,
+    "free": 40992,
+    "unknown": 182353
+  },
+  "pgm": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\acceptance-slam-1720.pgm",
+  "node_log": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\acceptance-slam-1720.log"
+}

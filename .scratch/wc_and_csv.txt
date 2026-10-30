@@ -1,0 +1,269 @@
+============================== nav2_waypoint_cycle\nav2_waypoint_cycle\waypoint_cycle.py 6975
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import PoseStamped, PointStamped
+from visualization_msgs.msg import Marker, MarkerArray
+from action_msgs.msg import GoalStatus,GoalStatusArray
+
+class waypoint_cycle(Node):
+    def __init__(self):
+        super().__init__('waypoint_cycle')
+        self.markerArray = MarkerArray()
+        self.markerArray_number = MarkerArray()
+        self.count = 0
+        self.index = 0
+        self.try_again = True
+
+        self.mark_pub = self.create_publisher(MarkerArray, '/path_point', 100)
+        self.goal_pub = self.create_publisher(PoseStamped, '/goal_pose', 10)
+        # 记录已经处理过的终态 Goal UUID，避免同一个 SUCCEEDED/ABORTED/CANCELED
+        # 在后续 status 数组里反复出现而被当成新 Goal 再次推进航点。
+        self.processed_goal_ids = set()
+        # 只有本节点发布过 goal 之后产生的终态才处理，避免 Action Server 启动时
+        # status_list 中残留的历史终态导致一上来就跳点。
+        self.arm_time_ns = 0
+        self.create_subscription(PointStamped, '/clicked_point', self.click_callback, 10)
+        self.navigation_goal_status_sub_ = self.create_subscription(GoalStatusArray,"navigate_to_pose/_action/status",self.pose_callback,10)
+
+
+    def pose_callback(self, msg):
+        # status 列表在导航服务器刚启动时可能为空，直接访问 [-1] 会 IndexError
+        if not msg.status_list or self.count == 0:
+            return
+
+        terminal_status = None
+        terminal_goal_id = None
+        for st in msg.status_list:
+            if st.status not in (
+                GoalStatus.STATUS_SUCCEEDED,
+                GoalStatus.STATUS_CANCELED,
+                GoalStatus.STATUS_ABORTED,
+            ):
+                continue
+            goal_id = bytes(st.goal_info.goal_id.uuid)
+            if goal_id in self.processed_goal_ids:
+                continue
+            # 丢弃本节点发布 goal 之前的历史终态
+            stamp_ns = st.goal_info.stamp.sec * 10**9 + st.goal_info.stamp.nanosec
+            if stamp_ns < self.arm_time_ns:
+                self.processed_goal_ids.add(goal_id)
+                continue
+            # 取最新（列表靠后）的未处理终态
+            terminal_status = st.status
+            terminal_goal_id = goal_id
+
+        if terminal_status is None:
+            return
+
+        # 同一个终态 UUID 只处理一次
+        self.processed_goal_ids.add(terminal_goal_id)
+        status = terminal_status
+
+        if self.count > 0:
+            if status == GoalStatus.STATUS_SUCCEEDED:
+                self.try_again = True
+                if self.index == self.count:
+                    self.print_marker_info(self.index-1)
+                    if self.count > 1:
+                        self.get_logger().info('Complete instructions!')
+                    self.index = 0
+                    self.publish_pose(self.index)
+                    self.index += 1
+                elif self.index < self.count:
+                    self.get_logger().info(f'Reach the target point {self.index-1}:')
+                    self.print_marker_info(self.index-1)
+                    self.publish_pose(self.index)
+                    self.index += 1
+            elif status in (GoalStatus.STATUS_CANCELED, GoalStatus.STATUS_ABORTED):
+                self.get_logger().warn(f'Can not reach the target point {self.index-1}:')
+                self.print_marker_info(self.index-1)
+                if self.try_again:
+                    self.get_logger().warn(f'trying reach the target point {self.index-1} again!')
+                    self.publish_pose(self.index - 1)
+                    self.try_again = False
+                elif self.index < len(self.markerArray.markers):
+                    self.get_logger().warn(f'try reach the target point {self.index-1} failed! reach next point:')
+                    self.print_marker_info(self.index-1)
+                    if self.index == self.count:
+                        self.index = 0
+                    self.publish_pose(self.index)
+                    self.index += 1
+                    self.try_again = True
+
+    def click_callback(self, msg):
+        self.add_marker(msg.point.x, msg.point.y, 0.0, 1.0)
+        self.add_marker_number(msg.point.x, msg.point.y, 0.0, 1.0)
+        self.mark_pub.publish(self.markerArray)
+        self.mark_pub.publish(self.markerArray_number)
+        if self.count == 0:
+            self.publish_pose(self.count)
+            self.index += 1
+        self.count += 1
+
+    def add_marker(self, x, y, z, w):
+        marker = Marker()
+        marker.header.frame_id = 'map'
+        marker.ns = 'arrow'
+        marker.id = self.count
+        marker.type = Marker.ARROW
+        marker.action = Marker.ADD
+        marker.scale.x = 0.5
+        marker.scale.y = 0.05
+        marker.scale.z = 0.05
+        marker.color.a = 1.0
+        marker.color.r = 1.0
+        marker.pose.position.x = x
+        marker.pose.position.y = y
+        marker.pose.position.z = 0.1
+        marker.pose.orientation.z = z
+        marker.pose.orientation.w = w
+        self.markerArray.markers.append(marker)
+
+    def add_marker_number(self, x, y, z, w):
+        marker_number = Marker()
+        marker_number.header.frame_id = 'map'
+        marker_number.ns = 'number'
+        marker_number.id = self.count
+        marker_number.type = Marker.TEXT_VIEW_FACING
+        marker_number.action = Marker.ADD
+        marker_number.scale.x = 0.5
+        marker_number.scale.y = 0.5
+        marker_number.scale.z = 0.5
+        marker_number.color.a = 1.0
+        marker_number.color.r = 1.0
+        marker_number.pose.position.x = x
+        marker_number.pose.position.y = y
+        marker_number.pose.position.z = 0.1
+        marker_number.pose.orientation.z = z
+        marker_number.pose.orientation.w = w
+        marker_number.text = str(self.count)
+        self.markerArray_number.markers.append(marker_number)
+
+    def publish_pose(self, index):
+        pose = PoseStamped()
+        pose.header.frame_id = 'map'
+        pose.header.stamp = self.get_clock().now().to_msg()
+        pose.pose.position.x = self.markerArray.markers[index].pose.position.x
+        pose.pose.position.y = self.markerArray.markers[index].pose.position.y
+        pose.pose.orientation.z = self.markerArray.markers[index].pose.orientation.z
+        pose.pose.orientation.w = self.markerArray.markers[index].pose.orientation.w
+        # 记录本次发布时刻，之后只处理晚于它的 Goal 终态
+        self.arm_time_ns = self.get_clock().now().nanoseconds
+        self.goal_pub.publish(pose)
+
+    def print_marker_info(self, index):
+        self.get_logger().info(
+            f"x: {self.markerArray.markers[index].pose.position.x}, "
+            f"y: {self.markerArray.markers[index].pose.position.y}, "
+            f"z: {self.markerArray.markers[index].pose.orientation.z}, "
+            f"w: {self.markerArray.markers[index].pose.orientation.w}"
+        )
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = waypoint_cycle()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.get_logger().info('Shutting down')
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+
+============================== racecar\config\help.md 1719
+﻿在您的 Nav2 配置文件中，决定机器人到达目标点准确度（容差）的参数主要集中在 **`controller_server`** 和 **`bt_navigator`** 这两个部分。
+
+如果您希望提高到达目标点的精度，主要需要修改以下几个地方：
+
+### 1. 核心判定依据：`goal_checker` (控制器端)
+
+这是决定机器人最终是否判定“已完成导航并到达目标”的最关键参数。在您的配置文件中搜索 `goal_checker:`，可以找到以下代码段：
+
+```yaml
+    goal_checker:
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.6                  # 【修改这里】：XY平移误差允许范围（单位：米）
+      yaw_goal_tolerance: 0.6                 # 【修改这里】：偏航角（旋转）误差允许范围（单位：弧度）
+      stateful: True
+
+```
+
+* **分析**：您目前的 `0.6` 米（60厘米）和 `0.6` 弧度（约34.3度）设置得非常宽泛。这意味着只要机器人进入目标点 60 厘米半径范围内，就会认为已经到达。
+* **修改建议**：如果需要高精度，通常将 `xy_goal_tolerance` 降低到 **`0.1` ~ `0.2**`，将 `yaw_goal_tolerance` 降低到 **`0.1` ~ `0.2**`。
+
+### 2. 行为树导航器判定：`bt_navigator`
+
+行为树在宏观层面也会使用容差参数来判断导航动作是否成功结束。在您的配置文件中搜索 `bt_navigator:`：
+
+```yaml
+bt_navigator:
+  ros__parameters:
+    use_sim_time: False
+    transform_tolerance: 0.1 #变换容差
+    goal_reached_tol: 0.6 # 【修改这里】：接受姿势作为目标的容忍度(单位：m)
+
+```
+
+* **修改建议**：为了保持系统逻辑的一致性，建议将这里的 `goal_reached_tol` 修改为与 `goal_checker` 中的 `xy_goal_tolerance` **相同的值**（例如设为 `0.1` 或 `0.2`）。
+
+### 3. 局部规划器逼近容差：`FollowPath`
+
+在局部控制器（Regulated Pure Pursuit 控制器）参数末尾，还有一个内部的距离容差参数，用于控制机器人在极度靠近目标时的运动逻辑：
+
+```yaml
+    FollowPath:
+      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+      # ... [省略中间代码] ...
+      inflation_cost_scaling_factor: 3.0
+      goal_dist_tol: 0.08  # 【修改这里】：控制器逼近目标时的距离容差
+
+```
+
+* **修改建议**：您这里目前是 `0.08` 米（8厘米），这个值本身已经很精确了。如果您把上方的 `xy_goal_tolerance` 改到了 `0.1`，那么这里的 `0.08` 可以保持不变，或者略微调小至 `0.05`。
+
+---
+
+**总结方案：**
+如果您想要让机器人**比较精准**地停在目标点，建议对这三处进行如下同步修改：
+
+* `xy_goal_tolerance: 0.15` (允许 15cm 的位置误差)
+* `yaw_goal_tolerance: 0.15` (允许约 8.5度的角度误差)
+* `goal_reached_tol: 0.15` (与 xy_goal_tolerance 保持一致)
+============================== CSVs
+--- ai_test.csv
+1.5561144351959229,0.23977863788604736,0.1523175484979148,0.9883316065064324
+2.9234846115112305,1.2087933540344238,-0.3303670953119068,0.9438525214964325
+5.2506707191467285,-0.64356298446655273,0.36871728808268245,0.9295415867345324
+7.547830581665039,1.2204211950302124,-0.345434068349354,0.93844302140493
+8.455327033996582,0.408345103263855,-0.8794133152090071,0.4760590520440752
+7.547856159210205,-0.47691597938537598,0.922741755368084,0.38541880195473993
+4.906630992889404,1.049702525138855,-0.91712843533865,0.3985918126270031
+2.8954367637634277,-0.48433494567871094,-0.9997643364207807,0.021708791332456602
+1.3323335647583008,-0.8327195644378662,-0.9999929263563558,0.0037612813311060345
+0.20812225341796875,-0.6494555473327637,-0.9995016737748328,0.0315658695636183
+
+--- ai_test1.csv
+5.4506707191467285,-0.64356298446655273,0.36871728808268245,0.9295415867345324
+7.547830581665039,1.2204211950302124,-0.345434068349354,0.93844302140493
+8.455327033996582,0.408345103263855,-0.8794133152090071,0.4760590520440752
+
+--- ai_test2.csv
+5.202912330627441,1.1775161027908325,-0.9204859402029413,0.39077568231494036
+3.0820279121398926,-0.29641222953796387,0.9751099329636406,0.22172193990591957
+0.0,-0.8,0.9999982953623612,0.001846421504385871
+0,0,0,0
+
+--- sim_room12.csv
+2.0000000000000000,-1.0000000000000000,-0.1601822430069672,0.9870874576374967
+3.5000000000000000,-1.5000000000000000,-0.5847102846637650,0.8112421851755608
+4.0000000000000000,-3.0000000000000000,-0.9570920264890529,0.2897841486884301
+2.5000000000000000,-4.0000000000000000,0.9467375531541463,0.3220062195792186
+1.2000000000000000,-3.0000000000000000,0.8434706471867067,0.5371752668677497
+0.5000000000000000,-1.5000000000000000,0.8506508083520399,0.5257311121191336
+0.0000000000000000,-0.5000000000000000,0.9951333266680702,0.0985376179666421
+-1.5000000000000000,-0.2000000000000000,-0.9238795325112867,0.3826834323650898
+-2.5000000000000000,-1.2000000000000000,-0.9238795325112867,0.3826834323650898
+

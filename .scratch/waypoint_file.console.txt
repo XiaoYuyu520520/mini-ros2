@@ -1,0 +1,23 @@
+loaded 17/17 scripts under the shim
+
+script                           default            argv csv         abs csv
+ai_第一个点后回终点.py                   ai_test.csv        sim_room12.csv   ai_test1.csv
+detct.py                         ai_test2.csv       sim_room12.csv   ai_test1.csv
+end_3_12.py                      ai_test.csv        sim_room12.csv   ai_test1.csv
+get.py                           (no waypoint_file; reads a fixed csv)
+go copy.py                       ai_test.csv        sim_room12.csv   ai_test1.csv
+go copy_多点需要切换.py                (no waypoint_file; reads a fixed csv)
+go.py                            ai_test.csv        sim_room12.csv   ai_test1.csv
+go_2c.py                         (no waypoint_file; reads a fixed csv)
+goal_l.py                        ai_test2.csv       sim_room12.csv   ai_test1.csv
+go一条路径.py                        (no waypoint_file; reads a fixed csv)
+一条路径+csv.py                      ai_test.csv        sim_room12.csv   ai_test1.csv
+人工智能赛道初始版本代码.py                  ai_test.csv        sim_room12.csv   ai_test1.csv
+会跳过几个点.py                        ai_test.csv        sim_room12.csv   ai_test1.csv
+第二个点nav2打断，然后转圈圈.py              ai_test.csv        sim_room12.csv   ai_test1.csv
+终点不停.py                          ai_test.csv        sim_room12.csv   ai_test1.csv
+跑一圈以内.py                         ai_test.csv        sim_room12.csv   ai_test1.csv
+重复载入完成圈数.py                      ai_test.csv        sim_room12.csv   ai_test1.csv
+
+all waypoint_file() answers exist, and the named one is the one that was named
+

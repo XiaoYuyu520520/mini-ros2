@@ -1,0 +1,107 @@
+=== 1. daemon WITHOUT /map: slam_toolbox is the map source ===
+[ros2_bridge] daemon not running
+[ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+--- topic list -t ---
+/clock [rosgraph_msgs/msg/Clock]
+/cmd_vel [geometry_msgs/msg/Twist]
+/odom [nav_msgs/msg/Odometry]
+/scan [sensor_msgs/msg/LaserScan]
+/tf [tf2_msgs/msg/TFMessage]
+/tf_static [tf2_msgs/msg/TFMessage]
+=== 2. car back to the origin ===
+request:
+(empty)
+response:
+success: true
+message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+=== 3. slam_toolbox ===
+=== 4. one closed lap: 4 x (2 m straight + 90 deg) ===
+  leg 1 done
+  leg 2 done
+  leg 3 done
+  leg 4 done
+--- /sim/status ---
+request:
+(empty)
+response:
+success: true
+message: "x=0.123 y=-0.024 theta=0.117 cmd=(0.00, 0.00) paused=false"
+=== 5. the same map, three ways ===
+--- map_dump.exe -> PGM + ascii ---
+MAPDUMP frames=4 frame=map size=473x473 res=0.0500 origin=(-11.758, -11.818) occupied=332 free=41196 unknown=182201
+MAPDUMP wrote E:\DesktopData\app\code\CPU\.scratch\slam_live6.pgm
+MAPDUMP |                      #  ##   #### ##  #. .                     |
+MAPDUMP |                               ..  .  .                         |
+MAPDUMP |                              .... . . . .                      |
+MAPDUMP |                      .  .      .  ..   ..                      |
+MAPDUMP |                            . ..... . .  .                      |
+MAPDUMP |                            .. ...... ..  .                     |
+MAPDUMP |                           .  ...  .... ..                      |
+MAPDUMP |                              ...........                       |
+MAPDUMP |                     ##..     ........ . .                     .|
+MAPDUMP |                       . ..   ......... .                  .    |
+MAPDUMP |                          . ............          .    .     .  |
+MAPDUMP |                           . ...........                  . .   |
+MAPDUMP |                              ..........        .. . . ...  .   |
+MAPDUMP |                             . ...................... . ..  .   |
+MAPDUMP |                         . ......... ................. . . .... |
+MAPDUMP |             . ..  ....      ....... . ............ ....  . ....|
+MAPDUMP |             .          ............................. . .  .. ..|
+MAPDUMP |                          .  ..... .......... ....  ..... . . . |
+MAPDUMP |                         .  ..    ..  .  ...... .        .   .  |
+MAPDUMP |                        . .       ... .    ... ...       .   .  |
+MAPDUMP |                   . ..            ..        . .  ..  .         |
+MAPDUMP |              . . . ..              .             .. .          |
+MAPDUMP |            #   .                   ...                         |
+MAPDUMP |               .                                                |
+MAPDUMP |               .                      ...                       |
+MAPDUMP |                                   .   ..                       |
+MAPDUMP |                                       .                        |
+MAPDUMP |                                                                |
+MAPDUMP |                                                                |
+MAPDUMP |                                                                |
+MAPDUMP |                                                                |
+MAPDUMP |                                                                |
+--- map_saver_cli.exe --fmt pgm ---
+[INFO] [map_saver] 
+	map_saver lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [map_saver] Creating
+[INFO] [map_saver] Configuring
+[INFO] [map_saver] Saving map from '/slam_map' topic to 'E:\DesktopData\app\code\CPU\.scratch\slam_live6_pgm' file
+[WARN] [map_saver] Free threshold unspecified. Setting it to default value: 0.250000
+[WARN] [map_saver] Occupied threshold unspecified. Setting it to default value: 0.650000
+[INFO] [map_io] Received a 473 X 473 map @ 0.05 m/pix
+[INFO] [map_io] Writing map occupancy data to E:\DesktopData\app\code\CPU\.scratch\slam_live6_pgm.pgm
+[INFO] [map_io] Writing map metadata to E:\DesktopData\app\code\CPU\.scratch\slam_live6_pgm.yaml
+[INFO] [map_io] Map saved
+[INFO] [map_saver] Map saved successfully
+[INFO] [map_saver] Destroying
+--- map_saver_cli.exe --fmt png ---
+[INFO] [map_saver] 
+	map_saver lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [map_saver] Creating
+[INFO] [map_saver] Configuring
+[INFO] [map_saver] Saving map from '/slam_map' topic to 'E:\DesktopData\app\code\CPU\.scratch\slam_live6_png' file
+[WARN] [map_saver] Free threshold unspecified. Setting it to default value: 0.250000
+[WARN] [map_saver] Occupied threshold unspecified. Setting it to default value: 0.650000
+[INFO] [map_io] Received a 473 X 473 map @ 0.05 m/pix
+[INFO] [map_io] Writing map occupancy data to E:\DesktopData\app\code\CPU\.scratch\slam_live6_png.png
+[INFO] [map_io] Writing map metadata to E:\DesktopData\app\code\CPU\.scratch\slam_live6_png.yaml
+[INFO] [map_io] Map saved
+[INFO] [map_saver] Map saved successfully
+[INFO] [map_saver] Destroying
+=== 6. slam node log ===
+[slam_bridge_node] /tf_static carries the laser frame
+[INFO] [slam_toolbox] Configuring
+[INFO] [slam_toolbox] Using solver plugin solver_plugins::CeresSolver
+[INFO] [slam_toolbox] EigenPoseGraphSolver: configured with 50 max iterations.
+[INFO] [slam_toolbox] Activating
+[slam_bridge_node] sync active: /scan -> /slam_map, base_link frame, resolution 0.0500, map every 2.0 s, scan buffer 10, with scan matching, with loop closing
+Registering sensor: [Custom Described Lidar]
+
+=== 7. stop the daemon ===
+[ros2_bridge] stopping daemon

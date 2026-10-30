@@ -1,0 +1,38 @@
+  ok   behavior_tree_log                nav2_msgs/msg/BehaviorTreeLog                 cdr=128 shim=118
+  ok   bool                             std_msgs/msg/Bool                             cdr=5 shim=1
+  ok   clock                            rosgraph_msgs/msg/Clock                       cdr=12 shim=8
+  ok   collision_monitor_state          nav2_msgs/msg/CollisionMonitorState           cdr=24 shim=16
+  ok   costmap_filter_info              nav2_msgs/msg/CostmapFilterInfo               cdr=52 shim=41
+  ok   costmap_update                   nav2_msgs/msg/CostmapUpdate                   cdr=50 shim=42
+  ok   critics_stats                    nav2_msgs/msg/CriticsStats                    cdr=112 shim=97
+  ok   diagnostic_array                 diagnostic_msgs/msg/DiagnosticArray           cdr=204 shim=166
+  ok   imu                              sensor_msgs/msg/Imu                           cdr=324 shim=316
+  ok   laserscan                        sensor_msgs/msg/LaserScan                     cdr=1524 shim=1519
+  ok   local_plan_evaluation            dwb_msgs/msg/LocalPlanEvaluation              cdr=576 shim=554
+  ok   log                              rcl_interfaces/msg/Log                        cdr=152 shim=136
+  ok   map_meta_data                    nav_msgs/msg/MapMetaData                      cdr=84 shim=76
+  ok   marker                           visualization_msgs/msg/Marker                 cdr=293 shim=257
+  ok   occupancy_grid                   nav_msgs/msg/OccupancyGrid                    cdr=144 shim=135
+  ok   occupancy_grid_update            map_msgs/msg/OccupancyGridUpdate              cdr=52 shim=47
+  ok   odometry                         nav_msgs/msg/Odometry                         cdr=724 shim=709
+  ok   parameter_event                  rcl_interfaces/msg/ParameterEvent             cdr=352 shim=310
+  ok   particle_cloud                   nav2_msgs/msg/ParticleCloud                   cdr=220 shim=211
+  ok   path                             nav_msgs/msg/Path                             cdr=244 shim=232
+  ok   point_cloud2                     sensor_msgs/msg/PointCloud2                   cdr=161 shim=133
+  ok   point_stamped                    geometry_msgs/msg/PointStamped                cdr=44 shim=39
+  ok   polygon                          geometry_msgs/msg/Polygon                     cdr=56 shim=52
+  ok   polygon_stamped                  geometry_msgs/msg/PolygonStamped              cdr=60 shim=55
+  ok   pose_array                       geometry_msgs/msg/PoseArray                   cdr=252 shim=243
+  ok   pose_stamped                     geometry_msgs/msg/PoseStamped                 cdr=76 shim=71
+  ok   pose_with_covariance_stamped     geometry_msgs/msg/PoseWithCovarianceStamped   cdr=364 shim=359
+  ok   speed_limit                      nav2_msgs/msg/SpeedLimit                      cdr=36 shim=25
+  ok   string                           std_msgs/msg/String                           cdr=31 shim=26
+  ok   tfmessage                        tf2_msgs/msg/TFMessage                        cdr=196 shim=181
+  ok   tracking_feedback                nav2_msgs/msg/TrackingFeedback                cdr=120 shim=111
+  ok   trajectory                       nav_msgs/msg/Trajectory                       cdr=700 shim=668
+  ok   twist                            geometry_msgs/msg/Twist                       cdr=52 shim=48
+  ok   twist_stamped                    geometry_msgs/msg/TwistStamped                cdr=76 shim=69
+  ok   voxel_grid                       nav2_msgs/msg/VoxelGrid                       cdr=88 shim=80
+
+35 fixtures, 105 byte comparisons, 0 failure(s)
+CDR <-> shim transcoding is byte exact in both directions

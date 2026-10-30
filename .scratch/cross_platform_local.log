@@ -1,0 +1,8 @@
+[check] local  shim: build entry point            PASS  (1.0s)
+[check] local  shim: ctest                        PASS  (53.5s)
+[check] local  shm: ctest                         PASS  (1.1s)
+[check] local  bridge: build entry point + ctest  PASS  (4.3s)
+[check] local  bridge: control entry point        PASS  (0.3s)
+[check] local  grpc sdk: build entry point + ctest PASS  (2.4s)
+
+[check] both halves green (6 steps)

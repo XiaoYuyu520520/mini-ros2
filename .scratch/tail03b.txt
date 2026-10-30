@@ -1,0 +1,112 @@
+   56| ## 证据 1 · Windows 上像 ROS2 一样使用
+   97| ## 证据 2 · Windows 发布，Ubuntu 订阅
+  113| ## 证据 3 · nav2 建图 + 规划 + 移动
+  155| ## 证据 4 · SLAM（`slam_toolbox` 移植到 Windows）
+  209| ## 证据 5 · AMCL（`nav2_amcl` 移植到 Windows）
+  249| ## 证据 6 · 参数文件（`--params-file`）
+  459| ## 证据 7 · 时间戳感知的 TF（slam_toolbox 建图从此确定性通过）
+  512| ## 证据 8 · 就绪文件：冷启动 `ros2 topic list` 变成确定性的
+  539| ## 证据 9 · 通道命名空间：测试和守护进程可以同时跑
+  559| ## 证据 10 · 一行 `--once` 发布必须到得了车
+  591| ## 证据 11 · `base_frame` 预设只让位给真正在配置它的调用方
+  614| ## 证据 12 · 生命周期节点的退出：从「进程直接崩掉」到按上游顺序关停
+  661| ## 证据 13 · 真正的 nav2 服务器栈被 lifecycle_manager 拉到 ACTIVE
+  699| ## 证据 14 · 真正的 nav2 栈一键闭环（`nav2_stack.bat`）
+  754| ## 证据 15 · 地图存档与再加载：绕开 GraphicsMagick 的 `nav2_map_server`
+  836| ## 证据 16 · 规划器插件层：`nav2_smac_planner`（Hybrid-A*）接入
+  955| ## 证据 17 · service / action：跨机的一问一答与目标生命周期
+ 1032| ## 证据 18 · 图注册表的重写：一次「静默丢失」的根因
+ 1111| ## 证据 19 · 时间基准：`use_sim_time` + `/clock`（栈从墙钟换到机器人时钟）
+ 1178| ## 证据 20 · 测试与桥相处：每个 ctest 一个通道命名空间
+ 1221| ## 证据 21 · `behavior_server`：行为树末尾的自救轮盘真的转起来了
+ 1312| ## 证据 22 · `smoother_server` 与 `waypoint_follower`
+ 1362| ## 证据 23 · `nav2_safety.bat`：`velocity_smoother` + `collision_monitor`
+ 1402| ## 证据 24 · 跨机 action / service：1 → 9 与 7 → 9
+ 1459| ## 证据 25 · 第三种控制器：`nav2_rotation_shim_controller`
+ 1513| ## 证据 26 · action 客户端的一次竞态：结果比「目标被接受」早到
+ 1566| ## 证据 27 · `nav2_dwb_controller`：第二种真正能开的控制器
+ 1605| ## 证据 28 · `nav2_docking_route.bat`：`docking_server` 与 `route_server` 到 ACTIVE
+ 1642| ## 证据 29 · 本轮收尾回归
+ 1659| ## 证据 30 · `nav2_mppi_controller`：上游默认的那个控制器，以及一处 pluginlib 注册表缺陷
+ 1793| ## 证据 31 · `shm_transport` 的读侧：等待有上界，读者状态有锁
+ 1854| ## 证据 32 · 话题 remap（`-r FROM:=TO`）与安全链进链
+ 1973| ## 证据 33 · 参数服务与 `ros2 param`
+ 2108| ## 证据 34 · `nav2_graceful_controller` 进插件表，`vector_object_server.exe` 第一次起来
+ 2211| ## 证据 35 · PNG coder：`Magick++` 替身从「只认 PGM」到「PGM + 8 位 PNG」
+ 2233| ### 证据一：真编译器写、两个独立解码器读
+ 2248| ### 证据二：读别人的 PNG（「不写也能看」的那一半）
+ 2280| ### 证据三：`map_io.cpp` 端到端
+ 2341| ## 证据 36 · 活的 SLAM 回路：桥 → `slam_toolbox` → 地图文件 → `map_server` → 桥
+ 2531| ## 证据 37 · `ros2 param list` 的节点名可以省，以及一轮对着真节点的复核
+ 2644| ## 证据 38 · 复核安全链：`/cmd_vel` 上只剩一个写者，车就听它的
+ 2696| ## 证据 39 · `/parameter_events`：节点自己发的话题，另一个进程读得到
+ 2827| ## 证据 40：四项收尾的现场复检
+ 2874| ## 证据 41 · 位姿图存档：`serialize_map` / `deserialize_map` 通了，两条解档路径都验过
+ 3031| ### 根因 3：这条证据自己写错了（给同一个节点挂了第二个 `/map` 订阅）
+ 3093| ## 证据 42 · 五项收尾：通道环的护栏、vendor 补丁、存档容差、图目录命名空间、文档订正
+ 3246| ## 证据 43 · 复修两处可靠性缺陷：`publish()` 的有界等待、读者耐心跟着错误码走
+ 3392| ## 证据 44 · 测试套件普查：34 条测试的源文件、两套断言口径，以及复修后的十轮压测
+ 3529| ## 证据 45 · 把验收 4（SLAM）接进 `acceptance_check.py`
+ 3642| ## 证据 46 · 命名空间隔离：把一条错建议改对，并把 `bridge\windows` 漏掉的 4 条补上
+ 3777| ## 证据 47 · 存图 → 换进程定位：能，但 `-p` 的一份列表值曾经被静默丢掉
+ 4002| ## 证据 48 · 跨机类型表：19 → 38，nav2 栈的每个话题现在都能读出字段
+ 4275| ## 证据 49 · 上行白名单能在 `.bat` 里写，以及新类型真的过了桥
+ 4379| ## 证据 50 · `/rosout`：Windows 侧终于有自己的日志话题
+ 4449| ### 四、进程内证据
+ 4466| ### 五、跨进程证据
+ 4604| ## 证据 51 · slam_toolbox 的九个 srv：类型表补全，并在活节点上真调了九条
+ 4706| ## 证据 52 · nav2 自己的九个 srv：costmap / planner 的跨机服务表补全，并在活栈上真调了七条
+ 4883| ## 证据 53 · nav2_msgs 的 srv 认到 20/20：collision_monitor / object server / route / docking 那八条
+ 5044| ## 证据 54 · 上行白名单开箱即用：nav2 的 `/plan` 与 `/behavior_tree_log` 不写参数就到机器人
+ 5109| ### 三、这条证据不能证明什么
+ 5119| ## 证据 55 · `%TEMP%` 里的图目录开始自清：56 个残留的来源，和两个关掉的位置
+ 5164| ### 三、这条证据不能证明什么
+ 5174| ## 证据 56 · 验收终于会红：nav2 的 `/plan` 变成一条门禁（2026-09-17 晚）
+ 5223| ### 五、这条证据不能证明什么
+ 5233| ## 证据 57 · 对端换成真 ROS2 之后的两处真 bug：空 CDR 体与一个零 allocator（2026-09-17 晚）
+ 5326| ### 五、这条证据不能证明什么
+ 5342| ## 证据 58 · `RclcppBackend` 的四个 action RPC：从 `unimplemented("actions")` 到真对端上跑通（2026-09-17 深夜）
+ 5521| ### 五、这条证据不能证明什么
+ 5548| ## 证据 59 · 跨机的「空请求」服务一条都没通过：两端对 CDR 空体的分歧（2026-09-17 深夜）
+ 5666| ### 七、这条证据不能证明什么
+ 5680| ## 证据 60 · 复核：今天这一轮实测（2026-09-17 晚）
+ 5777| ### 六、这条证据不能证明什么
+ 5791| ## 证据 61 · action 表 9 → 20：nav2 的 19 个 action 全部能过机器（2026-09-17 夜）
+ 5879| ## 证据 62 · `Image` + `CameraInfo` 入表：相机话题从「一个字节数」变成能读懂的消息（2026-09-17 夜）
+ 6006| ## 证据 63 · 日志轮转在「连不上 agent」那条路上漏了一段（2026-09-17 夜）
+ 6094| ## 证据 64 · `topic pub` / `service call` / `action send_goal` 的取值换成了真 YAML（2026-09-17 夜）
+ 6243| ## 证据 65 · Linux 上把 `--map` 跑通：护栏打印的那两条命令，Linux 侧一直是空转的（2026-09-18）
+ 6405| ## 证据 66 · 建图只长出车周围 1.7 m：根因是 slam_toolbox 的三个运动门槛（2026-09-18）
+ 6568| ## 证据 67 · nav2 真的会绕障：直线 5.01 m、规划 8.07 m、车上走出 8.5~8.8 m、最小离障 0.28 m（2026-09-18）
+ 6730| ## 证据 68 · `/navigate_through_poses`：从“命令行发不出去”到 `SUCCEEDED`，三个根因（2026-09-19）
+ 6946| ## 证据 69 · `racecar_ctl.py stop` 停不掉 SLAM 节点：`status eq running` 在这台机器上把所有进程都答成 `unknown`（2026-09-19）
+ 7051| ## 证据 70 · racecar 的导航脚本写的是 Humble 的 `NavigateThroughPoses` 字段；13 个脚本改成 `nav_msgs/Goals` 之后 `go.py` 在兼容层上走完 9 个航点（2026-09-19）
+ 7223| ## 证据 71 · `_action/status`：从「这条话题不存在」到 `ACCEPTED → EXECUTING → SUCCEEDED`，以及它顺路挖出的一个 Python 解码器缺陷（2026-09-19）
+ 7457| ## 证据 72 · SMAC 的 `std::bad_alloc` 是「角度箱越界」，三处下标修掉；`nav.yaml` 两个 workaround 一起回滚（2026-09-19）
+ 7684| ## 证据 73 · `GoalStatusArray` 的逐字节 fixture：没有 fixture 的话题 4 → 3（2026-09-19）
+ 7795| ## 证据 74 · `nav2_simple_commander` 的结果面：八条过完，顺路证伪两条「兼容层坏」的猜测（2026-09-19）
+ 7982| ## 证据 75 · 跨平台那六步：Windows 与 Ubuntu 各跑一遍全绿，并把远端最慢那条的明细留下来（2026-09-19）
+---- evidence 75 head ----
+ 7982| ## 证据 75 · 跨平台那六步：Windows 与 Ubuntu 各跑一遍全绿，并把远端最慢那条的明细留下来（2026-09-19）
+ 7983| 
+ 7984| `tools/check_cross_platform.py` 是「两边都能编」唯一那张表 —— `04-gaps.md` 第二十二节记着它今天仍然
+ 7985| 是**手工跑**的（仓库里有 `.github/workflows/cross-platform.yml`，但一次都没在 runner 上跑过）。
+ 7986| 这一轮两侧各跑一遍：
+ 7987| 
+ 7988| ```text
+ 7989| $ python tools\check_cross_platform.py --remote
+ 7990| [check] pushing 7704 files, 215.6 MB
+ 7991| pushed
+ 7992| [check] remote shim: build entry point            PASS  (4.2s)
+ 7993| [check] remote shim: ctest                        PASS  (273.2s)
+ 7994| [check] remote shm: ctest                         PASS  (1.1s)
+ 7995| [check] remote bridge: build entry point + ctest  PASS  (4.0s)
+ 7996| [check] remote bridge: control entry point        PASS  (0.2s)
+ 7997| [check] remote grpc sdk: build entry point + ctest PASS  (2.2s)
+ 7998| 
+ 7999| [check] both halves green (6 steps)
+ 8000| 
+ 8001| $ python tools\check_cross_platform.py --local
+ 8002| [check] local  shim: build entry point            PASS  (1.0s)
+ 8003| [check] local  shim: ctest                        PASS  (53.5s)
+ 8004| [check] local  shm: ctest                         PASS  (1.1s)

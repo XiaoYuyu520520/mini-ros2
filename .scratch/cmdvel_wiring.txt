@@ -1,0 +1,33 @@
+========================= E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\launch\Run_nav.launch.py
+16     racecar_dir = get_package_share_directory('racecar')
+17     racecar_launchr = os.path.join(racecar_dir, 'launch')
+21     # `ros2 launch` 是找不到这个文件的。`racecar_ctl.py nav` 无论怎样都会传 `map:=`，
+25         default=os.path.join(racecar_dir, 'map', 'ai_map.yaml')
+28     param_dir = os.path.join(racecar_dir, 'config')
+51                 [racecar_launchr, '/bringup_launch.py']),
+========================= E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\launch\bringup_launch.py
+60     # TODO(orduno) Substitute with `PushNodeRemapping`
+62     remappings = [('/tf', 'tf'),
+144             remappings=remappings,
+========================= E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py
+25     controller_server  path following (RPP), publishes /cmd_vel
+69     controller_server   -> /cmd_vel_nav       -r cmd_vel:=cmd_vel_nav
+70     behavior_server     -> /cmd_vel_nav       -r cmd_vel:=cmd_vel_nav
+71     velocity_smoother   -> /cmd_vel_smoothed  -r cmd_vel:=cmd_vel_nav
+72     collision_monitor   -> /cmd_vel           cmd_vel_out_topic
+119 # Remapped to /cmd_vel_nav under --safety: a node's topic names are fixed when
+130   carry use_sim_time, enable_stamped_cmd_vel, the behavior-tree paths and the
+149   instead of beside it: controller_server and behavior_server are remapped to
+150   /cmd_vel_nav, the smoother publishes /cmd_vel_smoothed and the monitor is the
+151   only writer of /cmd_vel, the topic the robot drives from. Limits and the stop
+288     # velocity_smoother is the node that needs the remap: its input topic is a
+289     # literal `cmd_vel` in velocity_smoother.cpp, so `-r cmd_vel:=cmd_vel_nav` is
+292     # no remap at all.
+294         extra = ["-r", "cmd_vel:=cmd_vel_nav"] if name == "velocity_smoother" else []
+309     print("[nav2_stack] command chain:  controller_server -> /cmd_vel_nav", flush=True)
+310     print("[nav2_stack]                  velocity_smoother -> /cmd_vel_smoothed", flush=True)
+311     print("[nav2_stack]                  collision_monitor -> /cmd_vel  (only writer)", flush=True)
+456     remap = ["-r", "cmd_vel:=cmd_vel_nav"] if safety else []
+459         extra = remap if (safety and name in CMD_VEL_WRITERS) else []
+491     # publish on /cmd_vel_nav - or read /cmd_vel - that is not part of the
+502     # ticks, and no /cmd_vel ever comes out, because the compute_path_to_pose

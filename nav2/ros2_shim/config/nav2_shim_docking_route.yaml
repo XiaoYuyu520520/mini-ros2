@@ -1,0 +1,52 @@
+# Parameters for the two servers `nav2_docking_route.bat` brings up next to a
+# running nav2 stack: `docking_server` (nav2_docking) and `route_server`
+# (nav2_route).
+#
+# Upstream's nav2_params.yaml has no block for either - docking's parameters
+# live in the package's own test file and route's are all defaults - so both
+# blocks here are additions rather than overrides, and `nav2_docking_route.bat`
+# loads this file after the stack's two.
+#
+# What each server needs to *configure* is little, and what it needs to *work*
+# is not in this file:
+#
+#   docking_server   a dock plugin to instantiate. The dock itself - id, type,
+#                    pose - arrives with each DockRobot goal, so no docks file
+#                    and no `docks` list is needed to load the plugin database.
+#   route_server     nothing beyond a clock. The route graph is handed to it at
+#                    runtime over `/route_server/set_route_graph`
+#                    (`nav2_msgs/srv/SetRouteGraph`); with no graph it answers
+#                    "No graph set! Aborting request." rather than failing to
+#                    configure, which is what makes it testable at all without
+#                    shipping a graph.
+#
+# `use_sim_time` is here for the same reason as everywhere else in the port: the
+# bridge carries the robot's simulation clock on /clock, and a node that pairs
+# its own `now()` with a stamped message has to follow it (see
+# bridge/docs/03-validation.md, evidence 19).
+
+docking_server:
+  ros__parameters:
+    use_sim_time: true
+    # The controller the dock sequence hands its staging/docking paths to. It is
+    # the same controller_server the stack runs; the pose it needs comes over
+    # /tf, which the bridge mirrors.
+    controller:
+      # The sim has no collision geometry for the dock, and upstream defaults
+      # this to true. Turning it off is what a robot without a dock model does.
+      use_collision_detection: false
+      transform_tolerance: 0.5
+    # The plugin database. `docking_server` instantiates each entry in
+    # `dock_plugins` at configure time; a DockRobot goal then names one of them
+    # by `dock_type`. This is the only thing in this file that has to be right
+    # for the server to reach ACTIVE.
+    dock_plugins: [charging_dock]
+    charging_dock:
+      plugin: opennav_docking::SimpleChargingDock
+      dock_direction: forward
+      rotate_to_dock: false
+      staging_yaw_offset: 0.0
+
+route_server:
+  ros__parameters:
+    use_sim_time: true

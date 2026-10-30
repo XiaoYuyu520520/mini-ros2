@@ -1,0 +1,28 @@
+================== detct.py
+   imports: import os import rclpy from rclpy.action import ActionClient from rclpy.node import Node from nav2_msgs.action import NavigateThroughPoses from geometry_msgs.msg import PoseStamped, Twist import csv
+   has rclpy_argv: False | rclpy.init call: ['rclpy.init(args=args)']
+   reads csv at: ["142 waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'ai_test2.csv'))"]
+================== goal_l.py
+   imports: import os import rclpy from rclpy.action import ActionClient from rclpy.node import Node from nav2_msgs.action import NavigateThroughPoses from geometry_msgs.msg import PoseStamped, Twist import csv
+   has rclpy_argv: False | rclpy.init call: ['rclpy.init(args=args)']
+   reads csv at: ["142 waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'ai_test2.csv'))"]
+================== 人工智能赛道初始版本代码.py
+   imports: import rclpy from rclpy.action import ActionClient from rclpy.node import Node from nav2_msgs.action import NavigateThroughPoses from geometry_msgs.msg import PoseStamped, Twist import csv import os from std_srvs.srv import Trigger  # 导入 Trigger 服务
+   has rclpy_argv: False | rclpy.init call: ['rclpy.init(args=args)']
+   reads csv at: ["95 waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'ai_test.csv'))"]
+================== 第二个点nav2打断，然后转圈圈.py
+   imports: import rclpy from rclpy.action import ActionClient from rclpy.node import Node from nav2_msgs.action import NavigateThroughPoses from geometry_msgs.msg import PoseStamped, Twist import csv import os
+   has rclpy_argv: False | rclpy.init call: ['rclpy.init(args=args)']
+   reads csv at: ["131 waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'ai_test.csv'))"]
+================== ai_第一个点后回终点.py
+   imports: import rclpy from rclpy.action import ActionClient from rclpy.node import Node from nav2_msgs.action import NavigateThroughPoses from geometry_msgs.msg import PoseStamped, Twist import csv import os
+   has rclpy_argv: False | rclpy.init call: ['rclpy.init(args=args)']
+   reads csv at: ["105 waypoints = read_waypoints_from_csv(os.path.join(script_dir, 'ai_test.csv'))"]
+================== end_3_12.py
+   imports: import rclpy from rclpy.action import ActionClient from rclpy.node import Node from nav2_msgs.action import NavigateThroughPoses from geometry_msgs.msg import PoseStamped, Twist import csv import os import sys from std_srvs.srv import Trigger  # 导入 Trigger 服务
+   has rclpy_argv: False | rclpy.init call: ['rclpy.init(args=args)']
+   reads csv at: ['110 waypoints = read_waypoints_from_csv(waypoint_file())']
+================== 跑一圈以内.py
+   imports: import rclpy from rclpy.action import ActionClient from rclpy.node import Node from nav2_msgs.action import NavigateThroughPoses from geometry_msgs.msg import PoseStamped, Twist import csv import os import sys from std_srvs.srv import Trigger  # 导入 Trigger 服务
+   has rclpy_argv: False | rclpy.init call: ['rclpy.init(args=args)']
+   reads csv at: ['110 waypoints = read_waypoints_from_csv(waypoint_file())']

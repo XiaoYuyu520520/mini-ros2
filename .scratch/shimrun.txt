@@ -1,0 +1,156 @@
+6041
+"""Run a ROS2 Python script on the shim, with the shim's ``rclpy`` in front of it.
+
+``python shim_run.py src/racecar/scripts/go.py`` is the whole idea. A runner is
+needed rather than plain ``python go.py`` for three reasons, and all three are
+about *when* something happens rather than what:
+
+* **The message names have to exist before the script's first import.** On a
+  real ROS2 ``geometry_msgs`` is an installed package; here it is a finder that
+  :func:`ros2py.aliases.install` puts on ``sys.meta_path``. Installing it when
+  ``rclpy`` is imported is not early enough, because a script may name a message
+  before it imports rclpy - ``nav2_simple_commander`` does, on its second
+  import - and then the first import of the script has already failed.
+
+* **``nav2_simple_commander`` is not an installed package here.** The ported
+  copy lives in the checkout (``nav2/nav2_extracted/navigation2-*/``), so the
+  runner finds it and puts it on the path. Found by glob rather than by a
+  pinned version, so bumping the vendored nav2 does not silently stop finding
+  it.
+
+* **The script has to run *as a script*.** ``runpy.run_path`` with
+  ``run_name='__main__'`` gives it ``__name__ == '__main__'`` and a real
+  ``__file__``: the mission scripts guard their entry point on the first and
+  locate their CSV waypoints relative to their own file with the second.
+
+Usage:
+
+    python shim_run.py <script.py> [args...]
+    python shim_run.py --path DIR <script.py> [args...]
+    python shim_run.py --paths
+
+Exit code is the script's own when it raises SystemExit, 1 when it raises
+anything else, and 2 for a usage mistake.
+"""
+from __future__ import annotations
+
+import os
+import runpy
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+CPU_ROOT = HERE.parent.parent.parent
+
+
+def simple_commander_dirs():
+    """The vendored ``nav2_simple_commander`` packages, newest first."""
+    found = []
+    for extracted in sorted((CPU_ROOT / "nav2" / "nav2_extracted").glob("navigation2-*"),
+                            reverse=True):
+        candidate = extracted / "nav2_simple_commander"
+        if (candidate / "nav2_simple_commander" / "robot_navigator.py").is_file():
+            found.append(candidate)
+    return found
+
+
+def script_paths(extra=()):
+    """Every directory a shim Python script has to be able to import from."""
+    paths = [HERE]
+    paths.extend(simple_commander_dirs())
+    for directory in extra:
+        paths.append(Path(directory).resolve())
+    return paths
+
+
+def install_paths(extra=()):
+    """Put the directories on ``sys.path`` and make the message names importable."""
+    paths = script_paths(extra)
+    for directory in reversed(paths):
+        if str(directory) not in sys.path:
+            sys.path.insert(0, str(directory))
+    try:
+        from ros2py.aliases import install
+    except ImportError as error:
+        print("shim_run: cannot import ros2py from %s: %s" % (HERE, error),
+              file=sys.stderr)
+        return None
+    installed = install()
+    if not installed:
+        print("shim_run: no generated messages under %s" % (HERE / "pymessages"),
+              file=sys.stderr)
+    return paths
+
+
+USAGE = """usage: shim_run.py [--path DIR]... [--sim-time|--wall-time] <script.py> [args...]
+       shim_run.py --paths
+
+Runs a ROS2 Python script with the shim's rclpy, message aliases and
+nav2_simple_commander already on the import path.
+
+  --path DIR   an extra directory to import from  (repeatable)
+  --sim-time   start the script on simulation time (ROS2_SHIM_SIM_TIME=1), for
+               a stack whose nodes run use_sim_time and publish /clock
+  --wall-time  the opposite, for a script that must stay on the wall clock
+  --paths      print the directories this would use, and stop
+
+--sim-time/--wall-time are an environment variable rather than an extra
+argument because a script may filter its own argv before rclpy sees it; the
+variable is the way in that no script can drop. See ros2py.node.
+"""
+
+
+def main(argv):
+    extra = []
+    rest = list(argv)
+    while rest:
+        if rest[0] == "--path" and len(rest) > 1:
+            extra.append(rest[1])
+            del rest[:2]
+            continue
+        if rest[0] in ("--sim-time", "--wall-time"):
+            # Not handed to the script: it is an instruction *about* the run,
+            # and the script has no `--ros-args` to put it in. The environment
+            # is where rclpy.init() picks it up from (ros2py.node), which is
+            # also the one channel a script's own argv filtering cannot lose.
+            os.environ["ROS2_SHIM_SIM_TIME"] = "1" if rest[0] == "--sim-time" else "0"
+            del rest[:1]
+            continue
+        break
+    if rest and rest[0] in ("-h", "--help"):
+        sys.stdout.write(USAGE)
+        return 0
+    if rest and rest[0] == "--paths":
+        for directory in script_paths(extra):
+            print(directory)
+        return 0
+    if not rest:
+        sys.stderr.write(USAGE)
+        return 2
+    script = Path(rest[0])
+    if not script.is_file():
+        sys.stderr.write("shim_run: no such script: %s\n" % script)
+        return 2
+    script = script.resolve()
+    if install_paths(extra) is None:
+        return 1
+    if os.environ.get("ROS2_SHIM_SIM_TIME") is not None:
+        print("shim_run: use_sim_time from the environment: %s"
+              % os.environ["ROS2_SHIM_SIM_TIME"], file=sys.stderr, flush=True)
+    # The interpreter's own argv, as the script would have seen it: this is why
+    # `sys.argv[0]` is a path and not this runner.
+    sys.argv = [str(script)] + [str(a) for a in rest[1:]]
+    try:
+        runpy.run_path(str(script), run_name="__main__")
+    except SystemExit as exit_request:
+        return exit_request.code if isinstance(exit_request.code, int) else 0
+    except KeyboardInterrupt:
+        # Ctrl-C is the way out of a mission script that is spinning; the
+        # interpreter's usual 130 is what a shell expects to see.
+        return 130
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
+

@@ -1,0 +1,15 @@
+ctest -j 8, 10 rounds, pinned to cores 0,1,10,11,12,13 (mask 0x3C03)
+[  1/10]   16.9s  ok  100% tests passed out of 27
+[  2/10]   19.8s  ok  100% tests passed out of 27
+[  3/10]   18.1s  ok  100% tests passed out of 27
+[  4/10]   15.9s  ok  100% tests passed out of 27
+[  5/10]   16.6s  ok  100% tests passed out of 27
+[  6/10]   20.4s  ok  100% tests passed out of 27
+[  7/10]   19.4s  ok  100% tests passed out of 27
+[  8/10]   20.2s  ok  100% tests passed out of 27
+[  9/10]   21.9s  ok  100% tests passed out of 27
+[ 10/10]   22.8s  ok  100% tests passed out of 27
+
+10/10 rounds clean, 0 rounds with a failed test
+test                                          runs  failed    worst s
+wrote E:\DesktopData\app\code\CPU\.scratch\ctest_stress.json

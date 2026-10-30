@@ -1,0 +1,23 @@
+{
+  "succeeded": true,
+  "reason": "SUCCEEDED",
+  "action": "navigate_to_pose",
+  "goal": [2.55, 0, 0],
+  "goal_source": "auto",
+  "frame": "map",
+  "result": "SUCCEEDED",
+  "error_code": 0,
+  "error_msg": "",
+  "elapsed_s": 10.7167,
+  "start_pose": [0, 0],
+  "final_pose": [2.67618, -0.220445, -0.0982113],
+  "travelled_m": 2.68524,
+  "remaining_m": 0.254002,
+  "feedback_messages": 491,
+  "number_of_recoveries": 0,
+  "last_distance_remaining_m": 0.0707107,
+  "max_linear_velocity": 0.493607,
+  "ack_latency_s": 0.026475,
+  "result_latency_s": 9.92091,
+  "messages": {"cmd_vel": 181, "cmd_vel_type": "Twist", "cmd_vel_moving": 180, "plan": 8, "plan_poses": 23, "odom": 509}
+}

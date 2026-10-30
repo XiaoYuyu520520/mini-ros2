@@ -1,0 +1,9 @@
+header:
+  stamp: 28370.020000526
+  frame_id: "odom"
+child_frame_id: "base_link"
+pose.pose.position: {x: -2.6506, y: -1.14738, z: 0}
+pose.pose.orientation: {x: 0, y: 0, z: -0.463979, w: 0.885846}
+twist.twist.linear: {x: 0, y: 0, z: 0}
+twist.twist.angular: {x: 0, y: 0, z: 0}
+---

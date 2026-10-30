@@ -1,0 +1,117 @@
+# ============================================================================
+# racecar 的建图参数 —— 跑在「本仓库移植的 slam_toolbox」上。
+#
+# 用法（兼容层，Windows 与 Ubuntu 同一份文件）：
+#
+#     python bridge/scripts/run_slam_demo.py --params-file <本文件> --mode async
+#
+# racecar/gmapping.sh（Linux）与 racecar/gmapping.bat（Windows）包的是上面这条命令。
+#
+# 为什么不是 slam_gmapping：真车的建图链是 slam_gmapping（gmapping.sh 起的是
+# `ros2 launch slam_gmapping slam_gmapping.launch.py`），而兼容层移植的是
+# slam_toolbox —— 本仓库里没有 gmapping 的移植，所以建图这一半落到 slam_toolbox 上。
+# 真车那边继续用 slam_gmapping 不受影响。
+#
+# 参数取自移植版自带并跑通的那份上游配置
+# （nav2/third_party/slam_toolbox/config/mapper_params_online_async.yaml），
+# 只改了与本车/本仿真相关的地方，都在带「兼容层」字样的注释里：
+#   * base_frame  base_footprint -> base_link   （仿真底座就叫 base_link）
+#   * max_laser_range 20.0 -> 12.0              （仿真雷达 range_max = 12.0）
+#   * minimum_travel_distance 0.5 -> 0.1         （兼容层/仿真：见下「运动门槛」）
+#   * minimum_travel_heading  0.5 -> 0.1
+#   * minimum_time_interval   0.5 -> 0.1
+#
+# 后三个是**运动门槛**。karto 只把「机器人已经动过」的那些扫描放进位姿图，
+# 判断用的是这三个值；它们也是「原地 / 小范围建图只长出车周围一小片、占据格子
+# 是 0」的根因（2026-09-18 量出来的，见 bridge/docs/03-validation.md 证据 66）：
+# 上游的 0.5 m / 0.5 rad / 0.5 s 是给 20 m 雷达的真车调的 —— 真车一秒走好几米，
+# 这条门槛几乎不生效；仿真车 0.4 m/s，一趟 4.5 m 的直线只留下 9 张扫描，
+# 图就只有车周围 1.7 m 的一小片、占据格子 0。降到 0.1 之后，同一份仿真、同一趟
+# 走位，一次跑出 233x233 的整间房（free 83.7% / occupied 2.3%）。
+#
+# 建图时不要再让桥把对面发来的 /map 镜像过来：同一话题两个写者就是两张图叠在
+# 一个通道里。gmapping.sh/bat 会先把守护进程按「镜像 /scan /odom /tf /tf_static
+# /clock，不镜像 /map」重启一遍，slam 出来的图发布在 /map 上。
+#
+# 存图：`python bridge/scripts/save_map.py -f <目标路径>`（racecar/save.sh、save.bat），
+# 或跑图时给 run_slam_demo.py 加 --map-name 换话题名。
+#
+# 上游参数说明：https://github.com/SteveMacenski/slam_toolbox
+# ============================================================================
+slam_toolbox:
+  ros__parameters:
+
+    # Plugin params
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+
+    # ROS Parameters
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_link        # 兼容层/仿真；真车是 base_footprint
+    scan_topic: /scan
+    use_map_saver: true
+    mode: mapping                # localization 表示在既有地图上定位
+
+    # 接着既有地图继续建 / 从某个位姿开始，三者互斥（给了 pose 就用 pose）
+    #map_file_name: test_steve
+    # map_start_pose: [0.0, 0.0, 0.0]
+    #map_start_at_dock: true
+
+    debug_logging: false
+    throttle_scans: 1
+    transform_publish_period: 0.02   #0 表示从不发 odom->map
+    map_update_interval: 5.0
+    resolution: 0.05                 #与仿真世界、racecar/map 里的图一致（0.05 m/格）
+    restamp_tf: false
+    min_laser_range: 0.0             #光栅化用
+    max_laser_range: 12.0            #兼容层/仿真：雷达 range_max 12.0（真车 20.0）
+    minimum_time_interval: 0.1      #兼容层/仿真：0.5 是真车值，见文件头的「运动门槛」
+    transform_timeout: 0.2
+    tf_buffer_duration: 30.0
+    stack_size_to_use: 40000000      #大图序列化需要更大的栈
+    enable_interactive_mode: true
+
+    # General Parameters
+    use_scan_matching: true
+    use_scan_barycenter: true
+    minimum_travel_distance: 0.1    #兼容层/仿真：0.5 是真车值，见文件头的「运动门槛」
+    minimum_travel_heading: 0.1     #兼容层/仿真：0.5 是真车值，见文件头的「运动门槛」
+    check_min_dist_and_heading_precisely: false
+    scan_buffer_size: 10
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.1
+    link_scan_maximum_distance: 1.5
+    loop_search_maximum_distance: 3.0
+    do_loop_closing: true
+    loop_match_minimum_chain_size: 10
+    loop_match_maximum_variance_coarse: 3.0
+    loop_match_minimum_response_coarse: 0.35
+    loop_match_minimum_response_fine: 0.45
+
+    # Correlation Parameters - Correlation Parameters
+    correlation_search_space_dimension: 0.5
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1
+
+    # Correlation Parameters - Loop Closure Parameters
+    loop_search_space_dimension: 8.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+
+    # Scan Matcher Parameters
+    distance_variance_penalty: 0.5
+    angle_variance_penalty: 1.0
+
+    fine_search_angle_offset: 0.00349
+    coarse_search_angle_offset: 0.349
+    coarse_angle_resolution: 0.0349
+    minimum_angle_penalty: 0.9
+    minimum_distance_penalty: 0.5
+    use_response_expansion: true
+    min_pass_through: 2
+    occupancy_threshold: 0.1

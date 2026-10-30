@@ -1,0 +1,329 @@
+## 二十八、racecar 应用层接上兼容层之后，还开着什么（2026-09-19）
+
+证据 70 把 `code/Desktop/racecar/src/racecar/scripts/` 那 19 个脚本接进来了：13 个
+`NavigateThroughPoses` 的 goal 字段从 Humble 的 `poses` 改成 Jazzy 的 `poses.goals`，7 处
+`/home/davinci-mini/...` 换成相对脚本目录，另加 `racecar_ctl.py nav --map live` 和一条仿真房间
+用的 `sim_room12.csv`。下面按「会挡住谁」排**那次改动之后仍然开着的**。
+
+### 1. ~~`test.csv` 不在仓库里，4 个脚本跑不起来~~ **2026-09-19 修掉了**
+
+`end_3_12.py`、`会跳过几个点.py`、`跑一圈以内.py`、`重复载入完成圈数.py` 读的是
+`<脚本目录>/test.csv`。车上原本有（老路径 `/home/davinci-mini/racecar/src/racecar/scripts/test.csv`），
+仓库里只带了 `ai_test.csv` / `ai_test1.csv` / `ai_test2.csv`。路径这一半已经修好，**文件那一半没有**，
+所以这 4 个脚本一跑就是 `FileNotFoundError`。
+**成本**：从车上拷回来，或者把它们指向已经带进来的那三条航线之一。
+
+**这一轮没有二选一，两条都留下来了**：那 4 个脚本（连同 `go copy.py`、`一条路径+csv.py`、
+`终点不停.py`，一共 7 个）现在都走 `go.py` 早就有的那套 `waypoint_file()` ——
+`run <脚本> <名字>.csv` 给的名字优先；不给就按 `test.csv`、`ai_test.csv` 的顺序找脚本目录里的第一个
+存在的文件。于是**车上把 `test.csv` 放回原位就还是原来的行为**（它在第一顺位），仓库里没有这个文件
+也不会再抛异常。**没有关掉的是「车上那份航线不在仓库里」**，只是不再挡住运行。
+
+### 2. ~~12 个改了字段的脚本一个都没实跑~~ **2026-09-19 补上了：17 个里 16 个跑过**
+
+证据 70 只跑了 `go.py`。其余 12 个改的是同一行、`compile()` 全过，但它们各自还有别的分支：
+`Trigger` 服务调用（`/sim/reset`）、`self.poses` 重发、按 4 个一组分组推进、圈数计数。
+「编译过」和「跑得过」在这套兼容层上是两件事 —— 这一轮的第一个 bug 就是编译完全没问题、
+一序列化就炸。
+**成本**：每个脚本对着 `sim_room12.csv` 各跑一次，看 result 里的 `waypoint_statuses`。
+
+证据 76 跑了其中 2 个：`一条路径+csv.py`（76.1 s，9/9 `waypoint_status=1`，`error_code=0`）与
+`终点不停.py`（73.8 s，同上，顺路把 `stop` 服务那处死等改成有界等待）。仍然只有 `compile()` 的是
+这 10 个：`ai_第一个点后回终点.py`、`detct.py`、`end_3_12.py`、`goal_l.py`、`go一条路径.py`、
+`人工智能赛道初始版本代码.py`、`会跳过几个点.py`、`第二个点nav2打断，然后转圈圈.py`、
+`跑一圈以内.py`、`重复载入完成圈数.py`。`self.poses` 重发、按 4 个一组分组推进、圈数计数这三条分支
+就是它们各自多出来的东西 —— 跑过的那 2 个都不含这三条。
+
+证据 77 把剩下的 10 个也跑了（`.scratch/run_mission_batch.py`：每个脚本走完整的一套
+`stop` → `/sim/reset` → `nav --map live` → `run`），**跑起来当场崩了 3 处，全修了**
+（`.scratch/script_fixes.txt`）：4 个脚本的 `cmd_vel_callback` 少了 `distance_remaining is not None`
+守卫（`/cmd_vel` 可以比第一条 feedback 先到，`TypeError` 之后 0.3 s 就退出）、5 个脚本的航线名写死
+（补上 `go.py` 那套 `waypoint_file()`，默认值还是各自原来那一条）、1 个脚本读的是 Humble 才有的
+`result.navigation_time`。17 个脚本里现在 **16 个在兼容层上真跑过**，每个脚本一份日志、结论表在
+`.scratch/batch_results.txt`，只剩 `get.py`（它要键盘，是给人按的工具）。
+
+另外 3 个脚本本来就不在这 13 个里，这一轮也没跑：`go copy.py` 走的是 `/goal_pose` 而不是
+action（`nav2_bt_navigator` 的 `NavigateToPoseNavigator` 确实订阅它并转成 goal ——
+`navigate_to_pose.cpp` 第 52 行 —— 但**兼容层上这条入口一次都没走过**），`go_2c.py` 与
+`go copy_多点需要切换.py` 走 `BasicNavigator`（它的 action 结果面在证据 74 里单独跑过，脚本本身没有）。
+
+### 3. ~~`nav2_simple_commander` 的结果面还没走完~~ **2026-09-19 走完了**
+
+`go_2c.py` / `go copy_多点需要切换.py` 走 `BasicNavigator`。2026-09-19 把它的 action 面单独拉出来
+跑过（`.scratch/dbg6_counters.py`）：`BasicNavigator()` 构造（一次建起 17 个 `ActionClient`）、
+`nav_pose_client.send_goal_async(goal)`、`rclpy.spin_until_future_complete` 等到 ack、goal handle 的
+`accepted`，都跑得通。对照臂是同一个进程里另建一个只有单个 client 的普通 `Node`，两者结论一致。
+
+**这一轮因此推翻了一条被写下来的错误结论。** `[ERROR] [basic_navigator]: NavigateToPose goal to
+1.178 -1.089 was rejected!` 原先被归因成「Python 客户端读 ack 的布局不对」，实测不是：
+
+* `compute_path_to_pose`（planner_server，空闲）→ `accepted=True`，8 s 内拿到 ack；
+* `navigate_to_pose`（bt_navigator，正在跑上一个 goal）→ `accepted=False`，而且 bt_navigator 日志里
+  同一时刻确实写着 `Requested navigation from navigate_to_pose while another navigator is processing,
+  rejecting request.`（这是 upstream 的行为，不是兼容层的）。
+* 两端的环计数器对得上：`_goal_ack` 的 `published_count` 在 ack 返回时 +1，客户端的 `read_count`
+  同步 +1；`_goal` 侧同样。
+
+也就是说客户端是对的，拒绝是真的。真正的缺陷在第十一节。
+
+结果面现在也跑完了（证据 74）：`setInitialPose` / `waitUntilNav2Active` / `goToPose`（`SUCCEEDED`，
+6.8 s）/ `getFeedback`（2.27 m → 1.04 m）/ `getResult` / `cancelTask`（`CANCELED`，0.3 s 后）/
+`clearAllCostmaps` / `lifecycleShutdown`（10.6 s，管理器记 `Managed nodes have been shut down`）
+八条逐条过。**`go_2c.py` / `go copy_多点需要切换.py` 本身仍然没实跑**（那归上一条）。
+
+留下两条**不是兼容层的**新记录：
+
+* **`BasicNavigator.initial_pose` 是默认构造的 `PoseStamped`，四元数 (0,0,0,0)**，而
+  `nav2::validateMsg` 要求 `|‖q‖-1| < 1e-4`（`nav2_ros_common/validate_messages.hpp`）。
+  所以 `waitUntilNav2Active()` 的默认 `localizer='amcl'` 那条路会**永远**循环下去：AMCL 每一轮
+  都答 `Received initialpose message is malformed. Rejecting.`，`initial_pose_received` 永远不翻。
+  先 `setInitialPose(pose)` 就好了（或者 `localizer='robot_localization'` 跳过这一半）。真 ROS2 上
+  同样如此 —— 第二节的 A/B 就是为了证明这一点；
+* **`spin_once(timeout_sec=N)` 只睡 1 ms**：`ros2py/executor.py` 的 `IDLE_SLEEP = 0.001`，而
+  `_poll()` 把它当成 `min(IDLE_SLEEP, N)`。实测 `timeout_sec=1.0` 每调用 **1.6 ms**（差 625 倍）、
+  `0.1` 差 133 倍。共享内存环没法 `wait`，这个上限本身是有意的，但后果是上游那种「等一条消息」
+  的紧循环变成 ~600 Hz：上面那个坏掉的等待在 27 s 里写了 **2,058,378 字节**日志。写脚本时别把
+  `spin_once(timeout_sec=...)` 当成睡眠用。
+
+### 4. ~~`_action/status` 这条隐藏话题没有~~ **2026-09-19 补上了**
+
+原文：`nav2_waypoint_cycle/waypoint_cycle.py` 订阅 `navigate_to_pose/_action/status`
+（`action_msgs/msg/GoalStatusArray`）来决定什么时候推进下一个航点，而兼容层的 action 只实现了六条
+通道（`_goal` / `_goal_ack` / `_cancel` / `_cancel_ack` / `_feedback` / `_result`），这条既没有发布者
+也不会被反射出来，`ros2 topic list` 里就没有这个名字。
+
+现在 server 侧会建 `name + "/_action/status"` 的发布者（`QoS(1).transient_local()`，槽走
+`parameter_slot_size()`，两份拼写分别在 `shm_config.hpp` 的 `is_action_status_name()` 和
+`ros2py/channel.py` 的 `slot_size_for_topic()` 里）。goal 从 ACCEPTED → EXECUTING → 终态各发一条，
+保留 10 s / 64 条。`bridge/windows/src/type_registry.cpp` 认了
+`action_msgs/msg/GoalStatusArray`（接口表 98 → **99**，话题 40 → **41**），`interop_matrix.py` 的
+第六条腿探它，`tests/action_status.cpp` 是它的 ctest。逐条证据见 03-validation.md 的「证据 71」；
+它现在也有逐字节 fixture（`bridge\tests\fixtures\goal_status_array.cdr` / `.shim`，证据 73）。
+
+### 5. Python 侧仍然没有 action **server**
+
+`ros2py/action.py` 只有 client。要在兼容层上用 Python 写一个 action 服务端，得先有「谁在订阅
+`_goal` 通道」这一侧（SelfClient 那套）。C++ 侧有（nav2 那 20 个 action 都是服务端），Python 侧没有。
+**成本**：`ActionServer` + goal handle + 取消语义，一块新东西。
+
+### 6. QoS 只声明不生效
+
+`rclpy.qos` / `ros2py.qos` 的 `QoSProfile` / `ReliabilityPolicy` / `DurabilityPolicy` / `HistoryPolicy`
+都能构造，`create_publisher(..., qos_profile)` 也收得下，但底层共享内存通道没有可靠性、持久性、
+深度这三个语义 —— `transient_local` 不会让后到的订阅者拿到最后一条，`reliable` 也不会重传。
+`nav.yaml` 里那些 `qos_overrides` 同理，是读进来放着的。**别把它当成能用了。**
+
+### 7. `--map live` 只有 `shim` 后端有
+
+`racecar_ctl.py` 的 `ros2` 分支直接走 `resolve_map(wanted)`，`--map live` 会被当成一个找不到的图名，
+报的是「`map/` 里都有什么」而不是「这个后端不支持」。真车上不需要它（`/map` 本来就是 `map_server`
+在读一个文件），所以合理的收尾是**明说**：要么在 `ros2` 分支里拒绝这两个保留名，要么在 `--help` 里
+写清它是 shim-only。
+
+### 8. 「真值图配不上正在跑的仿真世界」这件事还是手工的
+
+`run_sim.py --seed` 默认 `None`，所以每次重启仿真器就换一间房，`map/` 里那些 yaml 都只是快照
+（实测差 15.5% 的像素，证据 70 第四节）。`--map live` 是补救，但「这张图是哪次采摘的」还是靠人记。
+**能改进的一条**：让仿真器把自己的种子报出来（`/sim/status` 那行的一句话里再加一个字段就行），
+这样至少能判断盘上的图是不是当前这一间的。
+
+### 9. `--map live` 要重启两次守护进程
+
+`capture_live_map()` 先 `restart_daemon([])`（镜像一切，`/map` 才拿得到），dump 完再
+`restart_daemon(MIRROR_WITHOUT_MAP)`（`/map` 每边只能有一个写者，接下来那个写者是 `map_server`）。
+两次重启之间有几百毫秒没有镜像，`nav` 那一条命令因此比不带 `--map` 慢几秒。
+**成本**：低。真要做可以给守护进程加一个「暂停镜像某条话题」的控制面，但没有证据说这几秒值钱。
+
+### 10. 一次性 `topic pub --once` 喂不到晚挂上来的订阅者
+
+`ros2 topic pub --once` 是一次性进程：发布者一退出，它建的那条环就没了，晚起来的订阅者从
+`seek_to_latest` 之后只能看到空的。所以 `ros2 topic pub --once /initialpose ...` 之后再起 AMCL 是拿
+不到的；`/clicked_point` / `/goal_pose` 这类**发布者活着**的交互式用法不受影响。要喂一条一次性的
+消息给还没起来的订阅者，得用 `--rate N --duration S` 让发布者在那里等。（证据 71 第九节实测。）
+**成本**：低。真要做可以给 `topic pub` 加一条「等订阅者出现再发」的开关。
+
+### 11. ~~一个规划不了的 goal 会把 `bt_navigator` 卡死~~：入口那一环已修，剩下的两环要先「仿真器重启过」才发得出来
+
+这是 2026-09-19 找到的最重的一条，也是 `go_2c.py` 三个点全部 `was rejected!` 的真正原因
+（`%TEMP%\nav2_stack\*.log`）。链条三段：
+
+1. **规划失败抛的是 `std::bad_alloc`（2026-09-19 定位并修掉）。** 对一个到不了的 goal
+   （实测目标 `(1.00, 1.50)`），`SmacPlannerHybrid` 当时抛 `std::bad_alloc`，planner_server
+   日志里 376 次、188 次 `Aborting handle`；那确实是「某处算出了一个荒谬的长度交给 `new`」
+   —— 规划器自己的角度箱越界，根因与修法见 A 节。现在同一个 goal 的答复是
+   `PlannerTimedOut`（error_code 207、~1.7 s），动作正常结束；而且**坏目标之后的下一个 goal
+   立刻受理并跑完**（实测先发一个墙里的 goal 拿到 `error_code 206`，紧接一个好 goal 走 4 m、
+   19 s `SUCCEEDED`，见证据 72 第八节）。所以「一个坏 goal 就毁掉整栈」这一条不再成立。
+2. **BT 走恢复分支，轮转到 `Wait`。** `nav2_behaviors::Wait::onRun` 存的是
+   `node_->now() + command->time`，**绝对仿真时刻**（BT 里是 `<Wait wait_duration="5.0"/>`）。
+3. **仿真器一重启，`/clock` 的纪元从头开始。** 实测：仿真进程已经跑了 4 h 54 min、纪元 13000 s，
+   而 `/clock` 只报 17381 s —— 中间少掉的那 13000 s 就是一次重启。第 2 步存下的 `wait_end_` 于是
+   落在**未来约 13000 s**，`onCycleUpdate` 每次都返回 `RUNNING`，这个 5 秒的 `Wait` 要等 3.6 小时。
+   BT 的 `<RecoveryNode number_of_retries="6">` 再也数不到 6，goal 永远不结束，
+   `bt_navigator` 永远「processing」，于是后面每个 goal 都被拒。
+
+第 2、3 步本身没变：要复现这条链，得让一个 goal 先规划失败、**再把仿真器重启一次**让 `/clock`
+回跳。所以「仿真器重启之后必须重启整栈」这条建议不变，它管的是这两步。
+
+顺带暴露了一段 upstream 代码的脾气，值得记下来：`SimpleActionServer::deactivate()` 里那个
+`while (execution_future_.wait_for(milliseconds(100)) != std::future_status::ready)` **没有出口** ——
+超时分支只打日志不 `break`（`nav2_ros_common/include/nav2_ros_common/simple_action_server.hpp`
+337-344 行）。所以行为服务一旦在动作还在跑的时候被 deactivate，它就在那里 100 ms 一转地刷
+`Waiting for async process to finish.` + `Action callback is still running and missed deadline to stop`
+（实测 11113 次），进程再也退不出来 —— 这也是 `racecar_ctl.py stop` 停掉整栈之后
+`behavior_server.exe` 还活着的原因。
+
+**能做的两条**：
+
+* **便宜、立刻见效**：仿真器重启之后必须重启整栈（`racecar_ctl.py stop` 再 `nav`）。栈里每一个
+  `use_sim_time` 的节点都握着旧纪元的绝对时刻（`Wait`、AMCL 的超时、控制器的 `simulate_ahead_time`
+  都是）。这条建议已经写进 `code/Desktop/racecar/README.md`。
+* **根治**：让兼容层的时钟订阅在发现 `/clock` **回跳**时报一行错（`ros2py/clock.py` 记一个
+  `last_seen`，回跳就 `error`），至少让下一次的现象是「时钟回跳」而不是「nav2 忽然不动了」。
+
+### 12. 航点的朝向被写丢了：12 个脚本把 CSV 的第 3 列塞进了 `position.z`
+
+13 个 `NavigateThroughPoses` / `NavigateToPose` 脚本里，有 12 个用的是同一段：
+
+```python
+pose.pose.position.x = point["x"]
+pose.pose.position.y = point["y"]
+pose.pose.position.z = point["z"]      # 这一列是四元数的 z，不是高度
+pose.pose.orientation.w = point["w"]
+```
+
+`sim_room12.csv` / `ai_test*.csv` 的第 3、4 列是一对 `(sin(θ/2), cos(θ/2))`（`sim_room12.csv` 第一行
+`-0.1601822430069672, 0.9870874576374967`，平方和正好 1）。所以**朝向的 z 从来没被赋值**，一直是 0，
+而那个正弦值进了地面机器人上恒为 0 的 `position.z`。发出去的 goal 四元数是 `(0, 0, 0, cos(θ/2))`，
+模长 `|cos(θ/2)|`，只有 θ=0 时才是 1。
+
+**原意是清楚的**，不用猜：同一个目录里的 `go copy.py` 写的就是对的那一行 ——
+`self.goalMsg.pose.orientation.z = self.goalListZ[self.goalId]`（`go copy.py` 唯一不发 action、而是发
+`/goal_pose` 的脚本）。另外 3 个（`go一条路径.py`、`go_2c.py`、`go copy_多点需要切换.py`）航点写在
+代码里，直接 `orientation.w = 1.0`，不涉及 CSV 的这两列。
+
+这套兼容层**收下了**这个半四元数：证据 76 两趟的 feedback / result 里每个航点原样回显
+`position=(x, y, -0.1601822430069672)`、`orientation=(0, 0, 0, 0.9870874576374967)`，9/9 通过、
+`error_code=0`。对照是证据 74 里 `BasicNavigator` 那个全零四元数被 `nav2::validateMsg` 拒了 ——
+校验是真的，只是没挡这一条。
+
+**成本**：一行（`orientation.z = point["z"]`，把 `position.z` 那行删掉）。
+**这一轮没改**：这是车上原有的写法，改了之后**每个航点的收尾朝向都会变**，而这一轮手上没有车上的
+对照数据 —— 车上是不是也这么发、是不是也收，未知。要动它得先在车上量一次。
+`code/Desktop/racecar/README.md` 的坑列表里也记了这条。
+
+### 13. `nav2_waypoint_cycle` 在兼容层上没有对应物
+
+车上的 `Run_nav.launch.py` 除了 nav2 bringup，还会起第三个节点：
+`Node(package='nav2_waypoint_cycle', executable='nav2_waypoint_cycle', ...)`（源码在 `src/nav2_waypoint_cycle/`，
+跟 `racecar` 一起编的 Python 包）。它做的事是订阅 `/clicked_point` 攒航点、订阅
+`navigate_to_pose/_action/status` 判终态，然后自己往 `/goal_pose` 发 `PoseStamped` —— 也就是
+「点几个点，车自己一圈一圈跑」。
+
+兼容层这边，`racecar_ctl.py nav` 走的是 `bridge/scripts/run_nav2_stack.py`（planner / controller /
+bt_navigator 那一串直接起），**不读 launch**，所以这个节点不会被拉起来。它本身只 import
+`rclpy` / `geometry_msgs` / `visualization_msgs` / `action_msgs`，四个都在兼容层已支持的包里
+（`<action>/_action/status` 那条通道本来就是为它做的，见 `nav2/ros2_shim/CMakeLists.txt`），
+所以缺的只是「谁来起它」。
+
+**成本**：一条 `shim_run.py` 的启动项，加一次 `/clicked_point` → `/goal_pose` 的闭环实测。
+
+### 14. `maps/ceshi1.pgm` 是 15 MB，而它现在会随包 install
+
+`CMakeLists.txt` 这一轮补上了 `map/` 和 `rviz/`（`Run_nav.launch.py` 的默认地图就在 `map/` 里）。
+`map/` 里两张图一共 ~500 KB，但 `maps/ceshi1.pgm` 是 **16 000 054 字节（15.3 MB）**，
+而 `maps/` 也在 install 列表里 —— 一个包里同时装进去两份地图目录。
+
+这不挡任何事（`colcon build` 只是拷文件），但 `maps/ceshi1.yaml` 和 `map/ai_map.yaml` 都是能用的图，
+而且 `ceshi1.yaml` 的 `image:` 刚被从绝对路径修成相对路径。要减包就从 `install(DIRECTORY)` 里
+拿掉 `maps`（它是车上留下的旧图）；要留着当第二张测试图也行。这一轮留着了。
+
+### 15. 圈数分支（4 个脚本）现在只知道为什么没跑，还没改
+
+证据 77 实测出来：重发同一条航线不会真的跑第二圈（第二趟 0.1 s 回 `error_code=0`、9/9 通过，
+车一步没动）。证据 78 把成因查清了 —— **不是兼容层、也不是 `RemovePassedGoals`**：
+`controller_server` 的 goal checker 只看**路径的终点**（`config/nav.yaml` 的 `xy_goal_tolerance`
+是 1.0 m），而车正停在上趟的终点上，于是第二趟第一拍就 `Reached the goal!`，中间八个航点一个
+都不看。同一份机制也解释「不 `/sim/reset` 就 0.09 s 假成功」和「首尾相接的 CSV 走不动」——
+三条现象一个成因。
+
+能修，而且已经验过怎么修：**圈数走 `/follow_waypoints`**（`nav2_msgs/action/FollowWaypoints`，
+它一个航点一个航点地判到达，`number_of_loops = N` 就是走 N+1 遍）。同一条九点航线重发，
+第二趟真跑 110.6 s、九个点全过、无 `missed_waypoints`；`number_of_loops=1` 真的走两个来回
+（208.92 s，4167 条 feedback，`current_waypoint` 从 8 回到 0 又走一遍）。都是经兼容层跑的。
+
+**没做的是改那几个脚本本身**：`会跳过几个点.py`、`重复载入完成圈数.py`、`跑一圈以内.py`
+（其实是四个，`ai_第一个点后回终点.py` 是同一个闭环写法）是车上正在用的代码，把「重复发目标」
+换成 `FollowWaypoints` 会动到它们每一圈的行为；而且 `FollowWaypoints.number_of_loops` 是 Jazzy
+这一代才有的字段，车上的 action 定义这一轮没看过（Humble 那代只有 `poses`）。
+**成本**：先看车上的 `FollowWaypoints.action`，再把这四个脚本换成 `FollowWaypoints` 客户端，
+每个跑到第二圈为止各跑一遍。
+
+### 16. `nav --map live` 起栈时 `map_server` 激活偶尔失败，栈直接半截（2026-09-19 新撞到）
+
+证据 78 的第一次起栈就是这样：
+
+```text
+[nav2_stack] starting map_server  (...\racecar\map\truth_live.yaml)
+[nav2_stack] could not drive /map_server/change_state transition 3
+[nav2_stack] see C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\map_server.log
+```
+
+那一次 `%TEMP%\nav2_stack` 里只剩一个 `map_server.log` —— `bt_navigator.exe` 那些一个都没起来：
+`run_nav2_stack.py` 在激活失败那一步就返回了，**栈是半截的，退出码不等于 0**，而外面的调用
+（脚本里是 `cmd`/`;` 串起来的）照样会去 `run`。探针那一趟就是四个 goal 全部「no action server」，
+白等 80 s。`map_server.log` 里它自己只走到 `Read map ...: 240 X 240 map @ 0.05 m/cell`，没有别的
+报错 —— 看起来是 `change_state` 那一问没等到答复，不是加载失败。**原样重跑一条 `nav --map live`
+就好了**（`[nav2_stack] map_server is active`），那一趟和之后两趟都正常。
+
+**成本**：知道是哪一问没答（手动来一遍 `ros2.bat service call /map_server/change_state`，或者把
+`run_nav2_stack.py` 那一步的重试与退出码一起写出来）。现在只是「遇到就重跑一次」。这条也是
+「起栈脚本该自己重试」的第二个理由 —— 第 9 条是 `--map live` 要重启两次守护进程。
+
+### 17. 仓库里那份 `openslam_gmapping` 少了整个 `log/` 模块，整树 `colcon build` 过不去
+
+证据 79 第三节：Ubuntu 上第一次整树 `colcon build`，停在这个包上 ——
+
+```text
+scanmatcher/scanmatcherprocessor.h:4:10: fatal error: gmapping/log/sensorlog.h: 没有那个文件或目录
+    4 | #include <gmapping/log/sensorlog.h>
+```
+
+不是平台问题，是仓库里这份拷贝缺文件：包里有 3 个文件 `#include` 指着它
+（`include/gmapping/gridfastslam/gridslamprocessor.h`、`scanmatcher/scanmatcherprocessor.h` 要
+`gmapping/log/sensorlog.h`；`carmenwrapper/carmenwrapper.h` 与 `scanmatch_test.cpp` 要
+`log/sensorlog.h`），而 `include/gmapping/` 下只有 `grid gridfastslam particlefilter scanmatcher
+sensor utils`，包根也没有 `log/`。上游 `ros-perception/openslam_gmapping` 两样都在
+（`include/gmapping/log/sensorlog.h`、`log/sensorlog.cpp`，这一轮用 GitHub API 查的树列表）。
+Windows 上应该同样编不过 —— 那台机器上从来没人编过这个包，所以一直没人撞到。
+
+**为什么这一轮不动它**：`openslam_gmapping` 是小车旧的 gmapping，这条线用的是移植的 slam_toolbox
+（`nav2/slam_toolbox_port`），兼容层一次都不碰它；而它是 vendor 进来的第三方源码，补文件得先定补
+哪一版（这份拷贝是 ROS2 版的布局：头文件就在源码目录旁边、每层一个 `CMakeLists.txt`，跟上游
+`melodic-devel` 那份 ROS1 的布局对不上）。**成本**：从车上那份完整拷贝里把 `log/` 拷回来
+（只有车上有），或者同步 ROS2 版 gmapping 上游，然后两平台各编一次。
+
+顺带一个陷阱：**任何「排除名为 `log` 的目录」的打包步骤都会正好切掉它**（colcon 工作区自己的日志
+目录就叫 `log/`，谁都习惯把它排除掉）。`.scratch/push_racecar.py` 与
+`tools/check_cross_platform.py` 都中过这一枪（两处都把 `build/install/log` 当"任何一层见到就跳"），
+本轮都改成只跳**顶层**那三个 —— 不然补回 `log/` 之后，下一次推送又会把它吃掉。
+
+### 18. 「两边都编」这条门禁现在覆盖应用层了，但本地那一半只是个入口检查
+
+原来的缺口是：`tools/check_cross_platform.py` 推的是 `nav2/ros2_shim`、`nav2/shm_transport`、
+`nav2/slam_toolbox_port`、`nav2/third_party`、`nav2/nav2_extracted`、`bridge/*`、
+`gRPC/ros2_gRPC_sdk`，六步全在兼容层这一侧；`code/Desktop/racecar` **既不在推送清单里，
+也没有一步会在 Ubuntu 上 `colcon build` 它** —— 所以「同一份代码两平台都能编」这句话，对兼容层
+成立、对应用层从来没被机器检查过（证据 79 是第一次，还是手工补的）。
+
+**2026-09-19 补上了第七步 `racecar-build`**：`PUSH` 里加了 `code/Desktop/racecar`，远端那一半
+是 `colcon build --packages-select racecar nav2_waypoint_cycle --parallel-workers 6`，
+实测 `--only racecar-build` → 本地 PASS 0.0 s、远端 PASS 2.9 s（整树现在编不过，第 17 条，
+所以清单里点着名只编这两个包）。同时加了 `--only <key>` 好单跑一行。
+
+**还开着的是本地那一半**：Windows 上编不了 colcon，写的是 `racecar_ctl.py where`（入口还在解析、
+后端是 `shim`）—— 它**证明不了「那 17 个脚本都能加载」**，而后者才是这台机器上真会挂的地方
+（证据 77 里三个问题全是"编译过、跑起来才炸"）。**成本**：把「17 个脚本在 `shim_run.py` 下都能
+import / 加载」做成一个仓库级工具 —— 证据 77 那套一次性脚本的输出还在
+`.scratch/waypoint_file.out`（`loaded 17/17 scripts under the shim`），工具就是把它固化成一条命令，
+挂到本地那一半上。

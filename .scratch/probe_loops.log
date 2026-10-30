@@ -1,0 +1,87 @@
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py stop
+[nav2_stack] stopping the previous stack
+[nav2_stack] stopped
+request:
+(empty)
+response:
+success: true
+message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start
+[ros2_bridge] starting daemon --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors every topic again (including /map)
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\save_map.py -f E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live
+[save_map] /map -> E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.pgm + E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[launcher] map_saver_cli.exe -t /map -f E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live --fmt pgm
+[INFO] [map_saver] 
+	map_saver lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [map_saver] Creating
+[INFO] [map_saver] Configuring
+[INFO] [map_saver] Saving map from '/map' topic to 'E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live' file
+[WARN] [map_saver] Free threshold unspecified. Setting it to default value: 0.250000
+[WARN] [map_saver] Occupied threshold unspecified. Setting it to default value: 0.650000
+[INFO] [map_io] Received a 240 X 240 map @ 0.05 m/pix
+[INFO] [map_io] Writing map occupancy data to E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.pgm
+[INFO] [map_io] Writing map metadata to E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[INFO] [map_io] Map saved
+[INFO] [map_saver] Map saved successfully
+[INFO] [map_saver] Destroying
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static
+[ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors /clock /odom /scan /tf /tf_static only
+[racecar] navigating from the map the peer is publishing (truth_live.yaml)
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat stop
+[ros2_bridge] stopping daemon
+[racecar] cmd /c E:\DesktopData\app\code\CPU\bridge\windows\ros2_bridge.bat start --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static
+[ros2_bridge] starting daemon --mirror /clock --mirror /odom --mirror /scan --mirror /tf --mirror /tf_static --ready-file "E:\DesktopData\app\code\CPU\bridge\windows\build\ros2_bridge_daemon.ready"
+[racecar] the daemon mirrors /clock /odom /scan /tf /tf_static only
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\bridge\scripts\run_nav2_stack.py --params E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\nav.yaml --no-overrides --map E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml
+[nav2_stack] logs: C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack
+[nav2_stack] starting map_server  (E:\DesktopData\app\code\CPU\code\Desktop\racecar\map\truth_live.yaml)
+[nav2_stack]   map_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\map_server.log
+[nav2_stack] map_server is active
+[nav2_stack] map_server -> /map  (it is the only writer of it)
+[nav2_stack] starting amcl_bridge_node  (map -> odom)
+[nav2_stack] starting planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower
+[nav2_stack]   planner_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\planner_server.log
+[nav2_stack]   controller_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\controller_server.log
+[nav2_stack]   bt_navigator -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\bt_navigator.log
+[nav2_stack]   behavior_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\behavior_server.log
+[nav2_stack]   smoother_server -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\smoother_server.log
+[nav2_stack]   waypoint_follower -> C:\Users\ADMINI~1\AppData\Local\Temp\nav2_stack\waypoint_follower.log
+[nav2_stack] starting lifecycle_manager
+[nav2_stack] planner_server, controller_server, bt_navigator, behavior_server, smoother_server, waypoint_follower are active
+[nav2_stack] the stack is running; stop it with:  python bridge/scripts/run_nav2_stack.py stop
+[racecar] the shim graph has a /clock publisher: use_sim_time:=true
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\shim_run.py --sim-time .scratch\probe_follow_loops.py
+shim_run: use_sim_time from the environment: 1
+[probe]    0.01 s  sending 9 poses with number_of_loops=1
+[probe]    0.01 s  feedback 1  current_waypoint=0
+[probe]    0.01 s  accepted=True after 0.01 s
+[probe]    7.02 s  feedback 138  current_waypoint=1
+[probe]   14.97 s  feedback 297  current_waypoint=2
+[probe]   22.83 s  feedback 454  current_waypoint=3
+[probe]   35.96 s  feedback 717  current_waypoint=4
+[probe]   52.22 s  feedback 1042  current_waypoint=5
+[probe]   63.56 s  feedback 1269  current_waypoint=6
+[probe]   79.07 s  feedback 1579  current_waypoint=7
+[probe]   79.41 s  feedback 1586  current_waypoint=8
+[probe]   96.14 s  feedback 1911  current_waypoint=0
+[probe]  115.04 s  feedback 2293  current_waypoint=1
+[probe]  122.83 s  feedback 2449  current_waypoint=2
+[probe]  129.33 s  feedback 2579  current_waypoint=3
+[probe]  142.94 s  feedback 2851  current_waypoint=4
+[probe]  159.34 s  feedback 3179  current_waypoint=5
+[probe]  171.18 s  feedback 3409  current_waypoint=6
+[probe]  186.23 s  feedback 3714  current_waypoint=7
+[probe]  186.59 s  feedback 3721  current_waypoint=8
+[probe]  208.93 s  result after 208.92 s  missed_waypoints=[]  feedbacks=4167
+
+[probe] ===== summary =====
+[probe] number_of_loops=1  poses=9  result=208.92 s  feedbacks=4167  waypoint changes=[(0.0, 0), (7.0, 1), (15.0, 2), (22.8, 3), (35.9, 4), (52.2, 5), (63.6, 6), (79.1, 7), (79.4, 8), (96.1, 0), (115.0, 1), (122.8, 2), (129.3, 3), (142.9, 4), (159.3, 5), (171.2, 6), (186.2, 7), (186.6, 8)]
+[probe]  208.93 s  done

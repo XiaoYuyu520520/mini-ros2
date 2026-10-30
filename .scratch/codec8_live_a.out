@@ -1,0 +1,32 @@
+$ ros2 service call /collision_monitor/scan/add_exclusion_zone nav2_msgs/srv/AddExclusionZone zone.zone_name=keepout_a zone.type=circle zone.frame_id=map zone.radius=0.45 zone.enabled=true
+request:
+zone:
+  zone_name: "keepout_a"
+  type: "circle"
+  frame_id: "map"
+  points: 0 point(s)
+  radius: 0.45
+  min_height: 0
+  max_height: 0
+  enabled: true
+  visualize: false
+  frame_hold_timeout: 0
+response:
+success: true
+message: "Added zone 'keepout_a' to source 'scan'"
+
+$ ros2 service call /collision_monitor/scan/remove_exclusion_zone nav2_msgs/srv/RemoveExclusionZone zone_name=keepout_a
+request:
+zone_name: "keepout_a"
+remove_all: false
+response:
+success: true
+message: "Removed zone 'keepout_a' from source 'scan'"
+
+$ ros2 service call /collision_monitor/scan/remove_exclusion_zone nav2_msgs/srv/RemoveExclusionZone remove_all=true
+request:
+zone_name: ""
+remove_all: true
+response:
+success: true
+message: "Removed all zone(s) from source 'scan'"

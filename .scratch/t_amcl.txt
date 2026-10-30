@@ -1,0 +1,5 @@
+[racecar] E:\venvs\py312\Scripts\python.exe E:\DesktopData\app\code\CPU\nav2\ros2_shim\python\shim_run.py --sim-time .scratch\probe_amcl_pose.py
+shim_run: use_sim_time from the environment: 1
+PROBE spin_once calls        4254
+PROBE depth-10 subscriber    0 message(s)
+PROBE nav2-QoS subscriber    0 message(s)

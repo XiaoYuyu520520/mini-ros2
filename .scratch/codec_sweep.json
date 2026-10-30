@@ -1,0 +1,600 @@
+{
+  "summary": {
+    "topics": 73,
+    "types_on_the_graph": 32,
+    "types_convertible": 32,
+    "types_without_codec": [],
+    "decoded": [
+      "/amcl_pose",
+      "/clock",
+      "/map",
+      "/odom",
+      "/parameter_events",
+      "/particle_cloud",
+      "/scan",
+      "/tf",
+      "/tf_static",
+      "/behavior_tree_log",
+      "/cmd_vel_nav",
+      "/cmd_vel_smoothed",
+      "/global_costmap/costmap",
+      "/global_costmap/costmap_raw",
+      "/global_costmap/obstacle_layer",
+      "/global_costmap/obstacle_layer_raw",
+      "/global_costmap/published_footprint",
+      "/global_costmap/static_layer",
+      "/global_costmap/static_layer_raw",
+      "/is_rotating_to_heading",
+      "/lifecycle_manager/managed_nodes_activated",
+      "/local_costmap/clearing_endpoints",
+      "/local_costmap/costmap",
+      "/local_costmap/costmap_raw",
+      "/local_costmap/published_footprint",
+      "/local_costmap/voxel_grid",
+      "/local_costmap/voxel_layer",
+      "/local_costmap/voxel_layer_raw",
+      "/lookahead_collision_arc",
+      "/lookahead_point",
+      "/plan",
+      "/polygon_stop"
+    ],
+    "silent": [
+      "/cmd_vel",
+      "/initialpose",
+      "/cmd_vel_teleop",
+      "/collision_monitor/collision_points_marker",
+      "/collision_monitor/triggering_points",
+      "/collision_monitor_state",
+      "/controller_selector",
+      "/controller_server/candidate_trajectories",
+      "/controller_server/critics_stats",
+      "/controller_server/optimal_path",
+      "/controller_server/optimal_trajectory",
+      "/cost_cloud",
+      "/curvature_lookahead_point",
+      "/evaluation",
+      "/global_costmap/costmap_raw_updates",
+      "/global_costmap/costmap_updates",
+      "/global_costmap/footprint",
+      "/global_costmap/obstacle_layer_raw_updates",
+      "/global_costmap/obstacle_layer_updates",
+      "/global_costmap/static_layer_raw_updates",
+      "/global_costmap/static_layer_updates",
+      "/goal_checker_selector",
+      "/goal_pose",
+      "/keepout_costmap_filter_info",
+      "/local_costmap/costmap_raw_updates",
+      "/local_costmap/costmap_updates",
+      "/local_costmap/footprint",
+      "/local_costmap/voxel_layer_raw_updates",
+      "/local_costmap/voxel_layer_updates",
+      "/local_plan",
+      "/marker",
+      "/motion_target",
+      "/plan_smoothed",
+      "/planner_selector",
+      "/preempt_teleop",
+      "/progress_checker_selector",
+      "/slowdown",
+      "/speed_costmap_filter_info",
+      "/speed_limit",
+      "/tracking_feedback",
+      "/transformed_global_plan"
+    ],
+    "byte_count": [],
+    "goal": true
+  },
+  "rows": [
+    {
+      "topic": "/amcl_pose",
+      "type": "geometry_msgs/msg/PoseWithCovarianceStamped",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108182.400004065\n  frame_id: \"map\"\npose.pose.position: {x: 0, y: 0}\npose.pose.orientation: {z: 0, w: 1}"
+    },
+    {
+      "topic": "/clock",
+      "type": "rosgraph_msgs/msg/Clock",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "clock: 108185.540004066"
+    },
+    {
+      "topic": "/cmd_vel",
+      "type": "geometry_msgs/msg/Twist",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/initialpose",
+      "type": "geometry_msgs/msg/PoseWithCovarianceStamped",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/map",
+      "type": "nav_msgs/msg/OccupancyGrid",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108190.000004067\n  frame_id: \"map\"\ninfo: {resolution: 0.05, width: 480, height: 480, origin: {x: -12, y: -12}}\ndata: [230400 cells, 11529 occupied]"
+    },
+    {
+      "topic": "/odom",
+      "type": "nav_msgs/msg/Odometry",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108198.140004069\n  frame_id: \"odom\"\nchild_frame_id: \"base_link\"\npose.pose.position: {x: 0.845739, y: -0.748011, z: 0}\npose.pose.orientation: {x: 0, y: 0, z: -0.443846, w: 0.896103}\ntwist.twist.linear: {x: 0.259754, y: 0, z: 0}\ntwist.twist.angular: {x: 0, y: 0, z: 0}"
+    },
+    {
+      "topic": "/parameter_events",
+      "type": "rcl_interfaces/msg/ParameterEvent",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "stamp: 108190.260004067\nnode: \"/collision_monitor\"\nnew_parameters: [1]\n  - PolygonStop.max_points: NOT_SET"
+    },
+    {
+      "topic": "/particle_cloud",
+      "type": "nav2_msgs/msg/ParticleCloud",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108182.400004065\n  frame_id: \"map\"\nparticles: [2000]\n  best: {x: 0, y: 0, weight: 0.0005}"
+    },
+    {
+      "topic": "/scan",
+      "type": "sensor_msgs/msg/LaserScan",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108198.300004069\n  frame_id: \"laser\"\nangle_min: -3.14159\nangle_max: 3.12414\nangle_increment: 0.0174533\nrange_min: 0.15\nrange_max: 12\nranges: [360 values, min 6.02216, max inf]"
+    },
+    {
+      "topic": "/tf",
+      "type": "tf2_msgs/msg/TFMessage",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "transforms: [1]\n  - header: {stamp: 108199.260004069, frame_id: \"odom\"}\n    child_frame_id: \"base_link\"\n    translation: {x: 0.931148, y: -0.859485, z: 0}\n    rotation: {x: 0, y: 0, z: -0.355153, w: 0.934808}"
+    },
+    {
+      "topic": "/tf_static",
+      "type": "tf2_msgs/msg/TFMessage",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "transforms: [1]\n  - header: {stamp: 0.000000000, frame_id: \"base_link\"}\n    child_frame_id: \"laser\"\n    translation: {x: 0.1, y: 0, z: 0}\n    rotation: {x: 0, y: 0, z: 0, w: 1}"
+    },
+    {
+      "topic": "/behavior_tree_log",
+      "type": "nav2_msgs/msg/BehaviorTreeLog",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "timestamp: 108195.540004068\nevent_log: [9]\n  - 1789588757.802015500 ComputePathToPose uid 8: IDLE -> RUNNING\n  - 1789588757.802028900 ComputePathToPose uid 9: IDLE -> RUNNING\n  - 1789588757.817715300 ComputePathToPose uid 9: RUNNING -> SUCCESS\n  - 1789588757.817720200 ComputePathToPose uid 9: SUCCESS -> IDLE\n  - 1789588757.817723000 ComputePathToPose uid 8: RUNNING -> IDLE"
+    },
+    {
+      "topic": "/cmd_vel_nav",
+      "type": "geometry_msgs/msg/Twist",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "linear: {x: 0, y: 0, z: 0}\nangular: {x: 0, y: 0, z: 0.8}"
+    },
+    {
+      "topic": "/cmd_vel_smoothed",
+      "type": "geometry_msgs/msg/Twist",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "linear: {x: 0, y: 0, z: 0}\nangular: {x: 0, y: 0, z: 0.55}"
+    },
+    {
+      "topic": "/cmd_vel_teleop",
+      "type": "geometry_msgs/msg/Twist",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/collision_monitor/collision_points_marker",
+      "type": "visualization_msgs/msg/MarkerArray",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/collision_monitor/triggering_points",
+      "type": "visualization_msgs/msg/MarkerArray",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/collision_monitor_state",
+      "type": "nav2_msgs/msg/CollisionMonitorState",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/controller_selector",
+      "type": "std_msgs/msg/String",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/controller_server/candidate_trajectories",
+      "type": "visualization_msgs/msg/MarkerArray",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/controller_server/critics_stats",
+      "type": "nav2_msgs/msg/CriticsStats",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/controller_server/optimal_path",
+      "type": "nav_msgs/msg/Path",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/controller_server/optimal_trajectory",
+      "type": "nav_msgs/msg/Trajectory",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/cost_cloud",
+      "type": "sensor_msgs/msg/PointCloud2",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/curvature_lookahead_point",
+      "type": "geometry_msgs/msg/PointStamped",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/evaluation",
+      "type": "dwb_msgs/msg/LocalPlanEvaluation",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/global_costmap/costmap",
+      "type": "nav_msgs/msg/OccupancyGrid",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108187.880004067\n  frame_id: \"map\"\ninfo: {resolution: 0.05, width: 480, height: 480, origin: {x: -12, y: -12}}\ndata: [230400 cells, 11529 occupied]"
+    },
+    {
+      "topic": "/global_costmap/costmap_raw",
+      "type": "nav2_msgs/msg/Costmap",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108259.880004081\n  frame_id: \"map\"\nmetadata: {resolution: 0.05, size_x: 480, size_y: 480}\ndata: [230400 cells]"
+    },
+    {
+      "topic": "/global_costmap/costmap_raw_updates",
+      "type": "nav2_msgs/msg/CostmapUpdate",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/global_costmap/costmap_updates",
+      "type": "map_msgs/msg/OccupancyGridUpdate",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/global_costmap/footprint",
+      "type": "geometry_msgs/msg/Polygon",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/global_costmap/obstacle_layer",
+      "type": "nav_msgs/msg/OccupancyGrid",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108187.880004067\n  frame_id: \"map\"\ninfo: {resolution: 0.05, width: 480, height: 480, origin: {x: -12, y: -12}}\ndata: [230400 cells, 0 occupied]"
+    },
+    {
+      "topic": "/global_costmap/obstacle_layer_raw",
+      "type": "nav2_msgs/msg/Costmap",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108187.880004067\n  frame_id: \"map\"\nmetadata: {resolution: 0.05, size_x: 480, size_y: 480}\ndata: [230400 cells]"
+    },
+    {
+      "topic": "/global_costmap/obstacle_layer_raw_updates",
+      "type": "nav2_msgs/msg/CostmapUpdate",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/global_costmap/obstacle_layer_updates",
+      "type": "map_msgs/msg/OccupancyGridUpdate",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/global_costmap/published_footprint",
+      "type": "geometry_msgs/msg/PolygonStamped",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 0.000000000\n  frame_id: \"map\"\npolygon.points: [16]"
+    },
+    {
+      "topic": "/global_costmap/static_layer",
+      "type": "nav_msgs/msg/OccupancyGrid",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108187.880004067\n  frame_id: \"map\"\ninfo: {resolution: 0.05, width: 480, height: 480, origin: {x: -12, y: -12}}\ndata: [230400 cells, 11529 occupied]"
+    },
+    {
+      "topic": "/global_costmap/static_layer_raw",
+      "type": "nav2_msgs/msg/Costmap",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108187.880004067\n  frame_id: \"map\"\nmetadata: {resolution: 0.05, size_x: 480, size_y: 480}\ndata: [230400 cells]"
+    },
+    {
+      "topic": "/global_costmap/static_layer_raw_updates",
+      "type": "nav2_msgs/msg/CostmapUpdate",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/global_costmap/static_layer_updates",
+      "type": "map_msgs/msg/OccupancyGridUpdate",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/goal_checker_selector",
+      "type": "std_msgs/msg/String",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/goal_pose",
+      "type": "geometry_msgs/msg/PoseStamped",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/is_rotating_to_heading",
+      "type": "std_msgs/msg/Bool",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "data: true"
+    },
+    {
+      "topic": "/keepout_costmap_filter_info",
+      "type": "nav2_msgs/msg/CostmapFilterInfo",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/lifecycle_manager/managed_nodes_activated",
+      "type": "std_msgs/msg/Bool",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "data: false"
+    },
+    {
+      "topic": "/local_costmap/clearing_endpoints",
+      "type": "sensor_msgs/msg/PointCloud2",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108336.100004097\n  frame_id: \"odom\"\nwidth: 146\nheight: 1\npoint_step: 12\ndata: [1752 bytes]"
+    },
+    {
+      "topic": "/local_costmap/costmap",
+      "type": "nav_msgs/msg/OccupancyGrid",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108186.840004066\n  frame_id: \"odom\"\ninfo: {resolution: 0.05, width: 60, height: 60, origin: {x: -1.5, y: -1.5}}\ndata: [3600 cells, 0 occupied]"
+    },
+    {
+      "topic": "/local_costmap/costmap_raw",
+      "type": "nav2_msgs/msg/Costmap",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108332.520004096\n  frame_id: \"odom\"\nmetadata: {resolution: 0.05, size_x: 60, size_y: 60}\ndata: [3600 cells]"
+    },
+    {
+      "topic": "/local_costmap/costmap_raw_updates",
+      "type": "nav2_msgs/msg/CostmapUpdate",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/local_costmap/costmap_updates",
+      "type": "map_msgs/msg/OccupancyGridUpdate",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/local_costmap/footprint",
+      "type": "geometry_msgs/msg/Polygon",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/local_costmap/published_footprint",
+      "type": "geometry_msgs/msg/PolygonStamped",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 0.000000000\n  frame_id: \"odom\"\npolygon.points: [16]"
+    },
+    {
+      "topic": "/local_costmap/voxel_grid",
+      "type": "nav2_msgs/msg/VoxelGrid",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108353.740004100\n  frame_id: \"odom\"\nsize: {x: 60, y: 60, z: 16}\nresolutions: {x: 0.05, y: 0.05, z: 0.05}\norigin: {x: -0.6, y: -2.35, z: 0}\ndata: [3600 words, 57527 voxels set]"
+    },
+    {
+      "topic": "/local_costmap/voxel_layer",
+      "type": "nav_msgs/msg/OccupancyGrid",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108186.840004066\n  frame_id: \"odom\"\ninfo: {resolution: 0.05, width: 60, height: 60, origin: {x: -1.5, y: -1.5}}\ndata: [3600 cells, 0 occupied]"
+    },
+    {
+      "topic": "/local_costmap/voxel_layer_raw",
+      "type": "nav2_msgs/msg/Costmap",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108186.840004066\n  frame_id: \"odom\"\nmetadata: {resolution: 0.05, size_x: 60, size_y: 60}\ndata: [3600 cells]"
+    },
+    {
+      "topic": "/local_costmap/voxel_layer_raw_updates",
+      "type": "nav2_msgs/msg/CostmapUpdate",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/local_costmap/voxel_layer_updates",
+      "type": "map_msgs/msg/OccupancyGridUpdate",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/local_plan",
+      "type": "nav_msgs/msg/Path",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/lookahead_collision_arc",
+      "type": "nav_msgs/msg/Path",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 0.000000000\n  frame_id: \"odom\"\nposes: [3 waypoints]\n  first: {x: 0.931148, y: -0.859485}\n  last: {x: 0.931148, y: -0.859485}"
+    },
+    {
+      "topic": "/lookahead_point",
+      "type": "geometry_msgs/msg/PointStamped",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 0.000000000\n  frame_id: \"base_link\"\npoint: {x: 0.198601, y: -0.0493018, z: 0.01}"
+    },
+    {
+      "topic": "/marker",
+      "type": "visualization_msgs/msg/MarkerArray",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/motion_target",
+      "type": "geometry_msgs/msg/PoseStamped",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/plan",
+      "type": "nav_msgs/msg/Path",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108194.520004068\n  frame_id: \"map\"\nposes: [55 waypoints]\n  first: {x: 1.78814e-07, y: 1.78814e-07}\n  last: {x: 1, y: -1}"
+    },
+    {
+      "topic": "/plan_smoothed",
+      "type": "nav_msgs/msg/Path",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/planner_selector",
+      "type": "std_msgs/msg/String",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/polygon_stop",
+      "type": "geometry_msgs/msg/PolygonStamped",
+      "supported": true,
+      "verdict": "decoded",
+      "sample": "header:\n  stamp: 108200.480004069\n  frame_id: \"base_link\"\npolygon.points: [4]"
+    },
+    {
+      "topic": "/preempt_teleop",
+      "type": "std_msgs/msg/Empty",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/progress_checker_selector",
+      "type": "std_msgs/msg/String",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/slowdown",
+      "type": "visualization_msgs/msg/Marker",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/speed_costmap_filter_info",
+      "type": "nav2_msgs/msg/CostmapFilterInfo",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/speed_limit",
+      "type": "nav2_msgs/msg/SpeedLimit",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/tracking_feedback",
+      "type": "nav2_msgs/msg/TrackingFeedback",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    },
+    {
+      "topic": "/transformed_global_plan",
+      "type": "nav_msgs/msg/Path",
+      "supported": true,
+      "verdict": "silent (no writer in 6 s)",
+      "sample": ""
+    }
+  ]
+}

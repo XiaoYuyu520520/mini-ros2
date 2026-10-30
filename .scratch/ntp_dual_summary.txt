@@ -1,0 +1,16 @@
+
+===== ntp dual 2026-09-19 08:45:46 =====
+
+--- n00  end_3_12.py sim_room12.csv  exit=0 wall=66.1 s
+  goal accepted 1789778767.433471232
+  result 1789778833.327094784  wall=65.9 s  Navigation result: Result(error_code=0, error_msg='', waypoint_statuses=[WaypointStatus(waypoint_status=1, way
+  [ERROR]/[WARN]/traceback lines 2
+  | [WARN] [map_saver] Free threshold unspecified. Setting it to default value: 0.250000
+  | [WARN] [map_saver] Occupied threshold unspecified. Setting it to default value: 0.650000
+
+--- n01  终点不停.py sim_room12.csv  exit=0 wall=66.4 s
+  goal accepted 1789778853.625882624
+  result 1789778919.815027968  wall=66.2 s  Navigation result: Result(error_code=0, error_msg='', waypoint_statuses=[WaypointStatus(waypoint_status=1, way
+  [ERROR]/[WARN]/traceback lines 2
+  | [WARN] [map_saver] Free threshold unspecified. Setting it to default value: 0.250000
+  | [WARN] [map_saver] Occupied threshold unspecified. Setting it to default value: 0.650000

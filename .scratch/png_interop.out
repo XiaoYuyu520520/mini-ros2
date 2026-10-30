@@ -1,0 +1,35 @@
+[PASS] Pillow L (grayscale): 4x3
+[PASS] Pillow L (grayscale): gray pixels match
+[PASS] Pillow LA (gray + alpha): 3x2
+[PASS] Pillow LA (gray + alpha): gray pixels match
+[PASS] Pillow LA (gray + alpha): alpha pixels match (00ff8000ff01)
+[PASS] Pillow RGB (converted through luma): 3x2
+[PASS] Pillow RGB (converted through luma): gray pixels match
+[PASS] Pillow RGBA: 2x2
+[PASS] Pillow RGBA: gray pixels match
+[PASS] Pillow RGBA: alpha pixels match (ff0080c8)
+[PASS] Pillow palette (through the PLTE colours): 3x2
+[PASS] Pillow palette (through the PLTE colours): gray pixels match
+[PASS] Pillow I;16: refused by name (ERR cannot read 'E:\DesktopData\app\code\CPU\.scratch\pngin\deep16.png': this build's Magick++ decodes 8-bit PNG, and this file is 16-bit)
+[PASS] a grayscale PNG whose rows use filter 0: 4x2
+[PASS] a grayscale PNG whose rows use filter 0: gray pixels match
+[PASS] a grayscale PNG whose rows use filter 1: 4x2
+[PASS] a grayscale PNG whose rows use filter 1: gray pixels match
+[PASS] a grayscale PNG whose rows use filter 2: 4x2
+[PASS] a grayscale PNG whose rows use filter 2: gray pixels match
+[PASS] a grayscale PNG whose rows use filter 3: 4x2
+[PASS] a grayscale PNG whose rows use filter 3: gray pixels match
+[PASS] a grayscale PNG whose rows use filter 4: 4x2
+[PASS] a grayscale PNG whose rows use filter 4: gray pixels match
+[PASS] one file, a different filter per row: 4x5
+[PASS] one file, a different filter per row: gray pixels match
+[PASS] a PNG carrying gAMA / tEXt / pHYs: 4x1
+[PASS] a PNG carrying gAMA / tEXt / pHYs: gray pixels match
+[PASS] an interlaced PNG: refused by name (ERR cannot read 'E:\DesktopData\app\code\CPU\.scratch\pngin\interlaced.png': interlaced PNG is not one of the two this build's Magick++ decodes (non-interlaced, 8 bits per channel))
+[PASS] a 16-bit RGBA PNG: refused by name (ERR cannot read 'E:\DesktopData\app\code\CPU\.scratch\pngin\rgba16.png': this build's Magick++ decodes 8-bit PNG, and this file is 16-bit)
+[PASS] a 4-bit paletted PNG: refused by name (ERR cannot read 'E:\DesktopData\app\code\CPU\.scratch\pngin\depth4.png': this build's Magick++ decodes 8-bit PNG, and this file is 4-bit)
+[PASS] PNG colour type 9: refused by name (ERR cannot read 'E:\DesktopData\app\code\CPU\.scratch\pngin\badtype.png': PNG colour type 9 is not one of the five this build's Magick++ decodes)
+[PASS] a PNG that is only its signature: refused by name (ERR image 'E:\DesktopData\app\code\CPU\.scratch\pngin\empty.png' is a PNG with no IHDR chunk)
+[PASS] a file that is neither PNG nor PGM: refused by name (ERR image 'E:\DesktopData\app\code\CPU\.scratch\pngin\garbage.bin' is neither a PNG nor a PGM (magic 'not'; this build's Magick++ reads 8-bit PNG, P5 and P2))
+
+PASSED (0 failure(s))

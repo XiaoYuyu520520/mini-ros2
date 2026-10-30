@@ -1,0 +1,16 @@
+  /// The goal state a finished goal ends in. The wire carries rclcpp_action's
+  /// own `ResultCode`; the handle reports it with the message's code, which is
+  /// what the behavior tree compares against.
+  static int8_t status_for(ResultCode code)
+  {
+    switch (code) {
+      case ResultCode::SUCCEEDED: return action_msgs::msg::GoalStatus::STATUS_SUCCEEDED;
+      case ResultCode::CANCELED: return action_msgs::msg::GoalStatus::STATUS_CANCELED;
+      case ResultCode::ABORTED: return action_msgs::msg::GoalStatus::STATUS_ABORTED;
+      case ResultCode::UNKNOWN: break;
+    }
+    return action_msgs::msg::GoalStatus::STATUS_UNKNOWN;
+  }
+
+  struct Pending
+  {

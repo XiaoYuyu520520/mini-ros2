@@ -1,0 +1,33 @@
+# ros2_gRPC_sdk configuration (YAML - comments are supported)
+#
+# Everything is optional: missing keys fall back to the built-in defaults.
+# This file is searched for in (in order):
+#   1. $ROS2_GRPC_SDK_CONFIG_DIR (a directory)
+#   2. ./config                     (this folder)
+#   3. %APPDATA%\ros2_gRPC_sdk      (Windows)
+#      $XDG_CONFIG_HOME/ros2_gRPC_sdk or ~/.config/ros2_gRPC_sdk (Linux/macOS)
+# $ROS2_GRPC_SDK_CONFIG can point at a specific file.
+
+server:
+  address: "0.0.0.0:50051"   # agent bind address (0.0.0.0 = reachable on the LAN)
+  num_threads: 0             # 0 = gRPC default worker count
+
+client:
+  connect_timeout_ms: 3000   # connect() timeout
+  rpc_timeout_ms: 5000       # per unary RPC deadline (0 = none)
+  use_tls: false             # plaintext by default
+  tls_root_cert_pem: ""      # PEM root certificate when use_tls is true
+  tls_target_name_override: ""
+
+discovery:
+  ports: [50051]             # TCP ports scanned on every candidate host
+  connect_timeout_ms: 150    # per (host, port) TCP probe
+  concurrency: 256           # parallel probes
+  max_hosts_per_subnet: 1024
+  verify_with_ping: true     # confirm each hit with a gRPC Ping (uses RTT as latency)
+  ping_timeout_ms: 500       # per-candidate Ping timeout
+  overall_timeout_ms: 3000   # total discovery budget
+  include_self: false        # false = never target this machine
+  include_loopback: false    # false = exclude the whole 127.0.0.0/8
+  subnets: []                # empty = scan every local subnet
+  max_results: 32            # keep at most this many agents (lowest latency first)

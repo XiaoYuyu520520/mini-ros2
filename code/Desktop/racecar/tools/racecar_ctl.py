@@ -1,0 +1,559 @@
+#!/usr/bin/env python3
+"""racecar's entry points: mapping, navigation and the map saver, both sides.
+
+    python code/Desktop/racecar/tools/racecar_ctl.py nav
+    python code/Desktop/racecar/tools/racecar_ctl.py nav --goal auto
+    python code/Desktop/racecar/tools/racecar_ctl.py slam
+    python code/Desktop/racecar/tools/racecar_ctl.py save-map -f ai_map001
+    python code/Desktop/racecar/tools/racecar_ctl.py stop
+
+nav.sh / gmapping.sh / save.sh next to the racecar workspace, and their .bat
+twins, are one-line wrappers around this file, so Windows and the robot run the
+same code. The car itself is a real ROS2 install with no CPU checkout next to
+it, which is what the ros2 backend below is for.
+
+Two backends
+------------
+``shim`` - this racecar tree sits inside the CPU repository, so nav2 and
+slam_toolbox are the ported binaries under ``nav2/`` and everything is driven
+through the bridge's own scripts:
+
+    nav       bridge/scripts/run_nav2_stack.py  --params config/nav.yaml --no-overrides
+    slam      bridge/scripts/run_slam_demo.py   --params-file config/slam_toolbox.yaml
+    save-map  bridge/scripts/save_map.py
+    the robot is whatever the gRPC peer on the other machine publishes
+
+``ros2`` - a real ROS2 install, which is what the car runs:
+
+    nav       ros2 launch racecar Run_nav.launch.py map:=<map>/ai_map001.yaml
+                                               params:=config/nav.yaml
+    slam      ros2 launch slam_gmapping slam_gmapping.launch.py
+    save-map  ros2 run nav2_map_server map_saver_cli -f <map>/<name>
+
+``auto`` (the default) picks ``shim`` when ``../../bridge/scripts/
+run_nav2_stack.py`` exists - that is, when this tree is a CPU checkout - and
+``ros2`` otherwise. ``--backend shim|ros2`` overrides it.
+
+Where the configuration lives
+-----------------------------
+    src/racecar/config/nav.yaml           everything nav2 is tuned in: AMCL,
+                                          both costmaps, the planner (Smac
+                                          Hybrid with DUBIN), the controller
+                                          (RPP), the behavior tree paths and
+                                          the lifecycle_manager node list
+    src/racecar/config/slam_toolbox.yaml  slam_toolbox's own parameters
+    map/                                  the maps, and where save-map writes
+
+``slam`` and the map channel
+----------------------------
+A shim topic has exactly one writer. The peer mirrors its own ``/map`` in by
+default and slam_toolbox publishes ``/map`` too, so mapping with the daemon as
+it stands is two writers on one channel - the map you get is neither. ``slam``
+therefore restarts the daemon mirroring ``/clock /odom /scan /tf /tf_static``
+and no map, which is what a mapping run wants; ``--mirror-map`` leaves the
+daemon alone for a peer that publishes no map of its own, and ``mirror-all``
+puts the daemon back the way it was found.
+
+Maps, and the round trip they are for
+-------------------------------------
+``save-map`` writes ``map/<name>.pgm`` and ``map/<name>.yaml``; ``nav --map
+<name>`` navigates from one of them. That is what the car's
+``Run_nav.launch.py map:=map/ai_map001.yaml`` does, and the shim does it the
+same way: ``map_server`` loads the file, AMCL localises the robot against it
+from ``/scan``, and every later goal is planned in that map's frame. So the
+full loop is ``slam`` -> ``save-map -f NAME`` -> ``nav --map NAME``.
+
+``/map`` has one writer, and under ``--map`` it is ``map_server`` - so like
+``slam``, this restarts the daemon with ``/clock /odom /scan /tf /tf_static``
+mirrored and no map. Without ``--map``, the stack localises against whatever
+map the peer mirrors in, which is what the usual ``nav`` run wants.
+
+Missions
+--------
+``src/racecar/scripts`` holds the ``rclpy`` clients the race itself is run with:
+a route read out of ``ai_test.csv``, a lap counted, a stop service called at the
+last waypoint. They are ROS2 Python programs, so on this tree they run on the
+shim's own ``rclpy``, through ``nav2/ros2_shim/python/shim_run.py``:
+
+    racecar_ctl.py run go.py
+    racecar_ctl.py run detct.py
+
+``shim_run.py`` is what puts the shim's ``rclpy``, the message aliases and the
+vendored ``nav2_simple_commander`` in front of a script before its first line
+runs - see its docstring for why that order is the whole point. On the car the
+same scripts are ``ros2 run racecar <script>``, which is this command's ``ros2``
+backend.
+"""
+
+from __future__ import annotations
+
+import os
+import socket
+import subprocess
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve()
+RACE_ROOT = HERE.parent.parent                 # .../Desktop/racecar
+CPU_ROOT = RACE_ROOT.parent.parent.parent      # .../CPU, the shim's own repo
+CONFIG_DIR = RACE_ROOT / "src" / "racecar" / "config"
+NAV_YAML = CONFIG_DIR / "nav.yaml"
+SLAM_YAML = CONFIG_DIR / "slam_toolbox.yaml"
+MAP_DIR = RACE_ROOT / "map"
+DEFAULT_MAP = "ai_map001"
+
+BRIDGE_SCRIPTS = CPU_ROOT / "bridge" / "scripts"
+SHIM_PYTHON = CPU_ROOT / "nav2" / "ros2_shim" / "python"
+MISSION_DIR = RACE_ROOT / "src" / "racecar" / "scripts"
+
+# What the daemon mirrors while SLAM is the map source.
+MIRROR_WITHOUT_MAP = ["/clock", "/odom", "/scan", "/tf", "/tf_static"]
+
+# `nav --map live` (the same as `--map truth`) is not a file name: it means "the
+# map the peer is publishing at this moment". The simulator draws its interior
+# obstacles from a seed, so every map ever saved from one is a snapshot of a world
+# the next `run_sim.py` will not reproduce - and map_server would hand the planner
+# last week's walls.
+LIVE_MAP_NAMES = ("live", "truth")
+
+NAV_NODES = ["amcl_bridge_node", "planner_server", "controller_server", "bt_navigator",
+             "behavior_server", "smoother_server", "waypoint_follower",
+             "lifecycle_manager", "velocity_smoother", "collision_monitor",
+             "map_server"]
+SLAM_NODES = ["slam_bridge_node", "async_slam_toolbox_node", "sync_slam_toolbox_node",
+              "localization_slam_toolbox_node"]
+
+USAGE = """usage: racecar_ctl.py [--backend auto|shim|ros2] <command> [options]
+
+  nav [options]        bring the nav2 stack up on src/racecar/config/nav.yaml
+                       (--goal auto, --goal X,Y, --duration S, --safety, ...)
+                       --map NAME|FILE  navigate from a saved map: map/NAME.yaml
+                       here, map:=FILE on the car. --map live saves the map the
+                       peer is publishing right now and uses that one instead.
+                       Without it the stack uses the map the peer mirrors in.
+  slam [options]       map with SLAM on src/racecar/config/slam_toolbox.yaml
+                       (--duration S, -p name:=value, --mirror-map, ...)
+  save-map [options]   write the map to map/<name>  (-f NAME is a name under
+                       map/, a path with a separator is used as it stands)
+  run [--sim-time|--wall-time] <script> [args]
+                       run a mission script from src/racecar/scripts on the
+                       shim: a path, or a bare name like go.py. With neither
+                       flag the script starts on simulation time exactly when a
+                       /clock is being published
+  stop                 stop the nav2 stack and the SLAM node
+  status               which of the stack's nodes are running right now
+  mirror-all           restart the bridge daemon mirroring every topic again
+  where                the paths this script resolved
+
+Everything after the command goes to the tool underneath it, so the options
+listed by that tool all work:
+
+  shim  bridge/scripts/run_nav2_stack.py | run_slam_demo.py | save_map.py
+  ros2  ros2 launch racecar Run_nav.launch.py | ros2 launch slam_gmapping | map_saver_cli
+"""
+
+
+def say(text):
+    print("[racecar] %s" % text, flush=True)
+
+
+def run(argv, **kwargs):
+    say(" ".join(str(a) for a in argv))
+    return subprocess.call([str(a) for a in argv], **kwargs)
+
+
+def python_exe():
+    return sys.executable or ("python" if os.name == "nt" else "python3")
+
+
+def shim_env():
+    """The environment the bridge scripts should be given.
+
+    The daemon finds its peer by discovery, and discovery skips this machine on
+    purpose - so a simulator listening on loopback (which is what the Ubuntu
+    side of this pair runs) has to be named. Windows talks to the robot across
+    the network and needs nothing here.
+    """
+    env = os.environ.copy()
+    if os.name == "nt" or env.get("ROS2_BRIDGE_AGENT"):
+        return env
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+        probe.settimeout(0.3)
+        if probe.connect_ex(("127.0.0.1", 50051)) == 0:
+            env["ROS2_BRIDGE_AGENT"] = "127.0.0.1:50051"
+            say("ROS2_BRIDGE_AGENT=127.0.0.1:50051 (the simulator on this machine)")
+    return env
+
+
+def pick_backend(name):
+    if name in ("shim", "ros2"):
+        return name
+    return "shim" if (BRIDGE_SCRIPTS / "run_nav2_stack.py").is_file() else "ros2"
+
+
+def bridge_launcher():
+    """The daemon's own start/stop script for this platform."""
+    exe = CPU_ROOT / "bridge" / "windows" / "ros2_bridge.bat"
+    script = CPU_ROOT / "bridge" / "linux" / "ros2_bridge.sh"
+    if exe.is_file() and os.name == "nt":
+        return ["cmd", "/c", str(exe)]
+    if script.is_file():
+        return ["bash", str(script)]
+    return None
+
+
+def has_flag(args, flags):
+    return any(a.lower() in flags for a in args)
+
+
+def restart_daemon(mirror_topics):
+    launcher = bridge_launcher()
+    if launcher is None:
+        say("no ros2_bridge script next to this tree; start the daemon yourself")
+        return 1
+    code = run(launcher + ["stop"])
+    argv = launcher + ["start"]
+    for topic in mirror_topics:
+        argv += ["--mirror", topic]
+    code = run(argv) or code
+    if mirror_topics:
+        say("the daemon mirrors %s only" % " ".join(mirror_topics))
+    else:
+        say("the daemon mirrors every topic again (including /map)")
+    return code
+
+
+def resolve_map(value):
+    """The map a ``--map`` named: the file itself, or ``map/<name>.yaml``.
+
+    A bare name is the one ``save-map -f`` was given, so the two commands read
+    as a pair; anything that is already a file is taken as it stands, which is
+    how a map kept outside this workspace is used.
+    """
+    path = Path(value)
+    if path.is_file():
+        return path.resolve()
+    for candidate in (MAP_DIR / value, MAP_DIR / (value + ".yaml")):
+        if candidate.is_file():
+            return candidate.resolve()
+    known = sorted(p.stem for p in MAP_DIR.glob("*.yaml"))
+    say("no map file for %s" % value)
+    say("map/ has: %s" % (", ".join(known) if known else "(no .yaml in %s)" % MAP_DIR))
+    return None
+
+
+def take_map_option(rest):
+    """``--map`` out of the argument list: (rest, value or None)."""
+    if "--map" not in rest:
+        return rest, None
+    index = rest.index("--map")
+    if index + 1 >= len(rest):
+        say("--map needs a name or a file")
+        return None, None
+    return rest[:index] + rest[index + 2:], rest[index + 1]
+
+
+def capture_live_map():
+    """Save the /map the peer is publishing and return the file it landed in.
+
+    Three steps, because /map has one writer per side: mirror it, dump it, then
+    put the daemon back on the mirror set `nav` uses so that map_server - not the
+    daemon - is the writer the planner ends up reading.
+    """
+    base = MAP_DIR / "truth_live"
+    restart_daemon([])
+    code = run([python_exe(), BRIDGE_SCRIPTS / "save_map.py", "-f", str(base)],
+               env=shim_env())
+    if code != 0:
+        say("the peer's /map did not come out (exit %s)" % code)
+        return None
+    restart_daemon(MIRROR_WITHOUT_MAP)
+    path = base.with_suffix(".yaml")
+    if not path.is_file():
+        say("nothing was written to %s" % path)
+        return None
+    say("navigating from the map the peer is publishing (%s)" % path.name)
+    return path
+
+
+def cmd_nav(backend, rest):
+    rest, wanted = take_map_option(rest)
+    if rest is None:
+        return 2
+    if backend == "shim":
+        argv = [python_exe(), BRIDGE_SCRIPTS / "run_nav2_stack.py",
+                "--params", NAV_YAML, "--no-overrides"]
+        if wanted is None:
+            return run(argv + rest, env=shim_env())
+        if wanted.lower() in LIVE_MAP_NAMES:
+            path = capture_live_map()
+        else:
+            path = resolve_map(wanted)
+        if path is None:
+            return 2
+        # /map has one writer and map_server is about to be it, so the daemon
+        # has to stop mirroring the peer's map first - the same restart `slam`
+        # does, for the same reason.
+        restart_daemon(MIRROR_WITHOUT_MAP)
+        return run(argv + ["--map", str(path)] + rest, env=shim_env())
+    path = resolve_map(wanted if wanted is not None else DEFAULT_MAP)
+    if path is None:
+        return 2
+    return run(["ros2", "launch", "racecar", "Run_nav.launch.py",
+                "map:=%s" % path, "params:=%s" % NAV_YAML] + rest)
+
+
+def cmd_slam(backend, rest):
+    if backend != "shim":
+        return run(["ros2", "launch", "slam_gmapping", "slam_gmapping.launch.py"] + rest)
+    if "--mirror-map" in rest:
+        rest = [a for a in rest if a != "--mirror-map"]
+        say("leaving the daemon's map mirror alone (--mirror-map)")
+    else:
+        restart_daemon(MIRROR_WITHOUT_MAP)
+    return run([python_exe(), BRIDGE_SCRIPTS / "run_slam_demo.py",
+                "--params-file", SLAM_YAML, "--mode", "async"] + rest, env=shim_env())
+
+
+def map_base_option(rest):
+    """Rewrite a bare ``-f NAME`` into ``map/NAME``.
+
+    ``save-map -f ai_map001`` and ``nav --map ai_map001`` are meant to name the
+    same file, and ``nav`` resolves a bare name against ``map/``. Without this
+    the saver writes into whatever directory the caller happened to be standing
+    in - the map lands next to the repository's own files, and the next
+    ``nav --map`` cannot find it. A path that already carries a directory, or a
+    drive letter, is left exactly as it stands.
+    """
+    out = list(rest)
+    for index, arg in enumerate(out):
+        if arg.lower() not in ("-f", "--file") or index + 1 >= len(out):
+            continue
+        value = out[index + 1]
+        if not Path(value).is_absolute() and not set(value) & set("/\\"):
+            out[index + 1] = str(MAP_DIR / value)
+    return out
+
+
+def cmd_save_map(backend, rest):
+    rest = map_base_option(rest)
+    if backend != "shim":
+        argv = ["ros2", "run", "nav2_map_server", "map_saver_cli"]
+        if not has_flag(rest, ("-f", "--file")):
+            argv += ["-f", str(MAP_DIR / DEFAULT_MAP)]
+        return run(argv + rest)
+    argv = [python_exe(), BRIDGE_SCRIPTS / "save_map.py"]
+    if not has_flag(rest, ("-f", "--file")):
+        argv += ["-f", str(MAP_DIR / DEFAULT_MAP)]
+    return run(argv + rest, env=shim_env())
+
+
+def platform_layer():
+    """``bridge/scripts/_bridge_platform.py``, the shim's own platform layer.
+
+    Which of our nodes are running, and how the answer is obtained, is a
+    question each platform answers differently and every launcher asks, so it
+    is answered in one place and this is how the tool reaches it. Only the shim
+    backend needs it, and the car has no bridge next to it, so the import
+    happens where it is used rather than at the top.
+    """
+    if str(BRIDGE_SCRIPTS) not in sys.path:
+        sys.path.insert(0, str(BRIDGE_SCRIPTS))
+    import _bridge_platform
+    return _bridge_platform
+
+
+def process_running(name):
+    """Is a running process called `<name>` on this machine?
+
+    `status` used to answer "yes" for a process that was long gone: killing the
+    ported node with `taskkill /F` can leave an entry behind whose threads have
+    all ended (no command line, a few KB of memory, and `taskkill` then refuses
+    it with "Access is denied") - and that entry matches on image name too.
+    `status eq running`, which was here to tell the two apart, does not: this
+    machine answers `unknown` for every process, so it dropped the nodes as
+    well and `stop` skipped every SLAM node it was asked to stop. Asking the
+    process itself is what settles it, next to the launchers.
+    """
+    return bool(platform_layer().live_pids([name]))
+
+
+def cmd_status(backend, rest):
+    if backend != "shim":
+        return run(["ros2", "node", "list"] + rest)
+    for group, names in (("nav2", NAV_NODES), ("slam", SLAM_NODES)):
+        running = [n for n in names if process_running(n)]
+        say("%-5s running: %s" % (group, ", ".join(running) if running else "(none)"))
+    return 0
+
+
+def cmd_stop(backend, rest):
+    if backend != "shim":
+        say("the car runs the stack in the foreground: Ctrl-C in that window stops it")
+        return 0
+    code = run([python_exe(), BRIDGE_SCRIPTS / "run_nav2_stack.py", "stop"])
+    layer = platform_layer()
+    for name in SLAM_NODES:
+        if not layer.live_pids([name]):
+            continue
+        say("stopping %s" % name)
+        layer.kill_nodes([name])
+    return code
+
+
+def resolve_script(name):
+    """A script as ``run`` accepts it: a path, or a bare name under scripts/.
+
+    ``racecar_ctl.py run go.py`` is what a reader expects to work from the repo
+    root, and the mission scripts live three directories down, so a bare name is
+    looked up under ``src/racecar/scripts`` rather than in the cwd.
+    """
+    candidate = Path(name)
+    if candidate.is_file():
+        return candidate
+    bare = not candidate.is_absolute() and os.sep not in name and "/" not in name
+    if bare:
+        default = MISSION_DIR / name
+        if default.is_file():
+            return default
+    return None
+
+
+def clock_publishers():
+    """How many processes in the shim graph publish ``/clock`` right now.
+
+    None where the graph cannot be read at all, which is not the same answer as
+    zero: "no /clock" is a decision to stay on the wall clock, "no graph" is a
+    reason to say so rather than to guess. Read from the registry and not by
+    subscribing - a probe must not appear in the graph it is asking about, and
+    a subscription would also count as a second reader of that channel.
+    """
+    if str(SHIM_PYTHON) not in sys.path:
+        sys.path.insert(0, str(SHIM_PYTHON))
+    try:
+        from ros2py import graph
+    except ImportError as error:
+        say("cannot read the shim graph: %s" % error)
+        return None
+    try:
+        return graph.read().publisher_count("/clock")
+    except Exception as error:  # noqa: BLE001 - an unreadable registry, not a crash
+        say("cannot read the shim graph: %s" % error)
+        return None
+
+
+def cmd_run(backend, rest):
+    """Run one of ``src/racecar/scripts`` with this machine's ROS2.
+
+    Those scripts are clients, not part of the stack: they send a goal and the
+    planner on this machine answers it. On the shim they need the shim's
+    ``rclpy`` and the generated messages in front of them, which is what
+    ``shim_run.py`` does; on the car they are ordinary ``ros2 run`` nodes.
+
+    The clock the script starts on is decided here. The stack runs on
+    simulation time (``nav.yaml`` sets ``use_sim_time`` for every node in it),
+    so every stamp it publishes is the simulator's seconds - and a mission
+    script that compares one of those against its own ``get_clock().now()``
+    gets 13000 s against the wall clock's epoch unless it is on the same
+    timeline. ``--sim-time`` and ``--wall-time`` say which; with neither, the
+    graph is asked whether a ``/clock`` is being published right now, which is
+    the same question the stack answered when it turned the parameter on.
+    """
+    # The two clock flags are this tool's, not the script's, so they are taken
+    # out wherever they are written - `run --sim-time go.py` and
+    # `run go.py --sim-time` are the same command, and the usage line shows the
+    # first. A script that really wants an argument spelled that way does not
+    # exist here; the ones in this tree take a CSV.
+    args = list(rest)
+    sim_time = None
+    for flag in ("--sim-time", "--wall-time"):
+        while flag in args:
+            sim_time = flag == "--sim-time"
+            args.remove(flag)
+    if not args:
+        say("usage: racecar_ctl.py run [--sim-time|--wall-time] <script> [args]")
+        say("scripts live in %s" % MISSION_DIR)
+        return 2
+    name, args = args[0], args[1:]
+    parameter = "--ros-args -p use_sim_time:=%s" % ("true" if sim_time else "false")
+    if backend != "shim":
+        if sim_time is None:
+            return run(["ros2", "run", "racecar", name] + args)
+        say("use_sim_time:=%s" % ("true" if sim_time else "false"))
+        return run(["ros2", "run", "racecar", name] + args + parameter.split())
+    script = resolve_script(name)
+    if script is None:
+        say("no such script: %s" % name)
+        say("scripts live in %s" % MISSION_DIR)
+        return 2
+    runner = SHIM_PYTHON / "shim_run.py"
+    if not runner.is_file():
+        say("no shim runner at %s" % runner)
+        return 1
+    if sim_time is None:
+        publishers = clock_publishers()
+        sim_time = bool(publishers)
+        if publishers is None:
+            say("no shim graph to ask about /clock: use_sim_time:=false")
+        else:
+            say("the shim graph %s a /clock publisher: use_sim_time:=%s"
+                % ("has" if publishers else "has no", "true" if sim_time else "false"))
+    # Handed to the runner rather than as `--ros-args -p`: a script is free to
+    # filter its own argv before rclpy sees it (`go.py` keeps only the
+    # dash-prefixed arguments, which loses a `-p` value), and this way the
+    # choice survives that. An explicit `-p use_sim_time:=...` in *args* still
+    # wins, because the runner only fills in where the command line is silent.
+    return run([python_exe(), str(runner),
+                "--sim-time" if sim_time else "--wall-time",
+                str(script)] + args, env=shim_env())
+
+
+def cmd_where(backend, rest):
+    for label, path in (("racecar", RACE_ROOT), ("cpu repo", CPU_ROOT), ("config", CONFIG_DIR),
+                        ("nav.yaml", NAV_YAML), ("slam_toolbox.yaml", SLAM_YAML),
+                        ("maps", MAP_DIR), ("missions", MISSION_DIR),
+                        ("shim python", SHIM_PYTHON)):
+        say("%-16s %s" % (label, path))
+    say("%-16s %s" % ("backend", backend))
+    return 0
+
+
+def main(argv):
+    backend, args = "auto", list(argv)
+    if "--help" in args or "-h" in args:
+        print(USAGE)
+        return 0
+    if "--backend" in args:
+        index = args.index("--backend")
+        if index + 1 >= len(args):
+            print(USAGE)
+            return 2
+        backend = args[index + 1]
+        del args[index:index + 2]
+    if not args:
+        print(USAGE)
+        return 2
+    backend = pick_backend(backend)
+    command, rest = args[0].lower(), args[1:]
+    if command == "nav":
+        return cmd_nav(backend, rest)
+    if command == "slam":
+        return cmd_slam(backend, rest)
+    if command in ("save-map", "save"):
+        return cmd_save_map(backend, rest)
+    if command == "run":
+        return cmd_run(backend, rest)
+    if command == "stop":
+        return cmd_stop(backend, rest)
+    if command == "status":
+        return cmd_status(backend, rest)
+    if command == "mirror-all":
+        return restart_daemon([])
+    if command == "where":
+        return cmd_where(backend, rest)
+    print(USAGE)
+    return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

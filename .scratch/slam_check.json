@@ -1,0 +1,27 @@
+{
+  "check": "slam",
+  "title": "slam_toolbox maps a lap from the bridged /scan + /tf",
+  "ok": true,
+  "seconds": 65.06,
+  "detail": "473x473 @ 0.050 m, 384 occupied / 40992 free / 182353 unknown",
+  "data": {
+    "lap_legs": 4,
+    "map": {
+      "returncode": 0,
+      "frames": 4,
+      "frame_id": "map",
+      "width": 473,
+      "height": 473,
+      "resolution": 0.05,
+      "origin": [
+        -11.722,
+        -11.813
+      ],
+      "occupied": 384,
+      "free": 40992,
+      "unknown": 182353
+    },
+    "pgm": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\acceptance-slam-1720.pgm",
+    "node_log": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\acceptance-slam-1720.log"
+  }
+}

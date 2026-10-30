@@ -1,0 +1,270 @@
+  ok   behavior_tree_log                nav2_msgs/msg/BehaviorTreeLog                 cdr=128 shim=118
+       timestamp: 8.000000250
+event_log: [2]
+  - 8.000000000 ComputePathToPose uid 0: RUNNING -> SUCCESS
+  - 8.000000100 ComputePathToPose uid 1: RUNNING -> SUCCESS
+
+  ok   bool                             std_msgs/msg/Bool                             cdr=5 shim=1
+       data: true
+
+  ok   clock                            rosgraph_msgs/msg/Clock                       cdr=12 shim=8
+       clock: 1234567890.987654321
+
+  ok   collision_monitor_state          nav2_msgs/msg/CollisionMonitorState           cdr=24 shim=16
+       action_type: 2 (slowdown)
+polygon_name: "StopPolygon"
+
+  ok   costmap_filter_info              nav2_msgs/msg/CostmapFilterInfo               cdr=52 shim=41
+       header:
+  stamp: 7.123456789
+  frame_id: "map"
+type: 1
+filter_mask_topic: "/keepout_mask"
+base: 0
+multiplier: -1
+
+  ok   costmap_update                   nav2_msgs/msg/CostmapUpdate                   cdr=50 shim=42
+       header:
+  stamp: 7.123456789
+  frame_id: "odom"
+x: 1
+y: 2
+size_x: 3
+size_y: 2
+data: [6 cells]
+
+  ok   critics_stats                    nav2_msgs/msg/CriticsStats                    cdr=112 shim=97
+       stamp: 9.123456789
+critics: [4]
+  - RotateToGoal: cost 1.5 (changed)
+  - Oscillation: cost 0 (same)
+  - GoalAlign: cost -2.25 (changed)
+  - PathAlign: cost 0.75 (same)
+
+  ok   diagnostic_array                 diagnostic_msgs/msg/DiagnosticArray           cdr=204 shim=166
+       header:
+  stamp: 7.123456789
+  frame_id: ""
+status: [2]
+  - OK controller_server: topic rate: OK
+      rate=10.4
+      topic=/cmd_vel_nav
+  - WARN collision_monitor: StopPolygon: slowdown
+
+  ok   imu                              sensor_msgs/msg/Imu                           cdr=324 shim=316
+       header:
+  stamp: 7.123456789
+  frame_id: "imu_link"
+linear_acceleration: {x: 0, y: 0}
+angular_velocity: {z: 0.1}
+
+  ok   laserscan                        sensor_msgs/msg/LaserScan                     cdr=1524 shim=1519
+       header:
+  stamp: 7.123456789
+  frame_id: "laser_frame"
+angle_min: -3.14159
+angle_max: 3.14159
+angle_increment: 0.00872665
+range_min: 0.12
+range_max: 12
+ranges: [360 values, min 0.2, max 11.5]
+
+  ok   local_plan_evaluation            dwb_msgs/msg/LocalPlanEvaluation              cdr=576 shim=554
+       header:
+  stamp: 7.123456789
+  frame_id: "odom"
+twists: [2]
+best_index: 1
+worst_index: 0
+  best: total -2.5, poses 3, scores [2]
+
+  ok   log                              rcl_interfaces/msg/Log                        cdr=152 shim=136
+       stamp: 12.000000034
+level: 20 (INFO)
+name: "planner_server"
+msg: "Received a goal, begin computing control effort."
+file: "nav2_planner/planner_server.cpp" line 417 function: "computeControl"
+
+  ok   map_meta_data                    nav_msgs/msg/MapMetaData                      cdr=84 shim=76
+       resolution: 0.05
+width: 384
+height: 384
+
+  ok   marker                           visualization_msgs/msg/Marker                 cdr=293 shim=257
+       header:
+  stamp: 7.123456789
+  frame_id: "odom"
+ns: "slowdown" id: 3
+type: LINE_STRIP, action: ADD
+pose: {x: 1.25, y: -0.5, z: 0}
+scale: {x: 0.1, y: 0.2, z: 1}
+color: {r: 1, g: 0, b: 0, a: 0.5}
+points: [2]
+text: "slow"
+
+  ok   occupancy_grid                   nav_msgs/msg/OccupancyGrid                    cdr=144 shim=135
+       header:
+  stamp: 7.123456789
+  frame_id: "map"
+info: {resolution: 0.05, width: 8, height: 5, origin: {x: -5, y: -3}}
+data: [40 cells, 10 occupied]
+
+  ok   occupancy_grid_update            map_msgs/msg/OccupancyGridUpdate              cdr=52 shim=47
+       header:
+  stamp: 7.123456789
+  frame_id: "map"
+x: 2
+y: 3
+width: 4
+height: 3
+data: [12 cells, 3 occupied, 6 free, 3 unknown]
+
+  ok   odometry                         nav_msgs/msg/Odometry                         cdr=724 shim=709
+       header:
+  stamp: 7.123456789
+  frame_id: "odom"
+child_frame_id: "base_link"
+pose.pose.position: {x: 1.25, y: -2.5, z: 0}
+pose.pose.orientation: {x: 0, y: 0, z: 0.707107, w: 0.707107}
+twist.twist.linear: {x: 0.5, y: 0, z: 0}
+twist.twist.angular: {x: 0, y: 0, z: 0.25}
+
+  ok   parameter_event                  rcl_interfaces/msg/ParameterEvent             cdr=352 shim=310
+       stamp: 13.000000005
+node: "/controller_server"
+new_parameters: [2]
+  - FollowPath.max_vel_x: Double 0.5
+  - FollowPath.critics: StringArray [2 values]
+changed_parameters: [1]
+  - use_sim_time: Boolean true
+deleted_parameters: [1]
+  - obsolete: Integer 0
+
+  ok   particle_cloud                   nav2_msgs/msg/ParticleCloud                   cdr=220 shim=211
+       header:
+  stamp: 7.123456789
+  frame_id: "map"
+particles: [3]
+  best: {x: 0.2, y: -0.5, weight: 0.25}
+
+  ok   path                             nav_msgs/msg/Path                             cdr=244 shim=232
+       header:
+  stamp: 7.123456789
+  frame_id: "map"
+poses: [3 waypoints]
+  first: {x: 0, y: 0}
+  last: {x: 1, y: 0.5}
+
+  ok   point_cloud2                     sensor_msgs/msg/PointCloud2                   cdr=161 shim=133
+       header:
+  stamp: 7.123456789
+  frame_id: "lidar"
+width: 4
+height: 1
+point_step: 12
+data: [48 bytes]
+
+  ok   point_stamped                    geometry_msgs/msg/PointStamped                cdr=44 shim=39
+       header:
+  stamp: 7.123456789
+  frame_id: "map"
+point: {x: 1.5, y: -2.25, z: 0.125}
+
+  ok   polygon                          geometry_msgs/msg/Polygon                     cdr=56 shim=52
+       points: [4]
+  - {x: 0.31, y: 0.31, z: 0}
+  - {x: 0.31, y: -0.31, z: 0}
+  - {x: -0.31, y: -0.31, z: 0}
+  - {x: -0.31, y: 0.31, z: 0}
+
+  ok   polygon_stamped                  geometry_msgs/msg/PolygonStamped              cdr=60 shim=55
+       header:
+  stamp: 7.123456789
+  frame_id: "map"
+polygon.points: [3]
+
+  ok   pose_array                       geometry_msgs/msg/PoseArray                   cdr=252 shim=243
+       header:
+  stamp: 7.123456789
+  frame_id: "map"
+poses: [4]
+
+  ok   pose_stamped                     geometry_msgs/msg/PoseStamped                 cdr=76 shim=71
+       header:
+  stamp: 7.123456789
+  frame_id: "map"
+pose.position: {x: 3.5, y: -1.25}
+pose.orientation: {z: 0.382683, w: 0.923879}
+
+  ok   pose_with_covariance_stamped     geometry_msgs/msg/PoseWithCovarianceStamped   cdr=364 shim=359
+       header:
+  stamp: 7.123456789
+  frame_id: "map"
+pose.pose.position: {x: 1, y: 2}
+pose.pose.orientation: {z: 0, w: 1}
+
+  ok   speed_limit                      nav2_msgs/msg/SpeedLimit                      cdr=36 shim=25
+       header:
+  stamp: 7.123456789
+  frame_id: "odom"
+percentage: true
+speed_limit: 0.35
+
+  ok   string                           std_msgs/msg/String                           cdr=31 shim=26
+       data: "hello ros2 shim bridge"
+
+  ok   tfmessage                        tf2_msgs/msg/TFMessage                        cdr=196 shim=181
+       transforms: [2]
+  - header: {stamp: 7.000000001, frame_id: "odom"}
+    child_frame_id: "base_link"
+    translation: {x: 0.1, y: 0.2, z: 0.3}
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - header: {stamp: 7.000000002, frame_id: "base_link"}
+    child_frame_id: "laser_frame"
+    translation: {x: 0.25, y: 0, z: 0.4}
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+
+  ok   tracking_feedback                nav2_msgs/msg/TrackingFeedback                cdr=120 shim=111
+       header:
+  stamp: 7.123456789
+  frame_id: "odom"
+position_tracking_error: 0.05
+heading_tracking_error: 0.125
+current_path_index: 7
+robot_pose: {x: 1, y: 2}
+distance_to_goal: 3.5
+speed: 0.4
+remaining_path_length: 4.25
+
+  ok   trajectory                       nav_msgs/msg/Trajectory                       cdr=700 shim=668
+       header:
+  stamp: 7.123456789
+  frame_id: "odom"
+points: [3]
+  - stamp: 7.000000000, position: {x: 0, y: 0}, velocity: {linear.x: 0.3, angular.z: 0.2}
+  - stamp: 7.000000005, position: {x: 0.2, y: 0.1}, velocity: {linear.x: 0.3, angular.z: 0.2}
+  - stamp: 7.000000010, position: {x: 0.4, y: 0.2}, velocity: {linear.x: 0.3, angular.z: 0.2}
+
+  ok   twist                            geometry_msgs/msg/Twist                       cdr=52 shim=48
+       linear: {x: 0.3, y: -0.1, z: 0}
+angular: {x: 0, y: 0, z: 0.9}
+
+  ok   twist_stamped                    geometry_msgs/msg/TwistStamped                cdr=76 shim=69
+       header:
+  stamp: 7.123456789
+  frame_id: "base_link"
+twist.linear: {x: 0.42, y: 0}
+twist.angular: {z: -0.33}
+
+  ok   voxel_grid                       nav2_msgs/msg/VoxelGrid                       cdr=88 shim=80
+       header:
+  stamp: 7.123456789
+  frame_id: "odom"
+size: {x: 16, y: 16, z: 4}
+resolutions: {x: 0.05, y: 0.05, z: 0.2}
+origin: {x: 1, y: 2, z: 0}
+data: [3 words, 17 voxels set]
+
+
+35 fixtures, 105 byte comparisons, 0 failure(s)
+CDR <-> shim transcoding is byte exact in both directions

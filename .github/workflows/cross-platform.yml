@@ -1,0 +1,190 @@
+﻿# Build and test on Windows and Linux, with the same commands a developer runs.
+#
+# The port is only as good as the gate in front of it, and until this file there
+# was none: "both platforms compile" was a table in a document that somebody had
+# to remember to walk. Every step below is an entry point from the repo
+# (`nav2/ros2_shim/build.py`, `bridge/scripts/build_bridge.py`,
+# `tools/run_ctest.py`), never a hand-written `cmake` line, so a hardcoded MSYS2
+# path or a `".exe"` spelling fails the job instead of surviving in the tree.
+#
+# Both jobs also run the five machine-independent gates -- the simulator's pytest
+# tree and the four checkers for the docs, the structure, the `.scratch`
+# references and the vendored patches -- because they need neither a compiler nor
+# a robot and, until they were added here, nothing ran them at all
+# (bridge/docs/04-gaps.md section 22; the `pytest` and `rosbags` installs are for
+# that one tree).
+#
+# Windows resolves its toolchain through the shared resolver in
+# `tools/_toolchain.py`; a runner's MSYS2 is not the one on this desk, so the job
+# points `CPU_MSYS2_ROOT` at `setup-msys2`'s install. That override existing at
+# all is the point of the change this workflow guards.
+#
+# The shim's Linux half needs a compiler, CMake, Ninja, Eigen and Boost; the
+# bridge additionally needs gRPC, protobuf and yaml-cpp. The shim does *not* need
+# a ROS2 installation anywhere: that is what the compatibility layer is for.
+name: cross-platform
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      CPU_MSYS2_ROOT: C:/msys64
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      # The repo's own gates below are plain `python` / `python3` scripts, and the
+      # one tree that needs a test runner needs it installed. Pinning the
+      # interpreter is what makes "the same commands a developer runs" true of a
+      # runner whose image happens to ship something else.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The two vendored source trees the shim links against are not in version
+      # control (`nav2/third_party/dl/` is in `.gitignore`), so every job has
+      # to fetch them. `fetch_deps.py` tries several mirrors in turn, which is
+      # what makes this step survive a runner that cannot reach github.com.
+      - name: fetch the vendored build dependencies
+        run: python nav2/third_party/dl/fetch_deps.py
+
+      # The UCRT64 prefix, because that is the one carrying gRPC/protobuf/abseil
+      # -- the same packages the bridge links against on the development machine.
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: false
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-ninja
+            mingw-w64-ucrt-x86_64-grpc
+            mingw-w64-ucrt-x86_64-protobuf
+            mingw-w64-ucrt-x86_64-yaml-cpp
+            mingw-w64-ucrt-x86_64-boost
+            mingw-w64-ucrt-x86_64-eigen3
+
+      - name: toolchain resolution
+        run: python tools/_toolchain.py
+
+      # `-j 6` is the repo-wide policy rather than a runner fit: see tools/_cores.py.
+      - name: shim build entry point
+        run: python nav2/ros2_shim/build.py --jobs 6
+
+      - name: shim ctest
+        run: python tools/run_ctest.py shim
+
+      - name: shm ctest
+        run: python tools/run_ctest.py shm
+
+      - name: bridge build entry point + ctest
+        run: python bridge/scripts/build_bridge.py --test --jobs 6
+
+      # The SDK is built by its own entry point, exactly like the other three
+      # trees. Running `tools/run_ctest.py grpc` without this step was never
+      # going to work: that tree is only a ctest tree once something has
+      # configured it, and nothing in this job did.
+      - name: gRPC SDK build entry point + ctest
+        run: python gRPC/ros2_gRPC_sdk/scripts/build.py --test --jobs 6
+
+      # The five gates that no job ran until this step existed. The first is the
+      # fifth test tree: `tools/run_ctest.py` has known five since the simulator's
+      # pytest tree moved in, and this job ran four of them. The other four need
+      # no compiler and no robot, which is exactly why they belong here -- they
+      # catch a document that lost its BOM, a directory that lost its README or a
+      # structure map that points at something gone, a `.scratch` reference that
+      # stopped resolving, and a re-vendored `slam_toolbox` that dropped the
+      # shutdown patch `nav2/slam_toolbox_port/CMakeLists.txt` refuses to
+      # configure without. See bridge/docs/04-gaps.md section 22.
+      - name: simulator pytest tree (the fifth test tree)
+        run: |
+          python -m pip install --disable-pip-version-check pytest rosbags -r bridge/ubuntu/ros2_bridge_sim/requirements.txt
+          python tools/run_ctest.py sim
+
+      - name: docs, structure, scratch references and vendored patches
+        run: |
+          python tools/check_docs.py
+          python tools/check_structure.py
+          python tools/find_scratch_refs.py --check
+          python nav2/patches/verify_patch.py
+
+  linux:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      # The repo's own gates below are plain `python` / `python3` scripts, and the
+      # one tree that needs a test runner needs it installed. Pinning the
+      # interpreter is what makes "the same commands a developer runs" true of a
+      # runner whose image happens to ship something else.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The two vendored source trees the shim links against are not in version
+      # control (`nav2/third_party/dl/` is in `.gitignore`), so every job has
+      # to fetch them. `fetch_deps.py` tries several mirrors in turn, which is
+      # what makes this step survive a runner that cannot reach github.com.
+      - name: fetch the vendored build dependencies
+        run: python nav2/third_party/dl/fetch_deps.py
+
+      # Eigen and Boost are what the shim needs; gRPC/protobuf/yaml-cpp are what
+      # the bridge needs. Nothing here is ROS2 -- the shim replaces it.
+      - name: dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build zlib1g-dev \
+            libeigen3-dev libboost-dev libboost-serialization-dev \
+            libboost-thread-dev libboost-system-dev libboost-atomic-dev \
+            libboost-chrono-dev libboost-date-time-dev \
+            libgrpc++-dev libprotobuf-dev protobuf-compiler \
+            protobuf-compiler-grpc libyaml-cpp-dev
+
+      - name: toolchain resolution
+        run: python3 tools/_toolchain.py
+
+      # Identical to the Windows job, minus the shell -- which is the whole
+      # claim being tested.
+      - name: shim build entry point
+        run: python3 nav2/ros2_shim/build.py --jobs 6
+
+      - name: shim ctest
+        run: ctest --test-dir nav2/ros2_shim/build --output-on-failure
+
+      - name: shm ctest
+        run: ctest --test-dir nav2/shm_transport/build --output-on-failure
+
+      - name: bridge build entry point + ctest
+        run: python3 bridge/scripts/build_bridge.py --test --jobs 6
+
+      - name: gRPC SDK build entry point + ctest
+        run: python3 gRPC/ros2_gRPC_sdk/scripts/build.py --test --jobs 6
+
+      # Same five gates as the Windows job -- they are the ones that need neither
+      # a compiler nor a robot, so there is no reason for the two platforms to
+      # disagree about them. See bridge/docs/04-gaps.md section 22.
+      - name: simulator pytest tree (the fifth test tree)
+        run: |
+          python3 -m pip install --disable-pip-version-check pytest rosbags -r bridge/ubuntu/ros2_bridge_sim/requirements.txt
+          python3 tools/run_ctest.py sim
+
+      - name: docs, structure, scratch references and vendored patches
+        run: |
+          python3 tools/check_docs.py
+          python3 tools/check_structure.py
+          python3 tools/find_scratch_refs.py --check
+          python3 nav2/patches/verify_patch.py

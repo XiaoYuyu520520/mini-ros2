@@ -1,0 +1,51 @@
+before: 0
+2026-09-15 19:04:17,124 INFO    ros2_bridge_sim.services: service /sim/set_initial_pose: pose=4.310,-0.950 yaw=0.090
+
+sim log lines before: 36
+
+stack rc 0
+goal rc 1
+--- nav2_goal tail ---
+=== nav2_goal ===
+  action     : navigate_to_pose
+  goal       : 40,40
+  frame      : map
+  stack      : bt_navigator present, /odom x1, /map x0 (0x0 @ 0.000 m)
+  robot      : (4.31, -0.95, 0.09 rad), goal (40.00, 40.00), 54.32 m away
+  sending    : NavigateToPose x=40.00 y=40.00 yaw=0.0 deg
+  accepted   : status 1 after 0.024 s
+  timeout    : cancelling
+  result     : FAILED
+  reason     : the goal did not finish within 90s
+  odom       : (4.31, -0.95, 0.09 rad) from (4.31, -0.95)
+  travelled  : 0.00 m, 54.32 m left to the goal
+  pipeline   : /cmd_vel x0 (none) (0 moving, max 0.00 m/s), /plan x0 (last 0 poses), /odom x4256, 90.0 s
+  report     : .scratch\recov_goal.json
+
+--- ubuntu sim.log since run ---
+/odom       nav_msgs/msg/Odometry       1    0
+/scan       sensor_msgs/msg/LaserScan   1    0
+/tf         tf2_msgs/msg/TFMessage      1    0
+/tf_static  tf2_msgs/msg/TFMessage      1    0
+  service:
+    /sim/enable              [nav2_msgs/srv/Toggle]
+    /sim/pause               [std_srvs/srv/Empty]
+    /sim/reset               [std_srvs/srv/Trigger]
+    /sim/resume              [std_srvs/srv/Empty]
+    /sim/set_initial_pose    [nav2_msgs/srv/SetInitialPose]
+    /sim/set_paused          [std_srvs/srv/SetBool]
+    /sim/status              [std_srvs/srv/Trigger]
+    /sim/back_up             [nav2_msgs/action/BackUp] (action)
+    /sim/drive               [ros2_bridge_sim/action/Drive] (action)
+    /sim/drive_on_heading    [nav2_msgs/action/DriveOnHeading] (action)
+    /sim/spin                [nav2_msgs/action/Spin] (action)
+    /sim/wait                [nav2_msgs/action/Wait] (action)
+  cmd    : publish geometry_msgs/msg/Twist on /cmd_vel, or use the console
+2026-09-15 18:49:57,803 INFO    ros2_bridge_sim.services: service /sim/set_initial_pose: pose=2.000,-1.000 yaw=0.000
+2026-09-15 18:49:58,196 INFO    ros2_bridge_sim.services: service /sim/enable: enable=False
+2026-09-15 18:53:24,873 INFO    ros2_bridge_sim.services: service /sim/enable: enable=True
+2026-09-15 18:56:19,973 INFO    ros2_bridge_sim.services: service /sim/set_initial_pose: pose=4.310,-0.950 yaw=0.090
+2026-09-15 19:00:26,833 INFO    ros2_bridge_sim.services: service /sim/set_initial_pose: pose=4.310,-0.950 yaw=0.090
+2026-09-15 19:02:19,427 INFO    ros2_bridge_sim.services: service /sim/set_initial_pose: pose=4.310,-0.950 yaw=0.090
+2026-09-15 19:04:17,124 INFO    ros2_bridge_sim.services: service /sim/set_initial_pose: pose=4.310,-0.950 yaw=0.090
+

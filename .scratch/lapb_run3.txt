@@ -1,0 +1,2 @@
+[lap] l02  ai_第一个点后回终点.py  sim_room12.csv
+[lap] l02 exit=0 wall=159.5 s

@@ -1,0 +1,12 @@
+[waypoint_follower] E:\DesktopData\app\code\CPU\code\Desktop\racecar\src\racecar\config\nav.yaml: 14 parameter(s) for node 'waypoint_follower'
+[INFO] [waypoint_follower] 
+	waypoint_follower lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [waypoint_follower] Creating
+[waypoint_follower] 'waypoint_follower' started with 14 parameter override(s)
+[waypoint_follower] waiting for external lifecycle transitions on /waypoint_follower/change_state
+[INFO] [waypoint_follower] Configuring
+[INFO] [waypoint_follower] Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
+[INFO] [waypoint_follower] Activating
+[INFO] [waypoint_follower] Creating bond (waypoint_follower) to lifecycle manager.

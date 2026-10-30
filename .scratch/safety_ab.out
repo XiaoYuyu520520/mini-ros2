@@ -1,0 +1,54 @@
+====================================================================
+### A : nav2_stack.bat --safety 
+request:
+(empty)
+response:
+success: true
+message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+  result            : SUCCEEDED (SUCCEEDED) code=0 msg=''
+  goal / start      : [2.55, 0, 0]  from [0, 0]
+  final pose        : [2.39732, 0.0264987, 0.00783611]
+  travelled / left  : 2.397 m / 0.155 m
+  max linear vel    : 0.45
+  recoveries        : 0   elapsed 8.2 s
+  messages          : {'cmd_vel': 106, 'cmd_vel_type': 'Twist', 'cmd_vel_moving': 106, 'plan': 7, 'plan_poses': 12, 'odom': 387}
+  cmd_vel writers   : topic info /cmd_vel ->
+    Type: geometry_msgs/msg/Twist
+    
+    Publisher count: 2
+    Subscription count: 1
+    Source: remote (bridged over gRPC)
+[nav2_stack] stopping the previous stack
+[nav2_stack] stopped
+  collision_monitor log tail:
+    [INFO] [collision_monitor] [PolygonStop]: Creating Polygon
+====================================================================
+### B : nav2_stack.bat --safety --safety-params safety_stopall_chain.yaml
+request:
+(empty)
+response:
+success: true
+message: "x=0.000 y=0.000 theta=0.000 cmd=(0.00, 0.00) paused=false"
+  result            : ABORTED (ABORTED) code=105 msg='Failed to make progress'
+  goal / start      : [2.55, 0, 0]  from [0, 0]
+  final pose        : [0, 0, 0]
+  travelled / left  : 0.000 m / 2.550 m
+  max linear vel    : 0
+  recoveries        : 7   elapsed 73.0 s
+  messages          : {'cmd_vel': 34, 'cmd_vel_type': 'Twist', 'cmd_vel_moving': 0, 'plan': 40, 'plan_poses': 100, 'odom': 3447}
+  cmd_vel writers   : topic info /cmd_vel ->
+    Type: geometry_msgs/msg/Twist
+    
+    Publisher count: 2
+    Subscription count: 1
+    Source: remote (bridged over gRPC)
+[nav2_stack] stopping the previous stack
+[nav2_stack] stopped
+  collision_monitor log tail:
+    [collision_monitor] E:\DesktopData\app\code\CPU\.scratch\safety_stopall_chain.yaml: 16 parameter(s) for node 'collision_monitor'
+    [INFO] [collision_monitor] [PolygonStop]: Creating Polygon
+    [INFO] [collision_monitor] Robot to stop due to PolygonStop polygon
+====================================================================
+### summary
+  A: SUCCEEDED travelled  2.397 m  max v 0.45   /cmd_vel 106
+  B: ABORTED   travelled  0.000 m  max v 0      /cmd_vel 34

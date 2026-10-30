@@ -1,0 +1,95 @@
+[amcl_bridge_node] initial pose from /odom: 0.000 0.000 0.0000
+[amcl_bridge_node] /tf_static carries the laser frame
+[INFO] [amcl] 
+	amcl lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [amcl] Creating
+[INFO] [amcl] Configuring
+[INFO] [amcl] initTransforms
+[INFO] [amcl] initPubSub
+[INFO] [amcl] Subscribed to map topic.
+[INFO] [amcl] Activating
+[INFO] [amcl] initialPoseReceived
+[INFO] [amcl] Setting pose (1789429778.525056): 0.000 0.000 0.000
+[INFO] [amcl] Creating bond (amcl) to lifecycle manager.
+[amcl_bridge_node] active: scan + map, map -> odom -> base_link
+[amcl_bridge_node] nav2_amcl::DifferentialMotionModel motion model, likelihood_field laser model, 500..2000 particles
+[DEBUG] [amcl] AmclNode: A new map was received.
+[INFO] [amcl] Received a 480 X 480 map @ 0.050 m/pix
+[INFO] [amcl] createLaserObject
+[DEBUG] [amcl] Laser 0 angles in base frame: min: 3.142 inc: 0.017
+[DEBUG] [amcl] Num samples: 2000
+
+[DEBUG] [amcl] Max weight pose: 0.000 0.000 0.000
+[DEBUG] [amcl] Publishing pose
+[DEBUG] [amcl] New pose:  0.000  0.000  0.000
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[DEBUG] [amcl] AmclNode: A new map was received.
+[INFO] [amcl] Running Nav2 LifecycleNode rcl preshutdown (amcl)
+[INFO] [amcl] Deactivating
+[INFO] [amcl] Destroying bond (amcl) to lifecycle manager.
+[INFO] [amcl] Cleaning up
+[INFO] [amcl] Destroying bond (amcl) to lifecycle manager.
+[INFO] [amcl] Destroying
