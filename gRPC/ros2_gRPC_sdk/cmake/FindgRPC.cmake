@@ -46,12 +46,15 @@ find_program(gRPC_CPP_PLUGIN
     ${gRPC_LIBRARY}/..
     ${gRPC_LIBRARY}/../bin
     ${gRPC_LIBRARY}/../libexec
+    /usr/bin
+    /usr/sbin
     /usr/lib
+    /usr/local/bin
     /usr/local/lib
     /usr/lib/aarch64-linux-gnu
     /usr/lib/arm64-linux-gnu
     /usr/lib/x86_64-linux-gnu
-  PATH_SUFFIXES bin libexec sbin lib lib64)
+  PATH_SUFFIXES bin sbin libexec lib lib64)
 
 # The plugin may also be a versioned file (grpc_cpp_plugin-1.30) with the
 # unversioned name only in a -dev symlink that some architectures do not get.
