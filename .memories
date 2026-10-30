@@ -157,6 +157,21 @@ Pandoc / MkDocs 的）。显式 `<a id>` 是唯一在所有渲染器上都成立
 插完断言每个锚点都命中，再用脚本抓每一页的 `href="#..."` 与 `id="..."` 做差集验证
 （远端实测 16 页全部 `missing=[]`）。
 
+### 代码块复制按钮（2026-10-30）
+
+用户要求「代码需要加复制按钮」。实现放在
+`docs/_layouts/default.html` 的末尾一段 `<script>`：
+
+* 把 `main pre` 包进 `.codeblock`，动态插一个 `.copy-btn`（文字「复制」）；
+* 复制优先用 `navigator.clipboard.writeText`（需 `window.isSecureContext`），
+  否则回退到隐藏 `<textarea>` + `document.execCommand("copy")` ——
+  本地 `http://` 预览也能用；
+* 点击后文字短暂变「已复制」（1.6 s），失败变「复制失败」；
+* `pre` 右内边距加到 `4.75rem`，按钮不会盖住第一行代码；
+* 按钮在 `hover: none`（触屏）下常驻，否则半透明、hover 变主色。
+
+放在布局而不是每个 `.md` 里：Markdown 保持干净，新增页面自动就有。
+
 ### 一个坑：站内链接的相对基准
 
 页面 URL 是 `/mini-ros2/Quick_start/windows`（**没有尾斜杠**），所以在
