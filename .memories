@@ -169,6 +169,44 @@ Pandoc / MkDocs 的）。显式 `<a id>` 是唯一在所有渲染器上都成立
 插完断言每个锚点都命中，再用脚本抓每一页的 `href="#..."` 与 `id="..."` 做差集验证
 （远端实测 16 页全部 `missing=[]`）。
 
+### `ros2 topic pub ... -r 10` 报「找不到接受自变量 'topic' 的位置参数」（2026-10-30 修）
+
+**用户真机报错**，起因不是 CLI，是 `bridge/windows/ros2.ps1` 里的包装函数：
+
+```powershell
+function ros2 {
+    [CmdletBinding()]
+    param([Parameter(ValueFromRemainingArguments = $true)] [string[]] $Ros2Args)
+    ...
+}
+```
+
+PowerShell 允许**用参数名的前缀指定参数**。只有一个参数 `Ros2Args`，
+所以 `-r` 是它的**唯一前缀** → `-r 10` 被当成给 `Ros2Args` 赋值 `10`，
+前面的 `topic pub /demo ...` 反而没有位置可绑，报的就是 `'topic'`。
+
+**修法**：把包装函数变成**普通函数**（不要 `[CmdletBinding()]`、不要 `param()`），
+所有 token 进 `$args`，然后 `& $exe @args`。
+
+> **教训**：任何“转发剩余参数”的 PowerShell 包装器都不要用
+> `param([Parameter(ValueFromRemainingArguments)] ...)`，除非参数名不以任何短选项开头（`-r`
+> 会命中 `Rest` / `Ros2Args`，`-t` 会命中 `Tests`…）。用 `$args` 最干净。
+
+验证：把真函数体提出来、把 exe 调用换成打印 `$args`，四条命令都原样透传：
+`topic pub ... -r 10`、`topic echo --count 3`、`topic list -t`、`action send_goal ... -t 25`。
+另外用真 `ros2.exe` + `bridge_env.bat` 做了一次本机发/收：**PASS**。
+
+### 验证文档里的输出要照实写（2026-10-30）
+
+用真二进制量过之后修正：
+
+* `ros2 topic pub` **不逐条打印**，只打一行 `publisher: beginning loop`；
+  先发后订时还会多一行 `[ros2] warning: nobody was holding '/demo/chatter' yet ...`。
+* 字符串带引号：`data: "hello from Windows"`。
+* `topic info` / `topic hz` 要在发布者还活着时跑（`hz` 持续打印，Ctrl+C 停）；
+  发布一停，共享内存里没有常驻发布者，`topic list` 里也就没了，`info` 报 `Unknown topic`。
+* 先订阅后发布：前几条会打 `(N bytes of unknown type)`（实测 4 行），类型最多 1 s 后解析出来。
+
 ### 代码块复制按钮（2026-10-30）
 
 用户要求「代码需要加复制按钮」。实现放在
