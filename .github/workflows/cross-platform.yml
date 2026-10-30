@@ -136,6 +136,14 @@ jobs:
       # The visualiser's Go front end. It is a separate tree with its own
       # toolchain, and `go vet` plus `go test` is the gate that keeps the
       # sidecar protocol and the renderer honest.
+      #
+      # The Windows image happens to have Go on it; the Linux ones do not, and
+      # `go version` in a step is not a toolchain. setup-go pins the same
+      # version the module asks for, so both platforms build the same tree.
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.4"
+          cache-dependency-path: viz/go.sum
       - name: viz go build + test
         run: |
           go version
@@ -252,7 +260,12 @@ jobs:
 
       # The visualiser's Go front end. Same reason as in the Windows job: it is
       # a separate tree with its own toolchain, and the two platforms must not
-      # disagree about it.
+      # disagree about it. The runner image has no Go in it, so the toolchain
+      # is installed here rather than assumed.
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.4"
+          cache-dependency-path: viz/go.sum
       - name: viz go build + test
         run: |
           go version
