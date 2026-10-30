@@ -50,6 +50,23 @@ REFERRING = [
 
 PATTERN = re.compile(r"\.scratch[\\/]([A-Za-z0-9_\-\.\\/]*)")
 
+# Two parts of `.scratch/` are deliberately *not* in version control:
+#
+#   attic/    archived one-shot probes and logs, ignored by `.gitignore`
+#             (`.scratch/attic/`) because they are re-obtainable and huge;
+#   _before/  binaries built to compare a change against, also generated.
+#
+# A document that cites them is citing real evidence - it just lives outside
+# the repository, so a clean checkout (CI) does not have it. Treating those as
+# broken references made `--check` pass on the development machine and fail on
+# a runner, which is the worst of both. The citation is kept; only the
+# existence test is skipped, and only for these two prefixes.
+UNTRACKED_PREFIXES = ("attic", "_before")
+
+
+def _first_component(ref: str) -> str:
+    return re.split(r"[\\/]", ref, maxsplit=1)[0]
+
 
 def load_referring() -> list[tuple[str, str]]:
     out = []
@@ -105,6 +122,8 @@ def main() -> int:
 
     missing = []
     for ref in sorted(refs):
+        if _first_component(ref) in UNTRACKED_PREFIXES:
+            continue
         if not resolves(ref):
             missing.append(ref)
     if not args.check:
