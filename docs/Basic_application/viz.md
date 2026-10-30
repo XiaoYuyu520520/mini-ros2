@@ -216,6 +216,11 @@ ros2 topic echo /qos_probe/scan --count 3 --timeout 15
 ros2 topic echo /qos_probe/map --once --timeout 15
 ```
 
+对端的 rclcpp agent 就是被验的那一档：源码在
+`gRPC/ros2_gRPC_sdk/src/server/rclcpp_backend.cpp` 的 `qosFor()`，
+改完在 Ubuntu 上 `cmake --build gRPC/ros2_gRPC_sdk/build/linux-x86_64 --target ros2_grpc_sdk_agent`
+再重启 agent 即可。
+
 修好之后两条都收到（扫描 3 条、`ranges` 21 个值；地图 400 格 / 76 个占用）。
 **负对照**：把 sensor 分支临时改回 reliable，agent 立刻报
 `offering incompatible QoS ... RELIABILITY_QOS_POLICY`，Windows 端的扫描
