@@ -54,7 +54,7 @@ title: 6 常见问题 · 功能限制与缺口
 | --- | --- |
 | **一个通道一个写者** | `viz` 的边车自己持有 `/goal_pose` 与 `/initialpose` 的写端；再对同一通道跑 `ros2 topic pub` 会互相截断环形缓冲 |
 | **v1 只发话题，不走 action** | 目标点走 `/goal_pose` 话题（nav2 的 `bt_navigator` 订阅它），所以没有进度反馈与中途取消 |
-| **只画四类图层** | 地图 / 扫描 / 路径 / 位姿。代价地图叠加、点云、Marker、URDF 都没有 |
+| **只画五类图层** | 地图 / 扫描 / 路径 / 位姿 / Marker。代价地图叠加、点云（`PointCloud2`）、URDF 都没有 |
 | **QoS 没在真 ROS2 上量过** | agent 侧的默认表已经改了，但缺一台真 peer 的证据 |
 
 **不需要单独移植的**：`nav2_core` 与 `opennav_docking_core` 只有头文件；`nav2_util` 的源码被收进

@@ -16,6 +16,7 @@ title: 3 基础应用开发 · Windows 可视化
   <li><a href="#tools">发目标与初始位姿</a></li>
   <li><a href="#config">配置文件</a></li>
   <li><a href="#sidecar">边车与 TF</a></li>
+  <li><a href="#markers">Marker（箭头、线、点）</a></li>
   <li><a href="#qos">QoS</a></li>
   <li><a href="#evidence">验证到哪一步了</a></li>
   <li><a href="#limits">还没做的</a></li>
@@ -35,6 +36,7 @@ title: 3 基础应用开发 · Windows 可视化
 | 自由缩放平移 | 滚轮以指针为锚点缩放，左键拖动平移，网格按米自适应 |
 | **发目标点** | 2D Goal Pose：点一下是位置，拖一下是朝向，发 `/goal_pose` |
 | **设初始位姿** | 2D Pose Estimate：发 `/initialpose`，协方差用 rviz 的 0.25 / 0.25 / 0.0685 |
+| **看 Marker** | `visualization_msgs/msg/Marker` 与 `MarkerArray`：箭头、线段、点、方块（rviz 那套 marker 类型） |
 | 加话题 | 面板里从图里选一个话题加进来，不用改代码、不用重启 |
 | 显示属性 | 逐话题覆盖颜色 / 点大小 / 透明度；空着就用该类型的默认样式 |
 | 配置保存 / 读取 | 工具栏两个按钮，**保留文件里的中文注释**（JSON 没有注释语法，注释写成 `_comment` 键） |
@@ -90,13 +92,14 @@ python bridge\scripts\build_bridge.py --jobs 1
 
 ## 3.5.3 发目标与初始位姿
 
-工具栏最左边两个图标就是两个工具（和 rviz 的工具条一个位置）：
+工具栏最左边两个**带名字的按钮**就是两个工具（和 rviz 的工具条一个位置，
+名字也用 rviz 的那两个）：`2D Goal Pose` 与 `2D Pose Estimate`。选中的那个会高亮。
 
 | 操作 | 结果 |
 | --- | --- |
-| 点工具栏「目标」图标，再点视口 | 发 `/goal_pose`（`geometry_msgs/msg/PoseStamped`） |
+| 点工具栏「2D Goal Pose」按钮，再点视口 | 发 `/goal_pose`（`geometry_msgs/msg/PoseStamped`） |
 | 拖动代替点击 | 朝向 = 拖动方向；拖动距离小于 15 cm 时朝向为 0 |
-| 点工具栏「初始位姿」图标，再点视口 | 发 `/initialpose`（`geometry_msgs/msg/PoseWithCovarianceStamped`） |
+| 点工具栏「2D Pose Estimate」按钮，再点视口 | 发 `/initialpose`（`geometry_msgs/msg/PoseWithCovarianceStamped`） |
 | **Esc** | 取消当前工具 |
 
 <div class="callout warn">
@@ -174,9 +177,40 @@ viewer 发</strong>：不要再对同一通道跑 <code>ros2 topic pub</code>，
 
 `/goal_pose` 与 `/initialpose` 的写端也归它（见上面的单写者提醒）。
 
+<a id="markers"></a>
+
+## 3.5.6 Marker（箭头、线、点）
+
+`visualization_msgs/msg/Marker` 与 `MarkerArray` 的话题可以直接加进面板，
+画出来的是 rviz 那套东西：
+
+| marker 类型 | 画成什么 |
+| --- | --- |
+| `ARROW` (0) | 箭头：杆身 + 三角头，方向是 marker 的朝向，长度是 `scale.x` |
+| `ARROW_STRIP` (12) | 一串箭头（每两个点一个） |
+| `LINE_STRIP` (4) / `LINE_LIST` (5) | 折线 / 一段段独立的线 |
+| `POINTS` (8) | 点，大小是 `scale.x` |
+| `CUBE` (1) / `SPHERE` (2) / `CYLINDER` (3) | 位置上的一个方块（2D 视图里球和柱都是方块） |
+| `CUBE_LIST` (6) / `SPHERE_LIST` (7) | 一串方块 |
+| `TRIANGLE_LIST` (11) | 三角形 |
+
+几个要点：
+
+* **颜色用 marker 自带的**（`color.r/g/b/a`，0..1）；alpha 为 0 时画成品红，
+  免得完全看不见。
+* **同一个话题可以有很多 marker**：按 `ns` + `id` 分开存，后来的覆盖先来的。
+* **删除是认的**：`action = 2`（DELETE）删掉那一个，`action = 3`（DELETEALL）
+  清空这个话题。
+* **坐标变换在边车里做**：marker 的 `header.frame_id` 会先变换到视口的固定坐标系，
+  marker 自带的 `points`（线段、点集）也跟着变换。
+* 一个 `MarkerArray` 里的每个 marker 可以有自己的坐标系，边车逐个查 TF。
+
+加法：面板里「Add a topic from the graph」选到那个话题 → `Add`。
+面板的显示属性里可以改颜色；marker 自带颜色时以自带的为准。
+
 <a id="qos"></a>
 
-## 3.5.6 QoS
+## 3.5.7 QoS
 
 共享内存那一层**没有** QoS：可靠性与持久性只在 **DDS 边界**（Ubuntu 侧的 agent）
 决定能不能匹配。所以：
@@ -230,7 +264,7 @@ ros2 topic echo /qos_probe/map --once --timeout 15
 
 <a id="evidence"></a>
 
-## 3.5.7 验证到哪一步了
+## 3.5.8 验证到哪一步了
 
 已验证（`go test`，不需要显示器）：
 
@@ -245,10 +279,13 @@ ros2 topic echo /qos_probe/map --once --timeout 15
 * 发 `/tf_static`（`map -> laser`）、`/map`（20×20 占用栅格）、`/scan`、`/plan`、
   `/amcl_pose` 之后，窗口里出现：地图占用边框 32861 个像素、扫描点 27 个、
   路径 520 个、机器人位姿 6316 个（按各自的颜色数出来的）
-* 真点工具栏图标 → 点视口 → `/goal_pose` 与 `/initialpose` 都被独立的
+* 真点工具栏「2D Goal Pose」/「2D Pose Estimate」→ 点视口 → `/goal_pose` 与 `/initialpose` 都被独立的
   `ros2 topic echo` 收到（frame_id、x/y、四元数都对）
 * 真 ROS2（Jazzy）对端：best_effort 的 `/qos_probe/scan` 与 transient_local 的
   `/qos_probe/map` 都收到；把 sensor 改回 reliable 的负对照里扫描一条也收不到
+
+* Marker：本地发的 `Marker` 与**真 ROS2 对端发的 `MarkerArray`** 都收到
+  （两个 marker 的 ns/id、位置、颜色都对），真窗口截图里箭头是 2144 个品红像素
 
 边车侧（`viz_feed --selftest`，也是 ctest）：`map -> laser (x=10)` + laser 系位姿
 `(1,2)` → 边车输出 map 系 `(11,2)`；地图 int8 数据 base64 解出 `[0,100,-1,0]`；
@@ -256,11 +293,11 @@ ros2 topic echo /qos_probe/map --once --timeout 15
 
 <a id="limits"></a>
 
-## 3.5.8 还没做的
+## 3.5.9 还没做的
 
 | 缺口 | 现状 |
 | --- | --- |
-| 代价地图叠加、点云、Marker | 只有地图 / 扫描 / 路径 / 位姿四类图层 |
+| 代价地图叠加、点云、URDF | 只有地图 / 扫描 / 路径 / 位姿 / Marker 这几类图层 |
 | 3D 与 URDF | 没有；`nav2_rviz_plugins` 仍然没移植 |
 | action 发目标 | v1 只发 `/goal_pose` 话题，不走 `NavigateToPose` action（没有进度反馈与中途取消） |
 | 逐话题 QoS 覆盖 | proto 里预留了字段，daemon 还没透传 |

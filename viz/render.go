@@ -14,6 +14,7 @@ import (
 	"image"
 	"image/color"
 	"math"
+	"sort"
 )
 
 // drawMap paints an occupancy grid into the bitmap.
@@ -183,6 +184,160 @@ func drawLine(target *image.RGBA, x0, y0, x1, y1 float64, tint color.RGBA, thick
 			}
 		}
 	}
+}
+
+// drawMarkers paints every marker of every marker topic. The sidecar has
+// already put the poses and points in the fixed frame, so this is pure 2D
+// drawing; the interesting part is the type switch, because one topic can
+// carry an arrow, a line strip and a cube list at the same time.
+func drawMarkers(
+	target *image.RGBA, markers map[string]map[string]*MarkerLayer,
+	ppm float64, centerX, centerY float64, width, height int,
+) {
+	topics := make([]string, 0, len(markers))
+	for topic := range markers {
+		topics = append(topics, topic)
+	}
+	sort.Strings(topics)
+	for _, topic := range topics {
+		byID := markers[topic]
+		keys := make([]string, 0, len(byID))
+		for key := range byID {
+			keys = append(keys, key)
+		}
+		sort.Strings(keys)
+		for _, key := range keys {
+			drawMarker(target, byID[key], ppm, centerX, centerY, width, height)
+		}
+	}
+}
+
+func drawMarker(
+	target *image.RGBA, marker *MarkerLayer,
+	ppm float64, centerX, centerY float64, width, height int,
+) {
+	if marker == nil {
+		return
+	}
+	tint := color.RGBA{R: marker.R, G: marker.G, B: marker.B, A: marker.A}
+	if tint.A == 0 {
+		tint = color.RGBA{255, 0, 255, 255}
+	}
+	switch marker.Type {
+	case MarkerArrow:
+		drawArrow(
+			target, marker.X, marker.Y, marker.Yaw,
+			marker.ScaleX, marker.ScaleY, marker.ScaleZ,
+			ppm, centerX, centerY, width, height, tint)
+	case MarkerArrowStrip:
+		// Consecutive pairs are separate arrows: start, end, start, end.
+		for i := 0; i+3 < len(marker.Points); i += 4 {
+			x0, y0 := marker.Points[i], marker.Points[i+1]
+			x1, y1 := marker.Points[i+2], marker.Points[i+3]
+			length := math.Hypot(x1-x0, y1-y0)
+			if length <= 0 {
+				continue
+			}
+			drawArrow(
+				target, x0, y0, math.Atan2(y1-y0, x1-x0),
+				length, marker.ScaleY, marker.ScaleZ,
+				ppm, centerX, centerY, width, height, tint)
+		}
+	case MarkerLineStrip:
+		drawPolyline(target, marker.Points, ppm, centerX, centerY, width, height,
+			tint, markerWidth(marker, ppm))
+	case MarkerLineList:
+		for i := 0; i+3 < len(marker.Points); i += 4 {
+			drawLine(
+				target,
+				(marker.Points[i]-centerX)*ppm+float64(width)/2,
+				(centerY-marker.Points[i+1])*ppm+float64(height)/2,
+				(marker.Points[i+2]-centerX)*ppm+float64(width)/2,
+				(centerY-marker.Points[i+3])*ppm+float64(height)/2,
+				tint, markerWidth(marker, ppm), width, height)
+		}
+	case MarkerCubeList, MarkerSphereList, MarkerPoints:
+		size := math.Max(1, marker.ScaleX*ppm)
+		drawPoints(target, marker.Points, ppm, centerX, centerY, width, height, tint, size)
+	case MarkerTriangleList:
+		for i := 0; i+5 < len(marker.Points); i += 6 {
+			toScreen := func(j int) (float64, float64) {
+				return (marker.Points[j]-centerX)*ppm + float64(width)/2,
+					(centerY-marker.Points[j+1])*ppm + float64(height)/2
+			}
+			x0, y0 := toScreen(i)
+			x1, y1 := toScreen(i + 2)
+			x2, y2 := toScreen(i + 4)
+			fillTriangle(target, x0, y0, x1, y1, x2, y2, tint, width, height)
+		}
+	case MarkerTextFacing:
+		// There is no text rasteriser in this 2D bitmap; a small cross marks
+		// the anchor so a text marker is at least visible.
+		drawMarkerPoint(target, marker.X, marker.Y, ppm, centerX, centerY,
+			width, height, tint, 3)
+	case MarkerCube, MarkerSphere, MarkerCylinder:
+		drawMarkerPoint(target, marker.X, marker.Y, ppm, centerX, centerY,
+			width, height, tint, math.Max(2, marker.ScaleX*ppm))
+	default:
+		// MESH_RESOURCE and any future type: show the anchor rather than
+		// silently dropping it.
+		drawMarkerPoint(target, marker.X, marker.Y, ppm, centerX, centerY,
+			width, height, tint, 3)
+	}
+}
+
+func markerWidth(marker *MarkerLayer, ppm float64) float64 {
+	if marker.ScaleY > 0 {
+		return math.Max(1, marker.ScaleY*ppm)
+	}
+	return 1
+}
+
+func drawMarkerPoint(
+	target *image.RGBA, x, y, ppm, centerX, centerY float64,
+	width, height int, tint color.RGBA, size float64,
+) {
+	drawPoints(target, []float64{x, y}, ppm, centerX, centerY, width, height, tint, size)
+}
+
+// drawArrow paints an RViz ARROW: a shaft from the pose to the tip and a
+// triangular head. Scale x is the length, y the shaft diameter and z the head
+// diameter (all in metres); a zero component falls back to a visible default.
+func drawArrow(
+	target *image.RGBA, x, y, yaw, length, diameter, head float64,
+	ppm float64, centerX, centerY float64, width, height int, tint color.RGBA,
+) {
+	if length <= 0 {
+		length = 1
+	}
+	if diameter <= 0 {
+		diameter = 0.1
+	}
+	if head <= 0 {
+		head = math.Max(diameter*2, length*0.25)
+	}
+	cos, sin := math.Cos(yaw), math.Sin(yaw)
+	// The shaft starts at the pose and ends where the head begins; the head
+	// is the last part of the arrow, so the base sits *before* the tip.
+	headLength := math.Min(length*0.9, math.Max(head, diameter*2))
+	baseWorld := length - headLength
+	tailX := (x-centerX)*ppm + float64(width)/2
+	tailY := (centerY-y)*ppm + float64(height)/2
+	baseX := (x+cos*baseWorld-centerX)*ppm + float64(width)/2
+	baseY := (centerY-(y+sin*baseWorld))*ppm + float64(height)/2
+	tipX := (x+cos*length-centerX)*ppm + float64(width)/2
+	tipY := (centerY-(y+sin*length))*ppm + float64(height)/2
+
+	drawLine(target, tailX, tailY, baseX, baseY, tint,
+		math.Max(1, diameter*ppm), width, height)
+
+	half := math.Max(1, head*ppm/2)
+	perpX, perpY := -sin, cos
+	leftX := baseX + perpX*half
+	leftY := baseY - perpY*half
+	rightX := baseX - perpX*half
+	rightY := baseY + perpY*half
+	fillTriangle(target, tipX, tipY, leftX, leftY, rightX, rightY, tint, width, height)
 }
 
 // drawPose paints a robot: a triangle for the body and an arrow for the

@@ -62,7 +62,7 @@
 | costmap | static / obstacle / voxel / inflation / keepout_filter / speed_filter 全部激活成功 |
 | 时间 | `use_sim_time` + `/clock`（四个节点都跟机器人的仿真时钟，证据 19） |
 | 自主回充 / 路网 | `docking_server`（`opennav_docking::SimpleChargingDock`）与 `route_server`（GeoJSON 图加载器 + `DistanceScorer` / `CostmapScorer` / `AdjustSpeedLimit` / `ReroutingService` / `CollisionMonitor`）都能被 `nav2_docking_route.bat` 拉到 ACTIVE；**没有 dock 实例、也没有图文件**，所以只到「装得起来」（证据 28） |
-| 可视化 | `viz.exe` + `viz_feed.exe`：地图 / 扫描 / 路径 / 位姿，2D Goal 与 2D Pose Estimate；环境加载后命令名就是 `rviz2`。端到端验过（见 [`03-validation.md`](03-validation.md) 的 viz 一节） |
+| 可视化 | `viz.exe` + `viz_feed.exe`：地图 / 扫描 / 路径 / 位姿 / Marker，2D Goal 与 2D Pose Estimate；环境加载后命令名就是 `rviz2`。端到端验过（见 [`03-validation.md`](03-validation.md) 的 viz 一节） |
 | 跨机 | 话题（双向）、**38 种 service 类型**（远端在跑 7 个；`slam_toolbox` 的全部 11 个 srv 与 `nav_msgs/srv/GetMap` 是本机方向；nav2 自己的 20 个 `nav2_msgs` srv 见证据 52 / 53）、**20 个 action codec**（nav2 的 19 个全在；远端在跑 5 个）、`/clock`、`/tf` / `/tf_static`（证据 24） |
 
 ---
@@ -106,7 +106,7 @@ Windows 侧只是在这个文件之上再叠一层自己的覆写：
 | 边 | 现状 |
 | --- | --- |
 | 真 ROS2 的 QoS | **已量（含负对照）**：Jazzy 对端 best_effort 的 `/qos_probe/scan` 与 transient_local 的 `/qos_probe/map` 都收到；把 sensor 改回 reliable 之后扫描一条都不到。见 `03-validation.md` 第三节 |
-| 图层 | 只有地图 / 扫描 / 路径 / 位姿；代价地图叠加、点云、Marker、URDF 都没有 |
+| 图层 | 地图 / 扫描 / 路径 / 位姿 / Marker（`Marker` 与 `MarkerArray`，含箭头）；代价地图叠加、点云、URDF 都没有 |
 | 发目标 | v1 只发 `/goal_pose`，不走 `NavigateToPose` action，所以没有进度反馈与中途取消 |
 | 逐话题 QoS | proto 里预留了 `QosProfile`，daemon 还没透传 |
 

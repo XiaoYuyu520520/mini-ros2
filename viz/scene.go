@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"image/color"
 	"math"
+	"strconv"
 	"sync"
 )
 
@@ -69,6 +70,68 @@ type OdometryLayer struct {
 	ChildFrame string
 }
 
+// MarkerLayer is one shape from a visualization_msgs/Marker. The sidecar has
+// already transformed it into the fixed frame, so the numbers here are world
+// coordinates.
+//
+// The marker kinds are the ones ROS2 defines (visualization_msgs/msg/Marker):
+// ARROW, CUBE, SPHERE, CYLINDER, LINE_STRIP, LINE_LIST, CUBE_LIST,
+// SPHERE_LIST, POINTS, TEXT_VIEW_FACING and ARROW_STRIP.
+type MarkerLayer struct {
+	// Namespace and ID together identify a marker; a publisher that sends
+	// several arrows on one topic uses the namespace to keep them apart.
+	Namespace string
+	ID        int
+	Type      int
+	Action    int
+
+	// The pose, in the fixed frame.
+	X   float64
+	Y   float64
+	Yaw float64
+
+	// Scale is the marker's own size: for an arrow the length is x, the
+	// shaft diameter is y and the head diameter is z.
+	ScaleX float64
+	ScaleY float64
+	ScaleZ float64
+
+	// Colour, 0..255 per channel.
+	R, G, B, A uint8
+
+	// Points are the marker's own points, already in the fixed frame.
+	Points []float64
+
+	Text    string
+	StampNS int64
+	Frame   string
+}
+
+// Marker kinds, as ROS2 numbers them.
+const (
+	MarkerArrow        = 0
+	MarkerCube         = 1
+	MarkerSphere       = 2
+	MarkerCylinder     = 3
+	MarkerLineStrip    = 4
+	MarkerLineList     = 5
+	MarkerCubeList     = 6
+	MarkerSphereList   = 7
+	MarkerPoints       = 8
+	MarkerTextFacing   = 9
+	MarkerMeshResource = 10
+	MarkerTriangleList = 11
+	MarkerArrowStrip   = 12
+)
+
+// Marker actions: what a publisher is asking the display to do.
+const (
+	MarkerActionAdd       = 0
+	MarkerActionModify    = 0
+	MarkerActionDelete    = 2
+	MarkerActionDeleteAll = 3
+)
+
 // Scene holds the latest value of every display. It is written by the feed
 // reader and read by the render loop, so it has a lock; the render loop takes
 // a snapshot copy, never the live slices.
@@ -80,6 +143,9 @@ type Scene struct {
 	Paths    map[string]*PathLayer
 	Poses    map[string]*PoseLayer
 	Odometry map[string]*OdometryLayer
+	// Markers are keyed by topic and then by namespace/id, because one topic
+	// can carry many shapes and a publisher replaces them one at a time.
+	Markers map[string]map[string]*MarkerLayer
 
 	// Errors from the sidecar, keyed by topic.
 	Errors map[string]string
@@ -96,6 +162,7 @@ func NewScene() *Scene {
 		Paths:    map[string]*PathLayer{},
 		Poses:    map[string]*PoseLayer{},
 		Odometry: map[string]*OdometryLayer{},
+		Markers:  map[string]map[string]*MarkerLayer{},
 		Errors:   map[string]string{},
 	}
 }
@@ -196,6 +263,63 @@ func (s *Scene) Apply(event Event) {
 		}
 		layer.YawVar = payload.YawVar
 		s.Poses[event.Topic] = layer
+	case "marker":
+		var payload struct {
+			Frame       string    `json:"frame"`
+			SourceFrame string    `json:"source_frame"`
+			StampNS     int64     `json:"stamp_ns"`
+			Namespace   string    `json:"ns"`
+			ID          int       `json:"id"`
+			Type        int       `json:"type"`
+			Action      int       `json:"action"`
+			X           float64   `json:"x"`
+			Y           float64   `json:"y"`
+			Yaw         float64   `json:"yaw"`
+			Scale       []float64 `json:"scale"`
+			Color       []float64 `json:"color"`
+			Points      []float64 `json:"points"`
+			Text        string    `json:"text"`
+		}
+		if err := json.Unmarshal(event.Data, &payload); err != nil {
+			return
+		}
+		key := markerKey(payload.Namespace, payload.ID)
+		byID := s.Markers[event.Topic]
+		switch payload.Action {
+		case MarkerActionDeleteAll:
+			delete(s.Markers, event.Topic)
+		case MarkerActionDelete:
+			if byID != nil {
+				delete(byID, key)
+				if len(byID) == 0 {
+					delete(s.Markers, event.Topic)
+				}
+			}
+		default:
+			layer := &MarkerLayer{
+				Namespace: payload.Namespace, ID: payload.ID,
+				Type: payload.Type, Action: payload.Action,
+				X: payload.X, Y: payload.Y, Yaw: payload.Yaw,
+				Points: payload.Points, Text: payload.Text,
+				StampNS: payload.StampNS, Frame: payload.Frame,
+			}
+			if len(payload.Scale) >= 3 {
+				layer.ScaleX = payload.Scale[0]
+				layer.ScaleY = payload.Scale[1]
+				layer.ScaleZ = payload.Scale[2]
+			}
+			if len(payload.Color) >= 4 {
+				layer.R = channelByte(payload.Color[0])
+				layer.G = channelByte(payload.Color[1])
+				layer.B = channelByte(payload.Color[2])
+				layer.A = channelByte(payload.Color[3])
+			}
+			if byID == nil {
+				byID = map[string]*MarkerLayer{}
+				s.Markers[event.Topic] = byID
+			}
+			byID[key] = layer
+		}
 	case "odometry":
 		var payload struct {
 			Frame      string    `json:"frame"`
@@ -236,6 +360,7 @@ func (s *Scene) Remove(topic string) {
 	delete(s.Paths, topic)
 	delete(s.Poses, topic)
 	delete(s.Odometry, topic)
+	delete(s.Markers, topic)
 	delete(s.Errors, topic)
 }
 
@@ -270,6 +395,7 @@ type Snapshot struct {
 	Paths      map[string]*PathLayer
 	Poses      map[string]*PoseLayer
 	Odometry   map[string]*OdometryLayer
+	Markers    map[string]map[string]*MarkerLayer
 	Errors     map[string]string
 	Frames     []string
 	FixedFrame string
@@ -302,11 +428,36 @@ func (s *Scene) Snapshot() Snapshot {
 	for key, value := range s.Odometry {
 		odometry[key] = value
 	}
+	markers := make(map[string]map[string]*MarkerLayer, len(s.Markers))
+	for topic, byID := range s.Markers {
+		copied := make(map[string]*MarkerLayer, len(byID))
+		for key, value := range byID {
+			copied[key] = value
+		}
+		markers[topic] = copied
+	}
 	return Snapshot{
 		Maps: maps, Scans: scans, Paths: paths, Poses: poses,
-		Odometry: odometry, Errors: copyErrors,
+		Odometry: odometry, Markers: markers, Errors: copyErrors,
 		Frames: append([]string(nil), s.Frames...), FixedFrame: s.FixedFrame,
 	}
+}
+
+// markerKey is the identity of a marker inside a topic: the namespace and the
+// id. A publisher that sends one arrow per topic uses an empty namespace.
+func markerKey(namespace string, id int) string {
+	return namespace + "/" + strconv.Itoa(id)
+}
+
+// channelByte turns a marker colour channel (0..1) into a byte.
+func channelByte(value float64) uint8 {
+	if value <= 0 {
+		return 0
+	}
+	if value >= 1 {
+		return 255
+	}
+	return uint8(value*255 + 0.5)
 }
 
 // buildTexture turns the cells into an RGBA bitmap. The palette is the one

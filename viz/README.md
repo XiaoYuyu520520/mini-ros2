@@ -1,7 +1,8 @@
 ﻿# viz — Windows 上的共享内存 ROS2 可视化
 
 这是 rviz2 的替代品：一个能拖动、能缩放、能收起面板的 2D 视口，看共享内存里
-的 `/map`、`/scan`、`/plan`、机器人位姿，并且能**发目标点**和**设置初始位姿**。
+的 `/map`、`/scan`、`/plan`、机器人位姿和 **Marker（箭头、线段、点、方块）**，
+并且能**发目标点**和**设置初始位姿**。
 
 数据面是 C++ 边车 `viz_feed.exe`（在 `bridge/windows` 里编译）：它是一个普通
 的 shim 节点，用 `tf2` 把每条消息变换到视口的固定坐标系，再把结果通过
@@ -43,8 +44,9 @@ Fyne 的系统依赖）。
 | 状态栏 | 光标世界坐标、缩放、**当前 DPI 缩放** |
 | 工具栏「打开」 / **Ctrl+O** / **F5** | 重新读配置文件（窗口大小、分隔条、话题表都跟着变） |
 | 工具栏「保存」 / **Ctrl+S** | 把**当前**状态写回配置文件（含窗口当前尺寸和分隔条位置） |
-| 工具栏「2D Goal」+ 点击/拖拽 | 发 `/goal_pose`：位置=按下点，朝向=拖动方向（拖动 < 15 cm 时朝向为 0） |
+| 工具栏「2D Goal Pose」+ 点击/拖拽 | 发 `/goal_pose`：位置=按下点，朝向=拖动方向（拖动 < 15 cm 时朝向为 0） |
 | 工具栏「2D Pose Estimate」+ 点击/拖拽 | 发 `/initialpose`，协方差用 rviz 的 0.25 / 0.25 / 0.0685 |
+| 加 Marker 话题 | 话题列表里 `Add` 一个 `visualization_msgs/msg/Marker` 或 `MarkerArray`；箭头/线/点/方块按 marker 的类型和颜色画 |
 | **Esc** | 取消当前工具 |
 | 启动后 | 自动拉起 `viz_feed.exe`；状态栏显示边车状态、固定坐标系、每个话题的 Hz |
 
@@ -147,6 +149,10 @@ Windows 上两端都把 stdio 切到二进制模式；否则 CRT 会把负载里
 | `publish_pose` | `{topic, type, frame, x, y, yaw, times?}`，只支持 `PoseStamped` / `PoseWithCovarianceStamped` |
 | `shutdown` | 退出 |
 
+边车认识的类型：`OccupancyGrid`、`LaserScan`、`Path`、`PoseStamped`、
+`PoseWithCovarianceStamped`、`Odometry`、`Marker`、`MarkerArray`。这八种之外
+的类型会得到 `no decoder`，不会被悄悄忽略。
+
 `frame` 事件的 `kind` 与 `data`：
 
 * `occupancy_grid`：`width/height/resolution/origin=[x,y,yaw]/data`（int8 的 base64）
@@ -155,6 +161,9 @@ Windows 上两端都把 stdio 切到二进制模式；否则 CRT 会把负载里
 * `pose`：`x/y/yaw`（已变换）
 * `pose_covariance`：`x/y/yaw/cov=[xx,xy,yy]/yaw_var`（协方差已旋转）
 * `odometry`：`x/y/yaw/vx/wz/cov`，另有 `child_frame`
+* `marker`：`ns/id/type/action/x/y/yaw/scale=[x,y,z]/color=[r,g,b,a]/points/text`；
+  `points` 已经是固定系里的 `x,y` 对。`MarkerArray` 会拆成多条 `marker` 事件，
+  同一 `ns/id` 的后一条覆盖前一条；`action=2` 删除，`action=3` 清空话题。
 
 **TF 在边车里算**：边车是一个普通的 shim `rclcpp::Node`，带
 `tf2_ros::Buffer` + `TransformListener`。每条消息用 `header.stamp` 查变换，

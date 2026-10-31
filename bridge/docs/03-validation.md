@@ -9229,6 +9229,56 @@ Windows 端直接连它：`set ROS2_BRIDGE_AGENT=192.168.0.153:50111`。
 顺带量到的：`/particle_cloud`（`sensor_msgs/msg/PointCloud2`）在负对照里也被判
 incompatible —— 它和 `/qos_probe/scan` 走同一条 sensor 规则，所以修好之后也一起通了。
 
+### 四、Marker（箭头）与工具栏名字（2026-10-31）
+
+用户报了两件事：**加了箭头话题（Marker）不显示**，以及**工具栏上找不到
+「2D 初始位姿」和「导航点」**。两件都修了，也都量了。
+
+#### 1. Marker 的数据面
+
+`viz_feed` 以前只认 6 种类型，`visualization_msgs/msg/Marker` 直接得到
+`no decoder`。现在 `kindForType` / `createSubscription` 认 `Marker` 和
+`MarkerArray`，按 `ns/id` 逐条发 `kind=marker` 的帧；`FrameHub` 的 key 也
+带上 `ns/id`，否则一个 `MarkerArray` 只会剩下最后一条。
+
+**【跑】** 本地 shim 发布一个 `Marker`（type 0 = ARROW，x=1, y=2,
+yaw=π/2，scale 2/0.3/0.6，红色，ns=goal, id=7），`viz_feed` 订阅
+`/markers`：
+
+```
+{"kind":"marker","data":{"action":0,"color":[1,0,0,1],"id":7,"ns":"goal",
+ "points":[],"scale":[2,0.3,0.6],"source_frame":"map","stamp_ns":0,
+ "type":0,"x":1.0,"y":2.0,"yaw":1.570796380007374,...}}
+```
+
+**【跑】** 真 ROS2（Jazzy 对端）用 `ros2 topic pub` 发一个 `MarkerArray`
+（两个箭头，ns=goal，id=7/8，红/绿），Windows 端 bridge daemon 把它镜像
+进共享内存，`viz_feed` 收到两帧：
+
+```
+ns/id goal 7 x 1.0 y 2.0 colour [1.0, 0.0, 0.0, 1.0]
+ns/id goal 8 x -2.0 y 2.0 colour [0.0, 1.0, 0.0, 1.0]
+```
+
+#### 2. Marker 的界面
+
+**【跑】** 真窗口 + 本地 `/markers`：`PrintWindow` 抓图后数颜色，箭头是
+**2144 个 (255,0,255) 像素**，背景 431293 个 (30,30,30) 像素。说明不是
+「数据到了但没画」，而是真的落在视口里。
+
+Go 侧另外有两条不依赖显示器的测试：
+
+* `TestSceneAppliesAndDeletesMarkers`：`Marker` 的字段、`DELETE` 只删
+  `ns/id`、`DELETEALL` 清空话题。
+* `TestDrawArrowPointsAlongYaw`：yaw=0 的箭头像素必须落在位姿的右侧。
+
+#### 3. 工具栏
+
+两个工具从**纯图标**改成了**带名字的按钮**：`2D Goal Pose` 和
+`2D Pose Estimate`（rviz 的原名）。选中的那个高亮，状态栏同时显示
+`tool: 2D Goal Pose` / `tool: 2D Pose Estimate`。`go test` 通过，真窗口
+截图能看到按钮文字（见 `docs/Basic_application/viz.md` 的 3.5.3）。
+
 ### 四、还没量的
 
 * **整条 nav2 栈**：这一节量的是合成话题，不是 `nav2_stack.bat` 起来的真栈。

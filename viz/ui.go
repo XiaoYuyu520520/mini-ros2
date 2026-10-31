@@ -9,6 +9,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/driver/desktop"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -362,17 +363,22 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	}
 
 	// --- toolbar ----------------------------------------------------------
-	toolbar := widget.NewToolbar(
-		// The tools come first: they are what the pointer is for, and their
-		// position is stable enough for the screenshot tests to find them.
-		widget.NewToolbarAction(theme.NavigateNextIcon(), func() {
-			v.setTool(toolGoal)
-		}),
-		widget.NewToolbarAction(theme.HomeIcon(), func() {
-			v.setTool(toolPose)
-		}),
-		widget.NewToolbarSeparator(),
-		widget.NewToolbarAction(theme.FolderOpenIcon(), func() {
+	//
+	// The two tools are buttons with their names on them, not icons: an
+	// icon-only toolbar is a puzzle, and the two names are the ones rviz uses
+	// ("2D Goal Pose", "2D Pose Estimate"). The rest of the bar keeps to
+	// icons, because those actions are not what a person looks for by name.
+	goalButton := widget.NewButtonWithIcon("2D Goal Pose", theme.NavigateNextIcon(), func() {
+		v.setTool(toolGoal)
+	})
+	poseButton := widget.NewButtonWithIcon("2D Pose Estimate", theme.HomeIcon(), func() {
+		v.setTool(toolPose)
+	})
+	toolbar := container.NewHBox(
+		goalButton,
+		poseButton,
+		widget.NewSeparator(),
+		widget.NewButtonWithIcon("", theme.FolderOpenIcon(), func() {
 			err := sh.reload()
 			sh.notify("loaded", err)
 			if err == nil {
@@ -380,21 +386,21 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 				updateFooter()
 			}
 		}),
-		widget.NewToolbarAction(theme.DocumentSaveIcon(), func() {
+		widget.NewButtonWithIcon("", theme.DocumentSaveIcon(), func() {
 			sh.notify("saved", sh.save())
 		}),
-		widget.NewToolbarSeparator(),
-		widget.NewToolbarAction(theme.ViewRefreshIcon(), func() {
+		widget.NewSeparator(),
+		widget.NewButtonWithIcon("", theme.ViewRefreshIcon(), func() {
 			v.Fit()
 			updateFooter()
 		}),
-		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
+		widget.NewButtonWithIcon("", theme.ContentAddIcon(), func() {
 			name := fmt.Sprintf("/new/topic/%d", len(sh.topicNames)+1)
 			sh.topicNames = append(sh.topicNames, name)
 			topicList.Refresh()
 		}),
-		widget.NewToolbarSpacer(),
-		widget.NewToolbarAction(theme.MenuIcon(), togglePanel),
+		layout.NewSpacer(),
+		widget.NewButtonWithIcon("", theme.MenuIcon(), togglePanel),
 	)
 
 	// --- layout -----------------------------------------------------------
@@ -443,16 +449,26 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	w.SetTitle(fmt.Sprintf("mini-ros2 viz — %s", cfgPath))
 	sh.updateFooter = updateFooter
 
-	// The tool label follows the viewport's tool state.
+	// The tool label follows the viewport's tool state, and the buttons show
+	// which one is armed: a tool that is armed is the one the next click in
+	// the viewport belongs to.
 	v.onToolChanged = func(toolMode) {
 		switch v.Tool() {
 		case toolGoal:
-			toolLabel.SetText("tool: 2D Goal")
+			toolLabel.SetText("tool: 2D Goal Pose")
+			goalButton.Importance = widget.HighImportance
+			poseButton.Importance = widget.MediumImportance
 		case toolPose:
 			toolLabel.SetText("tool: 2D Pose Estimate")
+			goalButton.Importance = widget.MediumImportance
+			poseButton.Importance = widget.HighImportance
 		default:
 			toolLabel.SetText("tool: none")
+			goalButton.Importance = widget.MediumImportance
+			poseButton.Importance = widget.MediumImportance
 		}
+		goalButton.Refresh()
+		poseButton.Refresh()
 		toolLabel.Refresh()
 	}
 	v.onPlace = func(mode toolMode, x, y, yaw float64) {

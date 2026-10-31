@@ -357,6 +357,8 @@ func (v *viewport) drawScene(img *image.RGBA, ppm float64, w, h int) {
 		drawPolyline(img, layer.Poses, ppm, v.cx, v.cy, w, h, tint, width)
 	}
 
+	drawMarkers(img, snapshot.Markers, ppm, v.cx, v.cy, w, h)
+
 	for name, layer := range snapshot.Poses {
 		if layer == nil {
 			continue

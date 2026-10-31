@@ -218,3 +218,96 @@ func TestSceneRemoveDropsLayers(t *testing.T) {
 		t.Fatal("the scan survived Remove")
 	}
 }
+
+// A marker topic can carry many shapes and replace them one at a time, so the
+// scene keys them by namespace/id. DELETE and DELETEALL are the two actions
+// that matter: without them a deleted arrow would stay on screen forever.
+func TestSceneAppliesAndDeletesMarkers(t *testing.T) {
+	scene := NewScene()
+	marker := `{"frame":"map","source_frame":"map","stamp_ns":3,
+		"ns":"goal","id":7,"type":0,"action":0,
+		"x":1,"y":2,"yaw":0.5,"scale":[2,0.2,0.4],
+		"color":[1,0,0,1],"points":[]}`
+	scene.Apply(Event{Name: "frame", Topic: "/markers", Kind: "marker",
+		Data: json.RawMessage(marker)})
+
+	byID := scene.Snapshot().Markers["/markers"]
+	if byID == nil {
+		t.Fatal("marker topic not stored")
+	}
+	layer := byID["goal/7"]
+	if layer == nil {
+		t.Fatal("marker goal/7 missing")
+	}
+	if layer.Type != MarkerArrow || layer.X != 1 || layer.Y != 2 || layer.Yaw != 0.5 {
+		t.Fatalf("marker fields wrong: %+v", layer)
+	}
+	if layer.ScaleX != 2 || layer.ScaleY != 0.2 || layer.ScaleZ != 0.4 {
+		t.Fatalf("marker scale wrong: %+v", layer)
+	}
+	if layer.R != 255 || layer.G != 0 || layer.B != 0 || layer.A != 255 {
+		t.Fatalf("marker colour wrong: %+v", layer)
+	}
+
+	// A second marker on the same topic is a separate shape.
+	second := `{"frame":"map","stamp_ns":4,"ns":"goal","id":8,"type":4,
+		"x":0,"y":0,"scale":[0,1,0],"color":[0,1,0,1],
+		"points":[-1,0,1,0]}`
+	scene.Apply(Event{Name: "frame", Topic: "/markers", Kind: "marker",
+		Data: json.RawMessage(second)})
+	if len(scene.Snapshot().Markers["/markers"]) != 2 {
+		t.Fatal("second marker replaced the first")
+	}
+
+	// DELETE removes only that id.
+	scene.Apply(Event{Name: "frame", Topic: "/markers", Kind: "marker",
+		Data: json.RawMessage(`{"ns":"goal","id":7,"action":2}`)})
+	byID = scene.Snapshot().Markers["/markers"]
+	if _, ok := byID["goal/7"]; ok {
+		t.Fatal("deleted marker still present")
+	}
+	if _, ok := byID["goal/8"]; !ok {
+		t.Fatal("DELETE removed the wrong marker")
+	}
+
+	// DELETEALL clears the topic.
+	scene.Apply(Event{Name: "frame", Topic: "/markers", Kind: "marker",
+		Data: json.RawMessage(`{"action":3}`)})
+	if _, ok := scene.Snapshot().Markers["/markers"]; ok {
+		t.Fatal("DELETEALL left the topic behind")
+	}
+}
+
+// An arrow at yaw 0 points +x: its pixels must be to the right of the pose,
+// not left of it.
+func TestDrawArrowPointsAlongYaw(t *testing.T) {
+	const size = 60
+	const ppm = 10.0
+	img := newTestImage(size, size)
+	marker := &MarkerLayer{
+		Type: MarkerArrow, X: 0, Y: 0, Yaw: 0,
+		ScaleX: 2, ScaleY: 0.2, ScaleZ: 0.4,
+		R: 255, A: 255,
+	}
+	drawMarkers(img, map[string]map[string]*MarkerLayer{
+		"/markers": {"goal/7": marker},
+	}, ppm, 0, 0, size, size)
+
+	minX, maxX := size, -1
+	for y := 0; y < size; y++ {
+		for x := 0; x < size; x++ {
+			if colorAt(img, x, y) == (color.RGBA{255, 0, 0, 255}) {
+				minX = min(minX, x)
+				maxX = max(maxX, x)
+			}
+		}
+	}
+	if maxX < size*3/4 {
+		t.Fatalf("arrow did not reach the right side: x %d..%d", minX, maxX)
+	}
+	// The pose is the arrow's tail: the shaft may start a hair left of it
+	// because the line has a width, but it must not reach the far left.
+	if minX < size/2-4 {
+		t.Fatalf("arrow starts left of the pose: x %d..%d", minX, maxX)
+	}
+}

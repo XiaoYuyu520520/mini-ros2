@@ -92,6 +92,8 @@
 #include "tf2_ros/buffer.hpp"
 #include "tf2_ros/transform_listener.hpp"
 #include "tf2_msgs/msg/tf_message.hpp"
+#include "visualization_msgs/msg/marker.hpp"
+#include "visualization_msgs/msg/marker_array.hpp"
 
 namespace
 {
@@ -347,6 +349,10 @@ const char * kindForType(const std::string & type)
   if (type == "geometry_msgs/msg/PoseStamped") {return "pose";}
   if (type == "geometry_msgs/msg/PoseWithCovarianceStamped") {return "pose_covariance";}
   if (type == "nav_msgs/msg/Odometry") {return "odometry";}
+  // Markers arrive one frame per marker, so the array and the single marker
+  // share a kind; the GUI keys them by namespace and id.
+  if (type == "visualization_msgs/msg/Marker") {return "marker";}
+  if (type == "visualization_msgs/msg/MarkerArray") {return "marker";}
   return "";
 }
 
@@ -803,6 +809,50 @@ public:
     if (type == "nav_msgs/msg/Odometry") {
       return make<nav_msgs::msg::Odometry>(topic, type, transient, max_hz);
     }
+    if (type == "visualization_msgs/msg/Marker") {
+      // A DELETE/DELETEALL marker is a request to remove something; it often
+      // carries no meaningful frame, so the transform must not reject it.
+      auto topic_copy = topic;
+      auto encode = [this, topic_copy](
+        const visualization_msgs::msg::Marker & message, const Xform & xform) {
+          this->encodeMarker(topic_copy, message, xform);
+        };
+      auto transform = [this](const visualization_msgs::msg::Marker & message) {
+        if (message.action == visualization_msgs::msg::Marker::DELETE ||
+          message.action == visualization_msgs::msg::Marker::DELETEALL ||
+          message.header.frame_id.empty())
+        {
+          return identity();
+        }
+        return this->lookup(message.header.frame_id, message.header.stamp);
+      };
+      auto error_sink = [this](json event) {out_.json(event);};
+      return std::make_shared<TypedSubscription<visualization_msgs::msg::Marker>>(
+        node_, topic, type, transient, max_hz, encode, transform, error_sink);
+    }
+    if (type == "visualization_msgs/msg/MarkerArray") {
+      // MarkerArray carries no header of its own - each marker names its own
+      // frame - so the transform is looked up per marker instead of per
+      // message.
+      auto topic_copy = topic;
+      auto encode = [this, topic_copy](
+        const visualization_msgs::msg::MarkerArray & message, const Xform &) {
+          this->encodeMarkerArray(topic_copy, message);
+        };
+      auto transform = [this](const visualization_msgs::msg::MarkerArray & message) {
+        // The array's frame is the frame of its first marker; a marker with
+        // a frame of its own is transformed with it below.
+        for (const auto & marker : message.markers) {
+          if (!marker.header.frame_id.empty()) {
+            return this->lookup(marker.header.frame_id, marker.header.stamp);
+          }
+        }
+        return identity();
+      };
+      auto error_sink = [this](json event) {out_.json(event);};
+      return std::make_shared<TypedSubscription<visualization_msgs::msg::MarkerArray>>(
+        node_, topic, type, transient, max_hz, encode, transform, error_sink);
+    }
     return nullptr;
   }
 
@@ -833,14 +883,19 @@ public:
   }
 
   // --------------------------------------------------------------- encoding
-  void emitFrame(const std::string & topic, const char * kind, json data)
+  void emitFrame(
+    const std::string & topic, const char * kind, json data,
+    const std::string & key = "")
   {
     json frame;
     frame["event"] = "frame";
     frame["topic"] = topic;
     frame["kind"] = kind;
     frame["data"] = std::move(data);
-    hub_.set(topic, frame.dump());
+    // Most topics coalesce to "the latest message". A marker topic cannot:
+    // one topic carries many shapes, and the hub would keep only the last one
+    // of a batch. The key makes each namespace/id its own latest value.
+    hub_.set(key.empty() ? topic : topic + "" + key, frame.dump());
   }
 
   void encodeMessage(
@@ -1000,6 +1055,103 @@ public:
     data["wz"] = message.twist.twist.angular.z;
     data["cov"] = json::array({rxx, rxy, ryy});
     emitFrame(topic, "odometry", std::move(data));
+  }
+
+  // ----------------------------------------------------------------- markers
+  //
+  // A marker is a shape with a pose, a scale and a colour. It is the type
+  // every "arrow" in a ROS2 system is published as - nav2's footprint, the
+  // goal arrows, a debug cone - so a visualiser that cannot draw them cannot
+  // show what a robot is doing.
+  //
+  // The pose is transformed into the fixed frame here, and the marker's own
+  // points are transformed with it: a LINE_STRIP's points live in the
+  // marker's frame, so the marker's pose is part of the transform, not just
+  // an anchor.
+  void encodeMarker(
+    const std::string & topic, const visualization_msgs::msg::Marker & marker,
+    const Xform & xform)
+  {
+    const auto & position = marker.pose.position;
+    const auto & orientation = marker.pose.orientation;
+    const Vec3 rotated = rotate(
+      xform.q, Vec3{position.x, position.y, position.z});
+    const Quat rotation = mul(
+      xform.q, Quat{orientation.x, orientation.y, orientation.z, orientation.w});
+    const double yaw = yawOf(rotation);
+    const double mx = xform.t.x + rotated.x;
+    const double my = xform.t.y + rotated.y;
+
+    json data;
+    data["frame"] = fixedFrame();
+    data["source_frame"] = marker.header.frame_id;
+    data["stamp_ns"] = stampNs(marker.header.stamp);
+    data["ns"] = marker.ns;
+    data["id"] = marker.id;
+    data["type"] = marker.type;
+    data["action"] = marker.action;
+    data["x"] = mx;
+    data["y"] = my;
+    data["yaw"] = yaw;
+    data["scale"] = json::array({marker.scale.x, marker.scale.y, marker.scale.z});
+    data["color"] = json::array({
+      marker.color.r, marker.color.g, marker.color.b, marker.color.a});
+    data["text"] = marker.text;
+
+    // The points, in the fixed frame: the marker's own pose first, then the
+    // frame transform.
+    const double cos = std::cos(yaw);
+    const double sin = std::sin(yaw);
+    std::vector<double> points;
+    points.reserve(marker.points.size() * 2);
+    for (const auto & point : marker.points) {
+      const Vec3 in_marker = rotate(
+        Quat{0, 0, sin, cos}, Vec3{point.x, point.y, point.z});
+      points.push_back(mx + in_marker.x);
+      points.push_back(my + in_marker.y);
+    }
+    data["points"] = points;
+    emitFrame(
+      topic, "marker", std::move(data),
+      marker.ns + "/" + std::to_string(marker.id));
+  }
+
+  void encodeMessage(
+    const std::string & topic, const visualization_msgs::msg::Marker & message,
+    const Xform & xform)
+  {
+    encodeMarker(topic, message, xform);
+  }
+
+  void encodeMessage(
+    const std::string & topic, const visualization_msgs::msg::MarkerArray & message,
+    const Xform & xform)
+  {
+    for (const auto & marker : message.markers) {
+      encodeMarker(topic, marker, xform);
+    }
+  }
+
+  // The array case: every marker is transformed with its own frame, so a
+  // marker published in the robot frame lands in the fixed frame even when
+  // the other markers of the array are in the map frame.
+  void encodeMarkerArray(
+    const std::string & topic, const visualization_msgs::msg::MarkerArray & message)
+  {
+    for (const auto & marker : message.markers) {
+      Xform xform = identity();
+      if (marker.action != visualization_msgs::msg::Marker::DELETE &&
+        marker.action != visualization_msgs::msg::Marker::DELETEALL &&
+        !marker.header.frame_id.empty())
+      {
+        try {
+          xform = lookup(marker.header.frame_id, marker.header.stamp);
+        } catch (const std::exception &) {
+          xform = identity();
+        }
+      }
+      encodeMarker(topic, marker, xform);
+    }
   }
 
   // ------------------------------------------------------------------ tools
