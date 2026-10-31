@@ -25,6 +25,20 @@
   reliable 就一条都收不到（agent 报 `offering incompatible QoS`）。
   **Windows 连真机时用 `set ROS2_BRIDGE_AGENT=192.168.0.153:50111`**（50111 是
   rclcpp agent；50060 是另一个 python 进程）。
+* **点云要订阅两次**（2026-10-31）：`PointCloud2` 的发布端可能是 best_effort
+  （相机）也可能是 reliable（`ros2 topic pub` / bag 回放），DDS 只认「订阅请求
+  不比发布端更严格」。agent 对 `sensor_msgs/msg/PointCloud2` 建**两个**订阅
+  （reliable + best_effort），**各自一个回调** —— 一个发布端只匹配其中一个，
+  所以既不漏也不重收。日志里那条 `offering incompatible QoS` 是**另一条**
+  订阅在报自己配不上，**属于预期**；判断通没通要看帧，不要看这条警告。
+* **代价地图与点云的类型字符串要写 `/`**（2026-10-31 踩过）：
+  `createSubscription()` 里写成了 `sensor_msgs::msg::PointCloud2`（C++ 写法），
+  结果点云一路都不来，而 agent / daemon 的计数都在涨 —— **不报错**，只是走到
+  `return nullptr`。类型名以图里的为准：`sensor_msgs/msg/PointCloud2`。
+* **真窗口截图这条路上断了**（2026-10-31）：RDP 会话断开时
+  `CopyFromScreen` 直接抛「句柄无效」，`PrintWindow` 只能拿到黑图。
+  这时改用 Go 里**窗口同一套绘制函数**画到 `*image.RGBA` 再按颜色数像素
+  （`viz/render_costmap_test.go`），比截图更能断言具体颜色。
 * **真机 SSH 是 `wang@192.168.0.153`**（`ubuntu_ssh.py` 里的默认目标
   `ubuntu@192.168.1.113` 已过时，那台不在线）。密钥
   `C:/Users/Administrator/Desktop/app/ssh_key/id_ed25519`。
@@ -368,7 +382,116 @@ commit message 写的是 cmake 那件事 —— **文档和 cmake 改动混在�
 
 ---
 
-## 2026-10-30 · `package.py`：把运行产物 + 启动脚本打成 zip
+## 2026-10-31 · Copy-Paste-Mutools：Python 工具链整体迁 Go + Android App
+
+另一个仓库：**https://github.com/XiaoYuyu520520/Copy-Paste-Mutools.git**
+（本地 `E:\DesktopData\app\提示词复合工具箱-native`；桌面 `C:\Users\Administrator\Desktop\app\`
+是指向 `E:\DesktopData\app` 的符号链接，两个路径等价。）
+
+### 做了什么
+
+1. **目录标准化**：`cmd/{merger,toolbox,paint,android}` + `internal/` + `docs/` + `legacy/python/`。
+   module 从 `prompt-merger-native` 改成 `github.com/XiaoYuyu520520/Copy-Paste-Mutools`，
+   原有 `data/ui/render/chat/netscan/lanscan` 下沉到 `internal/`（import 批量替换）。
+2. **15 个 Python 工具改写为 Go**，统一成一个 `toolbox`（11 个子命令）：
+   `tree / cpubench / diskbench / diskm / netscan / sysinfo / shortcut / usb / share / monitor / netspeed`。
+   画板单独成 `paint`（Fyne）。
+3. **仓库瘦身**：删掉 128 MB 的 `add/`（exe/onnx/zip/o/pyc）、`发布/`、`dist/`、运行时 json，
+   最终 **1.58 MB / 203 文件**。
+4. **Android App**：`cmd/android` + `internal/mobile`，底部 5 页（编辑 / 聊天 / 扫描 / 画板 / 更多）。
+
+### 依赖映射（Python → Go）
+
+| 旧 | 新 |
+| --- | --- |
+| psutil + wmi + GPUtil | `github.com/shirou/gopsutil/v4` |
+| Flask（SSE） | `net/http` + `http.Flusher` |
+| FastAPI + uvicorn + pydantic | `net/http` + `archive/zip` |
+| tkinter | 命令行化；画板用 Fyne |
+| pyudev / WMI（USB） | Linux 读 `/sys/bus/usb/devices`，Windows 调 `Get-PnpDevice` |
+
+`go mod tidy` 后 gopsutil 会带出一批传递依赖（`tklauser/go-sysconf`、`yusufpapurcu/wmi`、
+`ebitengine/purego`、`lufia/plan9stats`、`power-devops/perfstat`）。
+**`go build ./...` 只对当前 GOOS 求值**，交叉编译时才暴露缺的 go.sum 条目：
+`GOOS=linux` 报缺 `tklauser/go-sysconf`，`GOOS=darwin` 缺 `ebitengine/purego`。
+→ 交叉编译冒烟必须**每个目标各跑一次** `go build`，不能只 build 本机。
+
+### GOOS=android 的两个反直觉点
+
+1. **`GOOS=android` 同时满足 `linux` 构建约束**。所以 gopsutil 的 `//go:build linux`
+   文件在 Android 上会被编进来，`/proc` 采集直接可用，不用另写实现。
+2. **Android 上没有可用的 `ping`**（ICMP 要 `CAP_NET_RAW`），`/proc/net/arp`
+   自 Android 10 起对普通应用不可读。
+   → 新增 `internal/netscan/platform.go`：`ICMPProbeSupported()` / `MACExtractionSupported()`，
+   Android 上扫描**只走 TCP 探测**，MAC 直接跳过。
+
+### Fyne Android 打包的 5 个坑（全部实测踩过）
+
+| 现象 | 根因 | 修法 |
+| --- | --- | --- |
+| `flag provided but not defined: -app-id` | `fyne.io/fyne/v2/cmd/fyne` 用**驼峰**参数 | `-appID / -appVersion / -appBuild`（`fyne.io/tools` 才是中划线） |
+| `Missing application icon at "ico/icon.png"` | `-icon` 相对 **`-src` 目录**解析，不是仓库根 | 传 `../../ico/icon.png` |
+| 产物叫 `go______.apk` | `androidPkgName()` 把非 ASCII 一律换成 `_` 当 libName | 保留中文 `-name`（桌面显示名），**收集阶段重命名**成英文 |
+| `go build` 能过但装不上 | 直接 `go build -o x.apk` 不生成 Java 绑定/清单 | 必须 `fyne package -os android/arm64` |
+| 本地出不了 APK | 需要 NDK（`android/log.h`） | 本地只做 `GOOS=android CGO_ENABLED=0` 编译校验，APK 交给 CI |
+
+### CI 上踩的坑（按出现顺序）
+
+1. **ubuntu runner 缺 GUI 头文件**：`go vet ./...` 编译 Fyne 时
+   `fatal error: wayland-client-core.h` / `Package gl was not found`。
+   → 装 `libgl1-mesa-dev xorg-dev libwayland-dev libxkbcommon-dev`。
+2. **arm64 上用 cgo 交叉编译失败**：x86_64 runner 调宿主 gcc 汇编，
+   `Error: no such instruction: 'stp x29,x30,[sp,'`。cgo **不能**靠 `GOARCH` 交叉。
+   → 用 GitHub 原生 arm runner **`ubuntu-24.04-arm`**。
+3. **`setup-msys2` 默认 `path-type: strict`**：MSYS2 的 bin 只进 msys2 shell，
+   后续 PowerShell 步骤既没 gcc 也看不到 go（`where.exe go` → `INFO: Could not find files`）。
+   → `path-type: inherit`，构建步骤改用 `shell: pwsh`。
+4. **`android-actions/setup-android@v3` 在 24.04 镜像上必挂**：
+   它会去装已废弃的 `tools` 包，`sdkmanager tools` 直接 exit code 1。
+   → 不用它：ubuntu-latest **自带** `/usr/local/lib/android/sdk`，
+   自己设 `ANDROID_SDK_ROOT` / `ANDROID_HOME` 并 `echo ... >> $GITHUB_PATH`，
+   先 `yes | sdkmanager --licenses`，再装
+   `platforms;android-34`、`build-tools;34.0.0`、`ndk;26.1.10909125`。
+5. **APK 不在仓库根**：`fyne package` 把产物放在**包目录**（`cmd/android/`），
+   `ls *.apk` 报 No such file，job 判失败。
+   → `find . -name '*.apk'` 统一收集到 `dist/`，顺带输出 SHA256SUMS。
+
+### 验证方式（不能只看「job 绿了」）
+
+把 artifact 下载下来**逐层验**：
+
+```
+artifact zip -> prompt-merger-toolbox-android-arm64.apk (32 MB)
+  sha256 与 SHA256SUMS-android.txt 一致
+  apk 内含 lib/arm64-v8a/lib*.so (31.9 MB)、classes.dex、AndroidManifest.xml、
+       resources.arsc、META-INF/CERT.{SF,RSA}   <- debug 签名，真的可装
+```
+
+### 桌面端 CI 也顺手修了
+
+`Release` 拆成三个**独立 job**（windows / linux-amd64 / linux-arm64），不用矩阵：
+MSYS2 的 `shell: msys2 {0}` 和 ubuntu 没法在一个矩阵里动态切换。
+`windows` job 用 `pwsh` + `path-type: inherit`；不再出 macOS 包
+（用户只要 Windows + Ubuntu amd64/arm64）。
+
+### 推送与凭据
+
+- 代理：仓库级 `git config --local http.proxy http://127.0.0.1:10090`。
+- token 只放**环境变量**，用一次性 credential helper：
+  `git -c credential.helper='!f() { echo username=x-access-token; echo "password=$GITHUB_TOKEN"; }; f' push`
+- **`git push` 忘带 helper 会卡住等输入**（表现为命令长时间无输出）；
+  删远程 tag 的 `git push origin :refs/tags/x` 同样需要 helper。
+- 本机 `curl` 直连 GitHub API 会超时/重置，**必须** `HTTPS_PROXY=http://127.0.0.1:10090`。
+  下载 17 MB artifact 直连 110 s 只拿到 9 MB，走代理 60 s 完成。
+- 已有 tag 不能重复推：要么改版本号，要么先 `push origin :refs/tags/<tag>` 再推。
+
+### 文档站
+
+GitHub Pages 用 **legacy 模式**（`branch: main`, `path: /docs`），
+所以 `release.yml` 里**不能**再有 `actions/deploy-pages` 的 job（两者冲突，会互相取消）。
+`docs/index.html` 提供导航卡片，README 顶部放同一套跳转表。
+
+---## 2026-10-30 · `package.py`：把运行产物 + 启动脚本打成 zip
 
 仓库根的 `package.py`（`python package.py`）产出 `dist/cpu-nav2-<日期>.zip`。
 本机实测 **210 文件 / 211.8 MB → 54.9 MB**。

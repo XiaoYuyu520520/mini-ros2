@@ -311,3 +311,115 @@ func TestDrawArrowPointsAlongYaw(t *testing.T) {
 		t.Fatalf("arrow starts left of the pose: x %d..%d", minX, maxX)
 	}
 }
+
+// A costmap is a grid of costs, not an OccupancyGrid. The incremental update
+// carries a rectangle and must land at the rectangle's offset; the texture has
+// to be dropped or the next frame would show the old costs.
+func TestSceneAppliesCostmapAndUpdates(t *testing.T) {
+	scene := NewScene()
+	costmap := `{"frame":"map","source_frame":"map","stamp_ns":5,
+		"width":2,"height":1,"resolution":0.5,"origin":[1,2,0.0],
+		"layer":"master","data":[0.0,100.0]}`
+	scene.Apply(Event{Name: "frame", Topic: "/global_costmap/costmap",
+		Kind: "costmap", Data: json.RawMessage(costmap)})
+
+	layer := scene.Snapshot().Costmaps["/global_costmap/costmap"]
+	if layer == nil {
+		t.Fatal("costmap not stored")
+	}
+	if layer.Width != 2 || layer.Height != 1 || layer.Resolution != 0.5 {
+		t.Fatalf("costmap metadata wrong: %+v", layer)
+	}
+	if layer.OriginX != 1 || layer.OriginY != 2 || layer.Layer != "master" {
+		t.Fatalf("costmap origin/layer wrong: %+v", layer)
+	}
+	if len(layer.Cells) != 2 || layer.Cells[0] != 0 || layer.Cells[1] != 100 {
+		t.Fatalf("costmap cells wrong: %v", layer.Cells)
+	}
+	layer.Texture = []byte{1}
+
+	update := `{"x":1,"y":0,"width":1,"height":1,"data":[50.0]}`
+	scene.Apply(Event{Name: "frame", Topic: "/global_costmap/costmap",
+		Kind: "costmap_update", Data: json.RawMessage(update)})
+	layer = scene.Snapshot().Costmaps["/global_costmap/costmap"]
+	if layer.Cells[1] != 50 {
+		t.Fatalf("costmap update did not land at x=1: %v", layer.Cells)
+	}
+	if layer.Texture != nil {
+		t.Fatal("costmap update left the old texture")
+	}
+
+	// The same rectangle logic for an OccupancyGrid update.
+	scene.Apply(Event{Name: "frame", Topic: "/map", Kind: "occupancy_grid",
+		Data: json.RawMessage(`{"frame":"map","width":2,"height":1,
+			"resolution":1,"origin":[0,0,0],"data":"AAD//w=="}`)})
+	scene.Apply(Event{Name: "frame", Topic: "/map", Kind: "occupancy_grid_update",
+		Data: json.RawMessage(`{"x":0,"y":0,"width":1,"height":1,"data":[0.0]}`)})
+	grid := scene.Snapshot().Maps["/map"]
+	if grid == nil || grid.Cells[0] != 0 {
+		t.Fatalf("occupancy update wrong: %+v", grid)
+	}
+}
+
+// A point cloud keeps its heights and intensities; the renderer turns the
+// heights into the rainbow, so they must survive the event.
+func TestSceneAppliesPointCloud(t *testing.T) {
+	scene := NewScene()
+	scene.Apply(Event{Name: "frame", Topic: "/points", Kind: "point_cloud2",
+		Data: json.RawMessage(`{"frame":"map","stamp_ns":6,
+			"points":[1,2,3,4],"heights":[0.5,1.5],"intensities":[10,20]}`)})
+	layer := scene.Snapshot().Clouds["/points"]
+	if layer == nil {
+		t.Fatal("cloud not stored")
+	}
+	if len(layer.Points) != 4 || layer.Points[2] != 3 {
+		t.Fatalf("cloud points wrong: %+v", layer)
+	}
+	if len(layer.Heights) != 2 || layer.Heights[1] != 1.5 {
+		t.Fatalf("cloud heights wrong: %+v", layer)
+	}
+	if len(layer.Intensities) != 2 || layer.Intensities[0] != 10 {
+		t.Fatalf("cloud intensities wrong: %+v", layer)
+	}
+}
+
+// The costmap palette has to be a palette, not a single colour: free is
+// transparent, the high cost is the high colour, and lethal is lethal.
+func TestBuildCostmapTexture(t *testing.T) {
+	layer := &CostmapLayer{Width: 3, Height: 1, Cells: []int{0, 100, 255}}
+	buildCostmapTexture(layer,
+		color.RGBA{0, 0, 255, 255}, color.RGBA{255, 0, 0, 255},
+		color.RGBA{0, 255, 255, 255}, color.RGBA{0, 0, 0, 255},
+		color.RGBA{128, 128, 128, 255}, 0.75)
+	if len(layer.Texture) != 3*4 {
+		t.Fatalf("texture length %d", len(layer.Texture))
+	}
+	if layer.Texture[3] != 0 {
+		t.Fatalf("free cell alpha %d, want 0", layer.Texture[3])
+	}
+	if layer.Texture[4] != 255 || layer.Texture[5] != 0 || layer.Texture[6] != 0 {
+		t.Fatalf("cost 100 colour %v, want red", layer.Texture[4:7])
+	}
+	if layer.Texture[8] != 0 || layer.Texture[9] != 0 || layer.Texture[10] != 0 {
+		t.Fatalf("lethal colour %v, want black", layer.Texture[8:11])
+	}
+}
+
+// Height colouring is a rainbow: the bottom of the range is blue, the top is
+// red, and a flat range does not divide by zero.
+func TestHeightColourAndRange(t *testing.T) {
+	if got := heightColor(0); got.B < 200 || got.R > 40 {
+		t.Fatalf("height 0 is %v, want blue", got)
+	}
+	if got := heightColor(1); got.R < 200 || got.B > 40 {
+		t.Fatalf("height 1 is %v, want red", got)
+	}
+	low, high := heightRange([]float64{2, -1, 4})
+	if low != -1 || high != 4 {
+		t.Fatalf("height range %v..%v", low, high)
+	}
+	low, high = heightRange([]float64{3, 3})
+	if high <= low {
+		t.Fatalf("flat height range %v..%v", low, high)
+	}
+}

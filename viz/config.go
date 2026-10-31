@@ -33,6 +33,8 @@ type DisplayConfig struct {
 	LaserScan     LaserScanStyle     `json:"laser_scan"`
 	Path          PathStyle          `json:"path"`
 	Pose          PoseStyle          `json:"pose"`
+	Costmap       CostmapStyle       `json:"costmap"`
+	PointCloud    PointCloudStyle    `json:"point_cloud"`
 	TF            TFStyle            `json:"tf"`
 }
 
@@ -57,6 +59,31 @@ type PoseStyle struct {
 	Color      string  `json:"color"`
 	Size       float64 `json:"size"`
 	Covariance bool    `json:"covariance"`
+}
+
+// CostmapStyle is the palette for nav2 costmaps. The cells are costs 0..255:
+// 0 is free (and stays transparent so the map below shows through), 1..100
+// fade from LowColor to HighColor, 254 is an inscribed obstacle and 255 a
+// lethal one.
+type CostmapStyle struct {
+	LowColor       string  `json:"low_color"`
+	HighColor      string  `json:"high_color"`
+	InscribedColor string  `json:"inscribed_color"`
+	LethalColor    string  `json:"lethal_color"`
+	UnknownColor   string  `json:"unknown_color"`
+	Alpha          float64 `json:"alpha"`
+}
+
+// PointCloudStyle is how a PointCloud2 is drawn. ColorByHeight makes a
+// rainbow from MinZ to MaxZ (0 means "use the cloud's own range"); when it is
+// false the flat Color is used.
+type PointCloudStyle struct {
+	Color         string  `json:"color"`
+	Size          float64 `json:"size"`
+	MaxRange      float64 `json:"max_range"`
+	ColorByHeight bool    `json:"color_by_height"`
+	MinZ          float64 `json:"min_z"`
+	MaxZ          float64 `json:"max_z"`
 }
 
 // TFStyle is the one thing drawn on the /tf topic: it is a live transform
@@ -173,7 +200,15 @@ func defaultConfig() Config {
 			LaserScan: LaserScanStyle{Color: "#00ff88", Size: 2.5},
 			Path:      PathStyle{Color: "#ff4444", Width: 2.5},
 			Pose:      PoseStyle{Color: "#ffcc00", Size: 14, Covariance: true},
-			TF:        TFStyle{ShowAxes: true},
+			Costmap: CostmapStyle{
+				LowColor: "#2b6cff", HighColor: "#ff4040",
+				InscribedColor: "#00e5ff", LethalColor: "#101010",
+				UnknownColor: "#7a7a7a", Alpha: 0.75,
+			},
+			PointCloud: PointCloudStyle{
+				Color: "#00d0ff", Size: 2, ColorByHeight: true,
+			},
+			TF: TFStyle{ShowAxes: true},
 		},
 		Transport: TransportConfig{},
 		Tools: map[string]ToolConfig{
@@ -328,6 +363,42 @@ func withDefaults(cfg Config, doc any) Config {
 	}
 	if cfg.Display.Pose.Size == 0 {
 		cfg.Display.Pose.Size = def.Display.Pose.Size
+	}
+	if cfg.Display.Costmap.LowColor == "" {
+		cfg.Display.Costmap.LowColor = def.Display.Costmap.LowColor
+	}
+	if cfg.Display.Costmap.HighColor == "" {
+		cfg.Display.Costmap.HighColor = def.Display.Costmap.HighColor
+	}
+	if cfg.Display.Costmap.InscribedColor == "" {
+		cfg.Display.Costmap.InscribedColor = def.Display.Costmap.InscribedColor
+	}
+	if cfg.Display.Costmap.LethalColor == "" {
+		cfg.Display.Costmap.LethalColor = def.Display.Costmap.LethalColor
+	}
+	if cfg.Display.Costmap.UnknownColor == "" {
+		cfg.Display.Costmap.UnknownColor = def.Display.Costmap.UnknownColor
+	}
+	if cfg.Display.Costmap.Alpha == 0 {
+		cfg.Display.Costmap.Alpha = def.Display.Costmap.Alpha
+	}
+	if cfg.Display.PointCloud.Color == "" {
+		cfg.Display.PointCloud.Color = def.Display.PointCloud.Color
+	}
+	if cfg.Display.PointCloud.Size == 0 {
+		cfg.Display.PointCloud.Size = def.Display.PointCloud.Size
+	}
+	// `color_by_height` defaults to true; false is a real value, so read the
+	// document rather than the zero value.
+	cfg.Display.PointCloud.ColorByHeight = true
+	if root, ok := doc.(map[string]any); ok {
+		if display, ok := root["display"].(map[string]any); ok {
+			if cloud, ok := display["point_cloud"].(map[string]any); ok {
+				if v, ok := cloud["color_by_height"].(bool); ok {
+					cfg.Display.PointCloud.ColorByHeight = v
+				}
+			}
+		}
 	}
 	// `show_axes` defaults to true; false is a real value, so read the
 	// document rather than the zero value.

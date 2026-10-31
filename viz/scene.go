@@ -70,6 +70,53 @@ type OdometryLayer struct {
 	ChildFrame string
 }
 
+// CostmapLayer is a nav2 costmap. The cells are the raw cost values 0..255,
+// where 255 is a lethal obstacle and 254 an inscribed one; the texture is
+// built from them with the costmap palette.
+//
+// It is a separate type from MapLayer because the numbers mean different
+// things: an OccupancyGrid cell is -1 (unknown), 0 (free) or 100 (occupied),
+// a costmap cell is a cost from 0 to 255.
+type CostmapLayer struct {
+	Width      int
+	Height     int
+	Resolution float64
+	// Origin is the pose of the grid's lower-left cell in the fixed frame.
+	OriginX   float64
+	OriginY   float64
+	OriginYaw float64
+	// Layer is the name nav2 gave the layer, when it sent one.
+	Layer string
+	// Cells are the cost values, row by row from the bottom.
+	Cells []int
+	// Texture is the RGBA bitmap built from Cells.
+	Texture  []byte
+	TextureW int
+	TextureH int
+	StampNS  int64
+	Frame    string
+}
+
+// PointCloudLayer is one sweep of a point cloud, already in the fixed frame.
+// The heights and the intensities travel with the points so the colour can be
+// made of them; a publisher that sends neither gets a flat colour.
+type PointCloudLayer struct {
+	// Points are x,y pairs in the fixed frame.
+	Points      []float64
+	Heights     []float64
+	Intensities []float64
+	// MinX, MinY, MaxX and MaxY are the envelope of the points, in the fixed
+	// frame. A cloud is often published in the sensor's own frame, so its
+	// position in the world is only known through the transform; this is what
+	// the fixed frame says about it.
+	MinX    float64
+	MinY    float64
+	MaxX    float64
+	MaxY    float64
+	StampNS int64
+	Frame   string
+}
+
 // MarkerLayer is one shape from a visualization_msgs/Marker. The sidecar has
 // already transformed it into the fixed frame, so the numbers here are world
 // coordinates.
@@ -146,6 +193,10 @@ type Scene struct {
 	// Markers are keyed by topic and then by namespace/id, because one topic
 	// can carry many shapes and a publisher replaces them one at a time.
 	Markers map[string]map[string]*MarkerLayer
+	// Costmaps are grids like the map, but with the costmap palette.
+	Costmaps map[string]*CostmapLayer
+	// Clouds are the point clouds, one layer per topic.
+	Clouds map[string]*PointCloudLayer
 
 	// Errors from the sidecar, keyed by topic.
 	Errors map[string]string
@@ -163,6 +214,8 @@ func NewScene() *Scene {
 		Poses:    map[string]*PoseLayer{},
 		Odometry: map[string]*OdometryLayer{},
 		Markers:  map[string]map[string]*MarkerLayer{},
+		Costmaps: map[string]*CostmapLayer{},
+		Clouds:   map[string]*PointCloudLayer{},
 		Errors:   map[string]string{},
 	}
 }
@@ -263,6 +316,77 @@ func (s *Scene) Apply(event Event) {
 		}
 		layer.YawVar = payload.YawVar
 		s.Poses[event.Topic] = layer
+	case "costmap":
+		var payload struct {
+			Frame       string    `json:"frame"`
+			SourceFrame string    `json:"source_frame"`
+			StampNS     int64     `json:"stamp_ns"`
+			Width       int       `json:"width"`
+			Height      int       `json:"height"`
+			Resolution  float64   `json:"resolution"`
+			Origin      []float64 `json:"origin"`
+			Layer       string    `json:"layer"`
+			Data        []float64 `json:"data"`
+		}
+		if err := json.Unmarshal(event.Data, &payload); err != nil {
+			return
+		}
+		layer := &CostmapLayer{
+			Width: payload.Width, Height: payload.Height,
+			Resolution: payload.Resolution, Layer: payload.Layer,
+			Cells: intCells(payload.Data), StampNS: payload.StampNS, Frame: payload.Frame,
+		}
+		if len(payload.Origin) >= 3 {
+			layer.OriginX, layer.OriginY, layer.OriginYaw =
+				payload.Origin[0], payload.Origin[1], payload.Origin[2]
+		}
+		s.Costmaps[event.Topic] = layer
+	case "costmap_update":
+		var payload struct {
+			X      int       `json:"x"`
+			Y      int       `json:"y"`
+			Width  int       `json:"width"`
+			Height int       `json:"height"`
+			Data   []float64 `json:"data"`
+		}
+		if err := json.Unmarshal(event.Data, &payload); err != nil {
+			return
+		}
+		mergeCostmapCells(s.Costmaps[event.Topic], payload.X, payload.Y,
+			payload.Width, payload.Height, intCells(payload.Data))
+	case "occupancy_grid_update":
+		var payload struct {
+			X      int       `json:"x"`
+			Y      int       `json:"y"`
+			Width  int       `json:"width"`
+			Height int       `json:"height"`
+			Data   []float64 `json:"data"`
+		}
+		if err := json.Unmarshal(event.Data, &payload); err != nil {
+			return
+		}
+		if layer := s.Maps[event.Topic]; layer != nil {
+			mergeGridCells(layer, payload.X, payload.Y, payload.Width,
+				payload.Height, intCells(payload.Data))
+		}
+	case "point_cloud2":
+		var payload struct {
+			Frame       string    `json:"frame"`
+			SourceFrame string    `json:"source_frame"`
+			StampNS     int64     `json:"stamp_ns"`
+			Points      []float64 `json:"points"`
+			Heights     []float64 `json:"heights"`
+			Intensities []float64 `json:"intensities"`
+		}
+		if err := json.Unmarshal(event.Data, &payload); err != nil {
+			return
+		}
+		layer := &PointCloudLayer{
+			Points: payload.Points, Heights: payload.Heights,
+			Intensities: payload.Intensities,
+			StampNS:     payload.StampNS, Frame: payload.Frame}
+		cloudEnvelope(layer)
+		s.Clouds[event.Topic] = layer
 	case "marker":
 		var payload struct {
 			Frame       string    `json:"frame"`
@@ -361,6 +485,8 @@ func (s *Scene) Remove(topic string) {
 	delete(s.Poses, topic)
 	delete(s.Odometry, topic)
 	delete(s.Markers, topic)
+	delete(s.Costmaps, topic)
+	delete(s.Clouds, topic)
 	delete(s.Errors, topic)
 }
 
@@ -396,6 +522,8 @@ type Snapshot struct {
 	Poses      map[string]*PoseLayer
 	Odometry   map[string]*OdometryLayer
 	Markers    map[string]map[string]*MarkerLayer
+	Costmaps   map[string]*CostmapLayer
+	Clouds     map[string]*PointCloudLayer
 	Errors     map[string]string
 	Frames     []string
 	FixedFrame string
@@ -436,9 +564,18 @@ func (s *Scene) Snapshot() Snapshot {
 		}
 		markers[topic] = copied
 	}
+	costmaps := make(map[string]*CostmapLayer, len(s.Costmaps))
+	for key, value := range s.Costmaps {
+		costmaps[key] = value
+	}
+	clouds := make(map[string]*PointCloudLayer, len(s.Clouds))
+	for key, value := range s.Clouds {
+		clouds[key] = value
+	}
 	return Snapshot{
 		Maps: maps, Scans: scans, Paths: paths, Poses: poses,
-		Odometry: odometry, Markers: markers, Errors: copyErrors,
+		Odometry: odometry, Markers: markers, Costmaps: costmaps, Clouds: clouds,
+		Errors: copyErrors,
 		Frames: append([]string(nil), s.Frames...), FixedFrame: s.FixedFrame,
 	}
 }
@@ -458,6 +595,96 @@ func channelByte(value float64) uint8 {
 		return 255
 	}
 	return uint8(value*255 + 0.5)
+}
+
+// cloudEnvelope computes the bounding box of a cloud. A cloud that has no
+// points keeps a zero envelope; the renderer skips it anyway.
+func cloudEnvelope(layer *PointCloudLayer) {
+	if layer == nil || len(layer.Points) < 2 {
+		return
+	}
+	layer.MinX, layer.MinY = math.Inf(1), math.Inf(1)
+	layer.MaxX, layer.MaxY = math.Inf(-1), math.Inf(-1)
+	for i := 0; i+1 < len(layer.Points); i += 2 {
+		x, y := layer.Points[i], layer.Points[i+1]
+		layer.MinX = math.Min(layer.MinX, x)
+		layer.MaxX = math.Max(layer.MaxX, x)
+		layer.MinY = math.Min(layer.MinY, y)
+		layer.MaxY = math.Max(layer.MaxY, y)
+	}
+}
+
+// intCells turns the JSON numbers of a costmap into the ints the grid stores.
+// The sidecar writes them as doubles, so a []int field would reject "0.0".
+func intCells(values []float64) []int {
+	out := make([]int, len(values))
+	for i, value := range values {
+		out[i] = int(value)
+	}
+	return out
+}
+
+// mergeCostmapCells applies a rectangle of a costmap update to the grid the
+// scene already has. A publisher that sends a grid in slices would otherwise
+// leave the window empty, because every slice is smaller than the grid.
+func mergeCostmapCells(
+	layer *CostmapLayer, x, y, width, height int, cells []int,
+) {
+	if layer == nil || width <= 0 || height <= 0 {
+		return
+	}
+	if len(layer.Cells) != layer.Width*layer.Height {
+		layer.Cells = make([]int, layer.Width*layer.Height)
+	}
+	for row := 0; row < height; row++ {
+		targetRow := y + row
+		if targetRow < 0 || targetRow >= layer.Height {
+			continue
+		}
+		for column := 0; column < width; column++ {
+			targetColumn := x + column
+			if targetColumn < 0 || targetColumn >= layer.Width {
+				continue
+			}
+			index := row*width + column
+			if index >= len(cells) {
+				break
+			}
+			layer.Cells[targetRow*layer.Width+targetColumn] = cells[index]
+		}
+	}
+	// The texture is stale now.
+	layer.Texture = nil
+}
+
+// mergeGridCells is the same thing for an OccupancyGrid update.
+func mergeGridCells(
+	layer *MapLayer, x, y, width, height int, cells []int,
+) {
+	if layer == nil || width <= 0 || height <= 0 {
+		return
+	}
+	if len(layer.Cells) != layer.Width*layer.Height {
+		layer.Cells = make([]int8, layer.Width*layer.Height)
+	}
+	for row := 0; row < height; row++ {
+		targetRow := y + row
+		if targetRow < 0 || targetRow >= layer.Height {
+			continue
+		}
+		for column := 0; column < width; column++ {
+			targetColumn := x + column
+			if targetColumn < 0 || targetColumn >= layer.Width {
+				continue
+			}
+			index := row*width + column
+			if index >= len(cells) {
+				break
+			}
+			layer.Cells[targetRow*layer.Width+targetColumn] = int8(cells[index])
+		}
+	}
+	layer.Texture = nil
 }
 
 // buildTexture turns the cells into an RGBA bitmap. The palette is the one

@@ -120,6 +120,74 @@ func drawMap(
 	}
 }
 
+// buildCostmapTexture turns the cost values into an RGBA bitmap.
+//
+// The palette is the one a costmap display uses: free space stays transparent
+// so the map below shows through, the costs 1..100 fade from the low colour to
+// the high one, and the special values keep their own colours - 254 is an
+// inscribed obstacle, 255 a lethal one, 253 unknown.
+func buildCostmapTexture(
+	layer *CostmapLayer, low, high, inscribed, lethal, unknown color.RGBA, alpha float64,
+) {
+	if layer.Width <= 0 || layer.Height <= 0 {
+		return
+	}
+	layer.TextureW = layer.Width
+	layer.TextureH = layer.Height
+	layer.Texture = make([]byte, layer.Width*layer.Height*4)
+	for i := 0; i < layer.Width*layer.Height; i++ {
+		cost := 0
+		if i < len(layer.Cells) {
+			cost = layer.Cells[i]
+		}
+		var r, g, b uint8
+		opacity := alpha
+		switch {
+		case cost == 0:
+			// Free: nothing to draw.
+			opacity = 0
+			r, g, b = 0, 0, 0
+		case cost == 253:
+			r, g, b = unknown.R, unknown.G, unknown.B
+		case cost == 254:
+			r, g, b = inscribed.R, inscribed.G, inscribed.B
+		case cost == 255:
+			r, g, b = lethal.R, lethal.G, lethal.B
+		default:
+			// 1..100 is the interesting range; anything above it is a
+			// scaled version of the same idea.
+			fraction := float64(cost) / 100.0
+			if fraction > 1 {
+				fraction = 1
+			}
+			r = uint8(float64(low.R)*(1-fraction) + float64(high.R)*fraction)
+			g = uint8(float64(low.G)*(1-fraction) + float64(high.G)*fraction)
+			b = uint8(float64(low.B)*(1-fraction) + float64(high.B)*fraction)
+		}
+		layer.Texture[i*4+0] = r
+		layer.Texture[i*4+1] = g
+		layer.Texture[i*4+2] = b
+		layer.Texture[i*4+3] = uint8(opacity * 255)
+	}
+}
+
+// drawCostmap blits a costmap with the same inverse-mapping blit a map uses;
+// only the texture (and therefore the palette) differs.
+func drawCostmap(
+	target *image.RGBA, layer *CostmapLayer, ppm float64,
+	centerX, centerY float64, width, height int,
+) {
+	if layer == nil || layer.Texture == nil {
+		return
+	}
+	drawMap(target, &MapLayer{
+		Width: layer.Width, Height: layer.Height, Resolution: layer.Resolution,
+		OriginX: layer.OriginX, OriginY: layer.OriginY, OriginYaw: layer.OriginYaw,
+		Texture: layer.Texture,
+	}, ppm, centerX, centerY, width, height,
+		layer.OriginX, layer.OriginY, layer.OriginYaw)
+}
+
 // drawPoints paints a scan: one small filled square per return.
 func drawPoints(target *image.RGBA, points []float64, ppm float64, centerX, centerY float64, width, height int, tint color.RGBA, size float64) {
 	if len(points) < 2 {
@@ -140,6 +208,102 @@ func drawPoints(target *image.RGBA, points []float64, ppm float64, centerX, cent
 				target.Set(px, py, tint)
 			}
 		}
+	}
+}
+
+// drawCloud paints a point cloud. The colour is made of the height when the
+// publisher sends one and the style asks for it, so a cloud reads as a
+// landscape rather than a blob of dots.
+func drawCloud(
+	target *image.RGBA, layer *PointCloudLayer, ppm float64,
+	centerX, centerY float64, width, height int,
+	tint color.RGBA, size float64, byHeight bool, minZ, maxZ float64, maxRange float64,
+) {
+	if layer == nil || len(layer.Points) < 2 {
+		return
+	}
+	if byHeight {
+		if minZ == 0 && maxZ == 0 {
+			minZ, maxZ = heightRange(layer.Heights)
+		}
+	}
+	span := maxZ - minZ
+	if span <= 0 {
+		span = 1
+	}
+	half := int(math.Max(1, size/2))
+	for i := 0; i+1 < len(layer.Points); i += 2 {
+		x := layer.Points[i]
+		y := layer.Points[i+1]
+		if maxRange > 0 {
+			if math.Hypot(x-centerX, y-centerY) > maxRange {
+				continue
+			}
+		}
+		colour := tint
+		if byHeight && i/2 < len(layer.Heights) {
+			fraction := (layer.Heights[i/2] - minZ) / span
+			if fraction < 0 {
+				fraction = 0
+			}
+			if fraction > 1 {
+				fraction = 1
+			}
+			colour = heightColor(fraction)
+			colour.A = tint.A
+		}
+		sx := int(math.Round((x-centerX)*ppm + float64(width)/2))
+		sy := int(math.Round((centerY-y)*ppm + float64(height)/2))
+		for dy := -half; dy <= half; dy++ {
+			for dx := -half; dx <= half; dx++ {
+				px, py := sx+dx, sy+dy
+				if px < 0 || py < 0 || px >= width || py >= height {
+					continue
+				}
+				target.Set(px, py, colour)
+			}
+		}
+	}
+}
+
+// heightRange is the span of the heights in a cloud, used when the style does
+// not name one.
+func heightRange(heights []float64) (float64, float64) {
+	if len(heights) == 0 {
+		return 0, 1
+	}
+	low, high := heights[0], heights[0]
+	for _, value := range heights {
+		if value < low {
+			low = value
+		}
+		if value > high {
+			high = value
+		}
+	}
+	if high <= low {
+		high = low + 1
+	}
+	return low, high
+}
+
+// heightColor is the rainbow a height map is drawn with: blue at the bottom,
+// red at the top.
+func heightColor(fraction float64) color.RGBA {
+	clamp := func(value float64) uint8 {
+		if value < 0 {
+			return 0
+		}
+		if value > 1 {
+			return 255
+		}
+		return uint8(value*255 + 0.5)
+	}
+	return color.RGBA{
+		R: clamp(fraction),
+		G: clamp(1 - math.Abs(2*fraction-1)),
+		B: clamp(1 - fraction),
+		A: 255,
 	}
 }
 

@@ -150,8 +150,10 @@ Windows 上两端都把 stdio 切到二进制模式；否则 CRT 会把负载里
 | `shutdown` | 退出 |
 
 边车认识的类型：`OccupancyGrid`、`LaserScan`、`Path`、`PoseStamped`、
-`PoseWithCovarianceStamped`、`Odometry`、`Marker`、`MarkerArray`。这八种之外
-的类型会得到 `no decoder`，不会被悄悄忽略。
+`PoseWithCovarianceStamped`、`Odometry`、`Marker`、`MarkerArray`、
+`nav2_msgs/Costmap`、`nav2_msgs/CostmapUpdate`、`map_msgs/OccupancyGridUpdate`、
+`sensor_msgs/PointCloud2`。这些之外的
+类型会得到 `no decoder`，不会被悄悄忽略。
 
 `frame` 事件的 `kind` 与 `data`：
 
@@ -164,6 +166,11 @@ Windows 上两端都把 stdio 切到二进制模式；否则 CRT 会把负载里
 * `marker`：`ns/id/type/action/x/y/yaw/scale=[x,y,z]/color=[r,g,b,a]/points/text`；
   `points` 已经是固定系里的 `x,y` 对。`MarkerArray` 会拆成多条 `marker` 事件，
   同一 `ns/id` 的后一条覆盖前一条；`action=2` 删除，`action=3` 清空话题。
+* `costmap`：`width/height/resolution/origin=[x,y,yaw]/layer/data`（代价值的数组）；
+  `costmap_update`：`x/y/width/height/data`，合并进已有网格并让纹理失效
+* `occupancy_grid_update`：同上，合并进已有的占据栅格
+* `point_cloud2`：`points=[x0,y0,...]`（已变换到 fixed frame）、
+  `heights=[...]`、`intensities=[...]`，以及包络 `min_x/min_y/max_x/max_y`
 
 **TF 在边车里算**：边车是一个普通的 shim `rclcpp::Node`，带
 `tf2_ros::Buffer` + `TransformListener`。每条消息用 `header.stamp` 查变换，
@@ -196,8 +203,18 @@ Windows 上两端都把 stdio 切到二进制模式；否则 CRT 会把负载里
 * 缩放时指针下的世界点不动
 * 帧格式往返；超长帧被拒；真边车的 hello / topics（用独立 namespace）
 * 地图纹理的调色板、协方差椭圆的半径、地图画在原点的位置、折线落在中线
+* 代价地图的调色板（0 透明 / 高代价红 / 内切青 / 致命深色）、增量更新合并、
+  点云的存储（点 / 高度 / 强度）与高度彩虹（低蓝高红）
 * 工具：点击给位置、拖拽给朝向（向上拖 = +90°）、再点一次取消、无工具时
   拖拽仍然平移
+
+已验证（真 ROS2 Jazzy 对端 `wang@192.168.0.153`）：
+
+* `nav2_msgs/msg/Costmap`：`resolution` 0.5、3×2 网格、`origin` (1,2)、
+  `layer` master、6 个代价值都对
+* `sensor_msgs/msg/PointCloud2`：4 个点、z 0..1.5、包络 x 1..7 / y 2..8
+* 点云的两种发布端都收到了：best_effort（相机）与 reliable（`ros2 topic pub`）
+  —— agent 对点云订阅两次，各用一个回调，所以两边都收得到且不会重收
 
 未验证 / 下一步：
 
@@ -205,5 +222,4 @@ Windows 上两端都把 stdio 切到二进制模式；否则 CRT 会把负载里
   「点工具栏图标 → 点视口 → 目标到达机器人」这条链还没在真窗口上跑通）
 * 添加话题（从 graph 选）与显示属性面板
 * 起完整 `nav2_stack.bat` 看真实 `/map` `/scan` `/plan`
-* 真 ROS2 上 best_effort / transient_local 的 QoS 匹配
-* `rviz2` 入口、`package.py` 打包、CI
+* 点云的 per-point RGB / 法线；3D 与 URDF

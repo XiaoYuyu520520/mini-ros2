@@ -45,7 +45,7 @@ title: 6 常见问题 · 功能限制与缺口
 | `nav2_following`（`opennav_following`） | 没有移植 | 「跟人 / 跟车」整个功能不可用（对本项目目标优先级最低） |
 | `nav2_loopback_sim` | 没有移植 | 没有「上游自带的仿真机器人」这个替代品；本项目的仿真在 Ubuntu 侧 |
 | `nav2_system_tests` | 没有移植 | 上游那套系统集成测试跑不了；本项目的回归是自己那几套 |
-| `nav2_rviz_plugins` | 没有移植；Windows 上的可视化由 `viz` 顶上了（见 [3.5](../Basic_application/viz)），但它**不是**这个插件 | rviz 插件里的调参面板与交互没有；日常看地图 / 扫描 / 规划 / 位姿、发目标点与初始位姿已经由 `viz` 覆盖 |
+| `nav2_rviz_plugins` | 没有移植；Windows 上的可视化由 `viz` 顶上了（见 [3.5](../Basic_application/viz)），但它**不是**这个插件 | rviz 插件里的调参面板与交互没有；日常看地图 / 扫描 / 规划 / 位姿 / 代价地图 / 点云、发目标点与初始位姿已经由 `viz` 覆盖 |
 | `nav2_simple_commander` | 没有移植（纯 Python，要 rclpy） | 没有 Python API；发目标只能用 C++（`nav2_goal.exe` / `nav2_waypoints.exe`）或 CLI |
 
 ### 可视化：能看能点，但有几条边
@@ -54,8 +54,10 @@ title: 6 常见问题 · 功能限制与缺口
 | --- | --- |
 | **一个通道一个写者** | `viz` 的边车自己持有 `/goal_pose` 与 `/initialpose` 的写端；再对同一通道跑 `ros2 topic pub` 会互相截断环形缓冲 |
 | **v1 只发话题，不走 action** | 目标点走 `/goal_pose` 话题（nav2 的 `bt_navigator` 订阅它），所以没有进度反馈与中途取消 |
-| **只画五类图层** | 地图 / 扫描 / 路径 / 位姿 / Marker。代价地图叠加、点云（`PointCloud2`）、URDF 都没有 |
-| **QoS 没在真 ROS2 上量过** | agent 侧的默认表已经改了，但缺一台真 peer 的证据 |
+| **只画这几类图层** | 地图 / 扫描 / 路径 / 位姿 / Marker / 代价地图 / 点云。URDF、3D 模型没有 |
+| **点云只有 2D 俯视** | `PointCloud2` 读 x / y / z / intensity，按高度上色画成俯视图；带 RGB 或法线的点云不画颜色 |
+| **代价地图不分层合成** | 每个话题一层，按加入顺序叠；没有 nav2 那种「多层合成一个 master」 |
+| **QoS 在真 ROS2 上量过了，但只有两类** | agent 的默认表（sensor→best_effort、`/map`→transient_local）在真 peer 上验过；点云额外订阅两次以兼容两种发布端。逐话题覆盖仍未透传 |
 
 **不需要单独移植的**：`nav2_core` 与 `opennav_docking_core` 只有头文件；`nav2_util` 的源码被收进
 `nav2_util_core`；`nav2_msgs` / `dwb_msgs` / `nav_2d_msgs` 由生成器出消息；
@@ -78,7 +80,7 @@ title: 6 常见问题 · 功能限制与缺口
 | **image_transport** | 只有 `point_cloud_transport` 的桩；没有 `image_transport` | `sensor_msgs/Image` 这类相机话题没有传输层，也没有压缩插件 |
 | **RViz / rqt** | RViz 本体没有，也不在计划里；rqt 没有。Windows 上有 `viz` 替代日常可视化（[3.5](../Basic_application/viz)） | rviz 的插件体系、3D 点云 / URDF 模型、rqt 的插件都没有；`viz` 是按需求做的小工具，不是 rviz 的移植 |
 | **tf 工具** | `tf2` / `tf2_ros` 库在，`tf_probe` / `tf_listener_probe` 是自带的诊断工具 | 没有 `static_transform_publisher`、`tf2_echo` / `tf2_monitor` 这些命令行工具 |
-| **QoS** | 共享内存内部**仍然只有声明**（可靠信道 / 历史深度落在本地环形缓冲），**枚举的拼法有差异**：shim 写的是 `RELIABLE` / `BEST_EFFORT` / `KEEP_LAST`，上游写的是 `Reliable` / `BestEffort` / `KeepLast`。`nav2_extracted` 里**一个都没直接写枚举名**，所以现状编得过 | DDS 那套「同一话题不同 QoS 不匹配」的行为**只在跨机的 agent 边界上**有：agent 现在按 rviz 的默认表选 QoS（sensor→best_effort、`/map`→transient_local），**但还没在一台真 ROS2 机器上量过**；逐话题覆盖的 `QosProfile` 已在 proto 里预留，daemon 还没透传 |
+| **QoS** | 共享内存内部**仍然只有声明**（可靠信道 / 历史深度落在本地环形缓冲），**枚举的拼法有差异**：shim 写的是 `RELIABLE` / `BEST_EFFORT` / `KEEP_LAST`，上游写的是 `Reliable` / `BestEffort` / `KeepLast`。`nav2_extracted` 里**一个都没直接写枚举名**，所以现状编得过 | DDS 那套「同一话题不同 QoS 不匹配」的行为**只在跨机的 agent 边界上**有：agent 按 rviz 的默认表选 QoS（sensor→best_effort、`/map`→transient_local），已在真 ROS2 Jazzy 上验过 best_effort / transient_local 两种；点云对 reliable 与 best_effort 各订阅一次以兼容两种发布端。逐话题覆盖的 `QosProfile` 已在 proto 里预留，daemon 还没透传 |
 | **组件 / 组合** | `rclcpp_components` 只有 `register_node_macro.hpp`，没有 component container 的 `load_component` 运行路径 | 上游那种「一个进程装多个组件」的部署方式用不了；这里每个服务是一个 exe |
 | **仿真时钟** | `use_sim_time` 只在那几个节点上打开；`rclcpp::utilities::set_use_sim_time()` 仍是空实现 | 没打开 `use_sim_time` 的节点里，「拿 `now()` 配消息戳」的代码会向未来外推 |
 | **CLI 面** | 有 `topic` / `service` / `action` / `param` / `node list` / `interface list` / `bridge status` | 没有 `ros2 bag`、`ros2 run`、`ros2 launch`、`ros2 lifecycle`、`node info`、`interface show`、`topic bw` / `topic delay`。另外 `service call` 只认编解码表里的类型 |

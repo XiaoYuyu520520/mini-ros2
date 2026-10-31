@@ -68,12 +68,34 @@ bool endsWith(const std::string& value, const std::string& suffix) {
          value.compare(value.size() - suffix.size(), suffix.size(), suffix) == 0;
 }
 
+// A sensor stream is a message that is published *repeatedly* and whose
+// newest value is enough: a laser sweep, a camera frame, an IMU reading.
+// rviz2 asks for those with best_effort, because a reliable subscription
+// would not match a best_effort publisher at all.
+//
+// A point cloud was in that list too, and here is the catch: the *type* does
+// not decide what the publisher offers. A depth camera publishes its cloud
+// with best_effort, but a plain `ros2 topic pub` or a bag replay publishes
+// the same type with the default reliable profile. A reliable subscription
+// matches both of those, a best_effort one matches only the camera.
+//
+// The measurement behind this change: on a real Jazzy peer a PointCloud2
+// published with the default profile (reliable) was invisible to a
+// best_effort subscription - the publisher said so in its own log
+// ("offering incompatible QoS ... RELIABILITY_QOS_POLICY") while the costmap
+// on the same graph arrived. With a reliable subscription the same cloud
+// arrives.
+//
+// The cost is that a best_effort publisher (a camera) and a reliable
+// subscription do not match either. That trade is the other way round now, so
+// it is worth measuring on a camera before it is called fixed; until then the
+// per-topic override in the proto is the way out.
 bool isSensorData(const std::string& type) {
   static const char* const kTypes[] = {
       "sensor_msgs/msg/LaserScan",       "sensor_msgs/msg/MultiEchoLaserScan",
-      "sensor_msgs/msg/PointCloud",      "sensor_msgs/msg/PointCloud2",
-      "sensor_msgs/msg/Image",           "sensor_msgs/msg/CompressedImage",
-      "sensor_msgs/msg/Imu",             "sensor_msgs/msg/Range",
+      "sensor_msgs/msg/PointCloud",      "sensor_msgs/msg/Image",
+      "sensor_msgs/msg/CompressedImage", "sensor_msgs/msg/Imu",
+      "sensor_msgs/msg/Range",
   };
   for (const char* known : kTypes) {
     if (type == known) {
@@ -375,7 +397,10 @@ bool deserializeInto(const Bytes & data,
 
 struct RclcppBackend::Impl {
   struct Subscription {
-    rclcpp::GenericSubscription::SharedPtr subscription;
+    // A topic can be read through more than one subscription: a point cloud
+    // is asked for twice, once reliable and once best_effort, because the
+    // publisher decides which of the two it offers and the type does not.
+    std::vector<rclcpp::GenericSubscription::SharedPtr> subscriptions;
     std::string type;
   };
 
@@ -1250,16 +1275,41 @@ Status RclcppBackend::subscribe(const std::string& topic,
       }
     };
 
-    auto subscription = impl_->node->create_generic_subscription(
-        topic, type, qosFor(topic, type), std::move(callback));
-    if (!subscription) {
-      return Status::error(StatusCode::NotFound,
-                          "no type support available for " + type);
+    // A point cloud is subscribed twice. The publisher's profile decides what
+    // matches: a depth camera offers best_effort, a plain publisher and a bag
+    // replay offer reliable, and a reader that asks for one of them only sees
+    // half the clouds in the world. Two subscriptions - one reliable, one
+    // best_effort - match both, and a publisher never matches both, so no
+    // message is delivered twice.
+    std::vector<rclcpp::GenericSubscription::SharedPtr> subscriptions;
+    if (type == "sensor_msgs/msg/PointCloud2") {
+      // Two callbacks, one per subscription: a best_effort publisher only
+      // matches a best_effort subscription and a reliable one only a
+      // reliable subscription, so each reader needs its own. The subscription
+      // that does not match simply never fires.
+      using MessageCallback =
+        std::function<void(const std::shared_ptr<rclcpp::SerializedMessage>)>;
+      auto best_effort_callback = std::make_shared<MessageCallback>(callback);
+      auto reliable_callback = std::make_shared<MessageCallback>(*best_effort_callback);
+      subscriptions.push_back(impl_->node->create_generic_subscription(
+          topic, type, rclcpp::QoS(rclcpp::KeepLast(5)).best_effort(),
+          *best_effort_callback));
+      subscriptions.push_back(impl_->node->create_generic_subscription(
+          topic, type, rclcpp::QoS(10), *reliable_callback));
+    } else {
+      subscriptions.push_back(impl_->node->create_generic_subscription(
+          topic, type, qosFor(topic, type), std::move(callback)));
+    }
+    for (const auto & subscription : subscriptions) {
+      if (!subscription) {
+        return Status::error(StatusCode::NotFound,
+                            "no type support available for " + type);
+      }
     }
 
     std::lock_guard<std::mutex> lock(impl_->mutex);
     Impl::Subscription entry;
-    entry.subscription = subscription;
+    entry.subscriptions = std::move(subscriptions);
     entry.type = type;
     handle_out = impl_->next_handle++;
     impl_->subscriptions.emplace(handle_out, std::move(entry));

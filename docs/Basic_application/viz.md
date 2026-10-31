@@ -17,6 +17,7 @@ title: 3 基础应用开发 · Windows 可视化
   <li><a href="#config">配置文件</a></li>
   <li><a href="#sidecar">边车与 TF</a></li>
   <li><a href="#markers">Marker（箭头、线、点）</a></li>
+  <li><a href="#costmap">代价地图与点云</a></li>
   <li><a href="#qos">QoS</a></li>
   <li><a href="#evidence">验证到哪一步了</a></li>
   <li><a href="#limits">还没做的</a></li>
@@ -37,6 +38,8 @@ title: 3 基础应用开发 · Windows 可视化
 | **发目标点** | 2D Goal Pose：点一下是位置，拖一下是朝向，发 `/goal_pose` |
 | **设初始位姿** | 2D Pose Estimate：发 `/initialpose`，协方差用 rviz 的 0.25 / 0.25 / 0.0685 |
 | **看 Marker** | `visualization_msgs/msg/Marker` 与 `MarkerArray`：箭头、线段、点、方块（rviz 那套 marker 类型） |
+| **看代价地图** | `nav2_msgs/msg/Costmap` 与 `CostmapUpdate`：按调色板叠加在地图上，支持增量更新 |
+| **看点云** | `sensor_msgs/msg/PointCloud2`：按高度上色，也可以压平成一个颜色 |
 | 加话题 | 面板里从图里选一个话题加进来，不用改代码、不用重启 |
 | 显示属性 | 逐话题覆盖颜色 / 点大小 / 透明度；空着就用该类型的默认样式 |
 | 配置保存 / 读取 | 工具栏两个按钮，**保留文件里的中文注释**（JSON 没有注释语法，注释写成 `_comment` 键） |
@@ -208,6 +211,83 @@ viewer 发</strong>：不要再对同一通道跑 <code>ros2 topic pub</code>，
 加法：面板里「Add a topic from the graph」选到那个话题 → `Add`。
 面板的显示属性里可以改颜色；marker 自带颜色时以自带的为准。
 
+<a id="costmap"></a>
+
+## 3.5.6b 代价地图与点云
+
+### 代价地图
+
+支持三种话题，画的都不是另起一层，而是**叠在地图上**：
+
+| 话题类型 | 说明 |
+| --- | --- |
+| `nav2_msgs/msg/Costmap` | nav2 自己的代价地图，带 `layer` 名（master / global / local） |
+| `nav2_msgs/msg/CostmapUpdate` | 增量更新：只改一个矩形区域 |
+| `map_msgs/msg/OccupancyGridUpdate` | 占据栅格的增量更新（`/map_updates`） |
+
+调色板跟 nav2 的 Costmap Display 一致，代价 0 是空的（**透明**，底下的地图能透出来）：
+
+| 代价 | 画成什么 | 默认颜色 |
+| --- | --- | --- |
+| `0` | 自由空间，不画 | 透明 |
+| `1` .. `100` | 从低代价色渐变到高代价色 | `#2b6cff` → `#ff4040` |
+| `253` | 未知 | `#7a7a7a` |
+| `254` | 内切障碍（inscribed） | `#00e5ff` |
+| `255` | 致命障碍（lethal） | `#101010` |
+
+增量更新会**合并进已有的网格**，然后让纹理失效重画 —— 所以局部代价地图
+（`/local_costmap/costmap_updates`）和全局代价地图可以同时开着，
+各自更新各自的那块区域，不会互相覆盖。
+
+### 点云
+
+`sensor_msgs/msg/PointCloud2` 支持 `x` / `y` / `z` / `intensity` 四个字段：
+
+* **高度上色**（默认）：把 `z` 从低到高映射成蓝→绿的彩虹，
+  于是点云看起来像一张地形图而不是一团点；只有 `x`/`y` 时就退化成单色。
+* **点大小**、**最大距离**（超出半径的点不画）、**透明度**都可以调。
+* 点云在传感器自己的坐标系里时，边车会**先查 TF 变换到视口的固定坐标系**
+  再画 —— 和其它图层一个规矩。
+* `point_step`、`row_step`、大小端都按消息里的来；`NaN` 点自动跳过。
+
+配置示例：
+
+```json
+{
+  "topics": {
+    "/local_costmap/costmap": {
+      "type": "nav2_msgs/msg/Costmap",
+      "qos": { "reliability": "reliable", "durability": "transient_local", "depth": 1 }
+    },
+    "/lidar/points": {
+      "_comment": "深度相机是 best_effort",
+      "type": "sensor_msgs/msg/PointCloud2",
+      "qos": { "reliability": "best_effort", "depth": 5 }
+    }
+  },
+  "display": {
+    "costmap": {
+      "low_color": "#2b6cff", "high_color": "#ff4040",
+      "inscribed_color": "#00e5ff", "lethal_color": "#101010",
+      "unknown_color": "#7a7a7a", "alpha": 0.75
+    },
+    "point_cloud": {
+      "color": "#00d0ff", "size": 2,
+      "color_by_height": true, "max_range": 20
+    }
+  }
+}
+```
+
+<div class="callout note">
+<span class="label">点云的 QoS 有个坑</span>
+<p>点云的发布端可能是 best_effort（深度相机）也可能是 reliable
+（<code>ros2 topic pub</code>、bag 回放）。**发布端的 QoS 决定谁收得到**：
+best_effort 的发布端只配 best_effort 的订阅，reliable 的发布端只配 reliable 的订阅。
+所以 agent 对点云<strong>订阅两次</strong>（一次 reliable、一次 best_effort），
+两种发布端都能收到，而且一条消息不会被收两遍。</p>
+</div>
+
 <a id="qos"></a>
 
 ## 3.5.7 QoS
@@ -287,6 +367,15 @@ ros2 topic echo /qos_probe/map --once --timeout 15
 * Marker：本地发的 `Marker` 与**真 ROS2 对端发的 `MarkerArray`** 都收到
   （两个 marker 的 ns/id、位置、颜色都对），真窗口截图里箭头是 2144 个品红像素
 
+* 代价地图：真 ROS2 对端发的 `nav2_msgs/msg/Costmap` 收到
+  （`resolution` 0.5、3×2 网格、`origin` (1,2)、`layer` master、6 个代价值都对）；
+  增量更新合并进已有网格并让纹理失效
+* 点云：真 ROS2 对端发的 `PointCloud2` 收到（4 个点、z 从 0 到 1.5、包络
+  x 1..7 / y 2..8 都对）；best_effort 与 reliable 两种发布端**都**收到了
+  （一个传感器一个 `ros2 topic pub`），这是 agent 双订阅的效果
+* 渲染：代价地图的调色板颜色（高代价红 / 内切青 / 致命深色）与点云的高度
+  彩虹（低点蓝 / 高点红）都在渲染出的图像里数到了像素
+
 边车侧（`viz_feed --selftest`，也是 ctest）：`map -> laser (x=10)` + laser 系位姿
 `(1,2)` → 边车输出 map 系 `(11,2)`；地图 int8 数据 base64 解出 `[0,100,-1,0]`；
 `set_fixed_frame` 后 latched 地图从 `(5,6)` 立刻重发成 `(-5,6)`。
@@ -297,8 +386,9 @@ ros2 topic echo /qos_probe/map --once --timeout 15
 
 | 缺口 | 现状 |
 | --- | --- |
-| 代价地图叠加、点云、URDF | 只有地图 / 扫描 / 路径 / 位姿 / Marker 这几类图层 |
-| 3D 与 URDF | 没有；`nav2_rviz_plugins` 仍然没移植 |
+| 3D 与 URDF、TF 坐标轴 | 没有；`nav2_rviz_plugins` 仍然没移植，点云只有 2D 俯视 |
+| 点云的 per-point RGB / 法线 | 只读 x / y / z / intensity；带 RGB 字段的点云按高度或单色画 |
+| 代价地图的分层叠加（costmap layer 组合） | 每个话题单独一层，按加入顺序叠，没有 nav2 那种「多层合成一个 master」 |
 | action 发目标 | v1 只发 `/goal_pose` 话题，不走 `NavigateToPose` action（没有进度反馈与中途取消） |
 | 逐话题 QoS 覆盖 | proto 里预留了字段，daemon 还没透传 |
 | 显示属性的图形化编辑 | 目前是面板里的文本框（颜色 / 大小 / 透明度），没有取色器 |

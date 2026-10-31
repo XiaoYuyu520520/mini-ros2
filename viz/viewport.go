@@ -323,6 +323,48 @@ func (v *viewport) drawScene(img *image.RGBA, ppm float64, w, h int) {
 			layer.OriginX, layer.OriginY, layer.OriginYaw)
 	}
 
+	for name, layer := range snapshot.Costmaps {
+		if layer == nil {
+			continue
+		}
+		topic := v.topics[name]
+		alpha := v.style.Costmap.Alpha
+		if topic.Alpha > 0 {
+			alpha = topic.Alpha
+		}
+		if layer.Texture == nil {
+			buildCostmapTexture(
+				layer,
+				rgbaColor(v.style.Costmap.LowColor, color.RGBA{43, 108, 255, 255}),
+				rgbaColor(v.style.Costmap.HighColor, color.RGBA{255, 64, 64, 255}),
+				rgbaColor(v.style.Costmap.InscribedColor, color.RGBA{0, 229, 255, 255}),
+				rgbaColor(v.style.Costmap.LethalColor, color.RGBA{16, 16, 16, 255}),
+				rgbaColor(v.style.Costmap.UnknownColor, color.RGBA{122, 122, 122, 255}),
+				alpha)
+		}
+		drawCostmap(img, layer, ppm, v.cx, v.cy, w, h)
+	}
+
+	for name, layer := range snapshot.Clouds {
+		if layer == nil {
+			continue
+		}
+		topic := v.topics[name]
+		tint := rgbaColor(firstNonEmpty(topic.Color, v.style.PointCloud.Color),
+			color.RGBA{0, 208, 255, 255})
+		size := v.style.PointCloud.Size
+		if topic.PointSize > 0 {
+			size = topic.PointSize
+		}
+		if size <= 0 {
+			size = 2
+		}
+		byHeight := v.style.PointCloud.ColorByHeight && topic.Color == ""
+		drawCloud(img, layer, ppm, v.cx, v.cy, w, h, tint, size, byHeight,
+			v.style.PointCloud.MinZ, v.style.PointCloud.MaxZ,
+			v.style.PointCloud.MaxRange)
+	}
+
 	for name, layer := range snapshot.Scans {
 		if layer == nil {
 			continue
@@ -442,7 +484,13 @@ func (v *viewport) applyView(cfg *Config) {
 	if v.scene != nil {
 		// The colours may have changed; drop the cached textures so they are
 		// built again with the new palette.
-		for _, layer := range v.scene.Snapshot().Maps {
+		snapshot := v.scene.Snapshot()
+		for _, layer := range snapshot.Maps {
+			if layer != nil {
+				layer.Texture = nil
+			}
+		}
+		for _, layer := range snapshot.Costmaps {
 			if layer != nil {
 				layer.Texture = nil
 			}

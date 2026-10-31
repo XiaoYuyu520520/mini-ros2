@@ -9279,6 +9279,68 @@ Go 侧另外有两条不依赖显示器的测试：
 `tool: 2D Goal Pose` / `tool: 2D Pose Estimate`。`go test` 通过，真窗口
 截图能看到按钮文字（见 `docs/Basic_application/viz.md` 的 3.5.3）。
 
-### 四、还没量的
+### 五、代价地图与点云（2026-10-31）
+
+`viz_feed` 现在认 `nav2_msgs/msg/Costmap`、`nav2_msgs/msg/CostmapUpdate`、
+`map_msgs/msg/OccupancyGridUpdate` 与 `sensor_msgs/msg/PointCloud2`；
+GUI 多了两个图层，代价地图按调色板叠在地图上，点云按高度上色。
+
+#### 1. 一个类型字符串的拼写错误
+
+点云从数据面到 GUI 的第一段一直「收不到」，但 agent 与 daemon 的计数都在涨。
+根因不在 QoS，而在 `createSubscription()` 里写成了
+`sensor_msgs::msg::PointCloud2`（C++ 的写法），而图里的类型名是
+`sensor_msgs/msg/PointCloud2`。我把判断改回 `/` 之后，点云帧立刻出现。
+这类错误不会报错 —— 只是走到最后的 `return nullptr`，看起来像「类型还不支持」。
+
+#### 2. 真 ROS2 上的代价地图
+
+**【跑】** 对端 rclpy 发 `nav2_msgs/msg/Costmap`（transient_local），
+Windows 端 daemon 镜像进共享内存，`viz_feed` 订阅 `/viz/costmap`：
+
+```
+{"kind":"costmap","data":{"width":3,"height":2,"resolution":0.5,
+ "origin":[1,2,0],"layer":"master","frame":"map",
+ "data":[0,100,254,255,0,0]}}
+```
+
+`resolution`、`size`、`origin`、`layer` 与 6 个代价值逐个对上。
+
+#### 3. 点云：两个发布端，两种 QoS
+
+对端的 `PointCloud2` 有两个发布端形状：深度相机给 **best_effort**，
+`ros2 topic pub` / bag 回放给 **reliable**。DDS 的规矩是「订阅请求的 QoS
+必须不比发布端更严格」，所以只订阅一次**必然**漏掉另一种。
+
+agent 现在对 `sensor_msgs/msg/PointCloud2` 订阅**两次**（reliable + best_effort），
+**各自一个回调**。一个发布端只会匹配其中一个，所以既不会漏，也不会重收。
+
+**【跑】** 同一个话题，两种 profile 各发 18 秒：
+
+| 发布端 QoS | `viz_feed` 收到的 `point_cloud2` 帧 |
+| --- | --- |
+| best_effort | 6 |
+| reliable | 15 |
+
+帧内容一致：4 个点、`heights` 0..1.5、包络 x 1..7 / y 2..8、`source_frame` map。
+
+**【注意】** agent 日志里仍会看到一条
+`offering incompatible QoS ... RELIABILITY_QOS_POLICY`：那是**另一条**
+订阅（best_effort 的那条）在报告它配不上 reliable 发布端，属于预期行为；
+消息由可靠的那条收下了。反过来 best_effort 发布端时也会有一条对称的警告。
+判断「通没通」要看帧，不要看这条警告。
+
+#### 4. 渲染
+
+窗口截图这条路这次走不通（RDP 会话断开，`CopyFromScreen` 直接抛
+`句柄无效`），所以改为在 Go 里用**窗口同一套绘制函数**把画面画到
+`*image.RGBA`，再按颜色数像素。新增的
+`TestRenderCostmapAndCloud` 断言：
+
+* 代价地图：高代价格的红、254 格的青、255 格的深色都在图上；
+* 点云：最低点是蓝、最高点是红（高度彩虹的两端）；
+* 图片同时写到测试临时目录，供人眼复核。
+
+### 六、还没量的
 
 * **整条 nav2 栈**：这一节量的是合成话题，不是 `nav2_stack.bat` 起来的真栈。

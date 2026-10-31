@@ -80,9 +80,13 @@
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
+#include "map_msgs/msg/occupancy_grid_update.hpp"
+#include "nav2_msgs/msg/costmap.hpp"
+#include "nav2_msgs/msg/costmap_update.hpp"
 #include "nav_msgs/msg/occupancy_grid.hpp"
 #include "nav_msgs/msg/odometry.hpp"
 #include "nav_msgs/msg/path.hpp"
+#include "sensor_msgs/msg/point_cloud2.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "ros2_bridge/shm_topic.hpp"
 #include "ros2_shim/graph.hpp"
@@ -353,6 +357,12 @@ const char * kindForType(const std::string & type)
   // share a kind; the GUI keys them by namespace and id.
   if (type == "visualization_msgs/msg/Marker") {return "marker";}
   if (type == "visualization_msgs/msg/MarkerArray") {return "marker";}
+  // The costmap family: a full grid, and the two incremental updates that
+  // nav2 publishes instead of the whole grid.
+  if (type == "nav2_msgs/msg/Costmap") {return "costmap";}
+  if (type == "nav2_msgs/msg/CostmapUpdate") {return "costmap_update";}
+  if (type == "map_msgs/msg/OccupancyGridUpdate") {return "occupancy_grid_update";}
+  if (type == "sensor_msgs/msg/PointCloud2") {return "point_cloud2";}
   return "";
 }
 
@@ -809,6 +819,18 @@ public:
     if (type == "nav_msgs/msg/Odometry") {
       return make<nav_msgs::msg::Odometry>(topic, type, transient, max_hz);
     }
+    if (type == "nav2_msgs/msg/Costmap") {
+      return make<nav2_msgs::msg::Costmap>(topic, type, transient, max_hz);
+    }
+    if (type == "nav2_msgs/msg/CostmapUpdate") {
+      return make<nav2_msgs::msg::CostmapUpdate>(topic, type, transient, max_hz);
+    }
+    if (type == "map_msgs/msg/OccupancyGridUpdate") {
+      return make<map_msgs::msg::OccupancyGridUpdate>(topic, type, transient, max_hz);
+    }
+    if (type == "sensor_msgs/msg/PointCloud2") {
+      return make<sensor_msgs::msg::PointCloud2>(topic, type, transient, max_hz);
+    }
     if (type == "visualization_msgs/msg/Marker") {
       // A DELETE/DELETEALL marker is a request to remove something; it often
       // carries no meaningful frame, so the transform must not reject it.
@@ -1055,6 +1077,246 @@ public:
     data["wz"] = message.twist.twist.angular.z;
     data["cov"] = json::array({rxx, rxy, ryy});
     emitFrame(topic, "odometry", std::move(data));
+  }
+
+  // ---------------------------------------------------------------- costmaps
+  //
+  // nav2 publishes its costmaps as `nav2_msgs/msg/Costmap`: a resolution, a
+  // size, an origin pose and one byte per cell. The bytes are the cost values
+  // 0..255, where 255 is a lethal obstacle and 254 an inscribed one. A
+  // costmap is drawn like a map, but with its own palette: the free space is
+  // transparent, the costs fade from blue to red, and the special values keep
+  // their own colours.
+  void encodeMessage(
+    const std::string & topic, const nav2_msgs::msg::Costmap & message,
+    const Xform & xform)
+  {
+    const auto & origin = message.metadata.origin;
+    const Vec3 position = rotate(
+      xform.q, Vec3{origin.position.x, origin.position.y, origin.position.z});
+    const Quat orientation = mul(
+      xform.q, Quat{origin.orientation.x, origin.orientation.y, origin.orientation.z,
+        origin.orientation.w});
+    json data;
+    data["frame"] = fixedFrame();
+    data["source_frame"] = message.header.frame_id;
+    data["stamp_ns"] = stampNs(message.header.stamp);
+    data["width"] = message.metadata.size_x;
+    data["height"] = message.metadata.size_y;
+    data["resolution"] = message.metadata.resolution;
+    data["origin"] = json::array({
+      xform.t.x + position.x, xform.t.y + position.y, yawOf(orientation)});
+    data["layer"] = message.metadata.layer;
+    std::vector<double> cells;
+    cells.reserve(message.data.size());
+    for (const auto value : message.data) {
+      cells.push_back(static_cast<double>(value));
+    }
+    data["data"] = cells;
+    emitFrame(topic, "costmap", std::move(data));
+  }
+
+  // The two incremental updates carry a rectangle of the grid and the cells
+  // in it. The GUI merges them into the grid it already has, so a costmap
+  // that is published in slices still shows up whole.
+  void encodeMessage(
+    const std::string & topic, const nav2_msgs::msg::CostmapUpdate & message,
+    const Xform & xform)
+  {
+    json data;
+    data["frame"] = fixedFrame();
+    data["source_frame"] = message.header.frame_id;
+    data["stamp_ns"] = stampNs(message.header.stamp);
+    data["x"] = message.x;
+    data["y"] = message.y;
+    data["width"] = message.size_x;
+    data["height"] = message.size_y;
+    std::vector<double> cells;
+    cells.reserve(message.data.size());
+    for (const auto value : message.data) {
+      cells.push_back(static_cast<double>(value));
+    }
+    data["data"] = cells;
+    emitFrame(topic, "costmap_update", std::move(data));
+  }
+
+  void encodeMessage(
+    const std::string & topic, const map_msgs::msg::OccupancyGridUpdate & message,
+    const Xform & xform)
+  {
+    json data;
+    data["frame"] = fixedFrame();
+    data["source_frame"] = message.header.frame_id;
+    data["stamp_ns"] = stampNs(message.header.stamp);
+    data["x"] = message.x;
+    data["y"] = message.y;
+    data["width"] = message.width;
+    data["height"] = message.height;
+    std::vector<double> cells;
+    cells.reserve(message.data.size());
+    for (const auto value : message.data) {
+      cells.push_back(static_cast<double>(value));
+    }
+    data["data"] = cells;
+    emitFrame(topic, "occupancy_grid_update", std::move(data));
+  }
+
+  // ------------------------------------------------------------- point cloud
+  //
+  // A PointCloud2 is a byte buffer with a field table. Only the fields that
+  // are actually asked for are read: x and y for the position, z for the
+  // height (which is what the colour is made of) and intensity when the
+  // publisher sends one. Everything else in the buffer is skipped.
+  void encodeMessage(
+    const std::string & topic, const sensor_msgs::msg::PointCloud2 & message,
+    const Xform & xform)
+  {
+    const std::size_t count = static_cast<std::size_t>(message.width) * message.height;
+    int x_offset = -1, y_offset = -1, z_offset = -1, intensity_offset = -1;
+    int x_type = 0, y_type = 0, z_type = 0, intensity_type = 0;
+    for (const auto & field : message.fields) {
+      if (field.name == "x") {
+        x_offset = static_cast<int>(field.offset);
+        x_type = field.datatype;
+      } else if (field.name == "y") {
+        y_offset = static_cast<int>(field.offset);
+        y_type = field.datatype;
+      } else if (field.name == "z") {
+        z_offset = static_cast<int>(field.offset);
+        z_type = field.datatype;
+      } else if (field.name == "intensity") {
+        intensity_offset = static_cast<int>(field.offset);
+        intensity_type = field.datatype;
+      }
+    }
+    if (x_offset < 0 || y_offset < 0) {
+      throw std::runtime_error("the point cloud has no x/y field");
+    }
+
+    const bool big_endian = message.is_bigendian;
+    const std::size_t step = message.point_step;
+    std::vector<double> points;
+    std::vector<double> heights;
+    std::vector<double> intensities;
+    points.reserve(count * 2);
+    for (std::size_t index = 0; index < count; ++index) {
+      const std::size_t base = index * step;
+      if (base + step > message.data.size()) {
+        break;
+      }
+      const double x = readScalar(message.data, base + x_offset, x_type, big_endian);
+      const double y = readScalar(message.data, base + y_offset, y_type, big_endian);
+      if (!std::isfinite(x) || !std::isfinite(y)) {
+        continue;  // a NaN point is a point that is not there
+      }
+      const Vec3 rotated = rotate(xform.q, Vec3{x, y, 0.0});
+      points.push_back(xform.t.x + rotated.x);
+      points.push_back(xform.t.y + rotated.y);
+      heights.push_back(z_offset >= 0
+        ? readScalar(message.data, base + z_offset, z_type, big_endian) : 0.0);
+      intensities.push_back(intensity_offset >= 0
+        ? readScalar(message.data, base + intensity_offset, intensity_type, big_endian) : 0.0);
+    }
+
+    json data;
+    data["frame"] = fixedFrame();
+    data["source_frame"] = message.header.frame_id;
+    data["stamp_ns"] = stampNs(message.header.stamp);
+    data["points"] = points;
+    data["heights"] = heights;
+    data["intensities"] = intensities;
+    // The envelope of the cloud: a cloud published in the sensor's own frame
+    // is only placed in the world by the transform, and this is where that
+    // placement shows.
+    double min_x = 0.0, min_y = 0.0, max_x = 0.0, max_y = 0.0;
+    if (!points.empty()) {
+      min_x = max_x = points[0];
+      min_y = max_y = points[1];
+      for (std::size_t i = 0; i + 1 < points.size(); i += 2) {
+        min_x = std::min(min_x, points[i]);
+        max_x = std::max(max_x, points[i]);
+        min_y = std::min(min_y, points[i + 1]);
+        max_y = std::max(max_y, points[i + 1]);
+      }
+    }
+    data["min_x"] = min_x;
+    data["min_y"] = min_y;
+    data["max_x"] = max_x;
+    data["max_y"] = max_y;
+    emitFrame(topic, "point_cloud2", std::move(data));
+  }
+
+  // readScalar reads one field of a point cloud row. The datatype numbers are
+  // the ones sensor_msgs/msg/PointField defines.
+  static double readScalar(
+    const std::vector<std::uint8_t> & data, std::size_t offset, int datatype,
+    bool big_endian)
+  {
+    const std::size_t size = (datatype == sensor_msgs::msg::PointField::FLOAT64 ||
+      datatype == sensor_msgs::msg::PointField::UINT64 ||
+      datatype == sensor_msgs::msg::PointField::INT64) ? 8 : 4;
+    if (offset + size > data.size()) {
+      return 0.0;
+    }
+    const auto * bytes = data.data() + offset;
+    switch (datatype) {
+      case sensor_msgs::msg::PointField::FLOAT32: {
+        std::uint32_t raw = 0;
+        std::memcpy(&raw, bytes, sizeof(raw));
+        if (big_endian) {
+          raw = ((raw & 0x000000ffu) << 24) | ((raw & 0x0000ff00u) << 8) |
+            ((raw & 0x00ff0000u) >> 8) | ((raw & 0xff000000u) >> 24);
+        }
+        float value = 0.0f;
+        std::memcpy(&value, &raw, sizeof(value));
+        return static_cast<double>(value);
+      }
+      case sensor_msgs::msg::PointField::FLOAT64: {
+        std::uint64_t raw = 0;
+        std::memcpy(&raw, bytes, sizeof(raw));
+        if (big_endian) {
+          raw = ((raw & 0x00000000000000ffull) << 56) |
+            ((raw & 0x000000000000ff00ull) << 40) |
+            ((raw & 0x0000000000ff0000ull) << 24) |
+            ((raw & 0x00000000ff000000ull) << 8) |
+            ((raw & 0x000000ff00000000ull) >> 8) |
+            ((raw & 0x0000ff0000000000ull) >> 24) |
+            ((raw & 0x00ff000000000000ull) >> 40) |
+            ((raw & 0xff00000000000000ull) >> 56);
+        }
+        double value = 0.0;
+        std::memcpy(&value, &raw, sizeof(value));
+        return value;
+      }
+      case sensor_msgs::msg::PointField::INT32: {
+        std::int32_t value = 0;
+        std::memcpy(&value, bytes, sizeof(value));
+        return static_cast<double>(value);
+      }
+      case sensor_msgs::msg::PointField::UINT32: {
+        std::uint32_t value = 0;
+        std::memcpy(&value, bytes, sizeof(value));
+        return static_cast<double>(value);
+      }
+      case sensor_msgs::msg::PointField::INT16: {
+        std::int16_t value = 0;
+        std::memcpy(&value, bytes, sizeof(value));
+        return static_cast<double>(value);
+      }
+      case sensor_msgs::msg::PointField::UINT16: {
+        std::uint16_t value = 0;
+        std::memcpy(&value, bytes, sizeof(value));
+        return static_cast<double>(value);
+      }
+      case sensor_msgs::msg::PointField::INT8: {
+        return static_cast<double>(static_cast<std::int8_t>(*bytes));
+      }
+      case sensor_msgs::msg::PointField::UINT8: {
+        return static_cast<double>(*bytes);
+      }
+      default:
+        return 0.0;
+    }
   }
 
   // ----------------------------------------------------------------- markers
