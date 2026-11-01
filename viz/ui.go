@@ -80,10 +80,12 @@ type shell struct {
 	// the drawing.
 	split     *container.Split
 	accordion *widget.Accordion
-	// displayList is the tree of displays. Each row is one display: a tick
-	// shows it, the name says what it is.
-	displayList *widget.List
-	topicNames  []string
+	// displayRows is the tree of displays, rebuilt when the list changes:
+	// a VBox of rows rather than a List, because a List inside an accordion
+	// has to have a fixed height and this panel does not.
+	displayRows     *fyne.Container
+	rebuildDisplays func()
+	topicNames      []string
 	// selectedDisplay is the display whose properties are on screen.
 	selectedDisplay string
 	// graphNames and graphTypes are what the sidecar says the graph holds.
@@ -218,34 +220,10 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	// this", the name says what it draws. The topic it reads is a property of
 	// the display, not a row of its own - that is the rviz arrangement, and
 	// it is why a display can be pointed at another topic later.
-	displayList := widget.NewList(
-		func() int { return len(sh.topicNames) },
-		func() fyne.CanvasObject {
-			return container.NewHBox(
-				widget.NewCheck("", nil),
-				widget.NewLabel("display"),
-			)
-		},
-		func(i widget.ListItemID, o fyne.CanvasObject) {
-			if i >= len(sh.topicNames) {
-				return
-			}
-			name := sh.topicNames[i]
-			row := o.(*fyne.Container)
-			check := row.Objects[0].(*widget.Check)
-			label := row.Objects[1].(*widget.Label)
-			topic, known := sh.cfg.Topics[name]
-			// The callback is replaced on every update, because the list
-			// reuses one object for many rows.
-			check.OnChanged = nil
-			check.SetChecked(!known || topic.enabled())
-			check.OnChanged = func(on bool) { sh.setTopicEnabled(name, on) }
-			label.SetText(fmt.Sprintf("%-22s %s", typeShort(topic.Type), name))
-			check.Refresh()
-			label.Refresh()
-		},
-	)
-	sh.displayList = displayList
+	displayRows := container.NewVBox()
+	displayScroll := container.NewVScroll(displayRows)
+	displayScroll.SetMinSize(fyne.NewSize(0, 200))
+	sh.displayRows = displayRows
 
 	// --- properties -------------------------------------------------------
 	// The property inspector: what the selected display draws and how it
@@ -313,12 +291,37 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		propStatus.SetText("")
 	}
 
-	displayList.OnSelected = func(id widget.ListItemID) {
-		if id < 0 || id >= len(sh.topicNames) {
-			return
+	// rebuildDisplays redraws the rows: the selected one is highlighted, each
+	// has its own tick, and the whole list is rebuilt only when it changes.
+	rebuildDisplays := func() {
+		displayRows.Objects = displayRows.Objects[:0]
+		if len(sh.topicNames) == 0 {
+			displayRows.Add(widget.NewLabel(tr("(no displays - press Add)", "（还没有显示，点“添加”）")))
 		}
-		loadProps(sh.topicNames[id])
+		for _, name := range sh.topicNames {
+			name := name
+			topic, known := sh.cfg.Topics[name]
+			check := widget.NewCheck("", nil)
+			check.SetChecked(!known || topic.enabled())
+			check.OnChanged = func(on bool) {
+				sh.setTopicEnabled(name, on)
+			}
+			button := widget.NewButton(fmt.Sprintf("%-18s %s", typeShort(topic.Type), name), func() {
+				loadProps(name)
+				rebuildDisplays()
+			})
+			button.Alignment = widget.ButtonAlignmentLeading
+			if sh.selectedDisplay == name {
+				button.Importance = widget.HighImportance
+			} else {
+				button.Importance = widget.LowImportance
+			}
+			displayRows.Add(container.NewBorder(nil, nil, check, nil, button))
+		}
+		displayRows.Refresh()
 	}
+	sh.rebuildDisplays = rebuildDisplays
+	rebuildDisplays()
 
 	applyProps := func() {
 		name := sh.selectedDisplay
@@ -370,7 +373,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			}
 		}
 		sh.cfg.Topics[name] = topic
-		displayList.Refresh()
+		sh.rebuildDisplays()
 		// The viewport holds a copy of the per-topic styles; give it the new
 		// one and let it rebuild the map textures.
 		v.applyView(&sh.cfg)
@@ -402,7 +405,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		if sh.feed != nil {
 			sh.feed.setEnabled(name, false)
 		}
-		displayList.Refresh()
+		sh.rebuildDisplays()
 		sh.announce(fmt.Sprintf(tr("removed %s", "已移除 %s"), name), nil)
 		if sh.autoSave != nil {
 			sh.autoSave()
@@ -599,7 +602,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 				sh.cfg.Topics[name] = TopicConfig{Type: typeName}
 				sh.topicNames = append(sh.topicNames, name)
 				sort.Strings(sh.topicNames)
-				displayList.Refresh()
+				sh.rebuildDisplays()
 				if sh.feed != nil {
 					sh.feed.resubscribe()
 				}
@@ -638,7 +641,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	}
 
 	displays := container.NewVBox(
-		displayList,
+		displayScroll,
 		container.NewHBox(
 			widget.NewButtonWithIcon(tr("Add", "添加"), theme.ContentAddIcon(), addDisplay),
 			widget.NewButtonWithIcon("", theme.ViewRefreshIcon(), func() {
@@ -809,7 +812,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		sh.cfg = fresh
 		v.applyView(&fresh)
 		sh.topicNames = sortedTopicNames(&fresh)
-		displayList.Refresh()
+		sh.rebuildDisplays()
 		frameEntry.SetText(fixedFrameOf(&fresh))
 		gridEntry.SetText(formatNumber(float64(gridCellOf(&fresh))))
 		backgroundEntry.SetText(backgroundOf(&fresh))
@@ -984,12 +987,8 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			sh.announce(fmt.Sprintf("nothing at %.2f, %.2f", x, y), nil)
 			return
 		}
-		for i, entry := range sh.topicNames {
-			if entry == name {
-				displayList.Select(i)
-				break
-			}
-		}
+		loadProps(name)
+		sh.rebuildDisplays()
 		v.setPicked(x, y)
 		sh.announce(fmt.Sprintf("selected %s at %.2f, %.2f", name, x, y), nil)
 	}
@@ -999,11 +998,9 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 
 	// Re-select the display that was open when the window last closed.
 	if name := sh.cfg.UI.SelectedDisplay; name != "" {
-		for i, entry := range sh.topicNames {
-			if entry == name {
-				displayList.Select(i)
-				break
-			}
+		if _, known := sh.cfg.Topics[name]; known {
+			loadProps(name)
+			sh.rebuildDisplays()
 		}
 	}
 
