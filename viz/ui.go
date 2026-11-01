@@ -167,11 +167,8 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	// The diagnostics button sits at the right edge of the status bar: when
 	// something is not on screen, what a bug report needs is the graph the
 	// sidecar sees and the displays this window holds, as text.
-	diagnosticsButton := widget.NewButtonWithIcon(tr("Copy diagnostics", "复制诊断信息"), theme.ContentCopyIcon(), func() {
-		text := sh.diagnosticsText()
-		sh.win.Clipboard().SetContent(text)
-		sh.announce(fmt.Sprintf(tr("diagnostics copied (%d bytes)", "诊断信息已复制（%d 字节）"), len(text)), nil)
-	})
+	diagnosticsButton := widget.NewButtonWithIcon(tr("Copy diagnostics", "复制诊断信息"),
+		theme.ContentCopyIcon(), func() { sh.copyDiagnostics() })
 	status := container.NewHBox(
 		statusMsg,
 		widget.NewSeparator(),
@@ -506,18 +503,26 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		modeSelect := widget.NewRadioGroup([]string{modeByType, modeByTopic},
 			func(v string) {
 				mode = v
-				typeTab.Visible = v == modeByType
-				anyTab.Visible = v == modeByTopic
-				typeTab.Refresh()
-				anyTab.Refresh()
+				if v == modeByType {
+					typeTab.Show()
+					anyTab.Hide()
+				} else {
+					typeTab.Hide()
+					anyTab.Show()
+				}
 			})
 		modeSelect.Horizontal = true
-		typeTab.Visible = true
-		anyTab.Visible = false
+		typeTab.Show()
+		anyTab.Hide()
 		body := container.NewStack(typeTab, anyTab)
 
+		// The dialog is modal, which greys out the window behind it - so the
+		// status-bar diagnostics button cannot be reached while this is open.
+		// A second one belongs here for exactly that reason.
+		dialogCopy := widget.NewButtonWithIcon(tr("Copy diagnostics", "复制诊断信息"),
+			theme.ContentCopyIcon(), func() { sh.copyDiagnostics() })
 		addDialog = dialog.NewCustomConfirm(tr("Add a display", "添加显示"), tr("Add", "添加"), tr("Cancel", "取消"),
-			container.NewVBox(modeSelect, body),
+			container.NewVBox(modeSelect, body, dialogCopy),
 			func(confirmed bool) {
 				if !confirmed {
 					return
@@ -584,9 +589,6 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 				}
 			})
 		}()
-		// Keep the body the same height whichever half is showing, so the
-		// dialog does not jump when the radio changes.
-		body.Resize(fyne.NewSize(360, 150))
 	}
 
 	displays := container.NewVBox(
@@ -919,6 +921,13 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		w.Close()
 	})
 	return sh
+}
+
+// copyDiagnostics puts the diagnostics text on the clipboard.
+func (s *shell) copyDiagnostics() {
+	text := s.diagnosticsText()
+	s.win.Clipboard().SetContent(text)
+	s.announce(fmt.Sprintf(tr("diagnostics copied (%d bytes)", "诊断信息已复制（%d 字节）"), len(text)), nil)
 }
 
 // diagnosticsText is what "Copy diagnostics" puts on the clipboard: the facts
