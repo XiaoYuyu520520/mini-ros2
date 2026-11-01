@@ -519,11 +519,14 @@ func drawPose(target *image.RGBA, x, y, yaw float64, ppm float64, centerX, cente
 	if body < 8 {
 		body = 8
 	}
-	// A point given as (forward, left) in the arrow's own frame.
+	// A point given as (forward, left) in the arrow's own frame, in body
+	// lengths; this is where the body size is applied.
 	point := func(forward, left float64) [2]float64 {
+		f := forward * body
+		l := left * body
 		return [2]float64{
-			screenX + cos*forward - sin*left,
-			screenY + sin*forward + cos*left,
+			screenX + cos*f - sin*l,
+			screenY + sin*f + cos*l,
 		}
 	}
 	// The head is long and narrow (a 20 degree half angle) so the tip is a
