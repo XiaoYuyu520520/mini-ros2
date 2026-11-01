@@ -506,6 +506,9 @@ func drawArrow(
 
 // drawPose paints a robot: a triangle for the body and an arrow for the
 // heading, plus the covariance ellipse when there is one.
+// drawPose paints a robot pose: a filled arrow with a dark outline, so it
+// reads on a white map as well as on a dark grid. The outline is drawn first
+// and the tint fills a slightly smaller copy of the same polygon.
 func drawPose(target *image.RGBA, x, y, yaw float64, ppm float64, centerX, centerY float64, width, height int, tint color.RGBA, size float64) {
 	screenX := (x-centerX)*ppm + float64(width)/2
 	screenY := (centerY-y)*ppm + float64(height)/2
@@ -514,19 +517,98 @@ func drawPose(target *image.RGBA, x, y, yaw float64, ppm float64, centerX, cente
 	angle := -yaw
 	cos, sin := math.Cos(angle), math.Sin(angle)
 	body := size * math.Max(1, ppm*0.12)
-	// A triangle with the tip ahead.
-	tipX := screenX + cos*body
-	tipY := screenY + sin*body
-	leftX := screenX + math.Cos(angle+2.094)*body
-	leftY := screenY + math.Sin(angle+2.094)*body
-	rightX := screenX + math.Cos(angle-2.094)*body
-	rightY := screenY + math.Sin(angle-2.094)*body
-	fillTriangle(target, tipX, tipY, leftX, leftY, rightX, rightY, tint, width, height)
-	// A line for the heading, twice the body length.
-	drawLine(
-		target, screenX, screenY,
-		screenX+cos*body*2, screenY+sin*body*2,
-		tint, math.Max(1, size/4), width, height)
+	if body < 8 {
+		body = 8
+	}
+	// A point given as (forward, left) in the arrow's own frame.
+	point := func(forward, left float64) [2]float64 {
+		return [2]float64{
+			screenX + cos*forward - sin*left,
+			screenY + sin*forward + cos*left,
+		}
+	}
+	// A notched arrow: tip, two head corners, a waist, and a short tail.
+	outer := [][2]float64{
+		point(1.00, 0.00),
+		point(0.52, 0.52),
+		point(0.40, 0.18),
+		point(-0.85, 0.18),
+		point(-0.85, -0.18),
+		point(0.40, -0.18),
+		point(0.52, -0.52),
+	}
+	// The dark rim gives the shape an edge on a light background.
+	fillPolygon(target, outer, color.RGBA{30, 30, 30, 255}, width, height)
+	inner := make([][2]float64, len(outer))
+	for i, vertex := range outer {
+		inner[i] = [2]float64{
+			screenX + (vertex[0]-screenX)*0.78,
+			screenY + (vertex[1]-screenY)*0.78,
+		}
+	}
+	fillPolygon(target, inner, tint, width, height)
+	fillCircle(target, screenX, screenY, math.Max(1.5, body*0.10), tint, width, height)
+}
+
+// fillPolygon paints a convex or concave polygon with the even-odd rule: one
+// span per scan line, which is all a shape this size needs.
+func fillPolygon(target *image.RGBA, points [][2]float64, tint color.RGBA, width, height int) {
+	if len(points) < 3 {
+		return
+	}
+	minY, maxY := points[0][1], points[0][1]
+	for _, point := range points[1:] {
+		minY = math.Min(minY, point[1])
+		maxY = math.Max(maxY, point[1])
+	}
+	first := int(math.Floor(minY))
+	last := int(math.Ceil(maxY))
+	if first < 0 {
+		first = 0
+	}
+	if last >= height {
+		last = height - 1
+	}
+	for y := first; y <= last; y++ {
+		scan := float64(y) + 0.5
+		var crossings []float64
+		for i := 0; i < len(points); i++ {
+			a := points[i]
+			b := points[(i+1)%len(points)]
+			if (a[1] <= scan && b[1] > scan) || (b[1] <= scan && a[1] > scan) {
+				t := (scan - a[1]) / (b[1] - a[1])
+				crossings = append(crossings, a[0]+t*(b[0]-a[0]))
+			}
+		}
+		sort.Float64s(crossings)
+		for i := 0; i+1 < len(crossings); i += 2 {
+			from := int(math.Round(crossings[i]))
+			to := int(math.Round(crossings[i+1]))
+			for x := from; x <= to; x++ {
+				if x >= 0 && x < width {
+					target.Set(x, y, tint)
+				}
+			}
+		}
+	}
+}
+
+// fillCircle paints a small filled disc; the pose's centre dot uses it.
+func fillCircle(target *image.RGBA, centreX, centreY, radius float64, tint color.RGBA, width, height int) {
+	first := int(math.Floor(centreY - radius))
+	last := int(math.Ceil(centreY + radius))
+	for y := first; y <= last; y++ {
+		for x := int(math.Floor(centreX - radius)); x <= int(math.Ceil(centreX+radius)); x++ {
+			if x < 0 || y < 0 || x >= width || y >= height {
+				continue
+			}
+			dx := float64(x) + 0.5 - centreX
+			dy := float64(y) + 0.5 - centreY
+			if dx*dx+dy*dy <= radius*radius {
+				target.Set(x, y, tint)
+			}
+		}
+	}
 }
 
 func fillTriangle(target *image.RGBA, x0, y0, x1, y1, x2, y2 float64, tint color.RGBA, width, height int) {

@@ -278,14 +278,17 @@ func (v *viewport) drawToolPreview(img *image.RGBA, ppm float64, w, h int) {
 	if math.Hypot(dx, dy) > 0.15 {
 		yaw = math.Atan2(dy, dx)
 	}
+	// A thin guide from the press point to the pointer, and the arrow itself
+	// at the press point: that is the pose the release will publish, so the
+	// preview and the result cannot disagree.
 	drawLine(
 		img,
 		(v.toolDrag.startX-v.cx)*ppm+float64(w)/2,
 		(v.cy-v.toolDrag.startY)*ppm+float64(h)/2,
 		(v.toolDrag.endX-v.cx)*ppm+float64(w)/2,
 		(v.cy-v.toolDrag.endY)*ppm+float64(h)/2,
-		tint, 2, w, h)
-	drawPose(img, v.toolDrag.endX, v.toolDrag.endY, yaw, ppm, v.cx, v.cy, w, h, tint, 14)
+		tint, 1, w, h)
+	drawPose(img, v.toolDrag.startX, v.toolDrag.startY, yaw, ppm, v.cx, v.cy, w, h, tint, 18)
 }
 
 // drawPicked marks the world point the Select tool resolved: a ring plus a
