@@ -97,12 +97,20 @@ Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy RemoteSigned
 </div>
 
 **如果 zip 是从浏览器下载的**，文件会带「来自 Internet」的标记（Mark-of-the-Web），
-`RemoteSigned` 下仍可能被拦。解压后对脚本解除锁定：
+`RemoteSigned` 下**照样会被拦**，而且报错说的是「未进行数字签名」：
 
 ```powershell
-Get-ChildItem -Path .\start, .\bridge -Recurse -Filter *.ps1 -ErrorAction SilentlyContinue |
-  Unblock-File
+.: 无法加载文件 ...\加载模拟ROS环境变量.ps1。文件 ... 未进行数字签名。无法在当前系统上运行此脚本。
 ```
+
+这是 Mark-of-the-Web 造成的，**改执行策略解决不了**（`RemoteSigned` 依然拒绝它）。
+解压后把整棵目录的锁定解除：
+
+```powershell
+Get-ChildItem -Path . -Recurse -File | Unblock-File
+```
+
+之后再点源即可。（`Unblock-File` 只清掉那个标记，不改脚本内容，也不改系统设置。）
 
 **只想这次临时绕过**（关窗口即失效，不改系统设置）：
 
@@ -143,41 +151,17 @@ ros2 topic list -t
 
 <div class="callout note">
 <span class="label">提示</span>
-<p>如果 <code>ros2</code> 报「不是内部或外部命令」，说明<strong>没点源</strong>，
-或者用了 <code>.\加载模拟ROS环境变量.ps1</code>（执行，不是点源）。
+<p>如果 <code>ros2</code> 报「无法将 <code>ros2</code> 项识别为 cmdlet、函数、脚本文件或可运行程序的名称」，
+说明<strong>没点源</strong>，或者用了 <code>.\加载模拟ROS环境变量.ps1</code>（执行，不是点源）。
 再点一次 <code>. .\start\加载模拟ROS环境变量.ps1</code> 即可。</p>
 </div>
-
-### 用 cmd 的话
-
-```bat
-cd /d E:\path\to\mini-ros2
-call bridge\windows\bridge_env.bat
-ros2 topic list -t
-```
-
-<div class="callout note">
-<span class="label">注意</span>
-<p><code>.bat</code> 里的 <code>set</code> 只作用于它自己那个 cmd 子进程，子进程一退环境就跟着走了，
-所以在 cmd 里必须用 <code>call</code> 而不是直接执行。</p>
-</div>
-
-### 不想点源：开一个已经准备好的窗口
-
-```powershell
-.\bridge\windows\ros2_shell.bat
-```
-
-它会开一个新的 PowerShell 窗口，<code>ros2.ps1</code> 已经在里面点源好了。
-子进程改不了你当前会话的变量，所以「bat 一键拿到完整环境」只有开新窗口这一条路。
 
 ### 环境是临时的
 
 <div class="callout note">
 <span class="label">提示</span>
 <p>加载进去的东西只影响<strong>当前这个窗口</strong>：<code>PATH</code>、共享内存几何、
-SDK 配置、日志级别。关掉窗口或 <code>endlocal</code> 就恢复原样 ——
-不写注册表、不改系统 <code>PATH</code>。</p>
+SDK 配置、日志级别。关掉窗口就恢复原样 —— 不写注册表、不改系统 <code>PATH</code>。</p>
 </div>
 
 <a id="verify"></a>
