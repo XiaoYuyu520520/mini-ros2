@@ -293,7 +293,8 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 
 	// rebuildDisplays redraws the rows: the selected one is highlighted, each
 	// has its own tick, and the whole list is rebuilt only when it changes.
-	rebuildDisplays := func() {
+	var rebuildDisplays func()
+	rebuildDisplays = func() {
 		displayRows.Objects = displayRows.Objects[:0]
 		if len(sh.topicNames) == 0 {
 			displayRows.Add(widget.NewLabel(tr("(no displays - press Add)", "（还没有显示，点“添加”）")))
@@ -310,7 +311,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 				loadProps(name)
 				rebuildDisplays()
 			})
-			button.Alignment = widget.ButtonAlignmentLeading
+			button.Alignment = widget.ButtonAlignLeading
 			if sh.selectedDisplay == name {
 				button.Importance = widget.HighImportance
 			} else {
