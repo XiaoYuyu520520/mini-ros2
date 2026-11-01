@@ -141,7 +141,7 @@ viewer 发</strong>：不要再对同一通道跑 <code>ros2 topic pub</code>，
     }
   },
   "display": {
-    "laser_scan": { "color": "#00ff88", "size": 2.5 },
+    "laser_scan": { "color": "#f44336", "size": 6 },
     "path": { "color": "#ff4444", "width": 2.5 },
     "pose": { "color": "#ffcc00", "size": 14, "covariance": true }
   },

@@ -219,7 +219,7 @@ func defaultConfig() Config {
 				FreeColor: "#f2f2f2", Occupied: "#202020",
 				UnknownColor: "#7a7a7a", Alpha: 0.85,
 			},
-			LaserScan: LaserScanStyle{Color: "#00ff88", Size: 2.5},
+			LaserScan: LaserScanStyle{Color: "#f44336", Size: 6},
 			Path:      PathStyle{Color: "#ff4444", Width: 2.5},
 			Pose:      PoseStyle{Color: "#ffcc00", Size: 14, Covariance: true},
 			Costmap: CostmapStyle{

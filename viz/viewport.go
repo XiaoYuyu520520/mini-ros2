@@ -205,9 +205,16 @@ func (v *viewport) render() {
 	minX, maxX := v.cx-halfW, v.cx+halfW
 	minY, maxY := v.cy-halfH, v.cy+halfH
 
+	// The grid and the axes have to work on a white background as well as on
+	// a dark one: a fixed dark grey grid disappears on white, and a dark red
+	// axis barely reads. The colours follow the background's brightness.
+	light := backgroundIsLight(v.bg)
 	line := color.RGBA{52, 52, 52, 255}
-	axisX := color.RGBA{120, 40, 40, 255}
-	axisY := color.RGBA{40, 110, 40, 255}
+	axisX := color.RGBA{220, 50, 50, 255}
+	axisY := color.RGBA{30, 150, 50, 255}
+	if light {
+		line = color.RGBA{205, 205, 205, 255}
+	}
 
 	grid := v.gridCellM
 	// Thin the grid out when a cell would be smaller than a few pixels, so a
@@ -220,28 +227,34 @@ func (v *viewport) render() {
 	first := math.Ceil(minX/grid) * grid
 	for x := first; x <= maxX; x += grid {
 		px := int(math.Round((x - minX) * ppm))
-		c := line
-		if math.Abs(x) < grid*0.001 {
-			c = axisY
-		}
-		drawVLine(img, px, c)
+		drawVLine(img, px, line)
 	}
 	first = math.Ceil(minY/grid) * grid
 	for y := first; y <= maxY; y += grid {
 		py := int(math.Round((maxY - y) * ppm)) // world y up, bitmap y down
-		c := line
-		if math.Abs(y) < grid*0.001 {
-			c = axisX
-		}
-		drawHLine(img, py, c)
+		drawHLine(img, py, line)
 	}
 
-	// A faint crosshair at the world origin, so "empty" still has a reference.
+	v.drawScene(img, ppm, w, h)
+
+	// The two axes go on top of the scene: a map or a cloud covering the
+	// origin must not hide the only fixed reference the grid has.
+	axisWidth := 2
+	if px := int(math.Round((0 - minX) * ppm)); px >= 0 && px < w {
+		drawVLineW(img, px, axisY, axisWidth)
+	}
+	if py := int(math.Round((maxY - 0) * ppm)); py >= 0 && py < h {
+		drawHLineW(img, py, axisX, axisWidth)
+	}
+	// A small crosshair at the origin, so "empty" still has a reference.
 	originX := int(math.Round((0 - minX) * ppm))
 	originY := int(math.Round((maxY - 0) * ppm))
-	drawPlus(img, originX, originY, color.RGBA{90, 90, 140, 255})
+	crosshair := color.RGBA{90, 90, 140, 255}
+	if light {
+		crosshair = color.RGBA{60, 60, 160, 255}
+	}
+	drawPlus(img, originX, originY, crosshair)
 
-	v.drawScene(img, ppm, w, h)
 	v.drawToolPreview(img, ppm, w, h)
 	v.drawPicked(img, ppm, w, h)
 
@@ -792,6 +805,27 @@ func (v *viewport) Fit() {
 func (v *viewport) Zoom() float64 { return v.scale }
 
 // --- drawing helpers -------------------------------------------------------
+
+// backgroundIsLight decides whether the grid needs dark or light lines.
+func backgroundIsLight(c color.Color) bool {
+	r, g, b, _ := c.RGBA()
+	lum := (299*float64(r) + 587*float64(g) + 114*float64(b)) / 1000
+	return lum > 0x8000
+}
+
+// drawVLineW and drawHLineW draw a line a few pixels wide; the axes are
+// thicker than the grid so they read as axes and not as another cell edge.
+func drawVLineW(img *image.RGBA, x int, c color.Color, width int) {
+	for i := 0; i < width; i++ {
+		drawVLine(img, x+i, c)
+	}
+}
+
+func drawHLineW(img *image.RGBA, y int, c color.Color, width int) {
+	for i := 0; i < width; i++ {
+		drawHLine(img, y+i, c)
+	}
+}
 
 func drawVLine(img *image.RGBA, x int, c color.Color) {
 	if x < 0 || x >= img.Bounds().Dx() {

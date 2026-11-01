@@ -40,7 +40,7 @@
       "_comment": "真雷达是 best_effort；写成 reliable 一条也收不到。",
       "type": "sensor_msgs/msg/LaserScan",
       "qos": { "reliability": "best_effort", "durability": "volatile", "depth": 5 },
-      "color": "#00ff88",
+      "color": "#f44336",
       "point_size": 2,
       "enabled": true
     },

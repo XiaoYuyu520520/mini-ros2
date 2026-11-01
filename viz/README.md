@@ -87,14 +87,14 @@ odom 里的机器人。
     "/scan": {
       "type": "sensor_msgs/msg/LaserScan",
       "qos": { "reliability": "best_effort", "depth": 5 },
-      "color": "#00ff88"
+      "color": "#f44336"
     }
   },
   "display": {
     "_comment": "按类型的默认样式；话题里的 color/size/alpha 是逐话题覆盖",
     "occupancy_grid": { "free_color": "#f2f2f2", "occupied_color": "#202020",
       "unknown_color": "#7a7a7a", "alpha": 0.85 },
-    "laser_scan": { "color": "#00ff88", "size": 2.5 },
+    "laser_scan": { "color": "#f44336", "size": 2.5 },
     "path": { "color": "#ff4444", "width": 2.5 },
     "pose": { "color": "#ffcc00", "size": 14, "covariance": true }
   },
