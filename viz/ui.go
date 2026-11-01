@@ -403,6 +403,10 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		kindSelect.SetSelected(kindLabels[0])
 		topicSelect := widget.NewSelect(nil, nil)
 		hint := widget.NewLabel("")
+		// how many topics the graph offered for the selected kind. The
+		// dialog keeps it so a later look at the graph can say "still none"
+		// instead of "none yet", which are different problems.
+		loaded := false
 
 		refreshTopics := func() {
 			typeName := ""
@@ -416,10 +420,14 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			topicSelect.Options = options
 			topicSelect.ClearSelected()
 			topicSelect.Refresh()
-			if len(options) == 0 {
-				hint.SetText(fmt.Sprintf("no %s topic in the graph yet", typeShort(typeName)))
-			} else {
+			if len(options) > 0 {
+				topicSelect.SetSelected(options[0])
 				hint.SetText(fmt.Sprintf("%d topic(s) of this type", len(options)))
+			} else if loaded {
+				hint.SetText(fmt.Sprintf("no %s topic in the graph (press Refresh to look again)",
+					typeShort(typeName)))
+			} else {
+				hint.SetText("looking for topics...")
 			}
 		}
 		kindSelect.OnChanged = func(string) { refreshTopics() }
@@ -463,10 +471,26 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 				sh.announce(fmt.Sprintf("added %s (%s)", name, typeShort(typeName)), nil)
 			}, w)
 		addDialog.Show()
-		// The graph may have changed since the last look; ask again while the
-		// dialog is open.
+		// The graph may have changed since the last look; ask again now that
+		// the dialog is on screen, and refresh the topic list when the answer
+		// arrives. This is what makes the first Add on a fresh window show the
+		// topics that were already there.
 		go func() {
-			sh.fetchGraph(func() { refreshTopics() })
+			sh.fetchGraph(func(ok bool) {
+				loaded = ok
+				refreshTopics()
+				// A fresh window opens on "Map", and a graph without a map
+				// would show an empty topic list even though it has a scan.
+				// Jump to the first kind that does have a topic.
+				if ok && len(topicSelect.Options) == 0 {
+					for _, kind := range displayKinds {
+						if len(topicsOfType(kind.Type)) > 0 {
+							kindSelect.SetSelected(kind.Label)
+							break
+						}
+					}
+				}
+			})
 		}()
 	}
 
@@ -821,15 +845,19 @@ func backgroundOf(cfg *Config) string {
 
 // fetchGraph asks the sidecar what the graph holds and remembers it. The
 // topic list and the Add dialog both read that list.
-func (s *shell) fetchGraph(after func()) {
+func (s *shell) fetchGraph(after func(ok bool)) {
 	if s.feed == nil {
 		return
 	}
 	frames, err := s.feed.graphTopics()
 	if err != nil {
-		if after == nil {
-			fyne.Do(func() { s.announce("topic list failed", err) })
-		}
+		fyne.Do(func() {
+			if after != nil {
+				after(false)
+			} else {
+				s.announce("topic list failed", err)
+			}
+		})
 		return
 	}
 	names := make([]string, 0, len(frames))
@@ -849,7 +877,7 @@ func (s *shell) fetchGraph(after func()) {
 		s.graphNames = names
 		s.graphTypes = types
 		if after != nil {
-			after()
+			after(true)
 		}
 	})
 }
