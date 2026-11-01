@@ -723,22 +723,45 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	sh.accordion = accordion
 
 	// The panel is on the left and the viewport fills the rest, the way
-	// rviz has it.
-	split := container.NewHSplit(accordion, v)
+	// rviz has it. Folding the panel leaves a thin rail with one button, so
+	// the map gets the window without losing the way back.
+	var toggle func()
+	hideButton := widget.NewButtonWithIcon("", theme.NavigateBackIcon(), func() { toggle() })
+	expandButton := widget.NewButtonWithIcon("", theme.NavigateNextIcon(), func() { toggle() })
+	panel := container.NewBorder(
+		container.NewHBox(layout.NewSpacer(), hideButton), nil, nil, nil, accordion)
+	rail := container.NewVBox(expandButton)
+
+	split := container.NewHSplit(panel, v)
 	sh.split = split
 	sh.setViewOffset(sh.savedOffset)
 
-	sh.togglePanel = func() {
+	toggle = func() {
 		if sh.collapsed {
+			split.Leading = panel
 			sh.setViewOffset(sh.savedOffset)
 			sh.collapsed = false
 		} else {
 			sh.savedOffset = sh.viewOffset()
-			sh.collapseView()
+			split.Leading = rail
+			// The rail is a fixed number of pixels, which as a fraction
+			// depends on how wide the window is right now.
+			offset := 0.03
+			if canvas := sh.win.Canvas(); canvas != nil && canvas.Size().Width > 0 {
+				offset = 30 / float64(canvas.Size().Width)
+			}
+			if offset < 0.01 {
+				offset = 0.01
+			}
+			if offset > 0.12 {
+				offset = 0.12
+			}
+			split.SetOffset(offset)
 			sh.collapsed = true
 		}
 		split.Refresh()
 	}
+	sh.togglePanel = toggle
 	togglePanel := sh.togglePanel
 
 	// --- config: load / save ----------------------------------------------

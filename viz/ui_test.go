@@ -40,8 +40,8 @@ func TestPanelCollapseAndRestore(t *testing.T) {
 	if !sh.collapsed {
 		t.Fatal("collapsed flag not set")
 	}
-	if sh.viewOffset() < 0.99 {
-		t.Fatalf("panel did not collapse: viewport share %v", sh.viewOffset())
+	if sh.viewOffset() < 0.9 {
+		t.Fatalf("panel did not fold to a rail: viewport share %v", sh.viewOffset())
 	}
 
 	sh.togglePanel()
