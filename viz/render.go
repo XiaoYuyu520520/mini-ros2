@@ -506,9 +506,8 @@ func drawArrow(
 
 // drawPose paints a robot: a triangle for the body and an arrow for the
 // heading, plus the covariance ellipse when there is one.
-// drawPose paints a robot pose: a filled arrow with a dark outline, so it
-// reads on a white map as well as on a dark grid. The outline is drawn first
-// and the tint fills a slightly smaller copy of the same polygon.
+// drawPose paints a robot pose: a long, sharp-headed arrow with a dark rim,
+// so it reads on a white map as well as on a dark grid.
 func drawPose(target *image.RGBA, x, y, yaw float64, ppm float64, centerX, centerY float64, width, height int, tint color.RGBA, size float64) {
 	screenX := (x-centerX)*ppm + float64(width)/2
 	screenY := (centerY-y)*ppm + float64(height)/2
@@ -527,27 +526,32 @@ func drawPose(target *image.RGBA, x, y, yaw float64, ppm float64, centerX, cente
 			screenY + sin*forward + cos*left,
 		}
 	}
-	// A notched arrow: tip, two head corners, a waist, and a short tail.
+	// The head is long and narrow (a 20 degree half angle) so the tip is a
+	// point rather than a wedge; the notches keep it from looking like a
+	// plain triangle.
 	outer := [][2]float64{
-		point(1.00, 0.00),
-		point(0.52, 0.52),
-		point(0.40, 0.18),
-		point(-0.85, 0.18),
-		point(-0.85, -0.18),
-		point(0.40, -0.18),
-		point(0.52, -0.52),
+		point(1.30, 0.00),
+		point(0.48, 0.40),
+		point(0.40, 0.13),
+		point(-0.85, 0.13),
+		point(-0.85, -0.13),
+		point(0.40, -0.13),
+		point(0.48, -0.40),
 	}
-	// The dark rim gives the shape an edge on a light background.
-	fillPolygon(target, outer, color.RGBA{30, 30, 30, 255}, width, height)
-	inner := make([][2]float64, len(outer))
-	for i, vertex := range outer {
-		inner[i] = [2]float64{
-			screenX + (vertex[0]-screenX)*0.78,
-			screenY + (vertex[1]-screenY)*0.78,
-		}
+	fillPolygon(target, outer, tint, width, height)
+	strokePolygon(target, outer, color.RGBA{25, 25, 25, 255}, width, height)
+	fillCircle(target, screenX, screenY, math.Max(1.5, body*0.09), tint, width, height)
+	strokeCircle(target, screenX, screenY, math.Max(1.5, body*0.09), color.RGBA{25, 25, 25, 255}, width, height)
+}
+
+// strokePolygon draws the polygon's edge, so a filled shape keeps a rim even
+// when its tint is close to the background.
+func strokePolygon(target *image.RGBA, points [][2]float64, tint color.RGBA, width, height int) {
+	for i := range points {
+		a := points[i]
+		b := points[(i+1)%len(points)]
+		drawLine(target, a[0], a[1], b[0], b[1], tint, 1, width, height)
 	}
-	fillPolygon(target, inner, tint, width, height)
-	fillCircle(target, screenX, screenY, math.Max(1.5, body*0.10), tint, width, height)
 }
 
 // fillPolygon paints a convex or concave polygon with the even-odd rule: one
@@ -589,6 +593,18 @@ func fillPolygon(target *image.RGBA, points [][2]float64, tint color.RGBA, width
 					target.Set(x, y, tint)
 				}
 			}
+		}
+	}
+}
+
+// strokeCircle draws a ring around a small disc.
+func strokeCircle(target *image.RGBA, centreX, centreY, radius float64, tint color.RGBA, width, height int) {
+	for angle := 0.0; angle < 360; angle += 10 {
+		rad := angle * math.Pi / 180
+		x := int(math.Round(centreX + radius*math.Cos(rad)))
+		y := int(math.Round(centreY + radius*math.Sin(rad)))
+		if x >= 0 && y >= 0 && x < width && y < height {
+			target.Set(x, y, tint)
 		}
 	}
 }
