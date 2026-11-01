@@ -108,6 +108,12 @@ type TransportConfig struct {
 // the original labels.
 type UIConfig struct {
 	Language string `json:"language"`
+	// AddMode is which half of the Add dialog opens first: "topic" (the
+	// default) or "type".
+	AddMode string `json:"add_mode"`
+	// SelectedDisplay is the display whose properties were open when the
+	// window last closed.
+	SelectedDisplay string `json:"selected_display"`
 }
 
 type WindowConfig struct {
@@ -138,6 +144,11 @@ type ViewConfig struct {
 	GridCellM  float64    `json:"grid_cell_m"`
 	Zoom       ZoomConfig `json:"zoom"`
 	Pan        bool       `json:"pan"`
+	// CenterX/CenterY/Scale remember where the view was looking and how far
+	// in it was zoomed, so a restart opens on the same spot.
+	CenterX float64 `json:"center_x,omitempty"`
+	CenterY float64 `json:"center_y,omitempty"`
+	Scale   float64 `json:"scale,omitempty"`
 }
 
 // TopicConfig is one topic entry. `qos` is what the sidecar will hand the
@@ -181,7 +192,7 @@ type ToolConfig struct {
 func defaultConfig() Config {
 	cfg := Config{
 		Window: WindowConfig{Width: 1440, Height: 900, Center: true},
-		UI:     UIConfig{Language: "zh"},
+		UI:     UIConfig{Language: "zh", AddMode: "topic"},
 		Layout: LayoutConfig{
 			Grid:        [][]string{{"view", "panel"}},
 			Sizes:       []float64{3, 1},
@@ -294,6 +305,9 @@ func withDefaults(cfg Config, doc any) Config {
 
 	if cfg.UI.Language == "" {
 		cfg.UI.Language = def.UI.Language
+	}
+	if cfg.UI.AddMode == "" {
+		cfg.UI.AddMode = def.UI.AddMode
 	}
 
 	if cfg.Window.Width <= 0 {

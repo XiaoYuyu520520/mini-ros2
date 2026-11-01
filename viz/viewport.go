@@ -763,6 +763,24 @@ func (v *viewport) updateCursor(pos fyne.Position) {
 	}
 }
 
+// setView restores a remembered look: centre and zoom. A zero scale means
+// "nothing remembered" and Fit applies instead.
+func (v *viewport) setView(cx, cy, scale float64) {
+	if scale <= 0 {
+		v.Fit()
+		return
+	}
+	v.cx, v.cy = cx, cy
+	v.scale = clamp(scale, v.minScale, v.maxScale)
+	v.render()
+	v.img.Refresh()
+}
+
+// Center is the world point the viewport is looking at.
+func (v *viewport) Center() (float64, float64) {
+	return v.cx, v.cy
+}
+
 // Fit puts the origin in the middle at a moderate zoom.
 func (v *viewport) Fit() {
 	v.cx, v.cy = 0, 0

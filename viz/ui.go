@@ -90,6 +90,12 @@ type shell struct {
 	graphTypes map[string]string
 	graphLabel *widget.Label
 
+	// addMode is which half of the Add dialog opens first; it is remembered.
+	addMode string
+	// autoSave writes the configuration without a status message: the memory
+	// features (displays, dialog mode, view) must not depend on Ctrl+S.
+	autoSave func()
+
 	savedOffset  float64
 	collapsed    bool
 	togglePanel  func()
@@ -147,6 +153,16 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		cfg: *cfg, path: cfgPath, win: w, view: v,
 		topicNames: sortedTopicNames(cfg), savedOffset: cfg.Layout.PanelOffset,
 		graphTypes: map[string]string{},
+	}
+	switch cfg.UI.AddMode {
+	case "type":
+		sh.addMode = "type"
+	default:
+		sh.addMode = "topic"
+	}
+	// A restart opens where the last session was looking.
+	if view, ok := sh.cfg.Views["view"]; ok {
+		v.setView(view.CenterX, view.CenterY, view.Scale)
 	}
 	if sh.savedOffset <= 0 || sh.savedOffset >= 1 {
 		sh.savedOffset = 0.74
@@ -362,6 +378,9 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		}
 		propStatus.SetText(tr("applied", "已应用"))
 		sh.announce(fmt.Sprintf("properties of %s applied", name), nil)
+		if sh.autoSave != nil {
+			sh.autoSave()
+		}
 	}
 
 	removeDisplay := func() {
@@ -384,6 +403,9 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		}
 		displayList.Refresh()
 		sh.announce(fmt.Sprintf(tr("removed %s", "已移除 %s"), name), nil)
+		if sh.autoSave != nil {
+			sh.autoSave()
+		}
 	}
 
 	properties := container.NewVBox(
@@ -499,21 +521,35 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		// reads as noise. One radio decides which half of the stack shows.
 		modeByType := tr("By display type", "按显示类型")
 		modeByTopic := tr("By topic", "按话题")
-		mode := modeByType
+		mode := modeByTopic
+		if sh.addMode == "type" {
+			mode = modeByType
+		}
 		modeSelect := widget.NewRadioGroup([]string{modeByType, modeByTopic},
 			func(v string) {
 				mode = v
 				if v == modeByType {
+					sh.addMode = "type"
 					typeTab.Show()
 					anyTab.Hide()
 				} else {
+					sh.addMode = "topic"
 					typeTab.Hide()
 					anyTab.Show()
 				}
+				if sh.autoSave != nil {
+					sh.autoSave()
+				}
 			})
 		modeSelect.Horizontal = true
-		typeTab.Show()
-		anyTab.Hide()
+		modeSelect.SetSelected(mode)
+		if mode == modeByType {
+			typeTab.Show()
+			anyTab.Hide()
+		} else {
+			typeTab.Hide()
+			anyTab.Show()
+		}
 		body := container.NewStack(typeTab, anyTab)
 
 		// The dialog is modal, which greys out the window behind it - so the
@@ -561,6 +597,9 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 					sh.feed.resubscribe()
 				}
 				sh.announce(fmt.Sprintf(tr("added %s (%s)", "已添加 %s（%s）"), name, kind.Label), nil)
+				if sh.autoSave != nil {
+					sh.autoSave()
+				}
 			}, w)
 		addDialog.Show()
 		go func() {
@@ -634,6 +673,9 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		}
 		viewStatus.SetText(tr("applied", "已应用"))
 		sh.announce("view applied", nil)
+		if sh.autoSave != nil {
+			sh.autoSave()
+		}
 	}
 	viewPanel := container.NewVBox(
 		widget.NewLabel(tr("Fixed frame:", "固定坐标系:")),
@@ -766,6 +808,14 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	sh.save = func() error {
 		// The path in the title is the truth: Save writes where Load read.
 		return writeConfig(sh.path, sh.snapshot())
+	}
+	// autoSave is the same write without the status line: the memory features
+	// call it on every change, and a status message for each one would drown
+	// out everything else.
+	sh.autoSave = func() {
+		if err := writeConfig(sh.path, sh.snapshot()); err != nil {
+			sh.announce(tr("could not remember the workspace", "无法记住当前工作区"), err)
+		}
 	}
 
 	// --- toolbar ----------------------------------------------------------
@@ -911,12 +961,26 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		sh.publishPoint(x, y)
 	}
 
+	// Re-select the display that was open when the window last closed.
+	if name := sh.cfg.UI.SelectedDisplay; name != "" {
+		for i, entry := range sh.topicNames {
+			if entry == name {
+				displayList.Select(i)
+				break
+			}
+		}
+	}
+
 	sh.feed = newFeedController(v, scene, func() Config { return sh.cfg }, sidecarLabel, frameLabel)
 	sh.feed.onConnected = func() {
 		go func() { sh.fetchGraph(nil) }()
 	}
 	sh.feed.start()
 	w.SetCloseIntercept(func() {
+		// Closing is the last chance to remember the workspace.
+		if sh.save != nil {
+			_ = sh.save()
+		}
 		sh.feed.close()
 		w.Close()
 	})
@@ -1274,6 +1338,15 @@ func (s *shell) snapshot() Config {
 		}
 	}
 	cfg.Topics = topics
+
+	// The look of the view and the Add dialog's tab are part of "where I was",
+	// not of the workspace file, so they ride along in the same document.
+	view := cfg.Views["view"]
+	view.CenterX, view.CenterY = s.view.Center()
+	view.Scale = s.view.Zoom()
+	cfg.Views["view"] = view
+	cfg.UI.AddMode = s.addMode
+	cfg.UI.SelectedDisplay = s.selectedDisplay
 	return cfg
 }
 
@@ -1290,6 +1363,9 @@ func (s *shell) setTopicEnabled(name string, on bool) {
 	s.cfg.Topics[name] = topic
 	if s.feed != nil {
 		s.feed.setEnabled(name, on)
+	}
+	if s.autoSave != nil {
+		s.autoSave()
 	}
 }
 
