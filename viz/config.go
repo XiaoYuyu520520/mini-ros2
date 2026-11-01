@@ -17,6 +17,7 @@ import (
 // replaced by defaults in `loadConfig`.
 type Config struct {
 	Window    WindowConfig           `json:"window"`
+	UI        UIConfig               `json:"ui"`
 	Layout    LayoutConfig           `json:"layout"`
 	Views     map[string]ViewConfig  `json:"views"`
 	Topics    map[string]TopicConfig `json:"topics"`
@@ -103,6 +104,12 @@ type TransportConfig struct {
 	Namespace string `json:"namespace"`
 }
 
+// UIConfig is the language of the window. "zh" is the default; "en" keeps
+// the original labels.
+type UIConfig struct {
+	Language string `json:"language"`
+}
+
 type WindowConfig struct {
 	Width  int  `json:"width"`
 	Height int  `json:"height"`
@@ -174,6 +181,7 @@ type ToolConfig struct {
 func defaultConfig() Config {
 	cfg := Config{
 		Window: WindowConfig{Width: 1440, Height: 900, Center: true},
+		UI:     UIConfig{Language: "zh"},
 		Layout: LayoutConfig{
 			Grid:        [][]string{{"view", "panel"}},
 			Sizes:       []float64{3, 1},
@@ -283,6 +291,10 @@ func parseConfig(raw []byte) (Config, any, error) {
 // file provided: `"topics": {}` means an empty topic list, not the defaults.
 func withDefaults(cfg Config, doc any) Config {
 	def := defaultConfig()
+
+	if cfg.UI.Language == "" {
+		cfg.UI.Language = def.UI.Language
+	}
 
 	if cfg.Window.Width <= 0 {
 		cfg.Window.Width = def.Window.Width

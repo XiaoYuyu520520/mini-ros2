@@ -153,24 +153,24 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	}
 
 	// --- status bar -------------------------------------------------------
-	zoomLabel := widget.NewLabel("zoom: -")
+	zoomLabel := widget.NewLabel(tr("zoom: -", "缩放: -"))
 	cursorLabel := widget.NewLabel("x: -  y: -")
-	dpiLabel := widget.NewLabel("dpi: -")
+	dpiLabel := widget.NewLabel(tr("dpi: -", "缩放比: -"))
 	v.onCursor = func(x, y float64) {
 		cursorLabel.SetText(fmt.Sprintf("x: %+8.2f  y: %+8.2f", x, y))
 	}
 
-	statusMsg := widget.NewLabelWithStyle("ready", fyne.TextAlignLeading, fyne.TextStyle{Monospace: true})
-	sidecarLabel := widget.NewLabel("sidecar: starting")
-	frameLabel := widget.NewLabel("frame: " + fixedFrameOf(cfg))
-	toolLabel := widget.NewLabel("tool: none")
+	statusMsg := widget.NewLabelWithStyle(tr("ready", "就绪"), fyne.TextAlignLeading, fyne.TextStyle{Monospace: true})
+	sidecarLabel := widget.NewLabel(tr("sidecar: starting", "数据边车: 启动中"))
+	frameLabel := widget.NewLabel(tr("frame: ", "坐标系: ") + fixedFrameOf(cfg))
+	toolLabel := widget.NewLabel(tr("tool: none", "工具: 无"))
 	// The diagnostics button sits at the right edge of the status bar: when
 	// something is not on screen, what a bug report needs is the graph the
 	// sidecar sees and the displays this window holds, as text.
-	diagnosticsButton := widget.NewButtonWithIcon("Copy diagnostics", theme.ContentCopyIcon(), func() {
+	diagnosticsButton := widget.NewButtonWithIcon(tr("Copy diagnostics", "复制诊断信息"), theme.ContentCopyIcon(), func() {
 		text := sh.diagnosticsText()
 		sh.win.Clipboard().SetContent(text)
-		sh.announce(fmt.Sprintf("diagnostics copied (%d bytes)", len(text)), nil)
+		sh.announce(fmt.Sprintf(tr("diagnostics copied (%d bytes)", "诊断信息已复制（%d 字节）"), len(text)), nil)
 	})
 	status := container.NewHBox(
 		statusMsg,
@@ -194,8 +194,8 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	// The footer shows the zoom and the screen scale; several places change
 	// the zoom, so it is one function.
 	updateFooter := func() {
-		zoomLabel.SetText(fmt.Sprintf("zoom: %.1f px/m", v.Zoom()))
-		dpiLabel.SetText(fmt.Sprintf("dpi: %.2fx", v.dpiScale()))
+		zoomLabel.SetText(fmt.Sprintf(tr("zoom: %.1f px/m", "缩放: %.1f 像素/米"), v.Zoom()))
+		dpiLabel.SetText(fmt.Sprintf(tr("dpi: %.2fx", "缩放比: %.2fx"), v.dpiScale()))
 	}
 	updateFooter()
 
@@ -238,7 +238,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	// talks to the agent. Empty means "the type's default", which is why the
 	// fields carry the default in their placeholder.
 	propTitle := widget.NewLabelWithStyle("(no display selected)", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
-	propEnabled := widget.NewCheck("Enabled", nil)
+	propEnabled := widget.NewCheck(tr("Enabled", "显示"), nil)
 	propTopic := widget.NewSelect(nil, nil)
 	colorEntry := widget.NewEntry()
 	colorEntry.SetPlaceHolder("#00ff88 - empty = the type's colour")
@@ -309,7 +309,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	applyProps := func() {
 		name := sh.selectedDisplay
 		if name == "" {
-			propStatus.SetText("pick a display first")
+			propStatus.SetText(tr("pick a display first", "请先选择一个显示"))
 			return
 		}
 		topic, known := sh.cfg.Topics[name]
@@ -363,7 +363,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		if sh.feed != nil {
 			sh.feed.resubscribe()
 		}
-		propStatus.SetText("applied")
+		propStatus.SetText(tr("applied", "已应用"))
 		sh.announce(fmt.Sprintf("properties of %s applied", name), nil)
 	}
 
@@ -386,29 +386,29 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			sh.feed.setEnabled(name, false)
 		}
 		displayList.Refresh()
-		sh.announce(fmt.Sprintf("removed %s", name), nil)
+		sh.announce(fmt.Sprintf(tr("removed %s", "已移除 %s"), name), nil)
 	}
 
 	properties := container.NewVBox(
 		propTitle,
 		propEnabled,
-		widget.NewLabel("Topic:"),
+		widget.NewLabel(tr("Topic:", "话题:")),
 		propTopic,
-		widget.NewLabel("Color:"),
+		widget.NewLabel(tr("Color:", "颜色:")),
 		colorEntry,
-		widget.NewLabel("Size:"),
+		widget.NewLabel(tr("Size:", "大小:")),
 		sizeEntry,
-		widget.NewLabel("Alpha:"),
+		widget.NewLabel(tr("Alpha:", "透明度:")),
 		alphaEntry,
-		widget.NewLabel("History length:"),
+		widget.NewLabel(tr("History length:", "历史帧数:")),
 		historyEntry,
 		widget.NewSeparator(),
-		widget.NewLabel("QoS (used at the agent boundary):"),
+		widget.NewLabel(tr("QoS (used at the agent boundary):", "QoS（在 agent 边界生效）:")),
 		reliability,
 		durability,
 		depthEntry,
 		container.NewHBox(
-			widget.NewButton("Apply", applyProps),
+			widget.NewButton(tr("Apply", "应用"), applyProps),
 			widget.NewButtonWithIcon("", theme.ContentRemoveIcon(), removeDisplay),
 		),
 		propStatus,
@@ -444,21 +444,22 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			topicSelect.Refresh()
 			if len(options) > 0 {
 				topicSelect.SetSelected(options[0])
-				kindHint.SetText(fmt.Sprintf("%d topic(s) of this type", len(options)))
+				kindHint.SetText(fmt.Sprintf(tr("%d topic(s) of this type", "%d 个该类型的话题"), len(options)))
 			} else if kindLoaded {
-				kindHint.SetText(fmt.Sprintf("no %s topic in the graph (press Refresh to look again)",
+				kindHint.SetText(fmt.Sprintf(tr("no %s topic in the graph (press Refresh to look again)",
+					"图里没有 %s 话题（可按 Refresh 再看一次）"),
 					typeShort(typeName)))
 			} else {
-				kindHint.SetText("looking for topics...")
+				kindHint.SetText(tr("looking for topics...", "正在查找话题..."))
 			}
 		}
 		kindSelect.OnChanged = func(string) { refreshKindTopics() }
 		refreshKindTopics()
 
 		typeTab := container.NewVBox(
-			widget.NewLabel("Display type:"),
+			widget.NewLabel(tr("Display type:", "显示类型:")),
 			kindSelect,
-			widget.NewLabel("Topic:"),
+			widget.NewLabel(tr("Topic:", "话题:")),
 			topicSelect,
 			kindHint,
 		)
@@ -480,28 +481,28 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			if len(options) > 0 {
 				topicAny.SetSelected(options[0])
 			}
-			topicHint.SetText(fmt.Sprintf("%d topic(s) with a display", len(options)))
+			topicHint.SetText(fmt.Sprintf(tr("%d topic(s) with a display", "%d 个可显示的话题"), len(options)))
 		}
 		topicAny.OnChanged = func(name string) {
 			kind, ok := displayKindFor(sh.graphTypes[name])
 			if !ok {
-				topicHint.SetText("no display for this type")
+				topicHint.SetText(tr("no display for this type", "该类型没有对应的显示组件"))
 				return
 			}
-			topicHint.SetText("becomes a " + kind.Label + " display")
+			topicHint.SetText(fmt.Sprintf(tr("becomes a %s display", "将作为「%s」显示"), kind.Label))
 		}
 		anyTab := container.NewVBox(
-			widget.NewLabel("Topic:"),
+			widget.NewLabel(tr("Topic:", "话题:")),
 			topicAny,
 			topicHint,
 		)
 
 		tabs := container.NewAppTabs(
-			container.NewTabItem("By display type", typeTab),
-			container.NewTabItem("By topic", anyTab),
+			container.NewTabItem(tr("By display type", "按显示类型"), typeTab),
+			container.NewTabItem(tr("By topic", "按话题"), anyTab),
 		)
 
-		addDialog = dialog.NewCustomConfirm("Add a display", "Add", "Cancel", tabs,
+		addDialog = dialog.NewCustomConfirm(tr("Add a display", "添加显示"), tr("Add", "添加"), tr("Cancel", "取消"), tabs,
 			func(confirmed bool) {
 				if !confirmed {
 					return
@@ -520,16 +521,16 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 					}
 				}
 				if name == "" {
-					sh.announce("pick a topic first", nil)
+					sh.announce(tr("pick a topic first", "请先选择一个话题"), nil)
 					return
 				}
 				kind, ok := displayKindFor(typeName)
 				if !ok {
-					sh.announce(fmt.Sprintf("no display for %s", emptyAs(typeName, "(unknown type)")), nil)
+					sh.announce(fmt.Sprintf(tr("no display for %s", "%s 没有对应的显示组件"), emptyAs(typeName, "(unknown type)")), nil)
 					return
 				}
 				if _, known := sh.cfg.Topics[name]; known {
-					sh.announce(fmt.Sprintf("%s is already shown", name), nil)
+					sh.announce(fmt.Sprintf(tr("%s is already shown", "%s 已经显示"), name), nil)
 					return
 				}
 				sh.cfg.Topics[name] = TopicConfig{Type: typeName}
@@ -539,7 +540,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 				if sh.feed != nil {
 					sh.feed.resubscribe()
 				}
-				sh.announce(fmt.Sprintf("added %s (%s)", name, kind.Label), nil)
+				sh.announce(fmt.Sprintf(tr("added %s (%s)", "已添加 %s（%s）"), name, kind.Label), nil)
 			}, w)
 		addDialog.Show()
 		go func() {
@@ -573,7 +574,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	displays := container.NewVBox(
 		displayList,
 		container.NewHBox(
-			widget.NewButtonWithIcon("Add", theme.ContentAddIcon(), addDisplay),
+			widget.NewButtonWithIcon(tr("Add", "添加"), theme.ContentAddIcon(), addDisplay),
 			widget.NewButtonWithIcon("", theme.ViewRefreshIcon(), func() {
 				go func() { sh.fetchGraph(nil) }()
 			}),
@@ -611,19 +612,19 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		if sh.feed != nil {
 			sh.feed.applyFixedFrame(fresh)
 		}
-		viewStatus.SetText("applied")
+		viewStatus.SetText(tr("applied", "已应用"))
 		sh.announce("view applied", nil)
 	}
 	viewPanel := container.NewVBox(
-		widget.NewLabel("Fixed frame:"),
+		widget.NewLabel(tr("Fixed frame:", "固定坐标系:")),
 		frameEntry,
-		widget.NewLabel("Grid cell (m):"),
+		widget.NewLabel(tr("Grid cell (m):", "网格大小（米）:")),
 		gridEntry,
-		widget.NewLabel("Background:"),
+		widget.NewLabel(tr("Background:", "背景色:")),
 		backgroundEntry,
 		container.NewHBox(
-			widget.NewButton("Apply", applyView),
-			widget.NewButton("Fit view", func() {
+			widget.NewButton(tr("Apply", "应用"), applyView),
+			widget.NewButton(tr("Fit view", "适应窗口"), func() {
 				v.Fit()
 				updateFooter()
 			}),
@@ -638,11 +639,11 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	if namespace == "" {
 		namespace = "(default)"
 	}
-	graphLabel := widget.NewLabel("graph:   - topics")
+	graphLabel := widget.NewLabel(tr("graph:   - topics", "话题图:   - 个话题"))
 	sh.graphLabel = graphLabel
 	connection := container.NewVBox(
 		widget.NewLabel("shared memory namespace: "+namespace),
-		widget.NewLabel("agent:  see the status bar"),
+		widget.NewLabel(tr("agent:  see the status bar", "agent:  见状态栏")),
 		graphLabel,
 	)
 
@@ -650,10 +651,10 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	// rviz's order: the displays are at the top, the properties of the
 	// selected display right below them, then the other sections.
 	accordion := widget.NewAccordion(
-		widget.NewAccordionItem("Displays", displays),
-		widget.NewAccordionItem("Properties", properties),
-		widget.NewAccordionItem("View", viewPanel),
-		widget.NewAccordionItem("Connection", connection),
+		widget.NewAccordionItem(tr("Displays", "显示"), displays),
+		widget.NewAccordionItem(tr("Properties", "属性"), properties),
+		widget.NewAccordionItem(tr("View", "视图"), viewPanel),
+		widget.NewAccordionItem(tr("Connection", "连接"), connection),
 	)
 	accordion.Open(0)
 	accordion.Open(1)
@@ -684,7 +685,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	// position, and the footer (the zoom limits may have changed).
 	sh.notify = func(what string, err error) {
 		if err != nil {
-			statusMsg.SetText(fmt.Sprintf("%s failed: %v", what, err))
+			statusMsg.SetText(fmt.Sprintf(tr("%s failed: %v", "%s失败: %v"), what, err))
 			statusMsg.Importance = widget.DangerImportance
 		} else {
 			statusMsg.SetText(fmt.Sprintf("%s %s", what, sh.path))
@@ -779,14 +780,14 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		widget.NewSeparator(),
 		widget.NewButtonWithIcon("", theme.FolderOpenIcon(), func() {
 			err := sh.reload()
-			sh.notify("loaded", err)
+			sh.notify(tr("loaded", "已加载"), err)
 			if err == nil {
 				v.Fit()
 				updateFooter()
 			}
 		}),
 		widget.NewButtonWithIcon("", theme.DocumentSaveIcon(), func() {
-			sh.notify("saved", sh.save())
+			sh.notify(tr("saved", "已保存"), sh.save())
 		}),
 		widget.NewSeparator(),
 		widget.NewButtonWithIcon("", theme.ViewRefreshIcon(), func() {
@@ -817,7 +818,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			togglePanel()
 		case fyne.KeyF5:
 			err := sh.reload()
-			sh.notify("loaded", err)
+			sh.notify(tr("loaded", "已加载"), err)
 			if err == nil {
 				v.Fit()
 			}
@@ -828,13 +829,13 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	// so both config paths need a shortcut as well as a toolbar button.
 	w.Canvas().AddShortcut(
 		&desktop.CustomShortcut{KeyName: fyne.KeyS, Modifier: fyne.KeyModifierControl},
-		func(fyne.Shortcut) { sh.notify("saved", sh.save()) },
+		func(fyne.Shortcut) { sh.notify(tr("saved", "已保存"), sh.save()) },
 	)
 	w.Canvas().AddShortcut(
 		&desktop.CustomShortcut{KeyName: fyne.KeyO, Modifier: fyne.KeyModifierControl},
 		func(fyne.Shortcut) {
 			err := sh.reload()
-			sh.notify("loaded", err)
+			sh.notify(tr("loaded", "已加载"), err)
 			if err == nil {
 				v.Fit()
 			}
@@ -863,7 +864,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			}
 			button.Refresh()
 		}
-		toolLabel.SetText("tool: " + toolName(v.Tool()))
+		toolLabel.SetText(tr("tool: ", "工具: ") + toolName(v.Tool()))
 		toolLabel.Refresh()
 	}
 	v.onPlace = func(mode toolMode, x, y, yaw float64) {
@@ -1057,7 +1058,7 @@ func (s *shell) fetchGraph(after func(ok bool)) {
 			if after != nil {
 				after(false)
 			} else {
-				s.announce("topic list failed", err)
+				s.announce(tr("topic list failed", "读取话题列表失败"), err)
 			}
 		})
 		return
@@ -1079,13 +1080,13 @@ func (s *shell) fetchGraph(after func(ok bool)) {
 		s.graphNames = names
 		s.graphTypes = types
 		if s.graphLabel != nil {
-			s.graphLabel.SetText(fmt.Sprintf("graph:   %d topic(s)", len(names)))
+			s.graphLabel.SetText(fmt.Sprintf(tr("graph:   %d topic(s)", "话题图:   %d 个话题"), len(names)))
 			s.graphLabel.Refresh()
 		}
 		if after != nil {
 			after(true)
 		} else {
-			s.announce(fmt.Sprintf("graph: %d topic(s)", len(names)), nil)
+			s.announce(fmt.Sprintf(tr("graph: %d topic(s)", "话题图: %d 个话题"), len(names)), nil)
 		}
 	})
 }

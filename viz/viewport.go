@@ -31,17 +31,17 @@ const (
 func toolName(mode toolMode) string {
 	switch mode {
 	case toolGoal:
-		return "2D Goal Pose"
+		return tr("2D Goal Pose", "2D 目标点")
 	case toolPose:
-		return "2D Pose Estimate"
+		return tr("2D Pose Estimate", "2D 初始位姿")
 	case toolPan:
-		return "Move Camera"
+		return tr("Move Camera", "移动视角")
 	case toolSelect:
-		return "Select"
+		return tr("Select", "选择")
 	case toolPoint:
-		return "Publish Point"
+		return tr("Publish Point", "发布点")
 	}
-	return "none"
+	return tr("none", "无")
 }
 
 // viewport is the 2D map view: a world rectangle drawn into a bitmap, with

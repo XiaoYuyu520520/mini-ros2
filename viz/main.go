@@ -21,7 +21,6 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/theme"
 )
 
 func main() {
@@ -35,7 +34,7 @@ func main() {
 	log.Printf("config: %s", path)
 
 	a := app.NewWithID("mini-ros2.viz")
-	a.Settings().SetTheme(theme.DarkTheme())
+	a.Settings().SetTheme(uiTheme(cfg.UI.Language))
 
 	w := a.NewWindow("mini-ros2 viz")
 	w.Resize(fyne.NewSize(float32(cfg.Window.Width), float32(cfg.Window.Height)))

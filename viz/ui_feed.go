@@ -52,7 +52,7 @@ func newFeedController(
 }
 
 func (c *feedController) start() {
-	c.setStatus("sidecar: starting")
+	c.setStatus(tr("sidecar: starting", "数据边车: 启动中"))
 	go c.loop()
 }
 
@@ -163,7 +163,7 @@ func (c *feedController) loop() {
 		if c.closing.Load() {
 			return
 		}
-		c.setStatus("sidecar: exited, restarting")
+		c.setStatus(tr("sidecar: exited, restarting", "数据边车已退出，正在重启"))
 		if !c.sleep(2 * time.Second) {
 			return
 		}
@@ -282,7 +282,7 @@ func (c *feedController) publishRates() {
 		}
 	}
 	sort.Slice(rows, func(i, j int) bool { return rows[i].count > rows[j].count })
-	text := fmt.Sprintf("sidecar: %d topic(s)", active)
+	text := fmt.Sprintf(tr("sidecar: %d topic(s)", "数据边车: %d 个话题"), active)
 	for i, entry := range rows {
 		if i == 3 {
 			break
@@ -290,7 +290,7 @@ func (c *feedController) publishRates() {
 		text += fmt.Sprintf("  %s %dHz", entry.topic, entry.count)
 	}
 	if len(rows) == 0 {
-		text += "  waiting for data"
+		text += tr("  waiting for data", "  等待数据")
 	}
 	c.setStatus(text)
 }
@@ -378,7 +378,7 @@ func (c *feedController) setStatus(text string) {
 func (c *feedController) setFrame(frame string) {
 	fyne.Do(func() {
 		if c.frameLabel != nil {
-			c.frameLabel.SetText("frame: " + frame)
+			c.frameLabel.SetText(tr("frame: ", "坐标系: ") + frame)
 			c.frameLabel.Refresh()
 		}
 	})
