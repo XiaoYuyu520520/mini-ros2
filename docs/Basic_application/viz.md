@@ -34,14 +34,19 @@ title: 3 基础应用开发 · Windows 可视化
 | 看 `/scan` | 雷达回波点，颜色与点大小可调；位置已经在**固定坐标系**里 |
 | 看 `/plan` | 规划出来的路径折线，带每点的朝向 |
 | 看机器人位姿 | `/amcl_pose` / `/odom` 的位置、朝向与位置协方差椭圆 |
-| 自由缩放平移 | 滚轮以指针为锚点缩放，左键拖动平移，网格按米自适应 |
+| 自由缩放平移 | 滚轮以指针为锚点缩放（最大 80 像素/米），左键拖动平移，网格按米自适应 |
+| **中文界面** | 默认中文，`ui.language` 可切回 `en`；系统字体自动加载，不会出现方块 |
+| **按话题添加** | 添加对话框默认「按话题」，选话题后自动推断显示类型，无需先选类型 |
+| **工作区记忆** | 显示列表、属性、视图中心/缩放、添加弹窗模式自动保存，下次打开原样恢复 |
+| **面板可折叠** | 左侧面板右上角 ‹ 收起成窄条，窄条上的 › 展开；工具栏 ☰ 与 F9 同样可以 |
 | **发目标点** | 2D Goal Pose：点一下是位置，拖一下是朝向，发 `/goal_pose` |
 | **设初始位姿** | 2D Pose Estimate：发 `/initialpose`，协方差用 rviz 的 0.25 / 0.25 / 0.0685 |
 | **看 Marker** | `visualization_msgs/msg/Marker` 与 `MarkerArray`：箭头、线段、点、方块（rviz 那套 marker 类型） |
 | **看代价地图** | `nav2_msgs/msg/Costmap` 与 `CostmapUpdate`：按调色板叠加在地图上，支持增量更新 |
 | **看点云** | `sensor_msgs/msg/PointCloud2`：按高度上色，也可以压平成一个颜色 |
 | 加话题 | 面板里从图里选一个话题加进来，不用改代码、不用重启 |
-| 显示属性 | 逐话题覆盖颜色 / 点大小 / 透明度；空着就用该类型的默认样式 |
+| 显示属性 | 选中一个显示后，下方属性栏可改颜色（取色器）/ 点大小 / 透明度 / 历史帧数 / QoS；空着就用该类型的默认样式 |
+| 诊断信息 | 右下角「复制诊断信息」把话题图、显示列表、图层点数、帧率、sidecar 日志复制到剪贴板 |
 | 配置保存 / 读取 | 工具栏两个按钮，**保留文件里的中文注释**（JSON 没有注释语法，注释写成 `_comment` 键） |
 
 坐标系的规矩：**工具发的是它自己的 frame**（配置里 `tools.*.frame`，默认 `map`），
@@ -103,6 +108,9 @@ python bridge\scripts\build_bridge.py --jobs 1
 | 点工具栏「2D Goal Pose」按钮，再点视口 | 发 `/goal_pose`（`geometry_msgs/msg/PoseStamped`） |
 | 拖动代替点击 | 朝向 = 拖动方向；拖动距离小于 15 cm 时朝向为 0 |
 | 点工具栏「2D Pose Estimate」按钮，再点视口 | 发 `/initialpose`（`geometry_msgs/msg/PoseWithCovarianceStamped`） |
+| 工具栏「移动视角」 | 拖动平移；滚轮缩放；再次点击取消工具 |
+| 工具栏「选择」 | 点击画面解析出该点属于哪个显示，左侧列表选中它并画准星 |
+| 工具栏「发布点」 | 点击发布 `geometry_msgs/msg/PointStamped` 到 `/clicked_point` |
 | **Esc** | 取消当前工具 |
 
 <div class="callout warn">
@@ -125,6 +133,7 @@ viewer 发</strong>：不要再对同一通道跑 <code>ros2 topic pub</code>，
 {
   "_comment": "这一行是注释",
   "window": { "width": 1440, "height": 900 },
+  "ui": { "language": "zh", "add_mode": "topic" },
   "layout": { "panel_offset": 0.74 },
   "views": {
     "view": { "fixed_frame": "map", "grid_cell_m": 1.0, "zoom": { "min": 0.02, "max": 80 } }
@@ -373,6 +382,8 @@ ros2 topic echo /qos_probe/map --once --timeout 15
 * 点云：真 ROS2 对端发的 `PointCloud2` 收到（4 个点、z 从 0 到 1.5、包络
   x 1..7 / y 2..8 都对）；best_effort 与 reliable 两种发布端**都**收到了
   （一个传感器一个 `ros2 topic pub`），这是 agent 双订阅的效果
+* 界面：点击显示行会选中并展开属性；取色器改背景/雷达颜色立即生效；添加对话框默认「按话题」；
+  `go test` 覆盖了点击选中、箭头头部像素、历史帧累积
 * 渲染：代价地图的调色板颜色（高代价红 / 内切青 / 致命深色）与点云的高度
   彩虹（低点蓝 / 高点红）都在渲染出的图像里数到了像素
 
@@ -391,7 +402,7 @@ ros2 topic echo /qos_probe/map --once --timeout 15
 | 代价地图的分层叠加（costmap layer 组合） | 每个话题单独一层，按加入顺序叠，没有 nav2 那种「多层合成一个 master」 |
 | action 发目标 | v1 只发 `/goal_pose` 话题，不走 `NavigateToPose` action（没有进度反馈与中途取消） |
 | 逐话题 QoS 覆盖 | proto 里预留了字段，daemon 还没透传 |
-| 显示属性的图形化编辑 | 目前是面板里的文本框（颜色 / 大小 / 透明度），没有取色器 |
+| 显示属性的图形化编辑 | 颜色已有取色器；大小 / 透明度 / 历史帧数仍是文本框 |
 
 代码与协议在仓库的 `viz/` 目录里，细节见那里的
 [README](https://github.com/XiaoYuyu520520/mini-ros2/blob/main/viz/README.md)。

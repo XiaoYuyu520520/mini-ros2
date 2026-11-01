@@ -6,6 +6,26 @@
 约定与根 `README.md` 一致：`.md` 用 **LF** 换行 + **UTF-8 BOM**；
 `.bat` 用 **CRLF**；`.sh` 用 **LF**。
 
+### viz 界面按 rviz2 对齐（2026-11-01/02）
+
+* **面板在左、视口在右**；`layout.panel_offset` 仍是**视口**占比，所以面板实际是 `1-offset`。
+  折叠时用窄条（30px）承载展开按钮，不是把 split 压到 0.999。
+* **Add 对话框两种入口**：按显示类型 / 按话题（默认按话题，`ui.add_mode`）；
+  按话题时类型从 graph 推断。**不要用 AppTabs**：标签栏在弹窗里会挤标签并长溢出 `…`，
+  用一行 RadioGroup + Stack。
+* **属性检查器**跟在「显示」选中行后面，点行要自动展开 Properties。
+* **界面中文**：所有文字走 `tr(en, zh)`，语言 `ui.language`（默认 zh）。Fyne 自带
+  NotoSans 无中文字形，`theme.go` 从 `C:\Windows\Fonts` 加载纯 TTF（msyh.ttf / Deng.ttf /
+  simhei.ttf / simkai.ttf / simfang.ttf）；Fyne 不解析 `.ttc`。
+* **工作区记忆**：显示列表/属性/选中项/添加模式/视图 center+scale 写回同一 config，
+  改动即时保存、关窗再存；`ui.selected_display`、`views.view.center_x/center_y/scale`。
+* **姿态箭头**：位姿点 = **尾巴**（`f=0`），尖头朝前；先填色再沿轮廓描 1px 深色边，
+  这样尖点不会被「缩小填充」削钝。预览画在按下点，指引线连到指针。
+* **网格/坐标轴**按背景亮度自适应，轴画在场景**之上**且 2px 宽；默认背景 `#ffffff`，
+  放大上限 80 像素/米，雷达默认 `#f44336` / size 6。
+* **诊断**：右下角「复制诊断信息」把 graph（`*` 标已加显示）、display 列表、scene 点数/戳、
+  帧率、sidecar 日志尾部复制到剪贴板；弹窗是模态的，所以对话框里也放了一个。
+
 ### 启动脚本先打印时间（规范）—— 2026-11-01
 
 * **任何启动脚本（`start/*.ps1`、给用户手动跑的 `*.bat`）第一件事是打印

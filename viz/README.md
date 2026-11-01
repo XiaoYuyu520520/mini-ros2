@@ -71,14 +71,21 @@ odom 里的机器人。
 不会偷偷把默认的 `/map` `/scan` `/plan` 加回来；完全没写 `topics` 才用默认表。
 带 UTF-8 BOM 的文件（Windows 编辑器常见）也能读。
 
+`ui.language` 是界面语言（`zh` 默认，`en` 回到英文）；`ui.add_mode` 是添加对话框
+默认打开的页（`topic` 默认，`type` 先选类型）。界面会自动把显示列表、每个显示
+的属性、当前选中项、添加模式、视图中心与缩放到 `views.view.center_x/center_y/scale`
+里，**改动即时保存**，关窗口时再存一次，不需要 Ctrl+S。
+
 ```json
 {
   "_comment": "这一行是注释",
   "window": { "width": 1440, "height": 900 },
+  "ui": { "language": "zh", "add_mode": "topic" },
   "layout": { "panel_offset": 0.74 },
   "views": {
     "view": {
       "fixed_frame": "map",
+      "background": "#ffffff",
       "grid_cell_m": 1.0,
       "zoom": { "min": 0.02, "max": 80 }
     }
@@ -94,7 +101,7 @@ odom 里的机器人。
     "_comment": "按类型的默认样式；话题里的 color/size/alpha 是逐话题覆盖",
     "occupancy_grid": { "free_color": "#f2f2f2", "occupied_color": "#202020",
       "unknown_color": "#7a7a7a", "alpha": 0.85 },
-    "laser_scan": { "color": "#f44336", "size": 2.5 },
+    "laser_scan": { "color": "#f44336", "size": 6 },
     "path": { "color": "#ff4444", "width": 2.5 },
     "pose": { "color": "#ffcc00", "size": 14, "covariance": true }
   },
@@ -147,6 +154,7 @@ Windows 上两端都把 stdio 切到二进制模式；否则 CRT 会把负载里
 | `unsubscribe` | 停止推送（保留通道，便于立刻恢复） |
 | `set_fixed_frame` | 改固定系，**立刻重发**每个话题的最后一帧（latched 地图不用等新消息） |
 | `publish_pose` | `{topic, type, frame, x, y, yaw, times?}`，只支持 `PoseStamped` / `PoseWithCovarianceStamped` |
+| `publish_point` | `{topic, type, frame, x, y, z}`，只支持 `PointStamped`（rviz 的 Publish Point 工具） |
 | `shutdown` | 退出 |
 
 边车认识的类型：`OccupancyGrid`、`LaserScan`、`Path`、`PoseStamped`、
