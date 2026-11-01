@@ -104,6 +104,9 @@ elseif (($env:PYTHONPATH -split ';') -notcontains $env:ROS2_SIM_ROOT) {
 # 本机开发走回环；跨机时在点源**之前**设 ROS2_BRIDGE_AGENT。
 if (-not $env:ROS2_BRIDGE_AGENT) { $env:ROS2_BRIDGE_AGENT = "127.0.0.1:$env:ROS2_LINK_PORT" }
 
+# 启动时间：排障时「我什么时候点源的」是第一个要回答的问题，所以任何
+# 启动脚本都要先打印它（这是本仓库的规范，见 .memories）。
+Write-Host ("[sim-env] time              = " + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
 Write-Host "[sim-env] CPU_ROOT          = $env:CPU_ROOT"
 Write-Host "[sim-env] ROS2_SIM_ROOT     = $env:ROS2_SIM_ROOT"
 Write-Host "[sim-env] ROS2_BRIDGE_AGENT = $env:ROS2_BRIDGE_AGENT"

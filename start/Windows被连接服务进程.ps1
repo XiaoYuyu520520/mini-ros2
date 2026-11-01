@@ -85,6 +85,10 @@ function Get-DaemonArgs {
     return $args
 }
 
+# 启动脚本先打印时间：排障时「这是什么时候起的」是第一个要回答的问题
+# （本仓库的规范，见 .memories）。
+Write-Host ("[win-service] time         = " + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
+
 switch ($Action) {
     'run' {
         if (-not (Test-Path -LiteralPath $Daemon)) {
