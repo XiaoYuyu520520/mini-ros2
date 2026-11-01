@@ -24,9 +24,10 @@ func TestPoseArrowHasAHead(t *testing.T) {
 		}
 		return total
 	}
-	// body = 14 * 4.8 = 67 px; the head spans x = centre+0.40*body .. +1.30*body.
-	head := count(330, 390)
-	shaft := count(260, 320)
+	// body = 14 * 4.8 = 67 px; the tail is the pose point (x=300), the head
+	// spans x = centre+0.70*body .. +1.60*body.
+	head := count(345, 410)
+	shaft := count(300, 345)
 	if head < 200 {
 		t.Fatalf("head is missing: %d tinted pixels ahead of the waist", head)
 	}

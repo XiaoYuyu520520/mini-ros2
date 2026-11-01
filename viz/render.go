@@ -529,17 +529,18 @@ func drawPose(target *image.RGBA, x, y, yaw float64, ppm float64, centerX, cente
 			screenY + sin*f + cos*l,
 		}
 	}
-	// The head is long and narrow (a 20 degree half angle) so the tip is a
-	// point rather than a wedge; the notches keep it from looking like a
-	// plain triangle.
+	// The pose point is the arrow's *tail*, not its middle: the point a goal
+	// or an initial pose names is where the robot goes, and the arrow says
+	// which way it will face from there. The head is long and narrow so the
+	// tip is a point rather than a wedge.
 	outer := [][2]float64{
-		point(1.30, 0.00),
-		point(0.48, 0.40),
-		point(0.40, 0.13),
-		point(-0.85, 0.13),
-		point(-0.85, -0.13),
-		point(0.40, -0.13),
-		point(0.48, -0.40),
+		point(1.60, 0.00),
+		point(0.78, 0.40),
+		point(0.70, 0.13),
+		point(0.00, 0.13),
+		point(0.00, -0.13),
+		point(0.70, -0.13),
+		point(0.78, -0.40),
 	}
 	fillPolygon(target, outer, tint, width, height)
 	strokePolygon(target, outer, color.RGBA{25, 25, 25, 255}, width, height)
