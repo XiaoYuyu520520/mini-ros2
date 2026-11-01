@@ -15,15 +15,39 @@ rem     set ROS2_BRIDGE_AGENT=192.168.1.113:50051
 rem     call bridge\windows\bridge_env.bat
 rem ---------------------------------------------------------------------------
 
+rem Remember which tree this environment came from, before overwriting the
+rem marker with this file's own directory.
+set "ROS2_BRIDGE_PREVIOUS_WINDOWS=%ROS2_BRIDGE_WINDOWS%"
 set "ROS2_BRIDGE_WINDOWS=%~dp0"
 for %%I in ("%~dp0..\..") do set "ROS2_BRIDGE_CPU_ROOT=%%~fI"
 
+rem A window that loaded another copy of this package first still carries that
+rem copy's derived paths: the values below are only filled in when they are
+rem empty, so a second tree inherits the first one's build directory, its
+rem NAV2_SHIM_SRC and its log paths. When the directory changes, drop exactly
+rem those derived values and let this file compute them again - the ones a
+rem person set on purpose (ports, slot sizes, the agent address) are left
+rem alone. The comparison uses ROS2_BRIDGE_WINDOWS rather than a dedicated
+rem marker because that variable is part of the environment the import keeps:
+rem the marker has to survive the switch to be able to detect it.
+if /I not "%ROS2_BRIDGE_PREVIOUS_WINDOWS%"=="%ROS2_BRIDGE_WINDOWS%" (
+  set "ROS2_BRIDGE_BUILD="
+  set "ROS2_BRIDGE_READY_FILE="
+  set "ROS2_BRIDGE_LOG="
+  set "ROS2_BRIDGE_ERR="
+  set "ROS2_BRIDGE_PATH_READY="
+  set "NAV2_SHIM_SRC="
+  set "NAV2_SHIM_BT_DIR="
+  set "ROS2_GRPC_SDK_CONFIG_DIR="
+)
+
 rem Make `ros2`, `rviz2` and the demo .bat files reachable by name from this
 rem window. The marker keeps a second `call bridge_env.bat` from growing PATH a
-rem second time.
-if not defined ROS2_BRIDGE_PATH_READY (
+rem second time - and it holds the directory the marker was set for, so a
+rem second tree puts its own directory in front.
+if /I not "%ROS2_BRIDGE_PATH_READY%"=="%ROS2_BRIDGE_WINDOWS%" (
   set "PATH=%ROS2_BRIDGE_WINDOWS%;%PATH%"
-  set "ROS2_BRIDGE_PATH_READY=1"
+  set "ROS2_BRIDGE_PATH_READY=%ROS2_BRIDGE_WINDOWS%"
 )
 
 if not defined ROS2_BRIDGE_BUILD set "ROS2_BRIDGE_BUILD=%ROS2_BRIDGE_WINDOWS%build"

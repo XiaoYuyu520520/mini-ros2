@@ -45,6 +45,7 @@ $ScriptRoot = Split-Path -Parent $StartDir
 # 否则上一次会话留下的旧值（比如换了目录解压后还指着上一份）会把整个脚本
 # 带到没有 ros2.ps1 的地方去。
 $Root = $ScriptRoot
+$PreviousRoot = $env:CPU_ROOT
 if ($env:CPU_ROOT -and
     (Test-Path -LiteralPath (Join-Path $env:CPU_ROOT 'bridge\windows\ros2.ps1'))) {
     $Root = $env:CPU_ROOT
@@ -60,14 +61,40 @@ if (-not (Test-Path -LiteralPath $Ros2Ps1)) {
 . $Ros2Ps1
 
 # --- 仿真侧 -----------------------------------------------------------------
-if (-not $env:ROS2_SIM_ROOT)      { $env:ROS2_SIM_ROOT = Join-Path $Root 'bridge\ubuntu' }
-if (-not $env:ROS2_SIM_PYTHON)    { $env:ROS2_SIM_PYTHON = Join-Path $Root '.venv\bin\python' }
+# 这些是「由根目录推出来」的路径。会话里可能还留着上一棵树的值，所以判断的
+# 标准不是「变量是否为空」，而是「它是不是指向当前这棵树」：指向别的
+# mini-ros2 解压目录的一律按旧值处理。
+$ExpectedSimRoot = Join-Path $Root 'bridge\ubuntu'
+if ($env:ROS2_SIM_ROOT) {
+    $simTree = Split-Path -Parent (Split-Path -Parent $env:ROS2_SIM_ROOT)
+    if ($simTree -ne $Root) {
+        $env:ROS2_SIM_ROOT = $ExpectedSimRoot
+    }
+} else {
+    $env:ROS2_SIM_ROOT = $ExpectedSimRoot
+}
+
+if ($env:ROS2_SIM_PYTHON) {
+    $pythonTree = Split-Path -Parent (Split-Path -Parent $env:ROS2_SIM_PYTHON)
+    if ($pythonTree -ne $Root) {
+        $env:ROS2_SIM_PYTHON = Join-Path $Root '.venv\bin\python'
+    }
+} else {
+    $env:ROS2_SIM_PYTHON = Join-Path $Root '.venv\bin\python'
+}
 if (-not $env:ROS2_LINK_SIM_PORT) { $env:ROS2_LINK_SIM_PORT = '50051' }
 if (-not $env:ROS2_LINK_REAL_PORT){ $env:ROS2_LINK_REAL_PORT = '50111' }
 if (-not $env:ROS2_LINK_PORT)     { $env:ROS2_LINK_PORT = '50060' }
 
 # 仿真包要能被 import 到，PYTHONPATH 得指到 bridge\ubuntu 这一层。
-# 用 ';' 分隔（Windows），且不重复添加。
+# 用 ';' 分隔（Windows）。别的 mini-ros2 树留下的那一条（形如
+# ...\bridge\ubuntu）先摘掉，否则 import 到的可能是上一棵树。
+if ($env:PYTHONPATH) {
+    $kept = @($env:PYTHONPATH -split ';' | Where-Object {
+        $_ -and ($_ -eq $env:ROS2_SIM_ROOT -or -not ($_ -match '\\bridge\\ubuntu$'))
+    })
+    $env:PYTHONPATH = ($kept -join ';')
+}
 if (-not $env:PYTHONPATH) { $env:PYTHONPATH = $env:ROS2_SIM_ROOT }
 elseif (($env:PYTHONPATH -split ';') -notcontains $env:ROS2_SIM_ROOT) {
     $env:PYTHONPATH = "$env:ROS2_SIM_ROOT;$env:PYTHONPATH"

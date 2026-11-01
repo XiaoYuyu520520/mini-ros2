@@ -1,4 +1,4 @@
-# ros2.ps1 - the PowerShell way in: keep the bridge environment in this window and
+﻿# ros2.ps1 - the PowerShell way in: keep the bridge environment in this window and
 # get a `ros2` command that behaves like the one in the docs.
 #
 #     . E:\DesktopData\app\code\CPU\bridge\windows\ros2.ps1    # once per window
@@ -45,28 +45,45 @@ if (-not $global:Ros2ShimState) {
 }
 $state = $global:Ros2ShimState
 
-if (-not $state.WindowsDir) {
-    # $MyInvocation is the dot-source that got us here; $PSScriptRoot is the
-    # host's own idea of the directory. Inside a *function* both of those can
-    # point at the caller instead of at this file, which is why the directory is
-    # resolved here, once, and only accepted when bridge_env.bat is really in it.
-    $candidates = @(
-        Split-Path -Parent $MyInvocation.MyCommand.Path
-        $PSScriptRoot
-        $state.WindowsDir
-    )
-    foreach ($candidate in $candidates) {
-        if ($candidate -and (Test-Path -LiteralPath (Join-Path $candidate 'bridge_env.bat'))) {
-            $state.WindowsDir = $candidate
-            break
+# The directory is resolved on every dot-source, not only the first one: a
+# window that loads a second copy of the package must end up using the copy it
+# just loaded. $MyInvocation is the dot-source that got us here; $PSScriptRoot
+# is the host's own idea of the directory. Inside a *function* both of those can
+# point at the caller instead of at this file, which is why the directory is
+# resolved here and only accepted when bridge_env.bat is really in it.
+$candidates = @(
+    Split-Path -Parent $MyInvocation.MyCommand.Path
+    $PSScriptRoot
+    $state.WindowsDir
+)
+foreach ($candidate in $candidates) {
+    if ($candidate -and (Test-Path -LiteralPath (Join-Path $candidate 'bridge_env.bat'))) {
+        if ($state.WindowsDir -and
+            ($state.WindowsDir.TrimEnd('') -ne $candidate.TrimEnd(''))) {
+            $state.EnvImported = $false
         }
+        $state.WindowsDir = $candidate
+        break
     }
-    if (-not $state.WindowsDir) {
-        # A warning and not a throw: a profile that dot-sources this file must
-        # never be able to take the shell down. The functions below report the
-        # real error if they are called anyway.
-        Write-Warning ("ros2.ps1: no bridge_env.bat next to this file (looked in: " +
-                       (($candidates | Where-Object { $_ }) -join ', ') + ")")
+}
+if (-not $state.WindowsDir) {
+    # A warning and not a throw: a profile that dot-sources this file must
+    # never be able to take the shell down. The functions below report the
+    # real error if they are called anyway.
+    Write-Warning ("ros2.ps1: no bridge_env.bat next to this file (looked in: " +
+                   (($candidates | Where-Object { $_ }) -join ', ') + ")")
+}
+
+# The "already imported" flag can be true while the environment itself still
+# belongs to another tree: the first version of this file cached only the flag,
+# and a window that had loaded a second copy kept the first copy's
+# ROS2_BRIDGE_BUILD. Compare the marker the bat sets with the directory this
+# file resolved - if they disagree, import again.
+if ($state.WindowsDir) {
+    $resolved = $state.WindowsDir.TrimEnd('')
+    $current = if ($env:ROS2_BRIDGE_WINDOWS) { $env:ROS2_BRIDGE_WINDOWS.TrimEnd('') } else { '' }
+    if ($current -ne $resolved) {
+        $state.EnvImported = $false
     }
 }
 
