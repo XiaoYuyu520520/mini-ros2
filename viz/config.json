@@ -20,7 +20,7 @@
       "_comment": "fixed_frame 是坐标基准；zoom 是缩放上下限；grid_cell_m 是一格多少米。",
       "kind": "grid",
       "fixed_frame": "map",
-      "background": "#1e1e1e",
+      "background": "#ffffff",
       "grid_cell_m": 1.0,
       "zoom": { "min": 0.02, "max": 80 },
       "pan": true

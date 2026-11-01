@@ -124,7 +124,7 @@ func newViewport(cfg *Config) *viewport {
 		scale:     40,
 		minScale:  1,
 		maxScale:  4000,
-		bg:        parseColor("#1e1e1e", color.RGBA{30, 30, 30, 255}),
+		bg:        parseColor("#ffffff", color.RGBA{255, 255, 255, 255}),
 		gridCellM: 1,
 		showPan:   true,
 		style:     cfg.Display,

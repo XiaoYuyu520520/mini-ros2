@@ -1184,7 +1184,7 @@ func backgroundOf(cfg *Config) string {
 	if view, ok := cfg.Views["view"]; ok && view.Background != "" {
 		return view.Background
 	}
-	return "#1e1e1e"
+	return "#ffffff"
 }
 
 // fetchGraph asks the sidecar what the graph holds and remembers it. The
