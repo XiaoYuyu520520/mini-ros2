@@ -340,6 +340,30 @@ func (c *feedController) publishPoint(
 	return feed.PublishPoint(ctx, topic, typeName, frame, x, y, z)
 }
 
+// rateSnapshot is the per-topic frame count of the current second, for the
+// diagnostics text.
+func (c *feedController) rateSnapshot() map[string]int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	out := make(map[string]int, len(c.rates))
+	for topic, count := range c.rates {
+		out[topic] = count
+	}
+	return out
+}
+
+// lastLog is the sidecar's own last words: the reason a subscription was
+// refused is usually written there.
+func (c *feedController) lastLog() string {
+	c.mu.Lock()
+	feed := c.feed
+	c.mu.Unlock()
+	if feed == nil {
+		return ""
+	}
+	return feed.LastLog()
+}
+
 func (c *feedController) setStatus(text string) {
 	fyne.Do(func() {
 		if c.sidecarLabel == nil {
