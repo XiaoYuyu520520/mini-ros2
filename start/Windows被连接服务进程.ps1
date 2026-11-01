@@ -42,7 +42,14 @@ $ErrorActionPreference = 'Stop'
 
 # --- 定位仓库根与兼容层环境 --------------------------------------------------
 $StartDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Root = if ($env:CPU_ROOT) { $env:CPU_ROOT } else { Split-Path -Parent $StartDir }
+$ScriptRoot = Split-Path -Parent $StartDir
+# CPU_ROOT 可以指到别的目录，但只有它真的是一棵完整的树时才算数（见
+# start\加载模拟ROS环境变量.ps1 里的同一段说明）。
+$Root = $ScriptRoot
+if ($env:CPU_ROOT -and
+    (Test-Path -LiteralPath (Join-Path $env:CPU_ROOT 'bridge\windows\ros2.ps1'))) {
+    $Root = $env:CPU_ROOT
+}
 $env:CPU_ROOT = $Root
 
 # 兼容层环境变量的**唯一事实源**是 bridge\windows\bridge_env.bat，

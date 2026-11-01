@@ -40,7 +40,15 @@
 
 # --- 定位仓库根 -------------------------------------------------------------
 $StartDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Root = if ($env:CPU_ROOT) { $env:CPU_ROOT } else { Split-Path -Parent $StartDir }
+$ScriptRoot = Split-Path -Parent $StartDir
+# CPU_ROOT 可以指到别的目录，但**只有它真的是一棵完整的树时才算数**。
+# 否则上一次会话留下的旧值（比如换了目录解压后还指着上一份）会把整个脚本
+# 带到没有 ros2.ps1 的地方去。
+$Root = $ScriptRoot
+if ($env:CPU_ROOT -and
+    (Test-Path -LiteralPath (Join-Path $env:CPU_ROOT 'bridge\windows\ros2.ps1'))) {
+    $Root = $env:CPU_ROOT
+}
 $env:CPU_ROOT = $Root
 
 # --- 兼容层（点源 ros2.ps1：导入 PATH 与所有 ROS2_*/NAV2_* 变量）--------------
