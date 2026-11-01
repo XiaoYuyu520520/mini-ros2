@@ -22,7 +22,7 @@
       "fixed_frame": "map",
       "background": "#1e1e1e",
       "grid_cell_m": 1.0,
-      "zoom": { "min": 0.02, "max": 40 },
+      "zoom": { "min": 0.02, "max": 80 },
       "pan": true
     }
   },

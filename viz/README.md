@@ -80,7 +80,7 @@ odom 里的机器人。
     "view": {
       "fixed_frame": "map",
       "grid_cell_m": 1.0,
-      "zoom": { "min": 0.02, "max": 40 }
+      "zoom": { "min": 0.02, "max": 80 }
     }
   },
   "topics": {

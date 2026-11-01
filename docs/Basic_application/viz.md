@@ -127,7 +127,7 @@ viewer 发</strong>：不要再对同一通道跑 <code>ros2 topic pub</code>，
   "window": { "width": 1440, "height": 900 },
   "layout": { "panel_offset": 0.74 },
   "views": {
-    "view": { "fixed_frame": "map", "grid_cell_m": 1.0, "zoom": { "min": 0.02, "max": 40 } }
+    "view": { "fixed_frame": "map", "grid_cell_m": 1.0, "zoom": { "min": 0.02, "max": 80 } }
   },
   "topics": {
     "/map": {

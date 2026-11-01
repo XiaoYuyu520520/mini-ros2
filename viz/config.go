@@ -204,7 +204,7 @@ func defaultConfig() Config {
 				FixedFrame: "map",
 				Background: "#1e1e1e",
 				GridCellM:  1.0,
-				Zoom:       ZoomConfig{Min: 0.02, Max: 40},
+				Zoom:       ZoomConfig{Min: 0.02, Max: 80},
 				Pan:        true,
 			},
 		},
