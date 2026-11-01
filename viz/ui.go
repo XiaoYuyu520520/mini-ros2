@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"image/color"
 	"math"
 	"os"
 	"sort"
@@ -414,7 +415,13 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		widget.NewLabel(tr("Topic:", "话题:")),
 		propTopic,
 		widget.NewLabel(tr("Color:", "颜色:")),
-		colorEntry,
+		container.NewBorder(nil, nil, nil,
+			widget.NewButton(tr("Pick...", "选颜色..."), func() {
+				sh.pickColor(colorEntry.Text, func(hex string) {
+					colorEntry.SetText(hex)
+					applyProps()
+				})
+			}), colorEntry),
 		widget.NewLabel(tr("Size:", "大小:")),
 		sizeEntry,
 		widget.NewLabel(tr("Alpha:", "透明度:")),
@@ -683,7 +690,13 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		widget.NewLabel(tr("Grid cell (m):", "网格大小（米）:")),
 		gridEntry,
 		widget.NewLabel(tr("Background:", "背景色:")),
-		backgroundEntry,
+		container.NewBorder(nil, nil, nil,
+			widget.NewButton(tr("Pick...", "选颜色..."), func() {
+				sh.pickColor(backgroundEntry.Text, func(hex string) {
+					backgroundEntry.SetText(hex)
+					applyView()
+				})
+			}), backgroundEntry),
 		container.NewHBox(
 			widget.NewButton(tr("Apply", "应用"), applyView),
 			widget.NewButton(tr("Fit view", "适应窗口"), func() {
@@ -1008,6 +1021,20 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		w.Close()
 	})
 	return sh
+}
+
+// pickColor opens the colour wheel with the current colour in it. The
+// callback gets "#rrggbb", which is the only form the configuration holds.
+func (s *shell) pickColor(current string, apply func(string)) {
+	initial := parseColor(current, theme.BackgroundColor())
+	picker := dialog.NewColorPicker(tr("Pick a colour", "选择颜色"),
+		tr("Colour", "颜色"), func(c color.Color) {
+			rgba := color.RGBAModel.Convert(c).(color.RGBA)
+			apply(fmt.Sprintf("#%02x%02x%02x", rgba.R, rgba.G, rgba.B))
+		}, s.win)
+	picker.Advanced = true
+	picker.SetColor(initial)
+	picker.Show()
 }
 
 // copyDiagnostics puts the diagnostics text on the clipboard.
