@@ -497,18 +497,33 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			topicHint,
 		)
 
-		tabs := container.NewAppTabs(
-			container.NewTabItem(tr("By display type", "按显示类型"), typeTab),
-			container.NewTabItem(tr("By topic", "按话题"), anyTab),
-		)
+		// A radio above the form, not a tab strip: tabs inside a dialog crowd
+		// the labels and grow an overflow button when they do not fit, which
+		// reads as noise. One radio decides which half of the stack shows.
+		modeByType := tr("By display type", "按显示类型")
+		modeByTopic := tr("By topic", "按话题")
+		mode := modeByType
+		modeSelect := widget.NewRadioGroup([]string{modeByType, modeByTopic},
+			func(v string) {
+				mode = v
+				typeTab.Visible = v == modeByType
+				anyTab.Visible = v == modeByTopic
+				typeTab.Refresh()
+				anyTab.Refresh()
+			})
+		modeSelect.Horizontal = true
+		typeTab.Visible = true
+		anyTab.Visible = false
+		body := container.NewStack(typeTab, anyTab)
 
-		addDialog = dialog.NewCustomConfirm(tr("Add a display", "添加显示"), tr("Add", "添加"), tr("Cancel", "取消"), tabs,
+		addDialog = dialog.NewCustomConfirm(tr("Add a display", "添加显示"), tr("Add", "添加"), tr("Cancel", "取消"),
+			container.NewVBox(modeSelect, body),
 			func(confirmed bool) {
 				if !confirmed {
 					return
 				}
 				var name, typeName string
-				if tabs.SelectedIndex() == 1 {
+				if mode == modeByTopic {
 					name = topicAny.Selected
 					typeName = sh.graphTypes[name]
 				} else {
@@ -569,6 +584,9 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 				}
 			})
 		}()
+		// Keep the body the same height whichever half is showing, so the
+		// dialog does not jump when the radio changes.
+		body.Resize(fyne.NewSize(360, 150))
 	}
 
 	displays := container.NewVBox(
