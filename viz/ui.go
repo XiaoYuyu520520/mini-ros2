@@ -55,6 +55,17 @@ func typeShort(typeName string) string {
 	return typeName
 }
 
+// displayKindFor is the display a topic type maps to, if there is one. It is
+// what makes "By topic" possible: the type comes from the graph.
+func displayKindFor(typeName string) (displayKind, bool) {
+	for _, kind := range displayKinds {
+		if kind.Type == typeName {
+			return kind, true
+		}
+	}
+	return displayKind{}, false
+}
+
 // shell is the assembled window. It is a struct rather than a function's local
 // state so the layout behaviour (collapse, fit) can be exercised by a test
 // without a screen.
@@ -404,8 +415,9 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	)
 
 	// --- add a display ----------------------------------------------------
-	// rviz's Add button opens a list of display *types*; the topic is picked
-	// afterwards. The same order here keeps the two tools familiar.
+	// rviz's Add dialog has two ways in: pick a display type and then its
+	// topic, or pick a topic and let the type follow from it. Both are here;
+	// "By topic" is the one that needs no type knowledge.
 	var addDialog *dialog.ConfirmDialog
 	addDisplay := func() {
 		kindLabels := make([]string, 0, len(displayKinds))
@@ -415,13 +427,10 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		kindSelect := widget.NewSelect(kindLabels, nil)
 		kindSelect.SetSelected(kindLabels[0])
 		topicSelect := widget.NewSelect(nil, nil)
-		hint := widget.NewLabel("")
-		// how many topics the graph offered for the selected kind. The
-		// dialog keeps it so a later look at the graph can say "still none"
-		// instead of "none yet", which are different problems.
-		loaded := false
+		kindHint := widget.NewLabel("")
+		kindLoaded := false
 
-		refreshTopics := func() {
+		refreshKindTopics := func() {
 			typeName := ""
 			for _, kind := range displayKinds {
 				if kind.Label == kindSelect.Selected {
@@ -435,39 +444,88 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			topicSelect.Refresh()
 			if len(options) > 0 {
 				topicSelect.SetSelected(options[0])
-				hint.SetText(fmt.Sprintf("%d topic(s) of this type", len(options)))
-			} else if loaded {
-				hint.SetText(fmt.Sprintf("no %s topic in the graph (press Refresh to look again)",
+				kindHint.SetText(fmt.Sprintf("%d topic(s) of this type", len(options)))
+			} else if kindLoaded {
+				kindHint.SetText(fmt.Sprintf("no %s topic in the graph (press Refresh to look again)",
 					typeShort(typeName)))
 			} else {
-				hint.SetText("looking for topics...")
+				kindHint.SetText("looking for topics...")
 			}
 		}
-		kindSelect.OnChanged = func(string) { refreshTopics() }
-		refreshTopics()
+		kindSelect.OnChanged = func(string) { refreshKindTopics() }
+		refreshKindTopics()
 
-		content := container.NewVBox(
+		typeTab := container.NewVBox(
 			widget.NewLabel("Display type:"),
 			kindSelect,
 			widget.NewLabel("Topic:"),
 			topicSelect,
-			hint,
+			kindHint,
 		)
-		addDialog = dialog.NewCustomConfirm("Add a display", "Add", "Cancel", content,
+
+		// By topic: only the topics that have a display are offered, and the
+		// hint says which display the selected topic will become.
+		topicAny := widget.NewSelect(nil, nil)
+		topicHint := widget.NewLabel("")
+		refreshAnyTopics := func() {
+			options := make([]string, 0, len(sh.graphNames))
+			for _, name := range sh.graphNames {
+				if _, ok := displayKindFor(sh.graphTypes[name]); ok {
+					options = append(options, name)
+				}
+			}
+			topicAny.Options = options
+			topicAny.ClearSelected()
+			topicAny.Refresh()
+			if len(options) > 0 {
+				topicAny.SetSelected(options[0])
+			}
+			topicHint.SetText(fmt.Sprintf("%d topic(s) with a display", len(options)))
+		}
+		topicAny.OnChanged = func(name string) {
+			kind, ok := displayKindFor(sh.graphTypes[name])
+			if !ok {
+				topicHint.SetText("no display for this type")
+				return
+			}
+			topicHint.SetText("becomes a " + kind.Label + " display")
+		}
+		anyTab := container.NewVBox(
+			widget.NewLabel("Topic:"),
+			topicAny,
+			topicHint,
+		)
+
+		tabs := container.NewAppTabs(
+			container.NewTabItem("By display type", typeTab),
+			container.NewTabItem("By topic", anyTab),
+		)
+
+		addDialog = dialog.NewCustomConfirm("Add a display", "Add", "Cancel", tabs,
 			func(confirmed bool) {
 				if !confirmed {
 					return
 				}
-				typeName := ""
-				for _, kind := range displayKinds {
-					if kind.Label == kindSelect.Selected {
-						typeName = kind.Type
-						break
+				var name, typeName string
+				if tabs.SelectedIndex() == 1 {
+					name = topicAny.Selected
+					typeName = sh.graphTypes[name]
+				} else {
+					name = topicSelect.Selected
+					for _, kind := range displayKinds {
+						if kind.Label == kindSelect.Selected {
+							typeName = kind.Type
+							break
+						}
 					}
 				}
-				name := topicSelect.Selected
 				if name == "" {
 					sh.announce("pick a topic first", nil)
+					return
+				}
+				kind, ok := displayKindFor(typeName)
+				if !ok {
+					sh.announce(fmt.Sprintf("no display for %s", emptyAs(typeName, "(unknown type)")), nil)
 					return
 				}
 				if _, known := sh.cfg.Topics[name]; known {
@@ -481,26 +539,22 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 				if sh.feed != nil {
 					sh.feed.resubscribe()
 				}
-				sh.announce(fmt.Sprintf("added %s (%s)", name, typeShort(typeName)), nil)
+				sh.announce(fmt.Sprintf("added %s (%s)", name, kind.Label), nil)
 			}, w)
 		addDialog.Show()
-		// The graph may have changed since the last look; ask again now that
-		// the dialog is on screen, and refresh the topic list when the answer
-		// arrives. This is what makes the first Add on a fresh window show the
-		// topics that were already there.
 		go func() {
 			sh.fetchGraph(func(ok bool) {
 				if !ok {
-					// A sidecar that is still starting cannot answer; say so
-					// instead of leaving "looking for topics..." on screen.
-					hint.SetText("the sidecar did not answer yet - press Refresh")
+					kindHint.SetText("the sidecar did not answer yet - press Refresh")
+					topicHint.SetText("the sidecar did not answer yet - press Refresh")
 					return
 				}
-				loaded = true
-				refreshTopics()
-				// A fresh window opens on "Map", and a graph without a map
-				// would show an empty topic list even though it has a scan.
-				// Jump to the first kind that does have a topic.
+				kindLoaded = true
+				refreshKindTopics()
+				refreshAnyTopics()
+				// Opening on "Map" when the graph has no map would look empty
+				// even though it has a scan; jump to the first kind that does
+				// have a topic.
 				if len(topicSelect.Options) == 0 {
 					for _, kind := range displayKinds {
 						if len(topicsOfType(kind.Type)) > 0 {
@@ -508,6 +562,9 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 							break
 						}
 					}
+				}
+				if len(topicAny.Options) > 0 {
+					topicAny.SetSelected(topicAny.Options[0])
 				}
 			})
 		}()
@@ -584,7 +641,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	graphLabel := widget.NewLabel("graph:   - topics")
 	sh.graphLabel = graphLabel
 	connection := container.NewVBox(
-		widget.NewLabel("shared memory namespace: " + namespace),
+		widget.NewLabel("shared memory namespace: "+namespace),
 		widget.NewLabel("agent:  see the status bar"),
 		graphLabel,
 	)
