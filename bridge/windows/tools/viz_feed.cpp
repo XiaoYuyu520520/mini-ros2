@@ -1,4 +1,4 @@
-// viz_feed - the data plane for `viz.exe`.
+﻿// viz_feed - the data plane for `viz.exe`.
 //
 // The GUI is a Go/Fyne program and cannot open the shim's shared-memory
 // channels without re-implementing the Windows named mutex/event protocol and
@@ -956,9 +956,15 @@ public:
     points.reserve(message.ranges.size() * 2);
     const double angle_min = message.angle_min;
     const double increment = message.angle_increment;
+    // A range_min/range_max of 0 is not a real bound: it is what a hand-written
+    // test message carries when the author only filled in `ranges`. Treat a
+    // non-positive bound as "no bound" instead of dropping every return.
+    const bool has_min = message.range_min > 0.0;
+    const bool has_max = message.range_max > 0.0;
     for (std::size_t i = 0; i < message.ranges.size(); ++i) {
       const float range = message.ranges[i];
-      if (!std::isfinite(range) || range < message.range_min || range > message.range_max) {
+      if (!std::isfinite(range) || (has_min && range < message.range_min) ||
+        (has_max && range > message.range_max)) {
         continue;
       }
       const double angle = angle_min + static_cast<double>(i) * increment;

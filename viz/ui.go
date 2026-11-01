@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"math"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -75,6 +77,7 @@ type shell struct {
 	// graphNames and graphTypes are what the sidecar says the graph holds.
 	graphNames []string
 	graphTypes map[string]string
+	graphLabel *widget.Label
 
 	savedOffset  float64
 	collapsed    bool
@@ -150,6 +153,14 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	sidecarLabel := widget.NewLabel("sidecar: starting")
 	frameLabel := widget.NewLabel("frame: " + fixedFrameOf(cfg))
 	toolLabel := widget.NewLabel("tool: none")
+	// The diagnostics button sits at the right edge of the status bar: when
+	// something is not on screen, what a bug report needs is the graph the
+	// sidecar sees and the displays this window holds, as text.
+	diagnosticsButton := widget.NewButtonWithIcon("Copy diagnostics", theme.ContentCopyIcon(), func() {
+		text := sh.diagnosticsText()
+		sh.win.Clipboard().SetContent(text)
+		sh.announce(fmt.Sprintf("diagnostics copied (%d bytes)", len(text)), nil)
+	})
 	status := container.NewHBox(
 		statusMsg,
 		widget.NewSeparator(),
@@ -164,6 +175,8 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		zoomLabel,
 		widget.NewSeparator(),
 		dpiLabel,
+		layout.NewSpacer(),
+		diagnosticsButton,
 	)
 
 	// --- footer ------------------------------------------------------------
@@ -477,12 +490,18 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		// topics that were already there.
 		go func() {
 			sh.fetchGraph(func(ok bool) {
-				loaded = ok
+				if !ok {
+					// A sidecar that is still starting cannot answer; say so
+					// instead of leaving "looking for topics..." on screen.
+					hint.SetText("the sidecar did not answer yet - press Refresh")
+					return
+				}
+				loaded = true
 				refreshTopics()
 				// A fresh window opens on "Map", and a graph without a map
 				// would show an empty topic list even though it has a scan.
 				// Jump to the first kind that does have a topic.
-				if ok && len(topicSelect.Options) == 0 {
+				if len(topicSelect.Options) == 0 {
 					for _, kind := range displayKinds {
 						if len(topicsOfType(kind.Type)) > 0 {
 							kindSelect.SetSelected(kind.Label)
@@ -555,10 +574,19 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		viewStatus,
 	)
 
+	// The connection section answers the first question a missing display
+	// raises: does the sidecar see the same graph this window does? The
+	// namespace is the usual answer when it does not.
+	namespace := os.Getenv("NAV2_SHM_NAMESPACE")
+	if namespace == "" {
+		namespace = "(default)"
+	}
+	graphLabel := widget.NewLabel("graph:   - topics")
+	sh.graphLabel = graphLabel
 	connection := container.NewVBox(
-		widget.NewLabel("sidecar: not started"),
-		widget.NewLabel("agent:   -"),
-		widget.NewLabel("graph:   - topics"),
+		widget.NewLabel("shared memory namespace: " + namespace),
+		widget.NewLabel("agent:  see the status bar"),
+		graphLabel,
 	)
 
 	// --- panel ------------------------------------------------------------
@@ -817,6 +845,123 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	return sh
 }
 
+// diagnosticsText is what "Copy diagnostics" puts on the clipboard: the facts
+// a person cannot read off the window when a display does not appear.
+func (s *shell) diagnosticsText() string {
+	var b strings.Builder
+	b.WriteString("mini-ros2 viz diagnostics\n")
+	b.WriteString("time: " + time.Now().Format(time.RFC3339) + "\n")
+	b.WriteString("config: " + s.path + "\n")
+	b.WriteString("namespace: " + namespaceOf() + "\n")
+	b.WriteString("agent: " + envOr("ROS2_BRIDGE_AGENT", "(unset)") + "\n")
+	fmt.Fprintf(&b, "fixed frame: %s  zoom: %.2f px/m  center: %.2f, %.2f\n",
+		fixedFrameOf(&s.cfg), s.view.Zoom(), s.view.cx, s.view.cy)
+
+	fmt.Fprintf(&b, "\ngraph (%d topics):\n", len(s.graphNames))
+	if len(s.graphNames) == 0 {
+		b.WriteString("  (empty - the sidecar sees no topics)\n")
+	}
+	for _, name := range s.graphNames {
+		mark := " "
+		if _, added := s.cfg.Topics[name]; added {
+			mark = "*"
+		}
+		fmt.Fprintf(&b, " %s %-34s %s\n", mark, name, s.graphTypes[name])
+	}
+	b.WriteString("  (* = has a display)\n")
+
+	fmt.Fprintf(&b, "\ndisplays (%d):\n", len(s.topicNames))
+	if len(s.topicNames) == 0 {
+		b.WriteString("  (none added)\n")
+	}
+	for _, name := range s.topicNames {
+		topic := s.cfg.Topics[name]
+		fmt.Fprintf(&b,
+			"  %-34s %-42s enabled=%v history=%d qos=%s/%s/%d color=%q size=%g alpha=%g\n",
+			name, topic.Type, topic.enabled(), topic.History,
+			emptyAs(topic.QOS.Reliability, "default"),
+			emptyAs(topic.QOS.Durability, "default"),
+			topic.QOS.Depth, topic.Color, topic.PointSize, topic.Alpha)
+	}
+
+	if s.feed != nil {
+		snapshot := s.feed.scene.Snapshot()
+		fmt.Fprintf(&b,
+			"\nscene: maps=%d costmaps=%d clouds=%d scans=%d paths=%d poses=%d odom=%d marker_topics=%d\n",
+			len(snapshot.Maps), len(snapshot.Costmaps), len(snapshot.Clouds),
+			len(snapshot.Scans), len(snapshot.Paths), len(snapshot.Poses),
+			len(snapshot.Odometry), len(snapshot.Markers))
+		for name, layer := range snapshot.Scans {
+			if layer != nil {
+				fmt.Fprintf(&b, "  scan  %-30s points=%d stamp=%d frame=%q\n",
+					name, len(layer.Points)/2, layer.StampNS, layer.Frame)
+			}
+		}
+		for name, layer := range snapshot.Clouds {
+			if layer != nil {
+				fmt.Fprintf(&b, "  cloud %-30s points=%d stamp=%d frame=%q\n",
+					name, len(layer.Points)/2, layer.StampNS, layer.Frame)
+			}
+		}
+		for name, layer := range snapshot.Maps {
+			if layer != nil {
+				fmt.Fprintf(&b, "  map   %-30s %dx%d stamp=%d frame=%q\n",
+					name, layer.Width, layer.Height, layer.StampNS, layer.Frame)
+			}
+		}
+		for topic, message := range snapshot.Errors {
+			fmt.Fprintf(&b, "  error %-30s %s\n", topic, message)
+		}
+
+		b.WriteString("\nrates (Hz):\n")
+		rates := s.feed.rateSnapshot()
+		if len(rates) == 0 {
+			b.WriteString("  (no frames yet)\n")
+		}
+		names := make([]string, 0, len(rates))
+		for name := range rates {
+			names = append(names, name)
+		}
+		sort.Strings(names)
+		for _, name := range names {
+			fmt.Fprintf(&b, "  %-34s %d\n", name, rates[name])
+		}
+
+		if log := s.feed.lastLog(); log != "" {
+			if len(snapshot.Frames) > 0 {
+				b.WriteString("\ntf frames: " + strings.Join(snapshot.Frames, ", ") + "\n")
+			}
+			b.WriteString("\nsidecar log (tail):\n")
+			b.WriteString(log)
+			if !strings.HasSuffix(log, "\n") {
+				b.WriteString("\n")
+			}
+		}
+	}
+	return b.String()
+}
+
+func namespaceOf() string {
+	if ns := os.Getenv("NAV2_SHM_NAMESPACE"); ns != "" {
+		return ns
+	}
+	return "(default)"
+}
+
+func envOr(name, fallback string) string {
+	if value := os.Getenv(name); value != "" {
+		return value
+	}
+	return fallback
+}
+
+func emptyAs(value, fallback string) string {
+	if value == "" {
+		return fallback
+	}
+	return value
+}
+
 // containsString reports whether the list has the name.
 func containsString(names []string, name string) bool {
 	for _, entry := range names {
@@ -876,8 +1021,14 @@ func (s *shell) fetchGraph(after func(ok bool)) {
 	fyne.Do(func() {
 		s.graphNames = names
 		s.graphTypes = types
+		if s.graphLabel != nil {
+			s.graphLabel.SetText(fmt.Sprintf("graph:   %d topic(s)", len(names)))
+			s.graphLabel.Refresh()
+		}
 		if after != nil {
 			after(true)
+		} else {
+			s.announce(fmt.Sprintf("graph: %d topic(s)", len(names)), nil)
 		}
 	})
 }
