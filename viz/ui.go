@@ -289,6 +289,13 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		}
 		depthEntry.SetText(formatNumber(float64(topic.QOS.Depth)))
 		propStatus.SetText("")
+		// The properties live in their own accordion section; opening it is
+		// part of clicking the display, or the fields would update behind a
+		// closed flap.
+		if sh.accordion != nil {
+			sh.accordion.Open(1)
+			sh.accordion.Refresh()
+		}
 	}
 
 	// rebuildDisplays redraws the rows: the selected one is highlighted, each
