@@ -19,7 +19,30 @@ const (
 	toolNone toolMode = iota
 	toolGoal
 	toolPose
+	// toolPan is rviz's "Move Camera": dragging moves the view.
+	toolPan
+	// toolSelect picks the display under the pointer.
+	toolSelect
+	// toolPoint publishes the clicked point, like rviz's "Publish Point".
+	toolPoint
 )
+
+// toolName is the name the status bar shows for a tool.
+func toolName(mode toolMode) string {
+	switch mode {
+	case toolGoal:
+		return "2D Goal Pose"
+	case toolPose:
+		return "2D Pose Estimate"
+	case toolPan:
+		return "Move Camera"
+	case toolSelect:
+		return "Select"
+	case toolPoint:
+		return "Publish Point"
+	}
+	return "none"
+}
 
 // viewport is the 2D map view: a world rectangle drawn into a bitmap, with
 // pan (drag) and zoom (wheel, anchored at the pointer). It is a custom widget
@@ -63,9 +86,29 @@ type viewport struct {
 	toolDrag      *toolDrag
 	onPlace       func(mode toolMode, x, y, yaw float64)
 	onToolChanged func(mode toolMode)
+	// onSelect is the "Select" tool: the shell resolves the clicked world
+	// point to the display that owns it.
+	onSelect func(x, y float64)
+	// onPublishPoint is the "Publish Point" tool.
+	onPublishPoint func(x, y float64)
 
+	// press is where the button went down. The click tools need it to tell a
+	// click from the end of a camera drag.
+	press    fyne.Position
+	pressSet bool
+	// picked highlights the last point the Select tool resolved.
+	picked   *[2]float64
+	trails   map[string]*trail
 	dragging bool
 	lastPos  fyne.Position
+}
+
+// trail keeps the last messages of a scan or a cloud, so History Length draws
+// a trail rather than only the newest sweep.
+type trail struct {
+	stamp  int64
+	scans  [][]float64
+	clouds []*PointCloudLayer
 }
 
 type toolDrag struct {
@@ -86,6 +129,7 @@ func newViewport(cfg *Config) *viewport {
 		showPan:   true,
 		style:     cfg.Display,
 		topics:    cfg.Topics,
+		trails:    map[string]*trail{},
 	}
 	if view, ok := cfg.Views["view"]; ok {
 		v.bg = parseColor(view.Background, v.bg)
@@ -199,6 +243,7 @@ func (v *viewport) render() {
 
 	v.drawScene(img, ppm, w, h)
 	v.drawToolPreview(img, ppm, w, h)
+	v.drawPicked(img, ppm, w, h)
 
 	v.img.Image = img
 }
@@ -228,6 +273,30 @@ func (v *viewport) drawToolPreview(img *image.RGBA, ppm float64, w, h int) {
 		(v.cy-v.toolDrag.endY)*ppm+float64(h)/2,
 		tint, 2, w, h)
 	drawPose(img, v.toolDrag.endX, v.toolDrag.endY, yaw, ppm, v.cx, v.cy, w, h, tint, 14)
+}
+
+// drawPicked marks the world point the Select tool resolved: a ring plus a
+// crosshair, so it is visible on a map as well as on a dark grid.
+func (v *viewport) drawPicked(img *image.RGBA, ppm float64, w, h int) {
+	if v.picked == nil {
+		return
+	}
+	tint := color.RGBA{255, 220, 0, 255}
+	sx := (v.picked[0]-v.cx)*ppm + float64(w)/2
+	sy := (v.cy-v.picked[1])*ppm + float64(h)/2
+	for d := 0; d < 9; d++ {
+		angle := float64(d) * math.Pi / 4
+		px := int(math.Round(sx + 9*math.Cos(angle)))
+		py := int(math.Round(sy + 9*math.Sin(angle)))
+		for oy := -1; oy <= 1; oy++ {
+			for ox := -1; ox <= 1; ox++ {
+				x, y := px+ox, py+oy
+				if x >= 0 && y >= 0 && x < w && y < h {
+					img.Set(x, y, tint)
+				}
+			}
+		}
+	}
 }
 
 // setTool selects a tool; selecting the active one turns it off.
@@ -262,7 +331,14 @@ func (v *viewport) cancelTool() {
 }
 
 func (v *viewport) MouseDown(e *desktop.MouseEvent) {
-	if v.tool == toolNone || e.Button != desktop.MouseButtonPrimary {
+	if e.Button != desktop.MouseButtonPrimary {
+		return
+	}
+	v.press = e.Position
+	v.pressSet = true
+	if v.tool != toolGoal && v.tool != toolPose {
+		// The camera tools drag the view and the click tools only need the
+		// press position; neither draws a preview.
 		return
 	}
 	x, y := v.worldAt(e.Position)
@@ -273,25 +349,48 @@ func (v *viewport) MouseDown(e *desktop.MouseEvent) {
 }
 
 func (v *viewport) MouseUp(e *desktop.MouseEvent) {
-	if v.toolDrag == nil || !v.toolDrag.active {
+	if e.Button != desktop.MouseButtonPrimary {
 		return
 	}
-	drag := v.toolDrag
+	if v.toolDrag != nil && v.toolDrag.active {
+		drag := v.toolDrag
+		x, y := v.worldAt(e.Position)
+		drag.endX, drag.endY = x, y
+		dx := drag.endX - drag.startX
+		dy := drag.endY - drag.startY
+		yaw := 0.0
+		if math.Hypot(dx, dy) > 0.15 {
+			yaw = math.Atan2(dy, dx)
+		}
+		drag.active = false
+		v.toolDrag = nil
+		if v.onPlace != nil {
+			v.onPlace(drag.mode, drag.startX, drag.startY, yaw)
+		}
+		v.render()
+		v.img.Refresh()
+		return
+	}
+	// The click tools only act on a click, not on the end of a camera drag.
+	if !v.pressSet {
+		return
+	}
+	moved := math.Hypot(float64(e.Position.X-v.press.X), float64(e.Position.Y-v.press.Y))
+	v.pressSet = false
+	if moved > 4 {
+		return
+	}
 	x, y := v.worldAt(e.Position)
-	drag.endX, drag.endY = x, y
-	dx := drag.endX - drag.startX
-	dy := drag.endY - drag.startY
-	yaw := 0.0
-	if math.Hypot(dx, dy) > 0.15 {
-		yaw = math.Atan2(dy, dx)
+	switch v.tool {
+	case toolSelect:
+		if v.onSelect != nil {
+			v.onSelect(x, y)
+		}
+	case toolPoint:
+		if v.onPublishPoint != nil {
+			v.onPublishPoint(x, y)
+		}
 	}
-	drag.active = false
-	v.toolDrag = nil
-	if v.onPlace != nil {
-		v.onPlace(drag.mode, drag.startX, drag.startY, yaw)
-	}
-	v.render()
-	v.img.Refresh()
 }
 
 // drawScene paints the layers the sidecar delivered: the map first (it is the
@@ -360,9 +459,15 @@ func (v *viewport) drawScene(img *image.RGBA, ppm float64, w, h int) {
 			size = 2
 		}
 		byHeight := v.style.PointCloud.ColorByHeight && topic.Color == ""
-		drawCloud(img, layer, ppm, v.cx, v.cy, w, h, tint, size, byHeight,
-			v.style.PointCloud.MinZ, v.style.PointCloud.MaxZ,
-			v.style.PointCloud.MaxRange)
+		// The history is drawn first, oldest first, so the newest sweep is
+		// the bright one on top.
+		past := v.cloudTrail(name, layer, topic.History)
+		for i, previous := range past {
+			fade := float64(i+1) / float64(len(past))
+			drawCloud(img, previous, ppm, v.cx, v.cy, w, h, dimColor(tint, fade), size, byHeight,
+				v.style.PointCloud.MinZ, v.style.PointCloud.MaxZ,
+				v.style.PointCloud.MaxRange)
+		}
 	}
 
 	for name, layer := range snapshot.Scans {
@@ -379,7 +484,11 @@ func (v *viewport) drawScene(img *image.RGBA, ppm float64, w, h int) {
 		if size <= 0 {
 			size = 2
 		}
-		drawPoints(img, layer.Points, ppm, v.cx, v.cy, w, h, tint, size)
+		past := v.scanTrail(name, layer, topic.History)
+		for i, sweep := range past {
+			fade := float64(i+1) / float64(len(past))
+			drawPoints(img, sweep, ppm, v.cx, v.cy, w, h, dimColor(tint, fade), size)
+		}
 	}
 
 	for name, layer := range snapshot.Paths {
@@ -443,6 +552,70 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
+}
+
+// scanTrail returns the sweeps to draw for a scan, oldest first. A history of
+// one is just the newest sweep, which is what the layer itself holds.
+func (v *viewport) scanTrail(name string, layer *ScanLayer, history int) [][]float64 {
+	if history <= 1 {
+		return [][]float64{layer.Points}
+	}
+	entry := v.trails[name]
+	if entry == nil {
+		entry = &trail{}
+		v.trails[name] = entry
+	}
+	if entry.stamp != layer.StampNS {
+		entry.stamp = layer.StampNS
+		entry.scans = append(entry.scans, layer.Points)
+		if len(entry.scans) > history {
+			entry.scans = entry.scans[len(entry.scans)-history:]
+		}
+	}
+	if len(entry.scans) == 0 {
+		return [][]float64{layer.Points}
+	}
+	return entry.scans
+}
+
+// cloudTrail is scanTrail for a point cloud.
+func (v *viewport) cloudTrail(name string, layer *PointCloudLayer, history int) []*PointCloudLayer {
+	if history <= 1 {
+		return []*PointCloudLayer{layer}
+	}
+	entry := v.trails[name]
+	if entry == nil {
+		entry = &trail{}
+		v.trails[name] = entry
+	}
+	if entry.stamp != layer.StampNS {
+		entry.stamp = layer.StampNS
+		entry.clouds = append(entry.clouds, layer)
+		if len(entry.clouds) > history {
+			entry.clouds = entry.clouds[len(entry.clouds)-history:]
+		}
+	}
+	if len(entry.clouds) == 0 {
+		return []*PointCloudLayer{layer}
+	}
+	return entry.clouds
+}
+
+// dimColor scales a colour towards black. The history is drawn with the same
+// colour as the newest sweep, only darker, so a trail reads as one thing.
+func dimColor(c color.RGBA, factor float64) color.RGBA {
+	if factor > 1 {
+		factor = 1
+	}
+	if factor < 0.05 {
+		factor = 0.05
+	}
+	return color.RGBA{
+		R: uint8(float64(c.R) * factor),
+		G: uint8(float64(c.G) * factor),
+		B: uint8(float64(c.B) * factor),
+		A: c.A,
+	}
 }
 
 // rgbaColor parses a "#rrggbb" string into an opaque colour.
@@ -561,6 +734,13 @@ func (v *viewport) Dragged(e *fyne.DragEvent) {
 }
 
 func (v *viewport) DragEnd() {}
+
+// setPicked highlights a world point - the Select tool's answer.
+func (v *viewport) setPicked(x, y float64) {
+	v.picked = &[2]float64{x, y}
+	v.render()
+	v.img.Refresh()
+}
 
 func (v *viewport) MouseMoved(e *fyne.PointEvent) {
 	v.updateCursor(e.Position)

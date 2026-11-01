@@ -27,6 +27,7 @@
 //   {"op":"unsubscribe","topic":...}
 //   {"op":"set_fixed_frame","frame":...}
 //   {"op":"publish_pose","topic":...}    -> /goal_pose or /initialpose
+//   {"op":"publish_point","topic":...}   -> /clicked_point
 //   {"op":"shutdown"}
 //
 // A shim channel has exactly one writer, and this process holds the write end
@@ -78,6 +79,7 @@
 
 #include "nlohmann/json.hpp"
 
+#include "geometry_msgs/msg/point_stamped.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
 #include "map_msgs/msg/occupancy_grid_update.hpp"
@@ -585,6 +587,8 @@ public:
         respond(id, fixedFrame());
       } else if (op == "publish_pose") {
         respond(id, publishPose(command));
+      } else if (op == "publish_point") {
+        respond(id, publishPoint(command));
       } else if (op == "shutdown") {
         respond(id, true);
         g_running.store(false);
@@ -1473,6 +1477,34 @@ public:
       return {{"topic", topic}, {"type", type}, {"times", times}};
     }
     throw std::runtime_error("publish_pose only supports PoseStamped and PoseWithCovarianceStamped");
+  }
+
+  // publishPoint is rviz's Publish Point tool: one PointStamped on the tool's
+  // topic. The write end of that channel is created on first use, like the
+  // pose tools, so the graph shows a publisher before the message goes out.
+  json publishPoint(const json & command)
+  {
+    const std::string topic = command.value("topic", "/clicked_point");
+    const std::string type = command.value("type", "geometry_msgs/msg/PointStamped");
+    const std::string frame = command.value("frame", "map");
+    const double x = command.value("x", 0.0);
+    const double y = command.value("y", 0.0);
+    const double z = command.value("z", 0.0);
+    if (type != "geometry_msgs/msg/PointStamped") {
+      throw std::runtime_error("publish_point only supports PointStamped");
+    }
+    geometry_msgs::msg::PointStamped message;
+    message.header.stamp = node_->now().to_message();
+    message.header.frame_id = frame;
+    message.point.x = x;
+    message.point.y = y;
+    message.point.z = z;
+    auto channel = toolChannel(topic, type);
+    const auto payload = ros2_shim::serialize(message);
+    if (!channel->publish(payload.data(), payload.size())) {
+      throw std::runtime_error("the point does not fit the '" + topic + "' slot");
+    }
+    return {{"topic", topic}, {"type", type}, {"x", x}, {"y", y}, {"z", z}};
   }
 
   // ---------------------------------------------------------------- threads

@@ -13,6 +13,9 @@ import (
 // The panel must collapse to the edge and come back to exactly where it was.
 // This is the layout behaviour the shell exists to prove; driving it through
 // the real toggle keeps the test honest about what a click does.
+//
+// The panel is on the left, so the split offset is the panel's share of the
+// window and the viewport's share is what the configuration records.
 func TestPanelCollapseAndRestore(t *testing.T) {
 	a := test.NewApp()
 	defer a.Quit()
@@ -24,25 +27,29 @@ func TestPanelCollapseAndRestore(t *testing.T) {
 		t.Fatal("buildUI returned no split")
 	}
 
-	open := sh.split.Offset
+	open := sh.viewOffset()
 	if open <= 0 || open >= 0.9 {
-		t.Fatalf("unexpected initial offset %v", open)
+		t.Fatalf("unexpected initial viewport share %v", open)
+	}
+	// The panel is on the left: it takes the smaller share.
+	if sh.split.Offset >= 0.5 {
+		t.Fatalf("the panel is not on the left: offset %v", sh.split.Offset)
 	}
 
 	sh.togglePanel()
 	if !sh.collapsed {
 		t.Fatal("collapsed flag not set")
 	}
-	if sh.split.Offset < 0.99 {
-		t.Fatalf("panel did not collapse: offset %v", sh.split.Offset)
+	if sh.viewOffset() < 0.99 {
+		t.Fatalf("panel did not collapse: viewport share %v", sh.viewOffset())
 	}
 
 	sh.togglePanel()
 	if sh.collapsed {
 		t.Fatal("collapsed flag not cleared")
 	}
-	if sh.split.Offset != open {
-		t.Fatalf("panel did not return to %v (got %v)", open, sh.split.Offset)
+	if sh.viewOffset() != open {
+		t.Fatalf("panel did not return to %v (got %v)", open, sh.viewOffset())
 	}
 }
 

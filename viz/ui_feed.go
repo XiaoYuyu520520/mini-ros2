@@ -324,6 +324,22 @@ func (c *feedController) publishTool(
 	return feed.PublishPose(ctx, topic, typeName, frame, x, y, yaw, 3)
 }
 
+// publishPoint sends one clicked point, the way rviz's Publish Point tool
+// does.
+func (c *feedController) publishPoint(
+	topic, typeName, frame string, x, y, z float64,
+) error {
+	c.mu.Lock()
+	feed := c.feed
+	c.mu.Unlock()
+	if feed == nil {
+		return fmt.Errorf("sidecar is not running")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	return feed.PublishPoint(ctx, topic, typeName, frame, x, y, z)
+}
+
 func (c *feedController) setStatus(text string) {
 	fyne.Do(func() {
 		if c.sidecarLabel == nil {

@@ -146,7 +146,10 @@ type TopicConfig struct {
 	PointSize float64   `json:"point_size,omitempty"`
 	Width     float64   `json:"width,omitempty"`
 	Alpha     float64   `json:"alpha,omitempty"`
-	Enabled   *bool     `json:"enabled,omitempty"`
+	// History keeps that many past messages for a scan or a cloud, so a
+	// spinning lidar draws a trail the way rviz's History Length does.
+	History int   `json:"history,omitempty"`
+	Enabled *bool `json:"enabled,omitempty"`
 }
 
 type QOSConfig struct {
@@ -218,6 +221,8 @@ func defaultConfig() Config {
 				Frame: "map"},
 			"initial_pose": {Topic: "/initialpose",
 				Type: "geometry_msgs/msg/PoseWithCovarianceStamped", Frame: "map"},
+			"point": {Topic: "/clicked_point", Type: "geometry_msgs/msg/PointStamped",
+				Frame: "map"},
 		},
 	}
 	return cfg

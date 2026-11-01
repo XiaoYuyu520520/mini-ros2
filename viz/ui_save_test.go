@@ -36,7 +36,7 @@ func TestShellSaveWritesCurrentLayout(t *testing.T) {
 	sh := buildUI(a, w, &cfg, path)
 
 	w.Resize(fyne.NewSize(1234, 678))
-	sh.split.SetOffset(0.5)
+	sh.setViewOffset(0.5)
 	if err := sh.save(); err != nil {
 		t.Fatalf("save: %v", err)
 	}
@@ -63,7 +63,7 @@ func TestShellSaveWritesCurrentLayout(t *testing.T) {
 
 	// A collapsed panel must not be remembered as the layout: the next start
 	// would open the window with the panel squeezed to the edge.
-	sh.split.SetOffset(0.5)
+	sh.setViewOffset(0.5)
 	sh.togglePanel()
 	if !sh.collapsed {
 		t.Fatal("panel did not collapse")
@@ -103,8 +103,8 @@ func TestShellReloadAppliesLayout(t *testing.T) {
 		t.Fatalf("reload: %v", err)
 	}
 
-	if math.Abs(sh.split.Offset-0.3) > 1e-6 {
-		t.Fatalf("splitter not applied: got %v, want 0.3", sh.split.Offset)
+	if math.Abs(sh.viewOffset()-0.3) > 1e-6 {
+		t.Fatalf("splitter not applied: got %v, want 0.3", sh.viewOffset())
 	}
 	size := w.Canvas().Size()
 	if int(size.Width) != 1000 || int(size.Height) != 640 {

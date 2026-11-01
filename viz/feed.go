@@ -370,6 +370,18 @@ func (f *Feed) Topics(ctx context.Context) (json.RawMessage, error) {
 	return f.Call(ctx, "topics", nil)
 }
 
+// PublishPoint is rviz's Publish Point tool: one PointStamped on the topic the
+// tool is configured with.
+func (f *Feed) PublishPoint(
+	ctx context.Context, topic, typeName, frame string, x, y, z float64,
+) error {
+	_, err := f.Call(ctx, "publish_point", map[string]any{
+		"topic": topic, "type": typeName, "frame": frame,
+		"x": x, "y": y, "z": z,
+	})
+	return err
+}
+
 // Frame is one topic the sidecar knows about.
 type Frame struct {
 	Name        string   `json:"name"`

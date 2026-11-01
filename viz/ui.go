@@ -2,30 +2,80 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sort"
 	"strconv"
 	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
+// displayKind is one entry of the "Add a display" list. rviz calls these
+// displays and the user picks a *kind* first and a topic afterwards; the
+// topic is not the thing that is managed.
+type displayKind struct {
+	Label string
+	Type  string
+}
+
+// displayKinds is the list the Add dialog offers. It is the set of message
+// types the sidecar can decode, in the order a person would look for them.
+var displayKinds = []displayKind{
+	{Label: "Map", Type: "nav_msgs/msg/OccupancyGrid"},
+	{Label: "Costmap", Type: "nav2_msgs/msg/Costmap"},
+	{Label: "Costmap update", Type: "nav2_msgs/msg/CostmapUpdate"},
+	{Label: "Occupancy grid update", Type: "map_msgs/msg/OccupancyGridUpdate"},
+	{Label: "LaserScan", Type: "sensor_msgs/msg/LaserScan"},
+	{Label: "PointCloud2", Type: "sensor_msgs/msg/PointCloud2"},
+	{Label: "Path", Type: "nav_msgs/msg/Path"},
+	{Label: "Pose", Type: "geometry_msgs/msg/PoseStamped"},
+	{Label: "Pose with covariance", Type: "geometry_msgs/msg/PoseWithCovarianceStamped"},
+	{Label: "Odometry", Type: "nav_msgs/msg/Odometry"},
+	{Label: "Marker", Type: "visualization_msgs/msg/Marker"},
+	{Label: "MarkerArray", Type: "visualization_msgs/msg/MarkerArray"},
+}
+
+// typeShort is the short name of a message type, the way rviz writes it in a
+// display's name: "sensor_msgs/msg/LaserScan" becomes "LaserScan".
+func typeShort(typeName string) string {
+	if typeName == "" {
+		return "(no type)"
+	}
+	if i := strings.LastIndex(typeName, "/"); i >= 0 && i+1 < len(typeName) {
+		return typeName[i+1:]
+	}
+	return typeName
+}
+
 // shell is the assembled window. It is a struct rather than a function's local
 // state so the layout behaviour (collapse, fit) can be exercised by a test
 // without a screen.
 type shell struct {
-	cfg          Config
-	path         string
-	win          fyne.Window
-	view         *viewport
-	split        *container.Split
-	accordion    *widget.Accordion
-	topicList    *widget.List
-	topicNames   []string
+	cfg  Config
+	path string
+	win  fyne.Window
+	view *viewport
+	// split holds the panel on the left and the viewport on the right, the
+	// way rviz has them: the displays are a control panel, not a sidebar of
+	// the drawing.
+	split     *container.Split
+	accordion *widget.Accordion
+	// displayList is the tree of displays. Each row is one display: a tick
+	// shows it, the name says what it is.
+	displayList *widget.List
+	topicNames  []string
+	// selectedDisplay is the display whose properties are on screen.
+	selectedDisplay string
+	// graphNames and graphTypes are what the sidecar says the graph holds.
+	graphNames []string
+	graphTypes map[string]string
+
 	savedOffset  float64
 	collapsed    bool
 	togglePanel  func()
@@ -48,6 +98,30 @@ func sortedTopicNames(cfg *Config) []string {
 	return names
 }
 
+// viewOffset is the fraction of the window the viewport takes. The panel is
+// on the left, so the splitter's offset is the other fraction.
+func (s *shell) viewOffset() float64 {
+	return 1 - s.split.Offset
+}
+
+// setViewOffset puts the viewport at that fraction and leaves the rest to the
+// panel.
+func (s *shell) setViewOffset(fraction float64) {
+	if fraction < 0.05 {
+		fraction = 0.05
+	}
+	if fraction > 0.95 {
+		fraction = 0.95
+	}
+	s.split.SetOffset(1 - fraction)
+}
+
+// collapseView squeezes the panel away: the viewport takes everything but a
+// sliver, so the panel can still be dragged back.
+func (s *shell) collapseView() {
+	s.split.SetOffset(0.001)
+}
+
 // buildUI assembles the shell: a toolbar, a 2D viewport, a collapsible side
 // panel of accordion sections, and a status bar. Nothing here talks to the
 // sidecar yet - the point is the frame the displays will be dropped into.
@@ -58,6 +132,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	sh := &shell{
 		cfg: *cfg, path: cfgPath, win: w, view: v,
 		topicNames: sortedTopicNames(cfg), savedOffset: cfg.Layout.PanelOffset,
+		graphTypes: map[string]string{},
 	}
 	if sh.savedOffset <= 0 || sh.savedOffset >= 1 {
 		sh.savedOffset = 0.74
@@ -91,101 +166,55 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		dpiLabel,
 	)
 
-	// --- side panel -------------------------------------------------------
-	// The topic list is the "add a display" surface: names come from config,
-	// and the button appends one so the list mechanics can be felt before the
-	// sidecar supplies real topics. It reads through the shell so a reload can
-	// replace the slice without the list holding a stale copy.
-	// The topic list is a list of checkboxes: a tick means "show this", and
-	// unticking stops the sidecar delivering it and drops the last frame.
-	topicList := widget.NewList(
+	// --- footer ------------------------------------------------------------
+	// The footer shows the zoom and the screen scale; several places change
+	// the zoom, so it is one function.
+	updateFooter := func() {
+		zoomLabel.SetText(fmt.Sprintf("zoom: %.1f px/m", v.Zoom()))
+		dpiLabel.SetText(fmt.Sprintf("dpi: %.2fx", v.dpiScale()))
+	}
+	updateFooter()
+
+	// --- displays ---------------------------------------------------------
+	// The list is a tree of displays, one row each: a tick means "show
+	// this", the name says what it draws. The topic it reads is a property of
+	// the display, not a row of its own - that is the rviz arrangement, and
+	// it is why a display can be pointed at another topic later.
+	displayList := widget.NewList(
 		func() int { return len(sh.topicNames) },
-		func() fyne.CanvasObject { return widget.NewCheck("", nil) },
+		func() fyne.CanvasObject {
+			return container.NewHBox(
+				widget.NewCheck("", nil),
+				widget.NewLabel("display"),
+			)
+		},
 		func(i widget.ListItemID, o fyne.CanvasObject) {
 			if i >= len(sh.topicNames) {
 				return
 			}
 			name := sh.topicNames[i]
-			check := o.(*widget.Check)
-			check.Text = name
+			row := o.(*fyne.Container)
+			check := row.Objects[0].(*widget.Check)
+			label := row.Objects[1].(*widget.Label)
+			topic, known := sh.cfg.Topics[name]
 			// The callback is replaced on every update, because the list
 			// reuses one object for many rows.
 			check.OnChanged = nil
-			topic, known := sh.cfg.Topics[name]
 			check.SetChecked(!known || topic.enabled())
 			check.OnChanged = func(on bool) { sh.setTopicEnabled(name, on) }
+			label.SetText(fmt.Sprintf("%-22s %s", typeShort(topic.Type), name))
 			check.Refresh()
+			label.Refresh()
 		},
 	)
-	sh.topicList = topicList
+	sh.displayList = displayList
 
-	// The topic picker. It lists what the graph has and adds the chosen one
-	// to the configuration, so a new topic needs no restart and no hand
-	// editing.
-	topicTypes := map[string]string{}
-	topicTypeLabel := widget.NewLabel("(select a topic)")
-	topicSelect := widget.NewSelect(nil, func(name string) {
-		if typeName := topicTypes[name]; typeName != "" {
-			topicTypeLabel.SetText(typeName)
-		} else {
-			topicTypeLabel.SetText("(select a topic)")
-		}
-	})
-	fillTopics := func() {
-		go func() {
-			frames, err := sh.feed.graphTopics()
-			if err != nil {
-				sh.announce("topic list failed", err)
-				return
-			}
-			names := make([]string, 0, len(frames))
-			types := make(map[string]string, len(frames))
-			for _, entry := range frames {
-				if entry.Name == "/tf" || entry.Name == "/tf_static" {
-					continue
-				}
-				if entry.Type == "" {
-					continue
-				}
-				names = append(names, entry.Name)
-				types[entry.Name] = entry.Type
-			}
-			sort.Strings(names)
-			fyne.Do(func() {
-				topicTypes = types
-				topicSelect.Options = names
-				topicSelect.ClearSelected()
-				topicSelect.Refresh()
-				topicTypeLabel.SetText(fmt.Sprintf("%d topic(s) in the graph", len(names)))
-			})
-		}()
-	}
-	var refreshPropTopics func()
-	addTopic := func() {
-		name := topicSelect.Selected
-		if name == "" {
-			sh.announce("pick a topic first", nil)
-			return
-		}
-		typeName := topicTypes[name]
-		if typeName == "" {
-			sh.announce(fmt.Sprintf("%s has no type yet", name), nil)
-			return
-		}
-		if _, known := sh.cfg.Topics[name]; !known {
-			sh.cfg.Topics[name] = TopicConfig{Type: typeName}
-			sh.topicNames = append(sh.topicNames, name)
-			sort.Strings(sh.topicNames)
-		}
-		topicList.Refresh()
-		if refreshPropTopics != nil {
-			refreshPropTopics()
-		}
-		sh.feed.resubscribe()
-		sh.announce(fmt.Sprintf("added %s (%s)", name, typeName), nil)
-	}
-	// The display properties. Empty means "the type's style", so a topic only
-	// carries what it wants to change.
+	// --- properties -------------------------------------------------------
+	// The property inspector: what the selected display draws and how it
+	// talks to the agent. Empty means "the type's default", which is why the
+	// fields carry the default in their placeholder.
+	propTitle := widget.NewLabelWithStyle("(no display selected)", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
+	propEnabled := widget.NewCheck("Enabled", nil)
 	propTopic := widget.NewSelect(nil, nil)
 	colorEntry := widget.NewEntry()
 	colorEntry.SetPlaceHolder("#00ff88 - empty = the type's colour")
@@ -193,103 +222,347 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	sizeEntry.SetPlaceHolder("point size / line width - empty = the type's")
 	alphaEntry := widget.NewEntry()
 	alphaEntry.SetPlaceHolder("0..1 - empty = the type's")
+	historyEntry := widget.NewEntry()
+	historyEntry.SetPlaceHolder("1 = only the newest message")
+	reliability := widget.NewSelect([]string{"(type default)", "best_effort", "reliable"}, nil)
+	durability := widget.NewSelect([]string{"(type default)", "volatile", "transient_local"}, nil)
+	depthEntry := widget.NewEntry()
+	depthEntry.SetPlaceHolder("history depth")
 	propStatus := widget.NewLabel("")
 
-	refreshPropTopics = func() {
-		propTopic.Options = append([]string(nil), sh.topicNames...)
-		propTopic.ClearSelected()
-		propTopic.Refresh()
+	// topicsOfType is the topics in the graph that carry a given type: the
+	// Add dialog and the topic binding both need it.
+	topicsOfType := func(typeName string) []string {
+		names := make([]string, 0, len(sh.graphTypes))
+		for _, name := range sh.graphNames {
+			if sh.graphTypes[name] == typeName {
+				names = append(names, name)
+			}
+		}
+		sort.Strings(names)
+		return names
 	}
+
 	loadProps := func(name string) {
 		topic, known := sh.cfg.Topics[name]
 		if !known {
 			return
 		}
+		sh.selectedDisplay = name
+		propTitle.SetText(fmt.Sprintf("%s  %s", typeShort(topic.Type), name))
+		propEnabled.SetChecked(topic.enabled())
+		options := topicsOfType(topic.Type)
+		if len(options) == 0 {
+			options = []string{name}
+		} else if !containsString(options, name) {
+			options = append([]string{name}, options...)
+		}
+		propTopic.Options = options
+		propTopic.SetSelected(name)
 		colorEntry.SetText(topic.Color)
 		sizeEntry.SetText(formatNumber(topic.PointSize))
 		alphaEntry.SetText(formatNumber(topic.Alpha))
+		historyEntry.SetText(formatNumber(float64(topic.History)))
+		reliability.SetSelected(topic.QOS.Reliability)
+		if reliability.Selected == "" {
+			reliability.SetSelected("(type default)")
+		}
+		durability.SetSelected(topic.QOS.Durability)
+		if durability.Selected == "" {
+			durability.SetSelected("(type default)")
+		}
+		depthEntry.SetText(formatNumber(float64(topic.QOS.Depth)))
+		propStatus.SetText("")
 	}
-	propTopic.OnChanged = loadProps
+
+	displayList.OnSelected = func(id widget.ListItemID) {
+		if id < 0 || id >= len(sh.topicNames) {
+			return
+		}
+		loadProps(sh.topicNames[id])
+	}
+
 	applyProps := func() {
-		name := propTopic.Selected
+		name := sh.selectedDisplay
 		if name == "" {
-			propStatus.SetText("pick a topic first")
+			propStatus.SetText("pick a display first")
 			return
 		}
 		topic, known := sh.cfg.Topics[name]
 		if !known {
 			return
 		}
+		enabled := propEnabled.Checked
+		topic.Enabled = &enabled
 		topic.Color = strings.TrimSpace(colorEntry.Text)
 		topic.PointSize = parseNumber(sizeEntry.Text)
 		topic.Width = topic.PointSize
 		topic.Alpha = parseNumber(alphaEntry.Text)
+		topic.History = int(parseNumber(historyEntry.Text))
+		if reliability.Selected != "(type default)" {
+			topic.QOS.Reliability = reliability.Selected
+		} else {
+			topic.QOS.Reliability = ""
+		}
+		if durability.Selected != "(type default)" {
+			topic.QOS.Durability = durability.Selected
+		} else {
+			topic.QOS.Durability = ""
+		}
+		topic.QOS.Depth = int(parseNumber(depthEntry.Text))
+
+		// The topic binding: a display can be pointed at another topic of
+		// the same type, the way a display in rviz is repointed.
+		bound := propTopic.Selected
+		if bound != "" && bound != name {
+			if _, exists := sh.cfg.Topics[bound]; !exists {
+				sh.cfg.Topics[bound] = topic
+				delete(sh.cfg.Topics, name)
+				for i, entry := range sh.topicNames {
+					if entry == name {
+						sh.topicNames[i] = bound
+					}
+				}
+				sort.Strings(sh.topicNames)
+				name = bound
+				sh.selectedDisplay = bound
+				if sh.feed != nil {
+					sh.feed.setEnabled(bound, enabled)
+				}
+			}
+		}
 		sh.cfg.Topics[name] = topic
+		displayList.Refresh()
 		// The viewport holds a copy of the per-topic styles; give it the new
 		// one and let it rebuild the map textures.
 		v.applyView(&sh.cfg)
+		if sh.feed != nil {
+			sh.feed.resubscribe()
+		}
 		propStatus.SetText("applied")
-		sh.announce(fmt.Sprintf("display properties of %s applied", name), nil)
+		sh.announce(fmt.Sprintf("properties of %s applied", name), nil)
 	}
-	refreshPropTopics()
 
-	displays := container.NewVBox(
-		widget.NewLabel("Add a topic from the graph:"),
-		topicSelect,
-		topicTypeLabel,
-		container.NewHBox(
-			widget.NewButton("Refresh", func() { fillTopics() }),
-			widget.NewButton("Add", addTopic),
-		),
-		widget.NewSeparator(),
-		widget.NewLabel("Display properties:"),
+	removeDisplay := func() {
+		name := sh.selectedDisplay
+		if name == "" {
+			return
+		}
+		delete(sh.cfg.Topics, name)
+		for i, entry := range sh.topicNames {
+			if entry == name {
+				sh.topicNames = append(sh.topicNames[:i], sh.topicNames[i+1:]...)
+				break
+			}
+		}
+		sh.selectedDisplay = ""
+		propTitle.SetText("(no display selected)")
+		propEnabled.SetChecked(false)
+		if sh.feed != nil {
+			sh.feed.setEnabled(name, false)
+		}
+		displayList.Refresh()
+		sh.announce(fmt.Sprintf("removed %s", name), nil)
+	}
+
+	properties := container.NewVBox(
+		propTitle,
+		propEnabled,
+		widget.NewLabel("Topic:"),
 		propTopic,
+		widget.NewLabel("Color:"),
 		colorEntry,
+		widget.NewLabel("Size:"),
 		sizeEntry,
+		widget.NewLabel("Alpha:"),
 		alphaEntry,
+		widget.NewLabel("History length:"),
+		historyEntry,
+		widget.NewSeparator(),
+		widget.NewLabel("QoS (used at the agent boundary):"),
+		reliability,
+		durability,
+		depthEntry,
 		container.NewHBox(
-			widget.NewButton("Reload", func() {
-				refreshPropTopics()
-				if len(sh.topicNames) > 0 {
-					loadProps(sh.topicNames[0])
-				}
-			}),
 			widget.NewButton("Apply", applyProps),
+			widget.NewButtonWithIcon("", theme.ContentRemoveIcon(), removeDisplay),
 		),
 		propStatus,
 	)
+
+	// --- add a display ----------------------------------------------------
+	// rviz's Add button opens a list of display *types*; the topic is picked
+	// afterwards. The same order here keeps the two tools familiar.
+	var addDialog *dialog.ConfirmDialog
+	addDisplay := func() {
+		kindLabels := make([]string, 0, len(displayKinds))
+		for _, kind := range displayKinds {
+			kindLabels = append(kindLabels, kind.Label)
+		}
+		kindSelect := widget.NewSelect(kindLabels, nil)
+		kindSelect.SetSelected(kindLabels[0])
+		topicSelect := widget.NewSelect(nil, nil)
+		hint := widget.NewLabel("")
+
+		refreshTopics := func() {
+			typeName := ""
+			for _, kind := range displayKinds {
+				if kind.Label == kindSelect.Selected {
+					typeName = kind.Type
+					break
+				}
+			}
+			options := topicsOfType(typeName)
+			topicSelect.Options = options
+			topicSelect.ClearSelected()
+			topicSelect.Refresh()
+			if len(options) == 0 {
+				hint.SetText(fmt.Sprintf("no %s topic in the graph yet", typeShort(typeName)))
+			} else {
+				hint.SetText(fmt.Sprintf("%d topic(s) of this type", len(options)))
+			}
+		}
+		kindSelect.OnChanged = func(string) { refreshTopics() }
+		refreshTopics()
+
+		content := container.NewVBox(
+			widget.NewLabel("Display type:"),
+			kindSelect,
+			widget.NewLabel("Topic:"),
+			topicSelect,
+			hint,
+		)
+		addDialog = dialog.NewCustomConfirm("Add a display", "Add", "Cancel", content,
+			func(confirmed bool) {
+				if !confirmed {
+					return
+				}
+				typeName := ""
+				for _, kind := range displayKinds {
+					if kind.Label == kindSelect.Selected {
+						typeName = kind.Type
+						break
+					}
+				}
+				name := topicSelect.Selected
+				if name == "" {
+					sh.announce("pick a topic first", nil)
+					return
+				}
+				if _, known := sh.cfg.Topics[name]; known {
+					sh.announce(fmt.Sprintf("%s is already shown", name), nil)
+					return
+				}
+				sh.cfg.Topics[name] = TopicConfig{Type: typeName}
+				sh.topicNames = append(sh.topicNames, name)
+				sort.Strings(sh.topicNames)
+				displayList.Refresh()
+				if sh.feed != nil {
+					sh.feed.resubscribe()
+				}
+				sh.announce(fmt.Sprintf("added %s (%s)", name, typeShort(typeName)), nil)
+			}, w)
+		addDialog.Show()
+		// The graph may have changed since the last look; ask again while the
+		// dialog is open.
+		go func() {
+			sh.fetchGraph(func() { refreshTopics() })
+		}()
+	}
+
+	displays := container.NewVBox(
+		displayList,
+		container.NewHBox(
+			widget.NewButtonWithIcon("Add", theme.ContentAddIcon(), addDisplay),
+			widget.NewButtonWithIcon("", theme.ViewRefreshIcon(), func() {
+				go func() { sh.fetchGraph(nil) }()
+			}),
+		),
+	)
+
+	// --- view -------------------------------------------------------------
+	// The view is a property of the drawing, not of a display, so it has its
+	// own section: the fixed frame, the grid and the background.
+	frameEntry := widget.NewEntry()
+	frameEntry.SetText(fixedFrameOf(cfg))
+	gridEntry := widget.NewEntry()
+	gridEntry.SetText(formatNumber(float64(gridCellOf(cfg))))
+	backgroundEntry := widget.NewEntry()
+	backgroundEntry.SetText(backgroundOf(cfg))
+	viewStatus := widget.NewLabel("")
+	applyView := func() {
+		fresh := sh.cfg
+		view, ok := fresh.Views["view"]
+		if !ok {
+			view = ViewConfig{}
+		}
+		if frame := strings.TrimSpace(frameEntry.Text); frame != "" {
+			view.FixedFrame = frame
+		}
+		if cell := parseNumber(gridEntry.Text); cell > 0 {
+			view.GridCellM = cell
+		}
+		if background := strings.TrimSpace(backgroundEntry.Text); background != "" {
+			view.Background = background
+		}
+		fresh.Views["view"] = view
+		sh.cfg = fresh
+		v.applyView(&fresh)
+		if sh.feed != nil {
+			sh.feed.applyFixedFrame(fresh)
+		}
+		viewStatus.SetText("applied")
+		sh.announce("view applied", nil)
+	}
+	viewPanel := container.NewVBox(
+		widget.NewLabel("Fixed frame:"),
+		frameEntry,
+		widget.NewLabel("Grid cell (m):"),
+		gridEntry,
+		widget.NewLabel("Background:"),
+		backgroundEntry,
+		container.NewHBox(
+			widget.NewButton("Apply", applyView),
+			widget.NewButton("Fit view", func() {
+				v.Fit()
+				updateFooter()
+			}),
+		),
+		viewStatus,
+	)
+
 	connection := container.NewVBox(
 		widget.NewLabel("sidecar: not started"),
 		widget.NewLabel("agent:   -"),
 		widget.NewLabel("graph:   - topics"),
 	)
 
+	// --- panel ------------------------------------------------------------
+	// rviz's order: the displays are at the top, the properties of the
+	// selected display right below them, then the other sections.
 	accordion := widget.NewAccordion(
-		widget.NewAccordionItem("Topics", topicList),
 		widget.NewAccordionItem("Displays", displays),
+		widget.NewAccordionItem("Properties", properties),
+		widget.NewAccordionItem("View", viewPanel),
 		widget.NewAccordionItem("Connection", connection),
 	)
 	accordion.Open(0)
+	accordion.Open(1)
 	sh.accordion = accordion
 
-	// --- split + collapse -------------------------------------------------
-	split := container.NewHSplit(v, accordion)
-	split.SetOffset(sh.savedOffset)
+	// The panel is on the left and the viewport fills the rest, the way
+	// rviz has it.
+	split := container.NewHSplit(accordion, v)
 	sh.split = split
-
-	updateFooter := func() {
-		zoomLabel.SetText(fmt.Sprintf("zoom: %.1f px/m", v.Zoom()))
-		dpiLabel.SetText(fmt.Sprintf("dpi: %.2fx", v.dpiScale()))
-	}
-	updateFooter()
+	sh.setViewOffset(sh.savedOffset)
 
 	sh.togglePanel = func() {
 		if sh.collapsed {
-			split.SetOffset(sh.savedOffset)
+			sh.setViewOffset(sh.savedOffset)
 			sh.collapsed = false
 		} else {
-			sh.savedOffset = split.Offset
-			split.SetOffset(0.999)
+			sh.savedOffset = sh.viewOffset()
+			sh.collapseView()
 			sh.collapsed = true
 		}
 		split.Refresh()
@@ -298,7 +571,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 
 	// --- config: load / save ----------------------------------------------
 	// `apply` re-reads everything that is derived from the config: the
-	// viewport's view settings, the topic list, the window size, the splitter
+	// viewport's view settings, the display list, the window size, the splitter
 	// position, and the footer (the zoom limits may have changed).
 	sh.notify = func(what string, err error) {
 		if err != nil {
@@ -328,7 +601,10 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		sh.cfg = fresh
 		v.applyView(&fresh)
 		sh.topicNames = sortedTopicNames(&fresh)
-		topicList.Refresh()
+		displayList.Refresh()
+		frameEntry.SetText(fixedFrameOf(&fresh))
+		gridEntry.SetText(formatNumber(float64(gridCellOf(&fresh))))
+		backgroundEntry.SetText(backgroundOf(&fresh))
 
 		// A loaded file describes a workspace, so its window size and splitter
 		// position are applied too. A reload that did not would look like it
@@ -341,7 +617,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			// user had collapsed: otherwise the new offset is invisible.
 			sh.savedOffset = off
 			sh.collapsed = false
-			split.SetOffset(off)
+			sh.setViewOffset(off)
 		}
 		updateFooter()
 	}
@@ -364,10 +640,20 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 
 	// --- toolbar ----------------------------------------------------------
 	//
-	// The two tools are buttons with their names on them, not icons: an
-	// icon-only toolbar is a puzzle, and the two names are the ones rviz uses
-	// ("2D Goal Pose", "2D Pose Estimate"). The rest of the bar keeps to
-	// icons, because those actions are not what a person looks for by name.
+	// The tools are buttons with their names on them, not icons: an
+	// icon-only toolbar is a puzzle, and the names are the ones rviz uses
+	// ("Move Camera", "Select", "Publish Point", "2D Goal Pose", "2D Pose
+	// Estimate"). The rest of the bar keeps to icons, because those actions
+	// are not what a person looks for by name.
+	cameraButton := widget.NewButtonWithIcon("Move Camera", theme.MoveUpIcon(), func() {
+		v.setTool(toolPan)
+	})
+	selectButton := widget.NewButtonWithIcon("Select", theme.SearchIcon(), func() {
+		v.setTool(toolSelect)
+	})
+	pointButton := widget.NewButtonWithIcon("Publish Point", theme.MailSendIcon(), func() {
+		v.setTool(toolPoint)
+	})
 	goalButton := widget.NewButtonWithIcon("2D Goal Pose", theme.NavigateNextIcon(), func() {
 		v.setTool(toolGoal)
 	})
@@ -375,6 +661,10 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		v.setTool(toolPose)
 	})
 	toolbar := container.NewHBox(
+		cameraButton,
+		selectButton,
+		pointButton,
+		widget.NewSeparator(),
 		goalButton,
 		poseButton,
 		widget.NewSeparator(),
@@ -394,11 +684,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 			v.Fit()
 			updateFooter()
 		}),
-		widget.NewButtonWithIcon("", theme.ContentAddIcon(), func() {
-			name := fmt.Sprintf("/new/topic/%d", len(sh.topicNames)+1)
-			sh.topicNames = append(sh.topicNames, name)
-			topicList.Refresh()
-		}),
+		widget.NewButtonWithIcon("", theme.ContentAddIcon(), addDisplay),
 		layout.NewSpacer(),
 		widget.NewButtonWithIcon("", theme.MenuIcon(), togglePanel),
 	)
@@ -452,31 +738,53 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	// The tool label follows the viewport's tool state, and the buttons show
 	// which one is armed: a tool that is armed is the one the next click in
 	// the viewport belongs to.
+	toolButtons := map[toolMode]*widget.Button{
+		toolPan:    cameraButton,
+		toolSelect: selectButton,
+		toolPoint:  pointButton,
+		toolGoal:   goalButton,
+		toolPose:   poseButton,
+	}
 	v.onToolChanged = func(toolMode) {
-		switch v.Tool() {
-		case toolGoal:
-			toolLabel.SetText("tool: 2D Goal Pose")
-			goalButton.Importance = widget.HighImportance
-			poseButton.Importance = widget.MediumImportance
-		case toolPose:
-			toolLabel.SetText("tool: 2D Pose Estimate")
-			goalButton.Importance = widget.MediumImportance
-			poseButton.Importance = widget.HighImportance
-		default:
-			toolLabel.SetText("tool: none")
-			goalButton.Importance = widget.MediumImportance
-			poseButton.Importance = widget.MediumImportance
+		for mode, button := range toolButtons {
+			if mode == v.Tool() {
+				button.Importance = widget.HighImportance
+			} else {
+				button.Importance = widget.MediumImportance
+			}
+			button.Refresh()
 		}
-		goalButton.Refresh()
-		poseButton.Refresh()
+		toolLabel.SetText("tool: " + toolName(v.Tool()))
 		toolLabel.Refresh()
 	}
 	v.onPlace = func(mode toolMode, x, y, yaw float64) {
 		sh.publishTool(mode, x, y, yaw)
 	}
+	// The Select tool picks the display under the pointer; the shell knows the
+	// scene, the viewport only knows the geometry.
+	v.onSelect = func(x, y float64) {
+		name, ok := sh.pickDisplay(x, y)
+		if !ok {
+			sh.announce(fmt.Sprintf("nothing at %.2f, %.2f", x, y), nil)
+			return
+		}
+		for i, entry := range sh.topicNames {
+			if entry == name {
+				displayList.Select(i)
+				break
+			}
+		}
+		v.setPicked(x, y)
+		sh.announce(fmt.Sprintf("selected %s at %.2f, %.2f", name, x, y), nil)
+	}
+	v.onPublishPoint = func(x, y float64) {
+		sh.publishPoint(x, y)
+	}
 
 	sh.feed = newFeedController(v, scene, func() Config { return sh.cfg }, sidecarLabel, frameLabel)
-	sh.feed.onConnected = fillTopics
+	sh.feed.onConnected = func() {
+		go func() { sh.fetchGraph(nil) }()
+	}
 	sh.feed.start()
 	w.SetCloseIntercept(func() {
 		sh.feed.close()
@@ -485,14 +793,197 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	return sh
 }
 
+// containsString reports whether the list has the name.
+func containsString(names []string, name string) bool {
+	for _, entry := range names {
+		if entry == name {
+			return true
+		}
+	}
+	return false
+}
+
+// gridCellOf is the grid spacing of the view.
+func gridCellOf(cfg *Config) float64 {
+	if view, ok := cfg.Views["view"]; ok && view.GridCellM > 0 {
+		return view.GridCellM
+	}
+	return 1
+}
+
+// backgroundOf is the background colour of the view.
+func backgroundOf(cfg *Config) string {
+	if view, ok := cfg.Views["view"]; ok && view.Background != "" {
+		return view.Background
+	}
+	return "#1e1e1e"
+}
+
+// fetchGraph asks the sidecar what the graph holds and remembers it. The
+// topic list and the Add dialog both read that list.
+func (s *shell) fetchGraph(after func()) {
+	if s.feed == nil {
+		return
+	}
+	frames, err := s.feed.graphTopics()
+	if err != nil {
+		if after == nil {
+			fyne.Do(func() { s.announce("topic list failed", err) })
+		}
+		return
+	}
+	names := make([]string, 0, len(frames))
+	types := make(map[string]string, len(frames))
+	for _, entry := range frames {
+		if entry.Name == "/tf" || entry.Name == "/tf_static" {
+			continue
+		}
+		if entry.Type == "" {
+			continue
+		}
+		names = append(names, entry.Name)
+		types[entry.Name] = entry.Type
+	}
+	sort.Strings(names)
+	fyne.Do(func() {
+		s.graphNames = names
+		s.graphTypes = types
+		if after != nil {
+			after()
+		}
+	})
+}
+
+// pickDisplay finds the display that owns the world point: the one whose
+// geometry is closest to it. A grid counts as owning the whole cell it is
+// in, so a click on the map picks the map.
+func (s *shell) pickDisplay(x, y float64) (string, bool) {
+	if s.feed == nil {
+		return "", false
+	}
+	snapshot := s.feed.scene.Snapshot()
+	best := ""
+	bestDistance := 0.0
+
+	consider := func(name string, px, py float64) {
+		distance := (px-x)*(px-x) + (py-y)*(py-y)
+		if best == "" || distance < bestDistance {
+			best = name
+			bestDistance = distance
+		}
+	}
+
+	for name, layer := range snapshot.Scans {
+		if layer == nil {
+			continue
+		}
+		for i := 0; i+1 < len(layer.Points); i += 2 {
+			consider(name, layer.Points[i], layer.Points[i+1])
+		}
+	}
+	for name, layer := range snapshot.Clouds {
+		if layer == nil {
+			continue
+		}
+		for i := 0; i+1 < len(layer.Points); i += 2 {
+			consider(name, layer.Points[i], layer.Points[i+1])
+		}
+	}
+	for name, layer := range snapshot.Poses {
+		if layer != nil {
+			consider(name, layer.X, layer.Y)
+		}
+	}
+	for name, layer := range snapshot.Odometry {
+		if layer != nil {
+			consider(name, layer.X, layer.Y)
+		}
+	}
+	for name, layer := range snapshot.Paths {
+		if layer == nil {
+			continue
+		}
+		for i := 0; i+1 < len(layer.Poses); i += 3 {
+			consider(name, layer.Poses[i], layer.Poses[i+1])
+		}
+	}
+	for topic, byID := range snapshot.Markers {
+		for _, layer := range byID {
+			if layer != nil {
+				consider(topic, layer.X, layer.Y)
+			}
+		}
+	}
+
+	// A point inside a grid belongs to that grid, and the grid wins over a
+	// scan point that happens to be near the click.
+	for name, layer := range snapshot.Maps {
+		if layer == nil || layer.Resolution <= 0 {
+			continue
+		}
+		col := int(math.Floor((x - layer.OriginX) / layer.Resolution))
+		row := int(math.Floor((y - layer.OriginY) / layer.Resolution))
+		if col >= 0 && row >= 0 && col < layer.Width && row < layer.Height {
+			return name, true
+		}
+	}
+	for name, layer := range snapshot.Costmaps {
+		if layer == nil || layer.Resolution <= 0 {
+			continue
+		}
+		col := int(math.Floor((x - layer.OriginX) / layer.Resolution))
+		row := int(math.Floor((y - layer.OriginY) / layer.Resolution))
+		if col >= 0 && row >= 0 && col < layer.Width && row < layer.Height {
+			return name, true
+		}
+	}
+	if best == "" {
+		return "", false
+	}
+	// Only a point that is really close counts: a click in empty space must
+	// not pick whatever happened to be nearest.
+	if bestDistance > 0.25 {
+		return "", false
+	}
+	return best, true
+}
+
+// publishPoint sends the clicked point, the way rviz's Publish Point tool
+// does.
+func (s *shell) publishPoint(x, y float64) {
+	if s.feed == nil {
+		return
+	}
+	tool, ok := s.cfg.Tools["point"]
+	if !ok {
+		tool = ToolConfig{Topic: "/clicked_point", Type: "geometry_msgs/msg/PointStamped"}
+	}
+	topic := tool.Topic
+	if topic == "" {
+		topic = "/clicked_point"
+	}
+	typeName := tool.Type
+	if typeName == "" {
+		typeName = "geometry_msgs/msg/PointStamped"
+	}
+	frame := tool.Frame
+	if frame == "" {
+		frame = fixedFrameOf(&s.cfg)
+	}
+	if err := s.feed.publishPoint(topic, typeName, frame, x, y, 0); err != nil {
+		s.announce("publish point failed", err)
+		return
+	}
+	s.announce(fmt.Sprintf("point published on %s: %.2f, %.2f", topic, x, y), nil)
+}
+
 // snapshot is the configuration as it stands on screen right now: the window's
-// current size, the splitter's current position, and the topic list as the
+// current size, the splitter's current position, and the display list as the
 // panel shows it. Save writes this, not the file that was loaded, so a resize
 // before saving is not lost.
 //
-// Per-topic settings (type, qos, colour) are not editable in the shell, so they
-// come straight from the loaded configuration; a name that is not in it can
-// only have come from the + button and is saved with an empty type.
+// Per-display settings come straight from the loaded configuration, since
+// the property inspector writes them back into it.
 func (s *shell) snapshot() Config {
 	cfg := s.cfg
 	if s.win != nil {
@@ -507,7 +998,7 @@ func (s *shell) snapshot() Config {
 	if s.collapsed {
 		cfg.Layout.PanelOffset = s.savedOffset
 	} else {
-		cfg.Layout.PanelOffset = s.split.Offset
+		cfg.Layout.PanelOffset = s.viewOffset()
 	}
 
 	topics := make(map[string]TopicConfig, len(s.topicNames))
@@ -522,9 +1013,9 @@ func (s *shell) snapshot() Config {
 	return cfg
 }
 
-// setTopicEnabled is the checkbox in the topic list. It writes the choice into
-// the configuration - so it survives a save - and tells the sidecar to stop or
-// start delivering the topic.
+// setTopicEnabled is the checkbox in the display list. It writes the choice
+// into the configuration - so it survives a save - and tells the sidecar to
+// stop or start delivering the topic.
 func (s *shell) setTopicEnabled(name string, on bool) {
 	topic, known := s.cfg.Topics[name]
 	if !known {
