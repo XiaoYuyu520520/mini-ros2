@@ -175,3 +175,73 @@ func TestSavePreservesBOMComments(t *testing.T) {
 		t.Fatalf("change lost:\n%s", raw)
 	}
 }
+
+// A broken config must be kept, not silently overwritten by the next autosave.
+func TestBrokenConfigIsPreserved(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "config.json")
+	broken := []byte(`{"window": {"width": 1000,`)
+	if err := os.WriteFile(path, broken, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg, _, err := loadConfig(path)
+	if err == nil {
+		t.Fatal("a truncated config should report an error")
+	}
+	if !strings.Contains(err.Error(), "broken-1.json") {
+		t.Fatalf("error should name the backup: %v", err)
+	}
+	backup := filepath.Join(dir, "config.broken-1.json")
+	raw, readErr := os.ReadFile(backup)
+	if readErr != nil {
+		t.Fatalf("the damaged bytes were not preserved: %v", readErr)
+	}
+	if string(raw) != string(broken) {
+		t.Fatalf("backup differs from the original: %q", raw)
+	}
+	if cfg.Window.Width <= 0 {
+		t.Fatalf("defaults were not used after the parse failure: %+v", cfg.Window)
+	}
+
+	// The next save writes a valid file and leaves the backup alone.
+	if err := writeConfig(path, cfg); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := loadConfig(path); err != nil {
+		t.Fatalf("the rewritten config should load: %v", err)
+	}
+	if raw, _ := os.ReadFile(backup); string(raw) != string(broken) {
+		t.Fatal("a later save overwrote the preserved broken file")
+	}
+}
+
+// Saving must not leave a temporary file behind, and repeated saves must keep
+// the document valid (the atomic path is the one the UI hits on every change).
+func TestWriteConfigLeavesNoTemporaryFile(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "config.json")
+	cfg := defaultConfig()
+	for i := 0; i < 5; i++ {
+		cfg.Window.Width = 800 + i
+		if err := writeConfig(path, cfg); err != nil {
+			t.Fatalf("save %d: %v", i, err)
+		}
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if strings.Contains(entry.Name(), ".tmp-") {
+			t.Fatalf("temporary file left behind: %s", entry.Name())
+		}
+	}
+	loaded, _, err := loadConfig(path)
+	if err != nil {
+		t.Fatalf("the saved config should load: %v", err)
+	}
+	if loaded.Window.Width != cfg.Window.Width {
+		t.Fatalf("last save lost: got %d want %d", loaded.Window.Width, cfg.Window.Width)
+	}
+}

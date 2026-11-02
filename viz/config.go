@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // Config is one `config.json`. Everything is optional; the zero value is
@@ -263,9 +264,39 @@ func loadConfig(path string) (Config, string, error) {
 	}
 	parsed, _, err := parseConfig(raw)
 	if err != nil {
+		// A damaged file must not be lost. The interface auto-saves on every
+		// change, so the next click would overwrite the broken document with
+		// a good one and the user could never see what went wrong. Keep a
+		// copy, then start from the defaults; the next save writes a valid
+		// file again.
+		if backup, backupErr := preserveBrokenConfig(path, raw); backupErr == nil {
+			return cfg, path, fmt.Errorf(
+				"%s: %w (a copy was kept at %s, starting from defaults)", path, err, backup)
+		}
 		return cfg, path, fmt.Errorf("%s: %w", path, err)
 	}
 	return parsed, path, nil
+}
+
+// preserveBrokenConfig saves the raw bytes of a config that failed to parse.
+// It never overwrites an earlier backup: `<name>.broken-<n>.json` is tried
+// from 1 upward.
+func preserveBrokenConfig(path string, raw []byte) (string, error) {
+	dir := filepath.Dir(path)
+	base := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+	for n := 1; n <= 100; n++ {
+		candidate := filepath.Join(dir, fmt.Sprintf("%s.broken-%d.json", base, n))
+		if _, err := os.Stat(candidate); err == nil {
+			continue
+		} else if !os.IsNotExist(err) {
+			return "", err
+		}
+		if err := os.WriteFile(candidate, raw, 0o644); err != nil {
+			return "", err
+		}
+		return candidate, nil
+	}
+	return "", fmt.Errorf("too many backups next to %s", path)
 }
 
 // utf8BOM is the three bytes a Windows editor may put in front of a JSON
@@ -495,7 +526,38 @@ func writeConfig(path string, cfg Config) error {
 		return err
 	}
 	body = append(body, '\n')
-	return os.WriteFile(path, body, 0o644)
+
+	// Write-then-rename. The interface saves on every change, so a crash or a
+	// power cut in the middle of `os.WriteFile` would leave a truncated file -
+	// and the next start would read half a document. A temporary file in the
+	// same directory is renamed over the target only once it is complete and
+	// flushed, which is atomic on both Windows and POSIX.
+	dir := filepath.Dir(path)
+	tmp, err := os.CreateTemp(dir, filepath.Base(path)+".tmp-*")
+	if err != nil {
+		return err
+	}
+	tmpName := tmp.Name()
+	fail := func(err error) error {
+		tmp.Close()
+		os.Remove(tmpName)
+		return err
+	}
+	if _, err := tmp.Write(body); err != nil {
+		return fail(err)
+	}
+	if err := tmp.Sync(); err != nil {
+		return fail(err)
+	}
+	if err := tmp.Close(); err != nil {
+		os.Remove(tmpName)
+		return err
+	}
+	if err := os.Rename(tmpName, path); err != nil {
+		os.Remove(tmpName)
+		return err
+	}
+	return nil
 }
 
 // toGeneric turns a typed value into the `any` tree encoding/json produces.
