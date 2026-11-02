@@ -28,7 +28,7 @@ Windows 上的 nav2 建图、规划，再把 <code>/cmd_vel</code> 送回 Ubuntu
 | [1.1 概述](Quick_start/overview) | 项目简介、能做什么、不能做什么、支持哪些平台 |
 | [1.2 Windows 上手](Quick_start/windows) | 下载解压、**加载环境变量**（`加载模拟ROS环境变量.ps1`）、验证、连机器人、跑第一个导航任务 |
 | [1.3 Ubuntu 上手](Quick_start/linux) | 起仿真小车、起真 ROS2 agent、起中继、加载环境 |
-| [1.4 连接机器人](Quick_start/connect) | 启动顺序、地址端口在哪配、连不上怎么查 |
+| [1.4 连接机器人](Quick_start/connect) | 两张 ROS2 图怎么合并、启动顺序、连不上怎么查 |
 
 ### 2 系统配置
 
