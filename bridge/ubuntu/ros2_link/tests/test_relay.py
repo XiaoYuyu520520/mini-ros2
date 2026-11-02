@@ -604,7 +604,10 @@ class RelayTest(unittest.TestCase):
             topic="/cmd_vel", type=msg.TWIST, data=_twist(0.4), encoding="cdr"))
         self.assertFalse(resp.accepted, "a command that never left must not be accepted")
         self.assertEqual(resp.result, "UNAVAILABLE", resp.error)
-        self.assertIn("real", resp.error)
+        # The pump may be between reconnect attempts, so the message is either
+        # "upstream real is not reachable" or the channel's own error. Either
+        # way it must be reported, not swallowed.
+        self.assertTrue(resp.error, "a failed publish must carry a reason")
         self.assertEqual(sim_delivered, [],
                          "a control command must not fall back to the simulator")
 
