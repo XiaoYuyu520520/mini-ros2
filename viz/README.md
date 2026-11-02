@@ -216,7 +216,7 @@ Windows 上两端都把 stdio 切到二进制模式；否则 CRT 会把负载里
 * 工具：点击给位置、拖拽给朝向（向上拖 = +90°）、再点一次取消、无工具时
   拖拽仍然平移
 
-已验证（真 ROS2 Jazzy 对端 `wang@192.168.0.153`）：
+已验证（真 ROS2 Jazzy 对端）：
 
 * `nav2_msgs/msg/Costmap`：`resolution` 0.5、3×2 网格、`origin` (1,2)、
   `layer` master、6 个代价值都对

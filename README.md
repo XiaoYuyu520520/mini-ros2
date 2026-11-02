@@ -34,8 +34,6 @@ Windows，Windows 上的 **魔改 nav2** 建图、规划，再把 `/cmd_vel` 送
 
 > 原始需求（保留）：
 >
-> 连接 ubuntu 设备命令 `ssh -i "C:\Users\Administrator\Desktop\app\ssh_key\id_ed25519" wang@192.168.0.153`
->
 > * `gRPC` 是一个基于 gRPC 的通信 sdk（初期开发，尚不稳定）
 > * `nav2` 是一个正在开发的、基于共享内存的 ros2 兼容层，力求在 Windows 上面运行 nav2，
 >   项目整体分为**兼容层 + 魔改适配的 nav2**

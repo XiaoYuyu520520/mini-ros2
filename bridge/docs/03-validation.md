@@ -9189,9 +9189,9 @@ hello / topics（独立 namespace）、地图调色板、协方差椭圆半径�
 
 ### 三、真 ROS2 上的 QoS（已量，含负对照）
 
-对端是 `wang@192.168.0.153` 上的 **ROS2 Jazzy**（真 rclcpp / 真 DDS），agent 在那边
+对端是一台 **ROS2 Jazzy** 真机（真 rclcpp / 真 DDS），agent 在那边
 重新编译并重启（`ros2_grpc_sdk_agent 0.0.0.0:50111 --backend rclcpp`）。
-Windows 端直接连它：`set ROS2_BRIDGE_AGENT=192.168.0.153:50111`。
+Windows 端直接连它：`set ROS2_BRIDGE_AGENT=<设备IP>:50111`。
 
 对端发消息的脚本是 `bridge/scripts/qos_probe.py`（新加，纯 rclpy）：
 
@@ -9407,7 +9407,7 @@ Ubuntu 本地 `ros2 topic hz /odom` 仍是 50 Hz。现在每个订阅有自己�
 `ROS_DOMAIN_ID=42`），Windows 端：
 
 ```bat
-set ROS2_BRIDGE_AGENT=192.168.0.153:50112
+set ROS2_BRIDGE_AGENT=<设备IP>:50112
 bridge\windows\ros2_bridge.bat start
 bridge\windows\ros2.bat topic list -t
 ```

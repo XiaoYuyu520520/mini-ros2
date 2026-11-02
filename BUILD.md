@@ -10,7 +10,7 @@
 | 项目根目录 | `E:\DesktopData\app\code\CPU`（`C:\Users\Administrator\Desktop\app\code\CPU` 是同一个目录，前者是它的链接） | `~/code/CPU`（= `/home/ubuntu/code/CPU`） |
 | 进根目录 | `cd /d E:\DesktopData\app\code\CPU`（cmd）/ `cd E:\DesktopData\app\code\CPU`（PowerShell） | `cd ~/code/CPU` |
 | Python | `E:\venvs\py312\Scripts\python.exe`，激活 `& "E:\venvs\py312\Scripts\Activate.ps1"` | `~/code/CPU/.venv/bin/python`（`python3` 也行） |
-| 登录设备 | `ssh -i "C:\Users\Administrator\Desktop\app\ssh_key\id_ed25519" ubuntu@192.168.1.113` | — |
+| 登录设备 | `ssh -i "<私钥路径>" ubuntu@<设备IP>` | — |
 | 编译工具链 | MSYS2 UCRT64（`tools\_toolchain.py` 解析，`CPU_MSYS2_ROOT` 覆盖）：gcc / cmake / ninja / gRPC / protobuf / yaml-cpp | 系统 apt 包，见 3.3 |
 | 需要装 ROS2 吗 | 不需要 | 兼容层不需要；**`code/Desktop/racecar` 要** —— 它在 Ubuntu 上是
 真 colcon 工作区，要 Jazzy 和几个 nav2 / slam_toolbox 的 apt 包，见 3.4 |
@@ -244,9 +244,6 @@ bridge\windows\ros2_bridge.bat start --mirror /clock --mirror /odom --mirror /sc
 | 跨平台门禁的目标机 | `tools/check_cross_platform.py:49`（`DEFAULT_TARGET`） | `--target ubuntu@IP`、`--key 密钥路径` |
 | agent 绑定地址与扫描端口 | `gRPC/ros2_gRPC_sdk/config/ros2_gRPC_sdk.yaml`（`server.address: 0.0.0.0:50051`、`discovery.ports: [50051]`） | 改这个 yaml；默认端口常量在 `gRPC/ros2_gRPC_sdk/include/ros2_grpc_sdk/discovery/discovery.hpp` 的 `kDefaultBridgePort` |
 | 仿真监听哪个地址 | `bridge/scripts/ubuntu_sim_ctl.sh:23`（`port=50051`）+ `run_sim --host/--port` | 从 Windows 传：`... -- start --port 50052` |
-
-本机约定：设备 `192.168.1.113`，agent 端口 `50051`，密钥
-`C:\Users\Administrator\Desktop\app\ssh_key\id_ed25519`。
 
 ### 5.4 从 Windows 操作 Ubuntu 那台
 

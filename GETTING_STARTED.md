@@ -115,7 +115,7 @@ bash start/connector.sh up -d
 
 ```powershell
 # Windows：连过去
-$env:ROS2_BRIDGE_AGENT = '192.168.0.153:50060'   # 换成你的 Ubuntu 地址
+$env:ROS2_BRIDGE_AGENT = '192.168.1.50:50060'   # 换成你的 Ubuntu 地址
 . .\start\加载模拟ROS环境变量.ps1
 ros2 topic list -t                                 # 应该能看到机器人上的话题
 ```
