@@ -9344,3 +9344,73 @@ agent 现在对 `sensor_msgs/msg/PointCloud2` 订阅**两次**（reliable + best
 ### 六、还没量的
 
 * **整条 nav2 栈**：这一节量的是合成话题，不是 `nav2_stack.bat` 起来的真栈。
+
+### 七、与真实 ROS2 nav2 的互通与性能（2026-11-02）
+
+前面的验收都朝着仓库自己的仿真小车。这一节换一个方向：对端不是 `ros2_bridge_sim`，
+而是 **Ubuntu 24.04 + Jazzy 上原生的 nav2**（`planner_server` / `controller_server` /
+`bt_navigator` / `behavior_server` / `map_server`，那台机器没装 `nav2_bringup`，
+所以逐个手动起），agent 用 `--backend rclcpp`，Windows 端照旧是 `ros2_bridge_daemon.exe`。
+
+#### 1. 图与速率
+
+`bridge status`：**48 话题 / 48 服务 / 9 action**。`/map`、`/global_costmap/costmap`、
+`/local_costmap/costmap`、`/plan`、`/received_global_plan`、`/navigate_to_pose` 等
+全部在列，action 的六个通道也都建了出来。
+
+30 s 窗口内按守护进程的逐话题计数取中位数（同一窗口内原生 `ros2 topic hz` 作参照）：
+
+| 话题 | 原生 | Windows（镜像） |
+| --- | --- | --- |
+| `/odom` | 50.0 Hz | **50.6 Hz** |
+| `/tf` | 50.0 Hz | **50.7 Hz** |
+| `/scan` | 10.0 Hz | **10.2 Hz** |
+| `/global_costmap/costmap` | 0.667 Hz | **0.60 Hz** |
+
+代价地图本身就是 1 Hz 发布、实测 0.667 Hz，Windows 0.60 Hz 属于发布端节奏，不是丢帧。
+
+#### 2. 行动链路：Windows 发目标，Ubuntu 原生 nav2 执行
+
+```bat
+ros2.bat action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose ^
+  pose.header.frame_id=map pose.pose.position.x=2.0 pose.pose.position.y=1.0 pose.pose.orientation.w=1.0
+```
+
+返回 `goal accepted (goal id 1)` → `result: SUCCEEDED`，对端 `/odom`
+`position.x` 从 0 走到 **1.795**（差 0.205 m，正是 `xy_goal_tolerance: 0.25` 的范围）。
+`/plan`、`/cmd_vel` 都由原生 nav2 产生，Windows 只是订阅者/发包方。
+
+#### 3. 两个真问题（已修）
+
+**a) agent 在 executor 线程里同步写 gRPC。** 一条 500 KB 的 costmap 流写不出去时，
+整台 agent 的其他话题全排在它后面 —— 实测 `/odom` 掉到 0.4 Hz，而同一时刻
+Ubuntu 本地 `ros2 topic hz /odom` 仍是 50 Hz。现在每个订阅有自己的发送线程和
+**有界队列**（每流 8 MB，满了丢最旧的），executor 只做入队，不再被链路拖住。
+
+**b) 话题消失后 mirror 不回收。** 对端某个发布者退出后，该话题从 agent 的话题表里
+消失，但 daemon 的 `mirrors_` 里还留着 `live=false` 的旧记录；而就绪文件只在
+「所有 mirror 都活」时写，于是**一个已经消失的话题**就能让 `ros2.bat` 每次多等
+30 秒（`wait_bridge_ready.bat` 的完整预算）。现在 `syncTopics()` 每轮把
+「mirror 有、agent 不再广播」的话题连同共享内存图记录一起删掉，话题回来再重建。
+
+#### 4. 带宽是硬上限
+
+用 400 KB 的 `std_msgs/String` 以 10 Hz（≈32 Mbps）压链路时，所有话题一起退化
+（`/odom` 4.7 Hz、`/big` 实际只进来 2.7 Hz）：这台机器的 Wi‑Fi 有效带宽只有
+~8–10 Mbps，任何实现都救不了。结论是**别把大载荷按高频率镜像**；确实需要时用
+`--mirror-filter` 只选要的，或给对应话题加 `--throttle-ms`。
+
+#### 5. 复现
+
+对端脚本在 `/tmp/navtest/`（`start_navtest.sh` / `stop_navtest.sh`：
+`simbot_pub` + 地图 + nav2 四个服务器 + `lifecycle_manager` + `50112` agent，全部
+`ROS_DOMAIN_ID=42`），Windows 端：
+
+```bat
+set ROS2_BRIDGE_AGENT=192.168.0.153:50112
+bridge\windows\ros2_bridge.bat start
+bridge\windows\ros2.bat topic list -t
+```
+
+`viz.exe` 对着同一份共享内存图（`%TEMP%\nav2_shim_graph`）能正常起窗口，
+12 s 内没有退出；日志里只有 Fyne 自身几个未翻译字符串的告警，与桥无关。

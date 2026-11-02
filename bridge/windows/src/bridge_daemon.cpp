@@ -740,6 +740,39 @@ private:
       }
       startMirror(topic);
     }
+
+    // A topic whose last publisher went away disappears from the agent's list.
+    // Its mirror would otherwise stay in `mirrors_` with live=false forever,
+    // and the ready file only claims "ready" when every mirror is live - so one
+    // stale topic (a demo publisher the user stopped, a bag that ended) kept
+    // `ros2.bat` waiting its full thirty seconds on every single invocation.
+    // Drop the graph record and the mirror together; a topic that comes back
+    // is re-created by the loop above on the next refresh.
+    std::set<std::string> advertised;
+    for (const auto & topic : topics) {
+      advertised.insert(topic.name);
+    }
+    std::vector<std::string> stale;
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      for (const auto & entry : mirrors_) {
+        if (advertised.count(entry.first) == 0) {
+          stale.push_back(entry.first);
+        }
+      }
+      for (const auto & name : stale) {
+        mirrors_.erase(name);
+        remote_topics_.erase(name);
+        retries_.erase(name);
+      }
+    }
+    for (const auto & name : stale) {
+      ros2_shim::graph::ProcessRegistry::instance().remove_topic(
+        name, "", "remote:" + peer_);
+      std::fprintf(
+        stderr, "[bridge] dropping '%s' (the agent no longer advertises it)\n",
+        name.c_str());
+    }
     return true;
   }
 

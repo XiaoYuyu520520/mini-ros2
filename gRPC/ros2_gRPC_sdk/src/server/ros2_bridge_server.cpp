@@ -2,6 +2,8 @@
 
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
+#include <deque>
 #include <memory>
 #include <mutex>
 #include <regex>
@@ -158,19 +160,71 @@ struct Ros2BridgeServer::Impl {
                             "topic must not be empty");
       }
 
+      // The backend delivers messages on its executor thread. A Write() there
+      // couples that thread to the link: one slow stream (a 500 KB costmap
+      // over a busy Wi-Fi link) then stalls every other topic on the same
+      // agent - measured as ~0.4 Hz on /odom while a native subscriber on the
+      // same host still saw 50 Hz. The callback below only appends to a
+      // bounded queue; a dedicated writer thread owns the Write() call. The
+      // queue keeps at most kMaxQueuedBytes per stream and drops the oldest
+      // sample when a reader cannot keep up, which is the right trade for
+      // live telemetry (the newest value wins) and keeps the executor
+      // spinning the ROS graph no matter what the link does.
       struct StreamState {
         std::mutex mutex;
+        std::condition_variable cv;
+        std::deque<ros2bridge::Message> queue;
+        std::size_t queued_bytes = 0;
         bool active = true;
         std::uint64_t sequence = 0;
         grpc::ServerWriter<ros2bridge::Message>* writer = nullptr;
       };
       auto state = std::make_shared<StreamState>();
       state->writer = writer;
+      constexpr std::size_t kMaxQueuedBytes = 8u * 1024u * 1024u;
+
+      auto dequeue = [state](ros2bridge::Message& out) {
+        const std::size_t size = state->queue.front().data().size();
+        state->queued_bytes -=
+            std::min<std::size_t>(state->queued_bytes, size);
+        out = std::move(state->queue.front());
+        state->queue.pop_front();
+      };
+      auto drop_oldest = [state](std::size_t budget) {
+        while (state->queued_bytes > budget && state->queue.size() > 1) {
+          const std::size_t front = state->queue.front().data().size();
+          state->queue.pop_front();
+          state->queued_bytes -= std::min<std::size_t>(state->queued_bytes, front);
+        }
+      };
+
+      std::thread pump([state, dequeue]() {
+        for (;;) {
+          ros2bridge::Message proto;
+          {
+            std::unique_lock<std::mutex> lock(state->mutex);
+            state->cv.wait(lock, [state] {
+              return !state->queue.empty() || !state->active;
+            });
+            if (state->queue.empty()) {
+              return;  // inactive and fully drained
+            }
+            dequeue(proto);
+          }
+          if (!state->writer->Write(proto)) {
+            std::lock_guard<std::mutex> lock(state->mutex);
+            state->active = false;
+            state->queue.clear();
+            state->queued_bytes = 0;
+            return;
+          }
+        }
+      });
 
       IRos2Backend::SubscriptionHandle handle = 0;
       const Status status = backend_->subscribe(
           topic, request->type(),
-          [state, topic](Message message) {
+          [state, topic, dequeue, drop_oldest](Message message) {
             std::lock_guard<std::mutex> lock(state->mutex);
             if (!state->active || state->writer == nullptr) {
               return;
@@ -182,13 +236,20 @@ struct Ros2BridgeServer::Impl {
             proto.set_stamp_ns(message.stamp_ns);
             proto.set_sequence(++state->sequence);
             proto.set_data(message.data.data(), message.data.size());
-            if (!state->writer->Write(proto)) {
-              state->active = false;
-            }
+            state->queued_bytes += proto.data().size();
+            state->queue.push_back(std::move(proto));
+            drop_oldest(kMaxQueuedBytes);
+            state->cv.notify_one();
           },
           handle, request->throttle_ms());
 
       if (!status.ok()) {
+        {
+          std::lock_guard<std::mutex> lock(state->mutex);
+          state->active = false;
+        }
+        state->cv.notify_all();
+        pump.join();
         return grpc::Status(grpc::StatusCode::NOT_FOUND, status.message());
       }
 
@@ -201,8 +262,9 @@ struct Ros2BridgeServer::Impl {
       {
         std::lock_guard<std::mutex> lock(state->mutex);
         state->active = false;
-        state->writer = nullptr;
       }
+      state->cv.notify_all();
+      pump.join();
       backend_->unsubscribe(handle);
       ROS2_GRPC_SDK_INFO("streaming subscriber detached from '", topic, "'");
       return grpc::Status::OK;

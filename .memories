@@ -1145,3 +1145,14 @@ $env:ROS2_BRIDGE_WAIT_MS = '1500'   # 真要等就给个小的
   5. `.md`/`.sh`/`.py` 仍是 **LF**；`.ps1` 是 **UTF-8 BOM + CRLF**；
      `.memories` 用 **UTF-8 BOM + LF**
      （`tools/check_docs.py --quiet` 本轮 26 file / 0 error / 0 warning）。
+
+git 可执行文件: D:/WindowsServer2025_1/software/MSYS2/usr/bin/git.exe (2.55.0)，shell PATH 中没有 git 时用全路径调用。
+
+2026-11-02 真机互通测试（192.168.0.153 / wang, key C:/Users/Administrator/Desktop/app/ssh_key/id_ed25519）：
+- 对端 ROS Jazzy，repo 副本在 /home/wang/code/CPU；原生 agent 在 :50111（域 0，用户自己的图）。
+- 测试台：/tmp/navtest/（start_navtest.sh / stop_navtest.sh，域 42：simbot_pub 假车 + 20x20 地图 + 原生 nav2 四服务器 + agent :50112）。Windows 连接：set ROS2_BRIDGE_AGENT=192.168.0.153:50112 后 ros2_bridge.bat start。
+- 验证：48 话题/48 服务/9 action；action send_goal NavigateToPose 到原生 nav2 SUCCEEDED（车动到 x=1.795）；镜像速率与原生持平（odom 50/tf 50/scan 10/costmap 0.6）。
+- 修复1：agent 每订阅独立发送线程 + 8MB 有界队列（ros2_bridge_server.cpp，executor 不再被大消息写阻塞）。
+- 修复2：daemon syncTopics 回收 agent 不再广播的话题（否则 ready 文件不再生成，ros2.bat 每次多等 30s）（bridge_daemon.cpp）。
+- 经验：Wi-Fi 链路 ~8-10Mbps，400KB@10Hz 会把所有流拖死，属带宽上限；daemon 日志的 report 块间隔默认 5s，但跨会话/旋转会把块计数弄脏，测速率要用相邻块中位数。
+- shell 陷阱：ssh 里 pkill -f 的模式若出现在命令行里会杀掉自己的 bash；ssh 后台进程要 setsid+重定向；Windows bash 里 cmd 需要 //c，MSYS 会把 /xxx 参数转成路径（MSYS2_ARG_CONV_EXCL=* 或去斜杠）。
