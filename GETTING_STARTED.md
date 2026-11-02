@@ -146,7 +146,10 @@ package.py             打发布包
 按重要性排：
 
 1. **补消息类型**。`bridge/windows/src/type_registry.cpp` 是一张手写表，
-   表里没有的类型过不去（现在缺 `PointCloud2`、`Image` 等大类型）。
+   表里没有的类型过不去。`sensor_msgs/msg/PointCloud2`、`sensor_msgs/msg/Image`
+   与 `sensor_msgs/msg/CameraInfo` **已经在表里**（2026-09-17 的 PNG coder 与
+   证据 62 那一轮补的，注册表位置见 `type_registry.cpp` 的 `{"sensor_msgs/msg/...` 段）；
+   仍然缺的是 `JointState` / `CompressedImage` / `std_msgs/Float64` 这一类。
 2. **减少拷贝**。现在一次发布 4 次拷贝。`WriteArchive` 逐字段 `push_back`
    且不 `reserve`，大消息会反复扩容 —— 这是最值得优化的一处。
 3. **`/parameter_events` 跨机不通**（编解码表里没有这个类型）。

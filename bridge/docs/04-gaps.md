@@ -11,6 +11,19 @@
 不再是「没有移植」；**这两条现在也做完了**，见证据 34。这一轮又补上了 PNG coder，
 见证据 35）。
 
+> **读这一页之前先看这段（现状 vs 历史）。** 下面 A–G 各节是**滚动维护**的：一条
+> 写「缺 / 零 / 从来不是」的结论，只有当它现在仍然成立时才留在这里。翻到旧版本时
+> 会看到几句早已过期的早期判断，它们**不代表今天**：
+>
+> | 早期写法 | 今天的实际情况 |
+> | --- | --- |
+> | 「对端从来不是真 ROS2」 | 仓库已有 `ros2_grpc_sdk_agent --backend rclcpp` 与 `start/connector.sh` 的中继；真 ROS2 对端在 `bridge/docs/05-audit.md` 的验收里跑过。这句只保留作为「仿真对端仍是默认测试路径」的提醒 |
+> | 「工程化（版本控制 / CI / 安装包）目前是零」 | 已有 `.github/workflows/cross-platform.yml`（五棵测试树 + viz + 文档体检）与 `release.yml`（Windows / Linux x86_64 / Linux arm64 三个包），见 CI 徽章与 Releases |
+> | 「`Image` / `CameraInfo` 在表外」 | 已在 `type_registry.cpp` 里（证据 62） |
+>
+> 历史本身有价值，所以这些旧句不删；但它们的位置和上下文都标成了「历史」，遇到
+> 与源码冲突时**以源码和 `03-validation.md` 的最新证据为准**。
+
 ---
 
 ## 一句话结论
@@ -255,8 +268,15 @@ footprint 的最大 cost 正好 253 < `OCCUPIED_COST` 254，所以**目标格合
 - **一次只对一个 agent**：`bridge_daemon.cpp` 的 `connectToAgent()` 是单数，discovery 虽然
   能列出最多 32 个（`config\ros2_gRPC_sdk.yaml` 的 `max_results`），但只连最近的那一个。
   多机器人场景没做。
-- **安全**：客户端有 `use_tls` / `tls_root_cert_pem` / `tls_target_name_override` 三个开关，
-  但默认明文、**从没验过**（【查】`config\ros2_gRPC_sdk.yaml`）；没有 mTLS / 鉴权 / 压缩。
+- **安全（2026-11 更新）**：客户端原有的 `use_tls` / `tls_root_cert_pem` /
+  `tls_target_name_override` 之外，**服务端与中继现在也有 TLS/mTLS 开关**：
+  `ServerOptions::tls_cert_chain_pem` / `tls_private_key_pem` / `tls_client_ca_pem`
+  （【查】`ros2_grpc_sdk/include/ros2_grpc_sdk/server/ros2_bridge_server.hpp`）、
+  agent 的 `--tls-cert/--tls-key/--tls-client-ca`、discovery 的 TLS 选项、以及
+  `ros2_link.relay` 的 `--tls-root/--tls-cert/--tls-key/--tls-require-client-cert`。
+  仍然**默认明文**，并且本轮没有端到端加密连接验收；**按操作划分的权限、连接白名单、
+  审计日志、消息大小上限**还没有 —— 这几项补齐之前，只应把端口放在受信任的局域网或
+  VPN 里，不要直接暴露到公网。
 - **版本不比对**：`Ping` 会带回对端的 SDK 版本，但客户端拿到之后**没有任何检查** ——
   `ros2_bridge_client.cpp` 里 `version()` 只出现在一条日志里【查】。两端版本不一致时不会有提示，
   只会以「某个 RPC 行为不对」的形式表现出来。
@@ -361,7 +381,7 @@ Karto 的扫描匹配、位姿图、回环检测、Eigen 求解器都在，归�
 | `collision_monitor` | 「激光说会撞 → 真的刹停」**做过了**（证据 32：停止多边形放大到 12 m，规划 20 次、控制器一直发 0.45 m/s，车走 0.00 m）；`/collision_monitor_state` 的消息体**已经进编解码表**（2026-09-17，证据 48），`ros2 topic echo` 打得出 `action_type: 2 (slowdown)` + `polygon_name` |
 | `route_server` / `docking_server` | 没有图文件 / 没有 dock 实例，只到 ACTIVE |
 | MPPI 的 `AckermannMotionModel` / `OmniMotionModel` / 3 个未启用 critic / `visualize` | 用的是上游默认那一套（8 个 critic），一次都没调过（证据 30 未验证清单） |
-| SDK 的 TLS 通道 | 开关在，从没走过加密连接 |
+| SDK 的 TLS 通道 | 服务端 / 中继的 TLS、mTLS 开关已经加上（2026-11），但**没有端到端跑过加密连接**；默认仍是明文 |
 | `/parameter_events` | ~~故意不做~~ **已经发了**（证据 39）：构造函数末尾建 publisher（`NodeOptions::start_parameter_event_publisher()`，默认开，`nav2_ros_common::generate_internal_node()` 关掉它）、`declare_parameter` 填 `new_parameters`、应用成功的 `set_parameters` 填 `changed_parameters`、`deleted_parameters` 永远空（shim 没有 `undeclare_parameter`）；ctest `ros2_shim_parameter_events` 盯着负载与「关掉就真的没有」，整条栈起来时图里 14 个 publisher。**跨机这一半 2026-09-17 补上了**：`rcl_interfaces/msg/ParameterEvent` 进了编解码表（证据 48），`ros2 topic echo /parameter_events` 现在打得出 `node:` 与新增/变更的参数；跨机端到端**还没实测**（proto 里仍然没有对应的 RPC，只有话题转发这条路）。本机仍然可以拿自带的 `parameter_events_probe.exe` 用 shim 自己的类型解码打印，作为不依赖编解码表的对照 |
 | `bt_smoke.exe` / `tf_probe.exe` / `tf_listener_probe.exe` / `scan_path_probe.exe` / `amcl_probe.exe` / `parameter_events_probe.exe` | 自带的诊断工具，不是回归的一部分（`parameter_events_probe.exe` 见证据 39） |
 
