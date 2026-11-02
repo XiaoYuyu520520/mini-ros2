@@ -30,6 +30,13 @@ struct ROS2_GRPC_SDK_API Message {
   std::string encoding = "cdr";
   std::int64_t stamp_ns = 0;
   std::uint64_t sequence = 0;
+  // Identity of the agent that produced the message (empty from older agents).
+  std::string source_id;
+  // Set when this is an echo of a message injected through `publish()` with
+  // an origin id; a relay drops exactly this copy, not a time window.
+  std::string origin_id;
+  // Multi-hop trace id, forwarded verbatim.
+  std::string trace_id;
 };
 
 // A service advertised in a ROS2 graph.

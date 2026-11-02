@@ -207,6 +207,18 @@ Status loadConfig(Config& out, const std::string& path) {
       config.server.num_threads =
           (*server)["num_threads"].asInt(config.server.num_threads);
     }
+    if (server->has("tls_cert_chain_pem")) {
+      config.server.tls_cert_chain_pem =
+          (*server)["tls_cert_chain_pem"].asString();
+    }
+    if (server->has("tls_private_key_pem")) {
+      config.server.tls_private_key_pem =
+          (*server)["tls_private_key_pem"].asString();
+    }
+    if (server->has("tls_client_ca_pem")) {
+      config.server.tls_client_ca_pem =
+          (*server)["tls_client_ca_pem"].asString();
+    }
   }
   if (const yaml::Value* client = root.find("client");
       client != nullptr && client->isObject()) {
@@ -306,6 +318,12 @@ Status saveConfig(const Config& config, const std::string& path) {
       << "   # agent bind address (0.0.0.0 = reachable on the whole LAN)\n"
       << "  num_threads: " << config.server.num_threads
       << "              # 0 = gRPC default\n"
+      << "  tls_cert_chain_pem: " << quote(config.server.tls_cert_chain_pem)
+      << "     # PEM text; empty = plaintext\n"
+      << "  tls_private_key_pem: " << quote(config.server.tls_private_key_pem)
+      << "     # PEM text; empty = plaintext\n"
+      << "  tls_client_ca_pem: " << quote(config.server.tls_client_ca_pem)
+      << "     # PEM text; set = require client cert (mTLS)\n"
       << "\n"
       << "client:\n"
       << "  connect_timeout_ms: " << config.client.connect_timeout_ms << "\n"
@@ -382,6 +400,9 @@ ServerOptions toServerOptions(const ServerConfig& config) {
   ServerOptions options;
   options.address = config.address;
   options.num_threads = config.num_threads;
+  options.tls_cert_chain_pem = config.tls_cert_chain_pem;
+  options.tls_private_key_pem = config.tls_private_key_pem;
+  options.tls_client_ca_pem = config.tls_client_ca_pem;
   return options;
 }
 

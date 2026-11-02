@@ -51,6 +51,12 @@ struct ROS2_GRPC_SDK_API DiscoveryOptions {
   std::vector<std::string> subnets;
   // Maximum number of agents returned (after sorting by latency).
   std::size_t max_results = 32;
+  // TLS for the verifying Ping. A TLS agent answers a plaintext probe by
+  // dropping the connection, so it would never be listed; these make the
+  // scan work against one. Empty root certs means "system roots".
+  bool use_tls = false;
+  std::string tls_root_cert_pem;
+  std::string tls_target_name_override;
 };
 
 struct ROS2_GRPC_SDK_API DiscoveredAgent {

@@ -17,7 +17,9 @@
 #include <chrono>
 #include <csignal>
 #include <cstring>
+#include <fstream>
 #include <iostream>
+#include <iterator>
 #include <memory>
 #include <string>
 #include <thread>
@@ -40,10 +42,24 @@ void handleSignal(int) { g_stop.store(true); }
 
 void usage(const char* argv0) {
   std::cout << "usage: " << argv0
-            << " [address] [--backend mock|rclcpp] [--node NAME]\n"
+            << " [address] [--backend mock|rclcpp] [--node NAME]"
+            << " [--tls-cert FILE --tls-key FILE [--tls-client-ca FILE]]\n"
             << "  address   default 0.0.0.0:50051\n"
             << "  --backend default mock; rclcpp serves this machine's real "
-               "ROS2 graph\n";
+               "ROS2 graph\n"
+            << "  --tls-cert/--tls-key serve TLS instead of plaintext\n"
+            << "  --tls-client-ca also require a client certificate (mTLS)\n";
+}
+
+bool readPem(const std::string& path, std::string& out) {
+  std::ifstream stream(path, std::ios::binary);
+  if (!stream) {
+    std::cerr << "cannot read " << path << std::endl;
+    return false;
+  }
+  out.assign(std::istreambuf_iterator<char>(stream),
+             std::istreambuf_iterator<char>());
+  return true;
 }
 
 }  // namespace
@@ -56,6 +72,9 @@ int main(int argc, char** argv) {
   std::string address = "0.0.0.0:50051";
   std::string backend_name = "mock";
   std::string node_name = "ros2_grpc_bridge_agent";
+  std::string tls_cert_path;
+  std::string tls_key_path;
+  std::string tls_client_ca_path;
 
   for (int i = 1; i < argc; ++i) {
     const std::string arg = argv[i];
@@ -75,6 +94,24 @@ int main(int argc, char** argv) {
         return 2;
       }
       node_name = argv[++i];
+    } else if (arg == "--tls-cert") {
+      if (i + 1 >= argc) {
+        std::cerr << "--tls-cert needs a value" << std::endl;
+        return 2;
+      }
+      tls_cert_path = argv[++i];
+    } else if (arg == "--tls-key") {
+      if (i + 1 >= argc) {
+        std::cerr << "--tls-key needs a value" << std::endl;
+        return 2;
+      }
+      tls_key_path = argv[++i];
+    } else if (arg == "--tls-client-ca") {
+      if (i + 1 >= argc) {
+        std::cerr << "--tls-client-ca needs a value" << std::endl;
+        return 2;
+      }
+      tls_client_ca_path = argv[++i];
     } else if (!arg.empty() && arg[0] == '-') {
       std::cerr << "unknown option: " << arg << std::endl;
       usage(argv[0]);
@@ -105,8 +142,25 @@ int main(int argc, char** argv) {
     return 2;
   }
 
-  Ros2BridgeServer server(backend);
-  const Status status = server.start(address);
+  ServerOptions options;
+  options.address = address;
+  if (!tls_cert_path.empty() || !tls_key_path.empty()) {
+    if (tls_cert_path.empty() || tls_key_path.empty()) {
+      std::cerr << "--tls-cert and --tls-key must be given together" << std::endl;
+      return 2;
+    }
+    if (!readPem(tls_cert_path, options.tls_cert_chain_pem) ||
+        !readPem(tls_key_path, options.tls_private_key_pem)) {
+      return 2;
+    }
+    if (!tls_client_ca_path.empty() &&
+        !readPem(tls_client_ca_path, options.tls_client_ca_pem)) {
+      return 2;
+    }
+  }
+
+  Ros2BridgeServer server(backend, options);
+  const Status status = server.start();
   if (!status.ok()) {
     std::cerr << "failed to start agent: " << status.toString() << std::endl;
     return 1;

@@ -191,10 +191,17 @@ private:
   {
     const std::uint32_t count = reader_.readU32();
     value.clear();
-    if (count > (1u << 20)) {
+    if (!reader_.ok()) {
       return;
     }
-    for (std::uint32_t i = 0; i < count; ++i) {
+    // A `wstring`/`u16string` in ROS2 is a sequence of UTF-16 units. The old
+    // guard returned without saying anything; it now marks the decode failed
+    // so `cdrToShim` answers `false` instead of serializing a truncated value.
+    if (count > (1u << 20) || (count > 0 && reader_.size() - reader_.position() < 2u * count)) {
+      reader_.fail();
+      return;
+    }
+    for (std::uint32_t i = 0; i < count && reader_.ok(); ++i) {
       const std::uint16_t unit = reader_.readU16();
       if (i + 1 < count) {
         value.push_back(static_cast<char16_t>(unit));
@@ -207,7 +214,19 @@ private:
   {
     const std::uint32_t count = reader_.readU32();
     value.clear();
-    if (count > (1u << 26)) {
+    if (!reader_.ok()) {
+      return;
+    }
+    // Reject an implausible count *and* one the remaining bytes cannot hold.
+    // The old code returned silently for a huge count, which the caller could
+    // only see as `ok()` once it was done - and a byte vector then did its own
+    // `require`, so the failure was at least reported there. A non-byte
+    // vector had no such backstop and could reserve gigabytes before the
+    // first element failed. Both are one check now: at least one byte per
+    // element has to be left, or the count is a lie.
+    constexpr std::uint32_t kMaxElements = 1u << 26;
+    if (count > kMaxElements || (count > 0 && reader_.size() - reader_.position() < count)) {
+      reader_.fail();
       return;
     }
     if constexpr (detail::is_byte_vector<std::vector<T>>) {
@@ -224,7 +243,12 @@ private:
     for (std::uint32_t i = 0; i < count && reader_.ok(); ++i) {
       T element{};
       read(element);
-      value.push_back(std::move(element));
+      if (reader_.ok()) {
+        value.push_back(std::move(element));
+      }
+    }
+    if (!reader_.ok()) {
+      value.clear();
     }
   }
 

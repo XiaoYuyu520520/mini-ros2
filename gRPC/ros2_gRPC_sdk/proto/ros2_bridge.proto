@@ -117,8 +117,26 @@ message Message {
   bytes data = 3;
   string encoding = 4;
   // Source timestamp in nanoseconds since the Unix epoch (0 when unknown).
+  // Not an identity: two messages can share a stamp, so never deduplicate on
+  // it alone.
   int64 stamp_ns = 5;
+  // Per-subscription monotonic counter assigned by the *serving agent*. It is
+  // unique within one `Subscribe` stream only - it resets on every new
+  // subscription - so a relay that wants a cross-stream identity pairs it with
+  // `source_id`.
   uint64 sequence = 6;
+  // Identity of the agent that produced the message, stable across
+  // reconnections (the agent generates it once at start-up). Empty from
+  // agents older than 2026-11; treat an empty id as "unknown origin".
+  string source_id = 7;
+  // Set on the copy an agent delivers back to a subscriber when the message
+  // was injected through `PublishRequest.origin_id`: it is that id verbatim.
+  // A relay uses it to recognise its own message instead of guessing from a
+  // time window.
+  string origin_id = 8;
+  // Multi-hop trace id, forwarded verbatim from `PublishRequest.trace_id`.
+  // Empty when the message originates locally.
+  string trace_id = 9;
 }
 
 message PublishRequest {
@@ -128,11 +146,30 @@ message PublishRequest {
   string encoding = 4;
   // Reserved; see QosProfile. The agent's default table is used when unset.
   QosProfile qos = 5;
+  // Echo suppression. A relay that injects a message into an upstream sets
+  // this to the id of the message it is forwarding; the upstream then tags the
+  // copy it delivers back to any subscriber with `origin_id`, so the relay can
+  // recognise its own injection instead of guessing with a time window.
+  string origin_id = 6;
+  // Set by a *forwarding* relay to the id of the message it is delivering, as
+  // received in `Message.origin_id`. Lets the downstream deduplicate a message
+  // that crossed more than one relay hop.
+  string trace_id = 7;
 }
 
 message PublishResponse {
   bool accepted = 1;
   string error = 2;
+  // Machine readable outcome, so a caller can tell "the agent has no such
+  // topic" (UNAVAILABLE) from "the graph refused the payload" (REJECTED) from
+  // "accepted but it timed out" (TIMEOUT). Empty for agents older than
+  // 2026-11; fall back to `accepted`/`error` then.
+  //
+  // One of: "ACCEPTED", "REJECTED", "UNAVAILABLE", "TIMEOUT".
+  string result = 3;
+  // The identity the agent assigned to the accepted message (fed from
+  // `origin_id` when the caller supplied one). Empty unless accepted.
+  string message_id = 4;
 }
 
 // A service advertised in a ROS2 graph.

@@ -40,6 +40,11 @@ struct ROS2_GRPC_SDK_API ClientConfig {
 struct ROS2_GRPC_SDK_API ServerConfig {
   std::string address = "0.0.0.0:50051";
   int num_threads = 0;
+  // PEM contents (not paths). Empty cert+key means plaintext, which is only
+  // acceptable on a trusted LAN; a non-empty client CA turns on mutual TLS.
+  std::string tls_cert_chain_pem;
+  std::string tls_private_key_pem;
+  std::string tls_client_ca_pem;
 };
 
 struct ROS2_GRPC_SDK_API Config {

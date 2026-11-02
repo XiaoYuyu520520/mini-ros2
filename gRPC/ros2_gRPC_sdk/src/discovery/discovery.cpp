@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <mutex>
 #include <set>
 #include <thread>
@@ -200,11 +201,23 @@ bool tcpProbe(const std::string& host, std::uint16_t port, int timeout_ms,
 }
 
 bool verifyAgent(const std::string& target, int timeout_ms,
-                 DiscoveredAgent& agent) {
+                 DiscoveredAgent& agent, bool use_tls = false,
+                 const std::string& root_cert_pem = {},
+                 const std::string& target_name_override = {}) {
   grpc::ChannelArguments args;
   args.SetMaxReceiveMessageSize(4 * 1024 * 1024);
-  auto channel =
-      grpc::CreateCustomChannel(target, grpc::InsecureChannelCredentials(), args);
+  std::shared_ptr<grpc::ChannelCredentials> credentials;
+  if (use_tls) {
+    grpc::SslCredentialsOptions ssl;
+    ssl.pem_root_certs = root_cert_pem;
+    credentials = grpc::SslCredentials(ssl);
+    if (!target_name_override.empty()) {
+      args.SetSslTargetNameOverride(target_name_override);
+    }
+  } else {
+    credentials = grpc::InsecureChannelCredentials();
+  }
+  auto channel = grpc::CreateCustomChannel(target, credentials, args);
   if (!channel) {
     return false;
   }
@@ -561,7 +574,9 @@ Status Ros2BridgeDiscovery::discover(std::vector<DiscoveredAgent>& agents_out,
         break;
       }
       DiscoveredAgent agent = candidate;
-      if (verifyAgent(candidate.target(), options_.ping_timeout_ms, agent)) {
+      if (verifyAgent(candidate.target(), options_.ping_timeout_ms, agent,
+                      options_.use_tls, options_.tls_root_cert_pem,
+                      options_.tls_target_name_override)) {
         verified.push_back(std::move(agent));
       } else {
         ROS2_GRPC_SDK_DEBUG("discovery: ", candidate.target(),

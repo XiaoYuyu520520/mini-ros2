@@ -55,6 +55,12 @@ class ROS2_GRPC_SDK_API Reader {
 
   bool ok() const { return ok_; }
   std::size_t position() const { return pos_; }
+  // Total size of the buffer that was handed in, header included.
+  std::size_t size() const { return size_; }
+  // Mark the stream as failed. A decoder that has already seen enough (an
+  // impossible sequence length, for example) uses this to report a decode
+  // failure instead of returning a value that looks valid.
+  void fail() { ok_ = false; }
 
   bool readBool();
   std::uint8_t readU8();

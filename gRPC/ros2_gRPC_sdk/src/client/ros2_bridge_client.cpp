@@ -66,6 +66,9 @@ Message fromProto(const ros2bridge::Message& proto) {
   message.encoding = proto.encoding();
   message.stamp_ns = proto.stamp_ns();
   message.sequence = proto.sequence();
+  message.source_id = proto.source_id();
+  message.origin_id = proto.origin_id();
+  message.trace_id = proto.trace_id();
   message.data.assign(proto.data().begin(), proto.data().end());
   return message;
 }
@@ -390,9 +393,16 @@ Status Ros2BridgeClient::publish(const std::string& topic,
     return toStatus(status);
   }
   if (!response.accepted()) {
-    return Status::error(StatusCode::Internal,
-                         response.error().empty() ? "publish rejected"
-                                                  : response.error());
+    StatusCode code = StatusCode::Internal;
+    if (response.result() == "UNAVAILABLE") {
+      code = StatusCode::Unavailable;
+    } else if (response.result() == "TIMEOUT") {
+      code = StatusCode::Timeout;
+    } else if (response.result() == "REJECTED") {
+      code = StatusCode::InvalidArgument;
+    }
+    return Status::error(code, response.error().empty() ? "publish rejected"
+                                                        : response.error());
   }
   return Status::success();
 }

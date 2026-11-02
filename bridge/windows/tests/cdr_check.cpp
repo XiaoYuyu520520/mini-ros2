@@ -145,6 +145,27 @@ int main(int argc, char ** argv)
     dir.push_back('/');
   }
 
+  // Malformed input has to be refused, not decoded into a half-filled message.
+  // A LaserScan whose `frame_id` length is far beyond any legitimate string is
+  // the cheapest way to reach the guard: the decoder must report failure so
+  // the caller (the daemon) drops the frame instead of publishing garbage.
+  {
+    ros2_bridge::Bytes malformed = {
+      0x00, 0x01, 0x00, 0x00,              // CDR header, little endian
+      0x00, 0x00, 0x00, 0x00,              // header.stamp.sec
+      0x00, 0x00, 0x00, 0x00,              // header.stamp.nanosec
+      0xF0, 0xFF, 0xFF, 0xFF,              // frame_id length: ~4 GiB
+    };
+    ros2_bridge::Bytes ignored;
+    ++g_checks;
+    if (ros2_bridge::cdr_to_shim(
+        "sensor_msgs/msg/LaserScan", malformed, ignored))
+    {
+      std::fprintf(stderr, "  FAIL malformed CDR was accepted\n");
+      ++g_failures;
+    }
+  }
+
   std::ifstream manifest(dir + "manifest.tsv");
   if (!manifest) {
     std::fprintf(stderr, "cannot open %smanifest.tsv\n", dir.c_str());
