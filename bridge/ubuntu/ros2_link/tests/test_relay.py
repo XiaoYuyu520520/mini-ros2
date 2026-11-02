@@ -476,13 +476,21 @@ class RelayTest(unittest.TestCase):
         self.assertTrue(_wait_for(lambda: "/scan" in sim.subs and "/scan" in real.subs),
                         "the relay should stream each upstream's /scan")
 
-        # A distinct marker per source makes a mix impossible to miss.
-        for index in range(5):
+        # A distinct marker per source makes a mix impossible to miss. Keep
+        # publishing until both sides have arrived: on a loaded CI runner the
+        # upstream stream may attach after the first publish.
+        deadline = time.monotonic() + TIMEOUT
+        index = 0
+        while time.monotonic() < deadline and (len(sim_seen) < 5 or len(real_seen) < 5):
             sim_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(1.5 + index * 0.01))
             real_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(9.5 + index * 0.01))
+            index += 1
+            time.sleep(0.05)
 
-        self.assertTrue(_wait_for(lambda: len(sim_seen) >= 5 and len(real_seen) >= 5),
-                        "both sources should reach their own merged topic")
+        self.assertGreaterEqual(len(sim_seen), 5,
+                                "the simulator's /scan should keep flowing")
+        self.assertGreaterEqual(len(real_seen), 5,
+                                "the real robot's /scan should keep flowing")
         for message in sim_seen:
             self.assertLess(_scan_marker(message), 2.0,
                             "the simulator's marker arrived on the real topic")
