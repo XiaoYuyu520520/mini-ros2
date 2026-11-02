@@ -322,7 +322,7 @@ best_effort 的发布端只配 best_effort 的订阅，reliable 的发布端只�
 `PublishRequest.qos`），但 daemon 还没透传，所以 GUI 配置里的 `qos` 目前只影响
 本地「读 latch 的那一条」这一层。
 
-这张表不是纸面推演：2026-10-31 在 `wang@192.168.0.153` 的 **ROS2 Jazzy** 上量过。
+这张表不是纸面推演：2026-10-31 在一台 **ROS2 Jazzy** 真机上量过。
 对端用 `bridge/scripts/qos_probe.py` 发两路：
 
 ```bash
@@ -334,7 +334,7 @@ python3 bridge/scripts/qos_probe.py
 
 ```bat
 :: Windows
-set ROS2_BRIDGE_AGENT=192.168.0.153:50111
+set ROS2_BRIDGE_AGENT=192.168.1.50:50111
 ros2 topic echo /qos_probe/scan --count 3 --timeout 15
 ros2 topic echo /qos_probe/map --once --timeout 15
 ```

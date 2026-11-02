@@ -96,7 +96,7 @@ bash start/connector.sh up -d
 **跨机** —— Windows 侧点源之前设好地址：
 
 ```powershell
-$env:ROS2_BRIDGE_AGENT = '192.168.0.153:50060'
+$env:ROS2_BRIDGE_AGENT = '192.168.1.50:50060'
 . .\start\加载模拟ROS环境变量.ps1
 ros2 topic list -t
 ```

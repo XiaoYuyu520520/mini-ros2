@@ -81,13 +81,13 @@ source ~/code/CPU/bridge/linux/bridge_env.sh
 
 ```powershell
 # Windows：点源之前设
-$env:ROS2_BRIDGE_AGENT = '192.168.0.153:50060'
+$env:ROS2_BRIDGE_AGENT = '192.168.1.50:50060'
 . .\start\加载模拟ROS环境变量.ps1
 ```
 
 ```bash
 # Linux
-export ROS2_BRIDGE_AGENT=192.168.0.153:50060
+export ROS2_BRIDGE_AGENT=192.168.1.50:50060
 source ~/code/CPU/bridge/linux/bridge_env.sh
 ```
 

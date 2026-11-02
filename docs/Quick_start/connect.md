@@ -42,14 +42,11 @@ title: 1 快速开始 · 连接机器人
 
 | 要改什么 | 在哪 | 怎么改 |
 | --- | --- | --- |
-| 守护进程连谁 | 环境变量 `ROS2_BRIDGE_AGENT` | 点源**之前**设 `$env:ROS2_BRIDGE_AGENT = '192.168.0.153:50060'`；或 `ros2_bridge.bat start --agent host:port`。**不设就自动发现**（LAN 扫描） |
+| 守护进程连谁 | 环境变量 `ROS2_BRIDGE_AGENT` | 点源**之前**设 `$env:ROS2_BRIDGE_AGENT = '192.168.1.50:50060'`；或 `ros2_bridge.bat start --agent host:port`。**不设就自动发现**（LAN 扫描） |
 | agent 绑定哪个地址 | `gRPC/ros2_gRPC_sdk/config/ros2_gRPC_sdk.yaml` | `server.address: "0.0.0.0:50051"`、`discovery.ports: [50051]` |
 | 中继的三个端口 | `ROS2_LINK_SIM_PORT` / `ROS2_LINK_REAL_PORT` / `ROS2_LINK_PORT` | 默认 50051 / 50111 / 50060 |
 | 同名话题谁保住原名 | `ROS2_LINK_COLLISION` | `prefer-sim`（默认）或 `prefer-real` |
-| SSH 目标机 | `bridge/scripts/ubuntu_ssh.py` 的 `DEFAULT_TARGET` | 命令行覆盖 `--target wang@IP` |
-
-本机约定：设备 `wang@192.168.0.153`，agent 端口 50051，密钥
-`C:\Users\Administrator\Desktop\app\ssh_key\id_ed25519`。
+| SSH 目标机 | `bridge/scripts/ubuntu_ssh.py` 的 `DEFAULT_TARGET` | 命令行覆盖 `--target user@IP` |
 
 <a id="check"></a>
 
@@ -139,7 +136,7 @@ ss -lnt | grep 50060
 
 ```powershell
 # 跨机只改这一行
-$env:ROS2_BRIDGE_AGENT = '192.168.0.153:50060'
+$env:ROS2_BRIDGE_AGENT = '192.168.1.50:50060'
 ```
 
 <div class="pagenav">

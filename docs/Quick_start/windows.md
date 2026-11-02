@@ -263,7 +263,7 @@ ros2 topic hz /demo/chatter  # 约 1 Hz，持续打印，Ctrl+C 停
 在点源<strong>之前</strong>设好地址：
 
 ```powershell
-$env:ROS2_BRIDGE_AGENT = '192.168.0.153:50060'
+$env:ROS2_BRIDGE_AGENT = '192.168.1.50:50060'
 . .\start\加载模拟ROS环境变量.ps1
 ros2 topic list -t
 ```
