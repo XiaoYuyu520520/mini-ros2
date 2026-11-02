@@ -30,6 +30,15 @@ class Message:
     stamp_ns: int
     #: Populated by subscriptions created with ``decode=True``.
     decoded: dict | None = None
+    #: Identity of the agent that produced the message, when known: the agent
+    #: stamps its own id on messages that originate locally.
+    source_id: str = ""
+    #: Copy of the injecting relay's ``origin_id``: non-empty means "this is
+    #: somebody's own injected message coming back", not new data.
+    origin_id: str = ""
+    #: Multi-hop trace id, forwarded verbatim so a downstream relay can drop a
+    #: message it already handled.
+    trace_id: str = ""
 
 
 @dataclass
@@ -242,8 +251,17 @@ class Graph:
         *,
         message: dict | None = None,
         stamp_ns: int = 0,
+        source_id: str = "",
+        origin_id: str = "",
+        trace_id: str = "",
     ) -> Message:
-        """Publish a message and hand it to every subscriber of the topic."""
+        """Publish a message and hand it to every subscriber of the topic.
+
+        ``source_id`` / ``origin_id`` / ``trace_id`` carry the relay's
+        provenance: an injected command is marked with ``origin_id`` so the
+        relay's own subscription can recognise the echo instead of guessing
+        with a time window (see ``ros2_link.relay``).
+        """
         with self._lock:
             topic = self._ensure(name, type_name)
             if data is None:
@@ -260,6 +278,9 @@ class Graph:
                 data=bytes(data),
                 sequence=sequence,
                 stamp_ns=stamp_ns,
+                source_id=source_id,
+                origin_id=origin_id,
+                trace_id=trace_id,
             )
             subscribers = list(topic.subscribers)
 
@@ -332,6 +353,9 @@ class Subscription:
                     sequence=event.sequence,
                     stamp_ns=event.stamp_ns,
                     decoded=messages.decode(event.data, event.type),
+                    source_id=event.source_id,
+                    origin_id=event.origin_id,
+                    trace_id=event.trace_id,
                 )
             except (messages.UnsupportedType, ValueError):
                 return

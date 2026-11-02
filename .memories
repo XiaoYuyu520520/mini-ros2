@@ -6,6 +6,30 @@
 约定与根 `README.md` 一致：`.md` 用 **LF** 换行 + **UTF-8 BOM**；
 `.bat` 用 **CRLF**；`.sh` 用 **LF**。
 
+### relay：跨机正确性收口（2026-11-03）
+
+* **同名话题要连数据一起隔离**：`_stream_topic` 必须用 `_merged_for()` 算出的名字，
+  不能用 `message.topic`。`_merged_for` 的映射一旦确定就稳定；若后出现的对端才发现
+  冲突，把先到的一方挪到 `/<upstream>/<topic>`，否则两个机器人的 `/scan` 会混在
+  一个话题里。
+* **回环抑制按消息身份，不按时间窗**：`PublishRequest.origin_id` → agent 回传
+  `Message.origin_id`；relay 只丢 id 匹配的那一份。旧的 `MUTE_S=0.5` 会误杀合法新
+  消息，已删除。agent 不认识 id 的旧版本走「精确字节指纹 + 计数」兼容路径。
+* **订阅必须有状态机**：`_Subscription` 的 CONNECTING/ACTIVE/RETRYING/FAILED，
+  `_pump` 看 `sub.alive` 而不是"字典里有没有"，失败后指数退避 + 抖动重启；话题消失
+  要 `call.cancel()`。
+* **Publish 的结果要如实返回**：`_PublishOutcome` 区分 ACCEPTED/REJECTED/
+  UNAVAILABLE/TIMEOUT，`accepted=True` 只在目标 agent 接受后出现。
+* **控制指令不猜目标**：`/cmd_vel` 等控制话题只认显式 `control_routes`，否则要求
+  两个上游都在线且恰好一个消费者；不满足就 REJECTED，绝不回退仿真器。可选
+  `max_linear_speed` / `max_angular_speed` 只对 `geometry_msgs/msg/Twist` 生效；
+  机器人本地 watchdog 仍必须有（仿真的在 `sim.py`）。
+* **proto 只追加字段**（`source_id` / `origin_id` / `trace_id` / `result` /
+  `message_id`），老 agent 忽略新字段；`ros2_bridge_pb2*.py` 用 grpcio-tools 重新
+  生成后要把 `pb2_grpc.py` 的 import 改回相对导入。
+* **测试进 CI**：`tools/run_ctest.py sim` 现在指向 `bridge/ubuntu`，同时跑
+  `ros2_bridge_sim/tests` 与 `ros2_link/tests`，relay 的 6 条新用例不会再漏掉。
+
 ### viz 界面按 rviz2 对齐（2026-11-01/02）
 
 * **面板在左、视口在右**；`layout.panel_offset` 仍是**视口**占比，所以面板实际是 `1-offset`。

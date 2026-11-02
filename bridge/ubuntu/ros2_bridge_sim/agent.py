@@ -27,6 +27,13 @@ LOG = logging.getLogger("ros2_bridge_sim.agent")
 AGENT_VERSION = "ros2_bridge_sim/0.1"
 ROS_DISTRO = "sim"
 
+#: Stable identity of *this* agent process. A relay tags its injections with
+#: ``origin_id`` and this agent echoes them back on the copy it delivers to
+#: subscribers, so the relay can recognise its own message instead of guessing
+#: with a time window. Generated once per process and stable across
+#: reconnections, which is what "identity" has to mean for that to work.
+AGENT_ID = "agent-%s" % uuid.uuid4().hex[:12]
+
 DEFAULT_HOST = "0.0.0.0"
 DEFAULT_PORT = 50051
 
@@ -266,6 +273,9 @@ class BridgeAgent(pb_grpc.Ros2BridgeServicer):
                     encoding="cdr",
                     stamp_ns=event.stamp_ns,
                     sequence=event.sequence,
+                    source_id=event.source_id or AGENT_ID,
+                    origin_id=event.origin_id,
+                    trace_id=event.trace_id,
                 )
         finally:
             subscription.unsubscribe()
@@ -282,16 +292,18 @@ class BridgeAgent(pb_grpc.Ros2BridgeServicer):
                 error="unsupported encoding %r: only 'cdr' (or empty) is supported" % request.encoding,
             )
         if not request.topic:
-            return pb.PublishResponse(accepted=False, error="topic must not be empty")
+            return pb.PublishResponse(accepted=False, error="topic must not be empty",
+                                     result="REJECTED")
         data = bytes(request.data)
         if not data:
-            return pb.PublishResponse(accepted=False, error="empty payload")
+            return pb.PublishResponse(accepted=False, error="empty payload", result="REJECTED")
 
         type_name = self.graph.topic_type(request.topic) or request.type
         if not type_name:
             return pb.PublishResponse(
                 accepted=False,
                 error="no type known for topic %r; set 'type' in the request" % request.topic,
+                result="REJECTED",
             )
 
         try:
@@ -302,19 +314,28 @@ class BridgeAgent(pb_grpc.Ros2BridgeServicer):
             return pb.PublishResponse(
                 accepted=False,
                 error="undecodable CDR payload for type %r: %s" % (type_name, exc),
+                result="REJECTED",
             )
         except Exception as exc:  # never let a bad payload kill the server
             LOG.exception("unexpected failure decoding %s", type_name)
             return pb.PublishResponse(
-                accepted=False, error="failed to decode %r: %s" % (type_name, exc)
+                accepted=False, error="failed to decode %r: %s" % (type_name, exc),
+                result="REJECTED",
             )
 
         try:
-            self.graph.publish(request.topic, type_name, data, stamp_ns=time.time_ns())
+            event = self.graph.publish(
+                request.topic, type_name, data, stamp_ns=time.time_ns(),
+                origin_id=request.origin_id, trace_id=request.trace_id,
+            )
         except Exception as exc:
             LOG.exception("failed to publish on %s", request.topic)
-            return pb.PublishResponse(accepted=False, error="publish failed: %s" % exc)
-        return pb.PublishResponse(accepted=True)
+            return pb.PublishResponse(
+                accepted=False, error="publish failed: %s" % exc, result="REJECTED")
+        return pb.PublishResponse(
+            accepted=True, result="ACCEPTED",
+            message_id="%s:%d" % (AGENT_ID, event.sequence),
+        )
 
     # -- services ----------------------------------------------------------
 

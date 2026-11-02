@@ -38,15 +38,21 @@ Three things the relay has to get right, and this module is where they live:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import logging
+import math
+import random
 import signal
 import sys
 import threading
 import time
+import uuid
+from collections import deque
 from concurrent import futures
 
 import grpc
 
+from ros2_bridge_sim import messages as sim_messages
 from ros2_bridge_sim.proto import ros2_bridge_pb2 as pb
 from ros2_bridge_sim.proto import ros2_bridge_pb2_grpc as pb_grpc
 
@@ -75,6 +81,35 @@ DEFAULT_REFRESH_S = 2.0
 #: for the downstream and they change on every node's startup.
 DEFAULT_EXCLUDE = ("/rosout", "/rosout_ros", "/parameter_events")
 
+#: Topics that carry a velocity command. A publish on one of these makes a
+#: robot move, so routing it by inference ("who is subscribed?") is not good
+#: enough: when the route is ambiguous the relay refuses instead of falling
+#: back to the simulator, which would silently drive the wrong robot.
+DEFAULT_CONTROL_TOPICS = (
+    "/cmd_vel",
+    "/cmd_vel_nav",
+    "/cmd_vel_raw",
+    "/cmd_vel_smoothed",
+)
+
+#: How long an injected message is remembered for echo suppression. The agent
+#: tags the copy it delivers back with the same ``origin_id``; this window only
+#: has to cover the round trip, not the lifetime of the topic.
+ECHO_TTL_S = 10.0
+
+#: Upper bound on remembered injections, so a flood cannot grow the relay.
+ECHO_MAX_PENDING = 4096
+
+#: Re-subscription backoff. A stream that dies is retried with exponential
+#: backoff plus jitter; a stream that lived long enough resets the counter, so
+#: a flapping link settles instead of hot-looping.
+SUB_BACKOFF_BASE_S = 0.5
+SUB_BACKOFF_MAX_S = 30.0
+
+#: A stream that stayed up at least this long counts as healthy even if it
+#: ends later; its next failure starts the backoff over.
+SUB_HEALTHY_AFTER_S = 2.0
+
 #: What to do when both upstreams publish the same topic name.
 #:
 #: ``prefer-sim``  the simulator keeps the plain name (``/scan``) and the real
@@ -95,14 +130,91 @@ def _split_addr(addr: str) -> tuple[str, int]:
     return host or "127.0.0.1", int(port)
 
 
+class _Subscription:
+    """One stream of one topic on one upstream, plus its retry state.
+
+    The relay used to keep a bare ``thread`` per topic and skip a topic that
+    already had one. That was wrong the moment the stream ended: the dead
+    thread stayed in the dict and the topic was never subscribed again, so one
+    network hiccup froze that half of the graph until the process restarted.
+    The explicit state is what makes the recovery visible and testable.
+    """
+
+    #: No RPC yet, or a new one is being opened.
+    CONNECTING = "CONNECTING"
+    #: The stream is open and delivering.
+    ACTIVE = "ACTIVE"
+    #: The stream ended; waiting out the backoff before reconnecting.
+    RETRYING = "RETRYING"
+    #: Gave up - the topic is malformed for this agent (type conflict, ...).
+    FAILED = "FAILED"
+
+    __slots__ = ("upstream", "topic", "type_name", "thread", "call", "state",
+                 "attempt", "retry_at", "started_at", "last_error", "delivered")
+
+    def __init__(self, upstream: "_Upstream", topic: str, type_name: str) -> None:
+        self.upstream = upstream
+        self.topic = topic
+        self.type_name = type_name
+        self.thread: threading.Thread | None = None
+        self.call = None
+        self.state = self.CONNECTING
+        self.attempt = 0
+        self.retry_at = 0.0
+        self.started_at = 0.0
+        self.last_error = ""
+        self.delivered = 0
+
+    @property
+    def alive(self) -> bool:
+        return self.thread is not None and self.thread.is_alive()
+
+    def backoff(self) -> float:
+        """Seconds to wait before the next attempt, with jitter."""
+        delay = min(SUB_BACKOFF_MAX_S, SUB_BACKOFF_BASE_S * (2 ** min(self.attempt, 6)))
+        return delay * (0.5 + random.random())
+
+
+class _PublishOutcome:
+    """What became of one downstream publish.
+
+    ``accepted`` is the wire field the daemon already reads; ``result`` is the
+    finer distinction a caller acting on it needs (a command that timed out is
+    not a command that reached a graph with no such topic).
+    """
+
+    __slots__ = ("accepted", "result", "error", "message_id")
+
+    def __init__(self, *, accepted: bool, result: str, error: str = "",
+                 message_id: str = "") -> None:
+        self.accepted = accepted
+        self.result = result
+        self.error = error
+        self.message_id = message_id
+
+    def response(self) -> "pb.PublishResponse":
+        return pb.PublishResponse(
+            accepted=self.accepted, error=self.error,
+            result=self.result, message_id=self.message_id,
+        )
+
+    def __repr__(self) -> str:  # pragma: no cover - debugging aid
+        return "_PublishOutcome(accepted=%r, result=%r, error=%r)" % (
+            self.accepted, self.result, self.error)
+
+
 class _Upstream:
     """One agent the relay talks to."""
 
-    def __init__(self, name: str, addr: str) -> None:
+    def __init__(self, name: str, addr: str, *, tls=None) -> None:  # noqa: ANN001
         self.name = name
         self.addr = addr
         self.host, self.port = _split_addr(addr)
         self.target = "%s:%d" % (self.host, self.port)
+        #: optional client credentials (None = plaintext). The relay to the
+        #: robot is the hop that can drive a car, so it is the one that most
+        #: needs the option.
+        self.tls = tls
         self.channel: grpc.Channel | None = None
         self.stub: pb_grpc.Ros2BridgeStub | None = None
         #: topic -> (type, publisher_count, subscriber_count) as the upstream
@@ -118,15 +230,18 @@ class _Upstream:
         self.services: dict[str, str] = {}
         #: action name -> action type
         self.actions: dict[str, str] = {}
-        #: topic -> the thread currently streaming it
-        self.subs: dict[str, threading.Thread] = {}
+        #: topic -> the subscription state machine currently streaming it
+        self.subs: dict[str, _Subscription] = {}
         self.alive = False
 
     def connect(self) -> bool:
         """Open the channel and probe the agent."""
         try:
             if self.channel is None:
-                self.channel = grpc.insecure_channel(self.target)
+                if self.tls is not None:
+                    self.channel = grpc.secure_channel(self.target, self.tls)
+                else:
+                    self.channel = grpc.insecure_channel(self.target)
                 grpc.channel_ready_future(self.channel).result(timeout=DEFAULT_PROBE_TIMEOUT_S)
             self.stub = pb_grpc.Ros2BridgeStub(self.channel)
             resp = self.stub.Ping(pb.PingRequest(payload="ros2_link"), timeout=DEFAULT_PROBE_TIMEOUT_S)
@@ -143,8 +258,15 @@ class _Upstream:
             return False
 
     def close(self) -> None:
-        for thread in list(self.subs.values()):
-            thread.join(timeout=0.5)
+        for sub in list(self.subs.values()):
+            if sub.call is not None:
+                try:
+                    sub.call.cancel()
+                except Exception:  # noqa: BLE001 - best effort on shutdown
+                    pass
+        for sub in list(self.subs.values()):
+            if sub.thread is not None:
+                sub.thread.join(timeout=0.5)
         self.subs.clear()
         if self.channel is not None:
             self.channel.close()
@@ -162,11 +284,6 @@ class Relay:
     byte-for-byte what the Windows daemon already expects.
     """
 
-    #: How long a topic stays muted after the relay published into it. Long
-    #: enough to swallow the upstream's echo of our own message, short enough
-    #: not to swallow a legitimate message that follows.
-    MUTE_S = 0.5
-
     def __init__(
         self,
         sim: "_Upstream",
@@ -175,6 +292,9 @@ class Relay:
         exclude: tuple[str, ...] = DEFAULT_EXCLUDE,
         refresh_s: float = DEFAULT_REFRESH_S,
         collision: str = "prefer-sim",
+        control_routes: dict[str, str] | None = None,
+        max_linear_speed: float | None = None,
+        max_angular_speed: float | None = None,
     ) -> None:
         self.sim = sim
         self.real = real
@@ -188,17 +308,41 @@ class Relay:
         self._lock = threading.Lock()
         #: merged topic name -> (upstream name, the name on that upstream)
         self._route: dict[str, tuple[str, str]] = {}
+        #: (upstream name, upstream topic) -> merged name. Once a name is
+        #: chosen it stays, so a collision that is discovered later moves the
+        #: loser aside instead of letting the two interleave during the window
+        #: where one side has not been listed yet.
+        self._stable: dict[tuple[str, str], str] = {}
         #: merged topic name -> (type, publisher_count, subscriber_count)
         self._counts: dict[str, tuple[str, int, int]] = {}
         #: service name -> (upstream name, service type)
         self._services: dict[str, tuple[str, str]] = {}
         #: action name -> (upstream name, action type)
         self._actions: dict[str, tuple[str, str]] = {}
-        #: topic -> monotonic deadline until which an upstream message is
-        #: dropped. Set right before the relay publishes *into* an upstream:
-        #: that upstream hands the message straight back to the relay's own
-        #: subscription, and mirroring it again would echo it downstream.
-        self._mute_until: dict[str, float] = {}
+        #: Echo suppression, protocol level. Every message this relay injects
+        #: into an upstream carries an ``origin_id``; the agent hands that id
+        #: back on the copy it delivers to us, so we recognise our own message
+        #: instead of dropping whatever happens to arrive in the next 0.5 s.
+        #: The fingerprint queue is the compatibility path for an agent that
+        #: does not echo ids yet (it matches the exact bytes we sent).
+        self.origin_id = "relay-%s" % uuid.uuid4().hex
+        self._injection_seq = 0
+        self._injections: dict[str, float] = {}
+        self._echo_keys: dict[tuple[str, str], deque] = {}
+        #: trace ids we have already handled, so a message crossing more than
+        #: one relay hop is not merged twice.
+        self._seen_traces: dict[str, float] = {}
+        #: explicit control routing: merged topic -> "sim" | "real"
+        self.control_routes = dict(control_routes or {})
+        for topic, owner in self.control_routes.items():
+            if owner not in ("sim", "real"):
+                raise ValueError("control route for %r must be 'sim' or 'real', got %r"
+                                 % (topic, owner))
+        #: every topic whose publish makes a robot move
+        self.control_topics = set(DEFAULT_CONTROL_TOPICS) | set(self.control_routes)
+        #: optional safety clamps for Twist commands; None means "do not touch"
+        self.max_linear_speed = max_linear_speed
+        self.max_angular_speed = max_angular_speed
         #: how many messages crossed in each direction
         self.counts = {"sim->down": 0, "real->down": 0, "down->sim": 0, "down->real": 0}
         self._servers: list[grpc.Server] = []
@@ -223,21 +367,137 @@ class Relay:
             return "/%s/%s" % (upstream_name, topic.lstrip("/"))
         return topic
 
+    def _merged_for(self, upstream_name: str, topic: str) -> str:
+        """The merged name of one upstream topic, stable for the session."""
+        key = (upstream_name, topic)
+        with self._lock:
+            existing = self._stable.get(key)
+            if existing is not None:
+                return existing
+            merged = self._merged_name(upstream_name, topic)
+            # The other side may already own this name because it was listed
+            # first. A collision is a property of both graphs, not of the
+            # order they came up in, so the loser is moved aside now.
+            owner = self._route.get(merged)
+            if owner is not None and owner != key:
+                other_name, other_topic = owner
+                displaced = "/%s/%s" % (other_name, other_topic.lstrip("/"))
+                self._stable[(other_name, other_topic)] = displaced
+                self._register_route(displaced, owner)
+                LOG.info("collision on %s: %s is published as %s",
+                         topic, other_name, displaced)
+            self._stable[key] = merged
+            self._register_route(merged, key)
+            return merged
+
+    def _register_route(self, merged: str, key: tuple[str, str]) -> None:
+        """Point a merged name at an upstream topic."""
+        self._route[merged] = key
+
+    # -- echo suppression ---------------------------------------------------
+
+    def _prune_echo(self, now: float) -> None:
+        """Drop expired injection ids, fingerprints and traces (lock held)."""
+        for origin_id, deadline in list(self._injections.items()):
+            if deadline <= now:
+                del self._injections[origin_id]
+        for key, queue in list(self._echo_keys.items()):
+            while queue and queue[0][1] <= now:
+                queue.popleft()
+            if not queue:
+                del self._echo_keys[key]
+        for trace_id, deadline in list(self._seen_traces.items()):
+            if deadline <= now:
+                del self._seen_traces[trace_id]
+
+    @staticmethod
+    def _fingerprint(data: bytes) -> bytes:
+        return hashlib.sha256(data).digest()
+
+    def _remember_injection(self, upstream_name: str, topic: str, data: bytes,
+                            origin_id: str) -> None:
+        """Remember one message we are about to inject into an upstream."""
+        now = time.monotonic()
+        with self._lock:
+            self._prune_echo(now)
+            self._injections[origin_id] = now + ECHO_TTL_S
+            queue = self._echo_keys.setdefault((upstream_name, topic), deque())
+            queue.append((self._fingerprint(data), now + ECHO_TTL_S))
+            total = sum(len(q) for q in self._echo_keys.values())
+            while total > ECHO_MAX_PENDING and queue:
+                queue.popleft()
+                total -= 1
+            if not queue:
+                self._echo_keys.pop((upstream_name, topic), None)
+
+    def _forget_injection(self, upstream_name: str, topic: str, data: bytes,
+                          origin_id: str) -> None:
+        """Drop the bookkeeping for an injection that will never echo."""
+        fingerprint = self._fingerprint(data)
+        with self._lock:
+            self._injections.pop(origin_id, None)
+            queue = self._echo_keys.get((upstream_name, topic))
+            if queue:
+                for index, (stored, _deadline) in enumerate(queue):
+                    if stored == fingerprint:
+                        del queue[index]
+                        break
+                if not queue:
+                    self._echo_keys.pop((upstream_name, topic), None)
+
+    def _consume_fingerprint(self, upstream_name: str, topic: str, data: bytes) -> bool:
+        """True when these exact bytes are one of our own injections."""
+        now = time.monotonic()
+        fingerprint = self._fingerprint(data)
+        with self._lock:
+            self._prune_echo(now)
+            queue = self._echo_keys.get((upstream_name, topic))
+            if not queue:
+                return False
+            for index, (stored, deadline) in enumerate(queue):
+                if deadline > now and stored == fingerprint:
+                    del queue[index]
+                    if not queue:
+                        self._echo_keys.pop((upstream_name, topic), None)
+                    return True
+            return False
+
+    def _is_echo(self, upstream: "_Upstream", topic: str, message) -> bool:  # noqa: ANN001
+        """Is this upstream message the copy of one the relay just injected?"""
+        origin_id = getattr(message, "origin_id", "")
+        if origin_id:
+            with self._lock:
+                known = self._injections.pop(origin_id, None)
+            if known is not None:
+                # The agent echoed our id: exact match, and the fingerprint
+                # slot is no longer needed.
+                self._consume_fingerprint(upstream.name, topic, message.data)
+                return True
+        return self._consume_fingerprint(upstream.name, topic, message.data)
+
+    def _seen_trace(self, trace_id: str) -> bool:
+        """True when this trace id already crossed this relay."""
+        if not trace_id:
+            return False
+        now = time.monotonic()
+        with self._lock:
+            self._prune_echo(now)
+            if self._seen_traces.get(trace_id, 0.0) > now:
+                return True
+            self._seen_traces[trace_id] = now + ECHO_TTL_S
+            return False
+
     # -- the merged graph ---------------------------------------------------
 
-    def _publish_merged(self, topic: str, type_name: str, data: bytes, stamp_ns: int, origin: str) -> None:
+    def _publish_merged(self, topic: str, type_name: str, data: bytes, stamp_ns: int,
+                        origin: str, trace_id: str = "") -> None:
         """Put a message from one upstream into the merged graph."""
         if topic in self.exclude:
             return
-        now = time.monotonic()
-        with self._lock:
-            if self._mute_until.get(topic, 0.0) > now:
-                # We injected this topic ourselves a moment ago; the upstream
-                # is only handing our own message back. Dropping it here is
-                # what keeps a publish from echoing to the downstream.
-                return
+        if self._seen_trace(trace_id):
+            return
         try:
-            self.graph.publish(topic, type_name, data, stamp_ns=stamp_ns)
+            self.graph.publish(topic, type_name, data, stamp_ns=stamp_ns, trace_id=trace_id)
         except Exception as exc:  # noqa: BLE001 - one bad message must not kill the relay
             LOG.warning("cannot merge %s from %s: %s", topic, origin, exc)
             return
@@ -250,24 +510,79 @@ class Relay:
 
     # -- upstream -> merged -------------------------------------------------
 
-    def _stream_topic(self, upstream: _Upstream, topic: str, type_name: str) -> None:
-        """Subscribe to one topic on one upstream and merge what comes."""
+    def _stream_topic(self, sub: "_Subscription") -> None:
+        """Subscribe to one topic on one upstream and merge what comes.
+
+        The state transitions here are the ones ``_pump`` reasons about: a
+        stream that ends leaves ``RETRYING`` with a backoff deadline, and the
+        pump starts a new thread for it. Without that the dict entry would
+        keep a dead thread and the topic would never be subscribed again.
+        """
+        upstream = sub.upstream
         assert upstream.stub is not None
-        request = pb.SubscribeRequest(topic=topic, type=type_name)
+        request = pb.SubscribeRequest(topic=sub.topic, type=sub.type_name)
+        sub.state = _Subscription.CONNECTING
+        sub.started_at = time.monotonic()
         try:
-            for message in upstream.stub.Subscribe(request):
+            call = upstream.stub.Subscribe(request)
+            sub.call = call
+            # The RPC object exists as soon as the call is opened; a failure
+            # surfaces from the iterator below and moves the state to RETRYING.
+            sub.state = _Subscription.ACTIVE
+            sub.attempt = 0
+            for message in call:
                 if self._stop.is_set():
                     return
-                self._publish_merged(message.topic or topic, message.type or type_name,
-                                     message.data, message.stamp_ns, upstream.name)
+                if sub.state == _Subscription.CONNECTING:
+                    sub.state = _Subscription.ACTIVE
+                    sub.attempt = 0
+                sub.delivered += 1
+                upstream_topic = message.topic or sub.topic
+                if self._is_echo(upstream, upstream_topic, message):
+                    continue
+                merged = self._merged_for(upstream.name, upstream_topic)
+                self._publish_merged(merged, message.type or sub.type_name,
+                                     message.data, message.stamp_ns,
+                                     upstream.name, getattr(message, "trace_id", ""))
         except grpc.RpcError as exc:
             if not self._stop.is_set():
-                LOG.debug("subscription on %s/%s ended: %s", upstream.name, topic, exc.code())
+                sub.last_error = str(exc.code())
+                if exc.code() in (grpc.StatusCode.INVALID_ARGUMENT,
+                                  grpc.StatusCode.FAILED_PRECONDITION):
+                    # A type conflict is not a transient network problem, but
+                    # the topic can be re-created with the right type; retry
+                    # slowly instead of hot-looping.
+                    sub.state = _Subscription.FAILED
         except Exception as exc:  # noqa: BLE001
             if not self._stop.is_set():
-                LOG.warning("subscription on %s/%s failed: %s", upstream.name, topic, exc)
+                sub.last_error = str(exc)
+                LOG.warning("subscription on %s/%s failed: %s",
+                            upstream.name, sub.topic, exc)
+        finally:
+            sub.call = None
+            if self._stop.is_set():
+                return
+            now = time.monotonic()
+            if now - sub.started_at >= SUB_HEALTHY_AFTER_S:
+                sub.attempt = 0
+            sub.attempt += 1
+            if sub.state != _Subscription.FAILED:
+                sub.state = _Subscription.RETRYING
+            sub.retry_at = now + sub.backoff()
+            LOG.info("subscription on %s/%s ended (%s); retry #%d in %.1fs",
+                     upstream.name, sub.topic, sub.last_error or "closed",
+                     sub.attempt, sub.retry_at - now)
 
-    def _pump(self, upstream: _Upstream) -> None:
+    def _cancel_streams(self, upstream: "_Upstream") -> None:
+        """Cancel every stream of an upstream; the pump restarts them."""
+        for sub in list(upstream.subs.values()):
+            if sub.call is not None:
+                try:
+                    sub.call.cancel()
+                except Exception:  # noqa: BLE001 - cancelling is best effort
+                    pass
+
+    def _pump(self, upstream: "_Upstream") -> None:
         """Keep one upstream's subscriptions in sync with its topic list.
 
         The upstream may not be there yet - a real ROS2 agent that is started
@@ -304,8 +619,10 @@ class Relay:
             except Exception as exc:  # noqa: BLE001
                 if not self._stop.is_set():
                     LOG.debug("cannot list topics on %s: %s", upstream.name, exc)
-                # The agent is gone or the channel broke: drop the stub so the
-                # next round reconnects.
+                # The agent is gone or the channel broke: cancel the streams
+                # (they would hang on the dead channel) and drop the stub so
+                # the next round reconnects.
+                self._cancel_streams(upstream)
                 upstream.alive = False
                 upstream.stub = None
                 time.sleep(self.refresh_s)
@@ -326,17 +643,11 @@ class Relay:
             # downstream `ros2 topic list` would answer "no topics" on a graph
             # whose topics are merely idle. `_ensure` is the graph's own
             # "create it if it is not there yet" helper.
-            #
-            # The names are the *merged* names, so a topic that lost a
-            # collision is registered under its prefixed name.
-            merged_names = {}
             for name, (type_name, publishers, subscribers) in topics.items():
-                merged = self._merged_name(upstream.name, name)
-                merged_names[name] = merged
+                merged = self._merged_for(upstream.name, name)
                 if merged in self.exclude:
                     continue
                 with self._lock:
-                    self._route[merged] = (upstream.name, name)
                     self._counts[merged] = (type_name, publishers, subscribers)
                 try:
                     self.graph._ensure(merged, type_name)
@@ -346,29 +657,109 @@ class Relay:
             # stop streaming topics the agent no longer has
             for name in list(upstream.subs):
                 if name not in topics:
-                    thread = upstream.subs.pop(name)
-                    # the thread ends on its own when the RPC fails; it is
-                    # daemon-threaded, so there is nothing to join hard
-                    del thread
+                    sub = upstream.subs.pop(name)
+                    if sub.call is not None:
+                        try:
+                            sub.call.cancel()
+                        except Exception:  # noqa: BLE001
+                            pass
 
-            # start streaming topics we do not have yet
+            # start (or restart) the streams that should be running
+            now = time.monotonic()
             for name, (type_name, _pub, _sub) in topics.items():
-                if name in upstream.subs or name in self.exclude:
+                if name in self.exclude:
                     continue
-                thread = threading.Thread(
+                sub = upstream.subs.get(name)
+                if sub is None:
+                    sub = _Subscription(upstream, name, type_name)
+                    upstream.subs[name] = sub
+                elif sub.type_name != type_name:
+                    sub.type_name = type_name
+                if sub.alive:
+                    continue
+                if now < sub.retry_at:
+                    continue
+                sub.thread = threading.Thread(
                     target=self._stream_topic,
-                    args=(upstream, name, type_name),
+                    args=(sub,),
                     name="sub-%s-%s" % (upstream.name, name),
                     daemon=True,
                 )
-                upstream.subs[name] = thread
-                thread.start()
+                sub.thread.start()
 
             time.sleep(self.refresh_s)
 
     # -- merged -> upstream -------------------------------------------------
 
-    def _publish_back(self, topic: str, type_name: str, data: bytes) -> None:
+    def _control_target(self, topic: str, upstream_topic: str) -> tuple["_Upstream | None", str]:
+        """Where a control command must go, or None when it is ambiguous.
+
+        An explicit route always wins. Otherwise a control topic is sent to
+        the single upstream that only *subscribes* to it (the actor). If there
+        is no such upstream, or both sides consume it, the relay refuses: a
+        velocity command must never silently land on the simulator just
+        because the real robot is not connected.
+        """
+        explicit = self.control_routes.get(topic)
+        if explicit is not None:
+            return (self.sim if explicit == "sim" else self.real), explicit
+        # No explicit route: infer only while *both* upstreams are known to be
+        # up. A command sent while the real robot is unreachable must be
+        # refused, not quietly delivered to whichever upstream happens to be
+        # left - that is how a simulator (or the wrong robot) starts moving.
+        if not (self.sim.alive and self.real.alive):
+            return None, ""
+        sinks = []
+        for upstream in (self.sim, self.real):
+            info = upstream.all_topics.get(upstream_topic)
+            if info is not None and info[1] == 0 and info[2] > 0:
+                sinks.append(upstream)
+        if len(sinks) == 1:
+            return sinks[0], sinks[0].name
+        return None, ""
+
+    def _apply_speed_limits(self, topic: str, type_name: str,
+                            data: bytes) -> tuple[bytes, str]:
+        """Clamp a Twist command when limits were configured.
+
+        Only ``geometry_msgs/msg/Twist`` is clamped; for anything else the
+        bytes are forwarded untouched rather than risking a wrong re-encode.
+        The robot still needs its own watchdog: a link that dies cannot send
+        the stop command this clamp would otherwise produce.
+        """
+        if topic not in self.control_topics:
+            return data, ""
+        if self.max_linear_speed is None and self.max_angular_speed is None:
+            return data, ""
+        if type_name != "geometry_msgs/msg/Twist":
+            return data, ""
+        try:
+            decoded = sim_messages.decode(data, type_name)
+        except Exception as exc:  # noqa: BLE001 - refuse rather than clamp blind
+            return data, "cannot decode Twist for speed limiting: %s" % exc
+        linear = decoded.get("linear") or {}
+        angular = decoded.get("angular") or {}
+        vx = float(linear.get("x", 0.0))
+        vy = float(linear.get("y", 0.0))
+        vz = float(linear.get("z", 0.0))
+        if self.max_linear_speed is not None:
+            speed = math.sqrt(vx * vx + vy * vy + vz * vz)
+            if self.max_linear_speed > 0 and speed > self.max_linear_speed:
+                scale = self.max_linear_speed / speed
+                linear.update(x=vx * scale, y=vy * scale, z=vz * scale)
+        if self.max_angular_speed is not None:
+            wz = float(angular.get("z", 0.0))
+            if abs(wz) > self.max_angular_speed:
+                angular["z"] = math.copysign(self.max_angular_speed, wz)
+        decoded["linear"] = linear
+        decoded["angular"] = angular
+        try:
+            return sim_messages.encode(decoded, type_name), ""
+        except Exception as exc:  # noqa: BLE001
+            return data, "cannot re-encode clamped Twist: %s" % exc
+
+    def _publish_back(self, topic: str, type_name: str, data: bytes,
+                      *, trace_id: str = "") -> "_PublishOutcome":
         """Send a message that came from downstream back to where it acts.
 
         "Back to its origin" is the wrong rule for a command. ``/cmd_vel`` is
@@ -378,53 +769,114 @@ class Relay:
         consumes it - otherwise the Windows controller drives the real robot's
         output topic and the car never moves.
 
-        So the order is:
-
-        1. an upstream that only *subscribes* to the topic is the actor and
-           gets the message;
-        2. otherwise the topic's own source does (the merged topic's owner);
-        3. otherwise the simulator, which is the side that acts on commands.
+        For a control topic the destination is never guessed when it is
+        ambiguous: an explicit ``control_routes`` entry wins, otherwise there
+        must be exactly one upstream that only consumes the topic. Anything
+        else is refused, so a missing real robot cannot make the simulator
+        move by accident. A non-control topic keeps the old inference: sink,
+        then the topic's owner, then the simulator.
         """
         with self._lock:
             route = self._route.get(topic)
         upstream_topic = route[1] if route is not None else topic
 
-        actor = None
-        for upstream in (self.sim, self.real):
-            info = upstream.all_topics.get(upstream_topic)
-            if info is not None and info[1] == 0 and info[2] > 0:
-                actor = upstream
-                break
-
-        if actor is not None:
-            target = actor
-            owner = actor.name
-        elif route is not None:
-            owner = route[0]
-            target = self.sim if owner == "sim" else self.real
+        target: _Upstream | None = None
+        owner = ""
+        if topic in self.control_topics:
+            target, owner = self._control_target(topic, upstream_topic)
+            if target is None:
+                return _PublishOutcome(
+                    accepted=False, result="REJECTED",
+                    error=("control route for %r is ambiguous (%s); configure an "
+                           "explicit control route before sending a velocity command"
+                           % (topic, self._describe_sinks(upstream_topic))))
         else:
-            # A topic nobody publishes (the simulator's /cmd_vel is one) is
-            # still writable from downstream. It goes to the simulator, which
-            # is the side that acts on a command.
-            owner, target = "sim", self.sim
+            actor = None
+            for upstream in (self.sim, self.real):
+                info = upstream.all_topics.get(upstream_topic)
+                if info is not None and info[1] == 0 and info[2] > 0:
+                    actor = upstream
+                    break
+            if actor is not None:
+                target = actor
+                owner = actor.name
+            elif route is not None:
+                owner = route[0]
+                target = self.sim if owner == "sim" else self.real
+            else:
+                # A topic nobody publishes (the simulator's /cmd_vel is one) is
+                # still writable from downstream. It goes to the simulator,
+                # which is the side that acts on a command.
+                owner, target = "sim", self.sim
+
         if target.stub is None:
-            return
-        # Mute the topic for a moment before the injection: the upstream
-        # delivers our own message straight back to this relay's subscription,
-        # and without the mute it would be merged again and echoed downstream.
+            return _PublishOutcome(
+                accepted=False, result="UNAVAILABLE",
+                error="upstream %s is not reachable" % target.name)
+
+        data, clamp_error = self._apply_speed_limits(topic, type_name, data)
+        if clamp_error:
+            return _PublishOutcome(accepted=False, result="REJECTED", error=clamp_error)
+
         with self._lock:
-            self._mute_until[topic] = time.monotonic() + self.MUTE_S
+            self._injection_seq += 1
+            origin_id = "%s:%d" % (self.origin_id, self._injection_seq)
+        self._remember_injection(target.name, upstream_topic, data, origin_id)
         try:
-            target.stub.Publish(
-                pb.PublishRequest(topic=upstream_topic, type=type_name, data=data, encoding="cdr"),
+            response = target.stub.Publish(
+                pb.PublishRequest(
+                    topic=upstream_topic, type=type_name, data=data,
+                    encoding="cdr", origin_id=origin_id, trace_id=trace_id,
+                ),
                 timeout=DEFAULT_PROBE_TIMEOUT_S,
             )
-            self.counts["down->%s" % owner] = self.counts.get("down->%s" % owner, 0) + 1
+        except grpc.RpcError as exc:
+            self._forget_injection(target.name, upstream_topic, data, origin_id)
+            code = exc.code() if hasattr(exc, "code") else None
+            if code == grpc.StatusCode.DEADLINE_EXCEEDED:
+                result = "TIMEOUT"
+            elif code in (grpc.StatusCode.UNAVAILABLE, grpc.StatusCode.CANCELLED):
+                result = "UNAVAILABLE"
+            else:
+                result = "REJECTED"
+            LOG.warning("cannot publish %s back to %s (%s): %s", topic, owner, result, exc)
+            return _PublishOutcome(accepted=False, result=result, error=str(exc))
         except Exception as exc:  # noqa: BLE001
+            self._forget_injection(target.name, upstream_topic, data, origin_id)
             LOG.warning("cannot publish %s back to %s: %s", topic, owner, exc)
-            with self._lock:
-                self._mute_until.pop(topic, None)
+            return _PublishOutcome(accepted=False, result="REJECTED", error=str(exc))
 
+        if not response.accepted:
+            # No echo is coming for a refused publish; release the bookkeeping
+            # now so an identical legitimate message is not dropped later.
+            self._forget_injection(target.name, upstream_topic, data, origin_id)
+            result = response.result or "REJECTED"
+            if result not in ("REJECTED", "UNAVAILABLE", "TIMEOUT"):
+                result = "REJECTED"
+            return _PublishOutcome(
+                accepted=False, result=result,
+                error=response.error or "upstream refused the message")
+
+        self.counts["down->%s" % owner] = self.counts.get("down->%s" % owner, 0) + 1
+        result = response.result or "ACCEPTED"
+        if result not in ("ACCEPTED", "REJECTED", "UNAVAILABLE", "TIMEOUT"):
+            result = "ACCEPTED"
+        return _PublishOutcome(accepted=True, result=result,
+                               message_id=response.message_id)
+
+    def _describe_sinks(self, upstream_topic: str) -> str:
+        parts = []
+        for upstream in (self.sim, self.real):
+            info = upstream.all_topics.get(upstream_topic)
+            if info is None:
+                parts.append("%s: absent" % upstream.name)
+            elif info[1] == 0 and info[2] > 0:
+                parts.append("%s: consumer" % upstream.name)
+            elif info[1] > 0:
+                parts.append("%s: publisher" % upstream.name)
+            else:
+                parts.append("%s: idle" % upstream.name)
+        return ", ".join(parts)
     # -- services -----------------------------------------------------------
 
     def _sync_services(self, upstream: _Upstream) -> None:
@@ -519,7 +971,7 @@ class Relay:
 
     # -- downstream ---------------------------------------------------------
 
-    def _serve(self, host: str, port: int) -> None:
+    def _serve(self, host: str, port: int, credentials=None) -> None:  # noqa: ANN001
         """Expose the merged graph over gRPC."""
         from ros2_bridge_sim.agent import BridgeAgent
 
@@ -562,20 +1014,31 @@ class Relay:
                         accepted=False,
                         error="unsupported encoding %r: only 'cdr' (or empty) is supported"
                               % request.encoding,
+                        result="REJECTED",
                     )
                 if not request.topic:
-                    return pb.PublishResponse(accepted=False, error="topic must not be empty")
+                    return pb.PublishResponse(accepted=False,
+                                              error="topic must not be empty",
+                                              result="REJECTED")
                 data = bytes(request.data)
                 if not data:
-                    return pb.PublishResponse(accepted=False, error="empty payload")
+                    return pb.PublishResponse(accepted=False, error="empty payload",
+                                              result="REJECTED")
                 type_name = request.type or relay.graph.topic_type(request.topic)
                 if not type_name:
                     return pb.PublishResponse(
                         accepted=False,
                         error="no type known for topic %r; set 'type' in the request" % request.topic,
+                        result="REJECTED",
                     )
-                relay._publish_back(request.topic, type_name, data)
-                return pb.PublishResponse(accepted=True)
+                # The outcome is what the caller is told. Reporting
+                # `accepted=True` for a command that never left this process is
+                # how a Windows controller concludes the car moved when the
+                # real robot was not even connected - see `_publish_back`.
+                outcome = relay._publish_back(
+                    request.topic, type_name, data,
+                    trace_id=getattr(request, "trace_id", ""))
+                return outcome.response()
 
             # -- services --------------------------------------------------
 
@@ -710,7 +1173,10 @@ class Relay:
         executor = futures.ThreadPoolExecutor(max_workers=SERVER_MAX_WORKERS)
         server = grpc.server(executor)
         pb_grpc.add_Ros2BridgeServicer_to_server(agent, server)
-        bound = server.add_insecure_port("%s:%d" % (host, port))
+        if credentials is not None:
+            bound = server.add_secure_port("%s:%d" % (host, port), credentials)
+        else:
+            bound = server.add_insecure_port("%s:%d" % (host, port))
         if not bound:
             raise RuntimeError("could not bind %s:%d" % (host, port))
         server.ros2_bridge_executor = executor
@@ -730,7 +1196,8 @@ class Relay:
             )
             thread.start()
 
-    def serve(self, host: str, port: int, loopback_host: str = "", loopback_port: int = 0) -> None:
+    def serve(self, host: str, port: int, loopback_host: str = "", loopback_port: int = 0,
+              credentials=None) -> None:  # noqa: ANN001
         """Serve on ``host:port`` and, when asked, also on the loopback pair.
 
         Serving on both is what lets the *same* configuration work on one
@@ -745,8 +1212,8 @@ class Relay:
         wildcard = host in ("0.0.0.0", "::", "*", "")
         if (not wildcard and loopback_host and loopback_port
                 and (loopback_host, loopback_port) != (host, port)):
-            self._serve(loopback_host, loopback_port)
-        self._serve(host, port)
+            self._serve(loopback_host, loopback_port, credentials)
+        self._serve(host, port, credentials)
 
     def stop(self) -> None:
         self._stop.set()
@@ -786,9 +1253,34 @@ def main(argv: list[str] | None = None) -> int:
                         help="who keeps the plain name when both sides publish it")
     parser.add_argument("--refresh", type=float, default=DEFAULT_REFRESH_S,
                         help="seconds between upstream topic-list refreshes")
+    parser.add_argument("--control", action="append", default=[], metavar="TOPIC=sim|real",
+                        help="explicit route for a velocity command (repeatable); "
+                             "a control topic without a route must have exactly one "
+                             "consumer or the publish is refused")
+    parser.add_argument("--max-linear-speed", type=float, default=None,
+                        help="clamp Twist linear speed (m/s) on control topics; "
+                             "unset means no clamp - set it from the chassis spec")
+    parser.add_argument("--max-angular-speed", type=float, default=None,
+                        help="clamp Twist angular z (rad/s) on control topics")
+    parser.add_argument("--tls-root", default="",
+                        help="CA certificate for TLS to the upstream agents and for "
+                             "serving TLS to the downstream (empty = plaintext)")
+    parser.add_argument("--tls-cert", default="",
+                        help="server certificate for the downstream (PEM path)")
+    parser.add_argument("--tls-key", default="",
+                        help="server private key for the downstream (PEM path)")
+    parser.add_argument("--tls-require-client-cert", action="store_true",
+                        help="require a client certificate from the downstream (mTLS)")
     parser.add_argument("--log", default="", help="also write the log to this file")
     parser.add_argument("--verbose", "-v", action="store_true")
     args = parser.parse_args(argv)
+
+    control_routes: dict[str, str] = {}
+    for spec in args.control:
+        topic, sep, owner = spec.rpartition("=")
+        if not sep or not topic or owner not in ("sim", "real"):
+            parser.error("--control expects TOPIC=sim|real, got %r" % spec)
+        control_routes[topic] = owner
 
     handlers: list[logging.Handler] = [logging.StreamHandler(sys.stderr)]
     if args.log:
@@ -799,11 +1291,42 @@ def main(argv: list[str] | None = None) -> int:
         handlers=handlers,
     )
 
-    sim = _Upstream("sim", args.sim)
-    real = _Upstream("real", args.real)
+    # TLS is opt-in and applies to both directions. The hop that can drive a
+    # car should not be plaintext outside a trusted LAN, but the lab default
+    # stays plaintext so existing scripts keep working.
+    client_tls = None
+    server_credentials = None
+    if args.tls_root or args.tls_cert:
+        if not args.tls_root:
+            parser.error("--tls-cert/--tls-key need --tls-root")
+        with open(args.tls_root, encoding="utf-8") as handle:
+            root_pem = handle.read()
+        client_tls = grpc.ssl_channel_credentials(root_certificates=root_pem.encode())
+        if args.tls_cert or args.tls_key:
+            if not (args.tls_cert and args.tls_key):
+                parser.error("--tls-cert and --tls-key must be given together")
+            with open(args.tls_cert, encoding="utf-8") as handle:
+                cert_pem = handle.read()
+            with open(args.tls_key, encoding="utf-8") as handle:
+                key_pem = handle.read()
+            if args.tls_require_client_cert:
+                server_credentials = grpc.ssl_server_credentials(
+                    [(key_pem.encode(), cert_pem.encode())],
+                    root_certificates=root_pem.encode(),
+                    require_client_auth=True,
+                )
+            else:
+                server_credentials = grpc.ssl_server_credentials(
+                    [(key_pem.encode(), cert_pem.encode())])
+
+    sim = _Upstream("sim", args.sim, tls=client_tls)
+    real = _Upstream("real", args.real, tls=client_tls)
     exclude = DEFAULT_EXCLUDE + tuple(args.exclude)
     relay = Relay(sim, real, exclude=exclude, refresh_s=args.refresh,
-                  collision=args.collision)
+                  collision=args.collision,
+                  control_routes=control_routes,
+                  max_linear_speed=args.max_linear_speed,
+                  max_angular_speed=args.max_angular_speed)
 
     host, _, port_s = args.listen.rpartition(":")
     host = host or "0.0.0.0"
@@ -825,7 +1348,7 @@ def main(argv: list[str] | None = None) -> int:
             pass
 
     relay.start()
-    relay.serve(host, port, loop_host, loop_port)
+    relay.serve(host, port, loop_host, loop_port, server_credentials)
     try:
         relay.wait()
     finally:

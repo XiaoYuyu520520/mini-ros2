@@ -51,7 +51,10 @@ TREES = {
     "shm": "nav2/shm_transport/build",
     "bridge": "bridge/windows/build",
     "grpc": "gRPC/ros2_gRPC_sdk/build",
-    "sim": "bridge/ubuntu/ros2_bridge_sim/tests",
+    # Both Python trees live under bridge/ubuntu: the simulator/agent and the
+    # relay that merges two agents. They are one pytest run so the relay's
+    # correctness tests cannot be forgotten by CI.
+    "sim": "bridge/ubuntu",
 }
 
 # The one tree that is not ctest. Its path is a source directory rather than a

@@ -66,13 +66,23 @@ def _free_port() -> int:
     return port
 
 
-def _scan_payload() -> bytes:
+def _scan_payload(marker: float = 1.0) -> bytes:
     return msg.encode(
         {"header": {"stamp": {"sec": 1, "nanosec": 0}, "frame_id": "laser"},
          "angle_min": 0.0, "angle_max": 1.0, "angle_increment": 0.1,
          "time_increment": 0.0, "scan_time": 0.05, "range_min": 0.1,
-         "range_max": 12.0, "ranges": [1.0, 2.0, 3.0], "intensities": []},
+         "range_max": 12.0, "ranges": [marker], "intensities": []},
         msg.LASER_SCAN)
+
+
+def _scan_marker(message) -> float:  # noqa: ANN001 - protobuf Message
+    return msg.decode(message.data, msg.LASER_SCAN)["ranges"][0]
+
+
+def _twist(x: float) -> bytes:
+    return msg.encode(
+        {"linear": {"x": x, "y": 0.0, "z": 0.0},
+         "angular": {"x": 0.0, "y": 0.0, "z": 0.0}}, msg.TWIST)
 
 
 def _collect(stream, sink):
@@ -100,13 +110,14 @@ class RelayTest(unittest.TestCase):
         self.servers.append((server, agent, port))
         return agent, port
 
-    def _relay(self, sim_graph: Graph, real_graph: Graph, collision: str = "prefer-sim"):
+    def _relay(self, sim_graph: Graph, real_graph: Graph, collision: str = "prefer-sim",
+               **kwargs):
         sim_agent, sim_port = self._agent(sim_graph)
         real_agent, real_port = self._agent(real_graph)
         self.sim_agent, self.real_agent = sim_agent, real_agent
         sim = _Upstream("sim", "127.0.0.1:%d" % sim_port)
         real = _Upstream("real", "127.0.0.1:%d" % real_port)
-        self.relay = Relay(sim, real, refresh_s=0.2, collision=collision)
+        self.relay = Relay(sim, real, refresh_s=0.2, collision=collision, **kwargs)
         self.relay.start()
         relay_port = _free_port()
         self.relay.serve("127.0.0.1", relay_port, "", 0)
@@ -425,6 +436,215 @@ class RelayTest(unittest.TestCase):
         self.assertTrue(result.success, result.error)
         decoded = msg.decode(result.result, "nav2_msgs/action/Spin_Result")
         self.assertEqual(decoded["error_code"], 0)
+
+
+    def test_colliding_topics_keep_their_data_apart(self) -> None:
+        """The names are split *and* the bytes are split.
+
+        The earlier version registered ``/real/scan`` in the graph but still
+        forwarded the real robot's messages under the plain name, so both
+        streams landed on ``/scan``. Listing the topic is not enough; the
+        message itself has to carry its own marker.
+        """
+        sim_graph = Graph()
+        real_graph = Graph()
+        sim_graph.create_publisher("/scan", msg.LASER_SCAN)
+        real_graph.create_publisher("/scan", msg.LASER_SCAN)
+
+        stub, sim, real = self._relay(sim_graph, real_graph, collision="prefer-sim")
+        self.assertTrue(
+            _wait_for(lambda: {t.name for t in stub.ListTopics(pb.ListTopicsRequest()).topics}
+                      >= {"/scan", "/real/scan"}),
+            "the collision should be split into two names",
+        )
+        self.assertEqual(self.relay._route.get("/scan"), ("sim", "/scan"))
+        self.assertEqual(self.relay._route.get("/real/scan"), ("real", "/scan"))
+
+        sim_seen: list = []
+        real_seen: list = []
+        for name, sink in (("/scan", sim_seen), ("/real/scan", real_seen)):
+            stream = stub.Subscribe(pb.SubscribeRequest(topic=name, type=msg.LASER_SCAN))
+            threading.Thread(target=_collect, args=(stream, sink), daemon=True).start()
+
+        self.assertTrue(
+            _wait_for(lambda: all(
+                (self.relay.graph.get_topic(name) or
+                 type("T", (), {"subscriber_count": 0})).subscriber_count >= 1
+                for name in ("/scan", "/real/scan"))),
+            "both merged topics should have a downstream subscriber",
+        )
+        self.assertTrue(_wait_for(lambda: "/scan" in sim.subs and "/scan" in real.subs),
+                        "the relay should stream each upstream's /scan")
+
+        # A distinct marker per source makes a mix impossible to miss.
+        for index in range(5):
+            sim_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(1.5 + index * 0.01))
+            real_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(9.5 + index * 0.01))
+
+        self.assertTrue(_wait_for(lambda: len(sim_seen) >= 5 and len(real_seen) >= 5),
+                        "both sources should reach their own merged topic")
+        for message in sim_seen:
+            self.assertLess(_scan_marker(message), 2.0,
+                            "the simulator's marker arrived on the real topic")
+        for message in real_seen:
+            self.assertGreater(_scan_marker(message), 9.0,
+                               "the real robot's marker arrived on the simulator topic")
+
+    def test_echo_suppression_does_not_swallow_a_new_message(self) -> None:
+        """Only the relay's own copy is dropped, never the next real sample.
+
+        The old rule muted the whole topic for 0.5 s after an injection, so a
+        legitimate message that happened to arrive in that window was lost.
+        The relay now drops the exact message it sent (the agent echoes its
+        ``origin_id``) and lets everything else through.
+        """
+        sim_graph = Graph()
+        real_graph = Graph()
+        real_graph.create_publisher("/scan", msg.LASER_SCAN)
+
+        stub, _sim, _real = self._relay(sim_graph, real_graph)
+        received: list = []
+        stream = stub.Subscribe(pb.SubscribeRequest(topic="/scan", type=msg.LASER_SCAN))
+        threading.Thread(target=_collect, args=(stream, received), daemon=True).start()
+        self.assertTrue(_wait_for(lambda: "/scan" in self.relay.real.subs))
+        self.assertTrue(
+            _wait_for(lambda: (self.relay.graph.get_topic("/scan") or
+                               type("T", (), {"subscriber_count": 0})).subscriber_count >= 1),
+            "the downstream subscriber should be attached",
+        )
+
+        # Warm up: proves the subscription really is established upstream.
+        real_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(3.0))
+        self.assertTrue(_wait_for(lambda: len(received) >= 1))
+        received.clear()
+
+        resp = stub.Publish(pb.PublishRequest(
+            topic="/scan", type=msg.LASER_SCAN, data=_scan_payload(5.0), encoding="cdr"))
+        self.assertTrue(resp.accepted, resp.error)
+        self.assertEqual(resp.result, "ACCEPTED")
+
+        # This one is *not* an echo and must survive, even though it lands
+        # well inside the old 0.5 s mute window.
+        real_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(7.0))
+
+        self.assertTrue(_wait_for(lambda: len(received) >= 1),
+                        "the legitimate message was swallowed by echo suppression")
+        markers = [_scan_marker(message) for message in received]
+        self.assertTrue(all(marker > 6.0 for marker in markers),
+                        "the injected message echoed downstream: %r" % markers)
+
+    def test_a_dead_subscription_is_recreated(self) -> None:
+        """A stream that ends must not leave a dead dict entry behind."""
+        sim_graph = Graph()
+        real_graph = Graph()
+        real_graph.create_publisher("/chatter", msg.STRING)
+
+        stub, _sim, _real = self._relay(sim_graph, real_graph)
+        chatter: list = []
+        stream = stub.Subscribe(pb.SubscribeRequest(topic="/chatter", type=msg.STRING))
+        threading.Thread(target=_collect, args=(stream, chatter), daemon=True).start()
+
+        self.assertTrue(_wait_for(lambda: "/chatter" in self.relay.real.subs))
+        sub = self.relay.real.subs["/chatter"]
+        self.assertTrue(_wait_for(lambda: sub.state == sub.ACTIVE),
+                        "the stream should be active before it is broken")
+        old_thread = sub.thread
+
+        # Break the stream the way a network drop does: cancel the RPC.
+        sub.call.cancel()
+        self.assertTrue(_wait_for(lambda: sub.state in (sub.RETRYING, sub.FAILED)),
+                        "the subscription should notice the stream ended")
+        self.assertTrue(
+            _wait_for(lambda: sub.thread is not old_thread and sub.alive, timeout=10.0),
+            "the pump should start a new stream after the backoff",
+        )
+
+        for _ in range(80):
+            real_graph.publish("/chatter", msg.STRING,
+                               msg.encode({"data": "after-restart"}, msg.STRING))
+            if chatter:
+                break
+            time.sleep(0.1)
+        self.assertTrue(chatter, "no message after the subscription was recreated")
+        self.assertEqual(msg.decode(chatter[0].data, msg.STRING)["data"], "after-restart")
+
+    def test_publish_to_an_unreachable_upstream_is_not_reported_as_accepted(self) -> None:
+        """A failed send has to say so; ``accepted=True`` is a lie."""
+        sim_graph = Graph()
+        sim_delivered: list = []
+        sim_graph.create_subscription("/cmd_vel", msg.TWIST, sim_delivered.append)
+
+        sim_agent, sim_port = self._agent(sim_graph)
+        del sim_agent
+        sim = _Upstream("sim", "127.0.0.1:%d" % sim_port)
+        # Reserve the port with a bound socket that never listens, so no other
+        # test's server can take it between `_free_port()` and the probe.
+        dead = socket.socket()
+        dead.bind(("127.0.0.1", 0))
+        self.addCleanup(dead.close)
+        real = _Upstream("real", "127.0.0.1:%d" % dead.getsockname()[1])
+        self.relay = Relay(sim, real, refresh_s=0.2,
+                           control_routes={"/cmd_vel": "real"})
+        self.relay.start()
+        relay_port = _free_port()
+        self.relay.serve("127.0.0.1", relay_port, "", 0)
+        channel = grpc.insecure_channel("127.0.0.1:%d" % relay_port)
+        self.addCleanup(channel.close)
+        stub = pb_grpc.Ros2BridgeStub(channel)
+
+        resp = stub.Publish(pb.PublishRequest(
+            topic="/cmd_vel", type=msg.TWIST, data=_twist(0.4), encoding="cdr"))
+        self.assertFalse(resp.accepted, "a command that never left must not be accepted")
+        self.assertEqual(resp.result, "UNAVAILABLE", resp.error)
+        self.assertIn("real", resp.error)
+        self.assertEqual(sim_delivered, [],
+                         "a control command must not fall back to the simulator")
+
+    def test_an_ambiguous_control_route_is_refused(self) -> None:
+        """Both sides consume /cmd_vel: refuse rather than pick one."""
+        sim_graph = Graph()
+        real_graph = Graph()
+        sim_delivered: list = []
+        real_delivered: list = []
+        sim_graph.create_subscription("/cmd_vel", msg.TWIST, sim_delivered.append)
+        real_graph.create_subscription("/cmd_vel", msg.TWIST, real_delivered.append)
+
+        stub, sim, real = self._relay(sim_graph, real_graph)
+        self.assertTrue(_wait_for(lambda: "/cmd_vel" in sim.all_topics
+                                           and "/cmd_vel" in real.all_topics))
+
+        resp = stub.Publish(pb.PublishRequest(
+            topic="/cmd_vel", type=msg.TWIST, data=_twist(0.4), encoding="cdr"))
+        self.assertFalse(resp.accepted, "an ambiguous control route must be refused")
+        self.assertEqual(resp.result, "REJECTED", resp.error)
+        self.assertIn("ambiguous", resp.error)
+        self.assertEqual(sim_delivered, [])
+        self.assertEqual(real_delivered, [])
+
+    def test_an_explicit_control_route_wins_and_is_clamped(self) -> None:
+        """The configured destination is used even when both consume it."""
+        sim_graph = Graph()
+        real_graph = Graph()
+        sim_delivered: list = []
+        real_delivered: list = []
+        sim_graph.create_subscription("/cmd_vel", msg.TWIST, sim_delivered.append)
+        real_graph.create_subscription("/cmd_vel", msg.TWIST, real_delivered.append)
+
+        stub, sim, real = self._relay(
+            sim_graph, real_graph, control_routes={"/cmd_vel": "real"},
+            max_linear_speed=0.5)
+        self.assertTrue(_wait_for(lambda: "/cmd_vel" in sim.all_topics
+                                           and "/cmd_vel" in real.all_topics))
+
+        resp = stub.Publish(pb.PublishRequest(
+            topic="/cmd_vel", type=msg.TWIST, data=_twist(2.0), encoding="cdr"))
+        self.assertTrue(resp.accepted, resp.error)
+        self.assertEqual(resp.result, "ACCEPTED")
+        self.assertTrue(_wait_for(lambda: len(real_delivered) >= 1))
+        self.assertEqual(sim_delivered, [], "the explicit route must be respected")
+        decoded = msg.decode(real_delivered[0].data, msg.TWIST)
+        self.assertAlmostEqual(decoded["linear"]["x"], 0.5, places=5,
+                               msg="the configured speed clamp was not applied")
 
 
 if __name__ == "__main__":
