@@ -9,10 +9,6 @@
 #include "ros2_grpc_sdk/common/types.hpp"
 #include "ros2_grpc_sdk/export.hpp"
 
-namespace grpc {
-class Channel;
-}  // namespace grpc
-
 namespace ros2bridge {
 class Ros2Bridge;
 }  // namespace ros2bridge
