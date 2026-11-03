@@ -17,7 +17,9 @@ the GitHub Releases page.
   using it), so it was removed. Windows, Linux x86_64 and Linux ARM64 now all
   build, test and package from the same tree, and the `continue-on-error` on
   arm64 is gone.
-* `mini-ros2-linux-arm64-<version>.tar.gz` is part of every release.
+* `mini-ros2-ubuntu22-arm64-<version>.tar.gz` is part of every release. The
+  label says `ubuntu22` because the archive is built there and needs glibc
+  2.35 (see `PLATFORMS` in `package.py`).
 
 ### Notes
 
@@ -80,9 +82,9 @@ follow-up fixes from the second review.
 
 ### Known limits
 
-* **No ARM64 archive.** The Ubuntu 22.04 arm runner ships gRPC 1.30 whose
-  headers conflict with the SDK's channel code (`grpc_impl::Channel`). The
-  arm64 CI job runs and is red; fixing it is a separate change.
+* **No ARM64 archive** — fixed in v0.2.5, which publishes
+  `mini-ros2-ubuntu22-arm64-<version>.tar.gz` and turns the arm64 CI job into
+  a required gate. v0.2.4 and older have no ARM64 package.
 * **Transport security is opt-in and not end-to-end tested.** Plaintext is
   still the default. There is no per-operation authorization, connection
   allow-list, audit log or message-size limit yet. Keep the ports on a trusted

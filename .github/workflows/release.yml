@@ -240,9 +240,9 @@ jobs:
               run `start/加载模拟ROS环境变量.ps1` (PowerShell) or
               `start/connector.sh` (Linux). No MSYS2 and no ROS2 needed.
             * `mini-ros2-linux-x86_64-*.tar.gz` - the Linux build (x86_64).
-
-            ARM64 (`mini-ros2-linux-arm64-*.tar.gz`) is built natively on an
-            Ubuntu 22.04 arm runner from the same tree.
+            * `mini-ros2-ubuntu22-arm64-*.tar.gz` - the Linux build (ARM64),
+              built natively on an Ubuntu 22.04 arm runner from the same tree
+              (the label says `ubuntu22` because it needs that glibc).
 
             `SHA256SUMS.txt` holds the checksums. See `GETTING_STARTED.md` for
             what this does and does not do, and `bridge/docs/04-gaps.md` for the

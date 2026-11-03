@@ -43,7 +43,7 @@
 
 **仍然没做，别当成已修**：
 
-1. ~~**ARM64 归档**~~ **2026-11-03 已修**：根因不是 gRPC 版本，而是 `ros2_grpc_sdk/client/ros2_bridge_client.hpp` 里手写的 `namespace grpc { class Channel; }` 前向声明 —— gRPC 1.30 把 `grpc::Channel` 定义成 `typedef grpc_impl::Channel`，一个 `class` 声明就成了硬错误；新版 gRPC 只是凑巧容忍它。删掉该声明（`.cpp` 里本来就 include 了 `<grpcpp/grpcpp.h>`）之后 arm64 原生 runner 编过、测过，三个平台都转绿，`continue-on-error` 也一并去掉，归档里多了 `mini-ros2-linux-arm64-*.tar.gz`。
+1. ~~**ARM64 归档**~~ **2026-11-03 已修**：根因不是 gRPC 版本，而是 `ros2_grpc_sdk/client/ros2_bridge_client.hpp` 里手写的 `namespace grpc { class Channel; }` 前向声明 —— gRPC 1.30 把 `grpc::Channel` 定义成 `typedef grpc_impl::Channel`，一个 `class` 声明就成了硬错误；新版 gRPC 只是凑巧容忍它。删掉该声明（`.cpp` 里本来就 include 了 `<grpcpp/grpcpp.h>`）之后 arm64 原生 runner 编过、测过，三个平台都转绿，`continue-on-error` 也一并去掉，归档里多了 `mini-ros2-ubuntu22-arm64-*.tar.gz`（`package.py` 的 label 决定的，名字里带 `ubuntu22` 是因为它在那儿构建、要 glibc 2.35）。
 2. **鉴权/访问隔离**：只有 opt-in TLS/mTLS，没有按操作分权、白名单、审计、消息大小上限；默认明文。
 3. **30 分钟双源长跑**：同名话题隔离只有消息级测试，没有长时段 soak。
 4. **指标面**：没有 RPC / GUI 展示，没有端到端延迟与 P95/P99。
