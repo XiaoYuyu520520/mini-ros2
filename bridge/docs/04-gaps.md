@@ -24,6 +24,32 @@
 > 历史本身有价值，所以这些旧句不删；但它们的位置和上下文都标成了「历史」，遇到
 > 与源码冲突时**以源码和 `03-validation.md` 的最新证据为准**。
 
+
+---
+
+## 零、2026-11-03 的第二轮修复（先说结论）
+
+第二轮 review 提的六条，处理结果：
+
+| 问题 | 结论 | 证据位置 |
+| --- | --- | --- |
+| P1 重连退避可能没生效 | **已修**：`_stream_topic` 不再在 RPC 对象创建时清零 `attempt`，只有存活够 `SUB_HEALTHY_AFTER_S` 才清零；新测试连跑 10 次快速失败，断言退避单调增长且封顶 | `ros2_link/tests/test_relay.py::test_backoff_grows_when_a_stream_fails_immediately` |
+| P1 消失的话题/服务/action 残留 | **已修**：`_pump` 记快照并清 `_route/_counts/_stable/topic_stats`；服务与 action 改为从两份快照重建映射；`ListTopics` 只列出仍在快照里的话题；`Graph.remove_action` 补上 | `test_removed_topics_services_and_actions_disappear` / `test_a_recreated_topic_can_have_a_new_type` |
+| P1 回环哈希兼容路径会误判 | **已修**：有 `origin_id` 时只看身份（外来 id 一律当真实数据）；`source_id` 非空的 agent 不走哈希；只有两者都没有的老 agent 才用字节指纹 | `test_a_foreign_origin_id_is_not_deduplicated_by_payload` |
+| P1 缺统一性能诊断 | **部分做**：relay 现在有全局计数（重连/合并/丢弃/发布）与逐话题计数（received/merged/dropped_echo/bytes/last_stamp_ns），`stats_snapshot()` 可取、每分钟打一条日志；**还没有 RPC、GUI、延迟直方图**，见下面第 5 条 | `Relay.stats_snapshot` |
+| P1 Action 反馈错误不清楚 | **已修**：`ActionFeedback` 遇到非 CANCELLED 的 gRPC 错误改为 `context.abort(code, details)`，不再只写 debug 日志 | `relay.py` `ActionFeedback` |
+| P1 `_prune_echo` 每条消息都遍历 | **已修**：改成每秒最多清一次（`PRUNE_INTERVAL_S`），逐消息路径只查它需要的那一条；**没有做基准对比**，见下面第 6 条 | `_prune_echo` |
+| 发布没有跟进 Release | **本轮做**：新增 `CHANGELOG.md`，打 `v0.2.4` 走 `release.yml` | `CHANGELOG.md` |
+
+**仍然没做，别当成已修**：
+
+1. **ARM64 归档**：Ubuntu 22.04 的 gRPC 1.30 头文件冲突仍在，arm64 job 仍红（`continue-on-error`）。
+2. **鉴权/访问隔离**：只有 opt-in TLS/mTLS，没有按操作分权、白名单、审计、消息大小上限；默认明文。
+3. **30 分钟双源长跑**：同名话题隔离只有消息级测试，没有长时段 soak。
+4. **指标面**：没有 RPC / GUI 展示，没有端到端延迟与 P95/P99。
+5. **性能基准**：`_prune_echo` 改造没有前后 CPU/延迟对比数据。
+6. **viz 导航动作闭环**：仍是"点地图发 `/goal_pose`"，没有 `navigate_to_pose` 的发送/取消/反馈面板，也没有逐节点诊断面板。
+
 ---
 
 ## 一句话结论

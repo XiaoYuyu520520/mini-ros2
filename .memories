@@ -6,6 +6,22 @@
 约定与根 `README.md` 一致：`.md` 用 **LF** 换行 + **UTF-8 BOM**；
 `.bat` 用 **CRLF**；`.sh` 用 **LF**。
 
+### relay 第二轮：退避、快照、指标（2026-11-03）
+
+* **`attempt` 只在"活得够久"时清零**：`_stream_topic` 打开 RPC 后**不要**清零，
+  否则每次秒断都从第一档重来；finally 里按 `SUB_HEALTHY_AFTER_S` 判断，再用 `backoff()`。
+* **图是快照不是日志**：`_upstream_topics/services/actions` 记上一轮快照，
+  差集里的名字要从 `_route/_counts/_stable/topic_stats` 清掉；服务/action 用
+  `_rebuild_*_locked()` 从两份快照重建，不要在旧 map 上 `setdefault` 累积。
+  `ListTopics` 必须过滤到仍在快照里的名字（图的话题可能因下游订阅而残留）。
+* **回环识别顺序**：有 `origin_id` → 只查注入表（外来 id 是数据）；无 id 但有
+  `source_id` → 新 agent，不比对字节；两者都没有 → 才用字节指纹。
+* **`_prune_echo` 每秒最多一次**（`PRUNE_INTERVAL_S`），逐消息路径只查自己那条。
+* **`stats_snapshot()`**：全局 + 逐话题 + 每订阅状态；`wait()` 每 `STATS_INTERVAL_S`
+  打一条日志。还没有 RPC/GUI，别在文档里写成"已具备观测体系"。
+* 发布走 `CHANGELOG.md` + 打 `v*` tag → `release.yml` 自动出三个平台的包。
+  写 CHANGELOG 时把"已知限制"单列一节，arm64/鉴权/soak/指标面都要点明。
+
 ### relay：跨机正确性收口（2026-11-03）
 
 * **同名话题要连数据一起隔离**：`_stream_topic` 必须用 `_merged_for()` 算出的名字，
