@@ -148,8 +148,11 @@ jobs:
       - name: shm ctest
         run: python tools/run_ctest.py shm
 
-      - name: bridge build entry point + ctest
-        run: python bridge/scripts/build_bridge.py --test --jobs 2
+      # The release archive only needs the bridge *built*; its ctest tree is
+      # the same one cross-platform.yml runs with `--test`, and repeating the
+      # runtime gate here adds minutes of runner time without adding coverage.
+      - name: bridge build entry point
+        run: python bridge/scripts/build_bridge.py --jobs 2
 
       - name: gRPC SDK build entry point + ctest
         run: python gRPC/ros2_gRPC_sdk/scripts/build.py --test --jobs 2
