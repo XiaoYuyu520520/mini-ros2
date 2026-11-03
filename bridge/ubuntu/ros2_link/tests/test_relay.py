@@ -852,8 +852,14 @@ class RelayGraphSnapshotTest(unittest.TestCase):
         real_graph.create_publisher("/chatter", msg.STRING)
 
         stub = self._relay(sim_graph, real_graph)
-        self.assertTrue(_wait_for(lambda: sim_graph.get_topic("/scan") is not None),
-                        "the relay should have subscribed to the simulator")
+        # Wait for the relay's *own* stream to be open: the topic exists in
+        # the graph as soon as the publisher does, and a message published
+        # before the stream is open goes into a topic nobody was listening
+        # to yet.
+        self.assertTrue(
+            _wait_for(lambda: self.relay.sim.subs.get("/scan") is not None
+                      and self.relay.sim.subs["/scan"].state == "ACTIVE"),
+            "the relay should have subscribed to the simulator")
 
         # A stamp 40 ms in the past: the sample should show up in the
         # percentiles, roughly that old.
@@ -898,8 +904,14 @@ class RelayGraphSnapshotTest(unittest.TestCase):
         sim_graph.create_publisher("/scan", msg.LASER_SCAN)
 
         stub = self._relay(sim_graph, real_graph)
-        self.assertTrue(_wait_for(lambda: sim_graph.get_topic("/scan") is not None),
-                        "the relay should have subscribed to the simulator")
+        # Wait for the relay's *own* stream to be open: the topic exists in
+        # the graph as soon as the publisher does, and a message published
+        # before the stream is open goes into a topic nobody was listening
+        # to yet.
+        self.assertTrue(
+            _wait_for(lambda: self.relay.sim.subs.get("/scan") is not None
+                      and self.relay.sim.subs["/scan"].state == "ACTIVE"),
+            "the relay should have subscribed to the simulator")
 
         def refuse(*_args, **_kwargs):
             raise RuntimeError("the graph says no")
