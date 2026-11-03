@@ -106,6 +106,27 @@ ros2 topic list -t
 （没有发布者时返回 null 就退出），要 `create`（shim 的规则：谁先碰都行）。
 类型也可能在发布者出现前是未知的，要惰性再查一次。
 
+### 5. 消息比槽大 = 静默丢弃（已修，但要知道为什么）
+
+`ShmChannel::publish()` 遇到超过槽大小的载荷**返回 `false`**，不写、不报错。
+以前槽大小只按**话题名**判断（含 `map`/`costmap`/`voxel` 用大槽），
+而 640x480 RGB8 是 921,600 字节、`/camera/image_raw` 名字里没有 `map` ——
+于是落进普通槽（桥接环境 512 KB），每一帧都被丢掉，从外面看和"没人发消息"一模一样。
+
+现在**消息类型**参与决定：`slot_size_for_type(type, topic)`，
+`Image`/`PointCloud2` 各自的大槽由 `NAV2_SHM_IMAGE_SLOT_SIZE` /
+`NAV2_SHM_POINTCLOUD_SLOT_SIZE` 控制（默认 8 MB），`CompressedImage` 仍是普通槽；
+参数服务、`/rosout`、action status 这些小通道规则**优先于类型**。
+shim 与守护进程走同一规则（`create_channel(topic, error, type)`）。
+新话题类型进来时，如果它是"像素/点"这类大载荷，记得这个。
+
+### 6. 等"别人开始听"要看订阅状态，不要看话题在不在图里
+
+写 relay 的测试时，`graph.get_topic("/scan")` 在 publisher 创建时就成立 ——
+早于 relay 真正订阅。消息发进去时还没有人听，relay 永远不会记录它。
+本机快所以过，Linux CI 慢所以挂（2026-11-04 实测）。
+正确条件是订阅自己的状态：`relay.sim.subs["/scan"].state == "ACTIVE"`。
+
 ## 加一个跨机消息类型（6 步）
 
 1. `nav2\ros2_shim\generate.ps1` 生成结构体（生成物在 `generated/`，不要手改）

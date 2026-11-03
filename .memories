@@ -6,6 +6,47 @@
 约定与根 `README.md` 一致：`.md` 用 **LF** 换行 + **UTF-8 BOM**；
 `.bat` 用 **CRLF**；`.sh` 用 **LF**。
 
+### 性能三项：CDR 批量、按类型分槽、relay 时延（2026-11-04）
+
+* **CDR `Writer::reserve()` 是个坑**：头文件里私有 `reserve(n)` 实际调用
+  `buffer_.resize(buffer_.size() + n)`，名字和语义相反，而且从未被调用过。已删除，
+  改成公开的 `writeRaw()` / `align()` / `little_endian()`。
+* **CDR 标量数组批量写**：`CdrWriteArchive::write(vector<T>)` 原来两个分支（标量/非标量）
+  都逐元素调用，完全是同一段代码。现在标量数组走 `align(sizeof(T))` 一次 + 一次
+  `writeRaw` 整段 memcpy。`vector<bool>` 在上游 `is_scalar` 里已被排除（bit proxy 没有
+  `data()`），仍是逐元素。大端（本项目的两个目标都不是）保留逐元素 swap。
+* **shim 序列化定容 + 复用**：`serialize()` 现在先 `serialized_size_of()` 走一遍计数
+  再写，`serializeInto(message, buffer)` 复用调用方的缓冲。实测（同进程、-O2、20 万次）：
+  Twist 0.039→0.025 µs，Odometry 0.105→0.043 µs，LaserScan 7.199→0.068 µs（106 倍，
+  主要来自不再逐元素 `insert` 触发扩容）；复用缓冲再快约 1.5~1.7 倍。
+  数组读写都改 memcpy，`std::endian` 编译期断言只在小端走快路径。
+* **槽大小按消息类型定**（P0 真问题）：原来只按话题名判断（含 `map`/`costmap`/`voxel`
+  用大槽），而 640x480 RGB8 是 921,600 字节、`/camera/image_raw` 名字里没有 `map`，
+  于是落进普通槽（桥接环境 512 KB），`publish()` 返回 `false` **且什么都不说** ——
+  从外面看和"没人发消息"一模一样。现在 `slot_size_for_type(type, topic)`：
+  `Image`→`NAV2_SHM_IMAGE_SLOT_SIZE`（8 MB），`PointCloud2`→`NAV2_SHM_POINTCLOUD_SLOT_SIZE`
+  （8 MB），`CompressedImage` 仍普通槽；参数服务/`/rosout`/action status 这些小通道规则
+  **优先于类型**（否则一个误挂在 `/rosout` 上的 Image 会占 64 MB）。
+  shim 的 `create_publisher`/`create_subscription` 和守护进程的 `create_channel(topic,
+  error, type)` 都走同一规则，两端几何一致。
+* **超限不再静默**：`Publisher::notePublishFailed()` 第一次失败打印样本字节数、槽大小和
+  该调哪个环境变量，`oversized_count()` 计数。测试里 50 MB 的帧会真的打出这行。
+* **relay 时延**：`stamp_ns` 是发布端墙钟（`time.time_ns()`），relay 收到时取本机时间，
+  差值就是单向延迟。分整体/按上游/按话题三层，512 条有界 deque，快照算 P50/P95/P99/max；
+  超 60 秒或落在未来的时间戳算 `stale_stamps` 单独计数（两台机器的时钟只有"按上游"
+  这一层能暴露）。另加 `merge_errors`（图拒收）与 `echo_pending`。
+* **测试竞态（CI 专有）**：新写的两条 relay 测试等的是 `sim_graph.get_topic("/scan")`，
+  这个条件在 publisher 创建时**就成立**，早于 relay 真正订阅 —— 消息发进了一个还没人听的
+  话题。本机快所以过，Linux CI 慢所以挂。正确条件是 relay 自己的订阅状态
+  `relay.sim.subs["/scan"].state == ACTIVE`。教训：等待"别人开始听"要看订阅状态，
+  不要看图里有没有这个话题。
+* **构建坑**：`cmake --build` 用 `timeout` 工具包着、或在后台跑，可能在父进程被杀时
+  悄无声息地一起没了（`tasklist` 里一个 `cc1plus` 都没有）。本地改 `nav2/ros2_shim`
+  的头文件会触发约 400 个 TU 重编（近 20 分钟），轮询时用 `date +%H:%M:%S` 报告时间。
+  另外 `ros2_bridge_daemon.exe` 在跑时 `ld` 会 `Permission denied`，先 `taskkill`。
+* 本地验证：shim 34/34（新增 `test_serialization_bulk` 31 项）、gRPC SDK 4/4、
+  bridge 7/7（`bridge_cdr_roundtrip` 仍逐字节匹配 rosbags fixture）、pytest 94/94。
+
 ### relay 第二轮：退避、快照、指标（2026-11-03）
 
 * **`attempt` 只在"活得够久"时清零**：`_stream_topic` 打开 RPC 后**不要**清零，
