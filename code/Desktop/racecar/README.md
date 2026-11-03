@@ -49,21 +49,21 @@ racecar/
 Windows / 本仓库（`shim` 后端）：
 
 ```powershell
-E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py status
-E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py slam
-E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py save-map -f ai_map001
-E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py nav --goal auto
-E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py stop
+python code\Desktop\racecar\tools\racecar_ctl.py status
+python code\Desktop\racecar\tools\racecar_ctl.py slam
+python code\Desktop\racecar\tools\racecar_ctl.py save-map -f ai_map001
+python code\Desktop\racecar\tools\racecar_ctl.py nav --goal auto
+python code\Desktop\racecar\tools\racecar_ctl.py stop
 ```
 
 一条完整的仿真演示。`/sim/reset` 必须在**起栈之前**：`nav` 会给 AMCL 传 `--initial-pose-from-odom`，
 顺序反了它拿到的是上一趟留下的 odom 位姿，`map -> odom` 从第一个 tick 就是错的。
 
 ```powershell
-E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py stop
+python code\Desktop\racecar\tools\racecar_ctl.py stop
 cmd /c "bridge\windows\ros2.bat service call /sim/reset std_srvs/srv/Trigger"
-E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py nav --map live
-E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py run go.py sim_room12.csv
+python code\Desktop\racecar\tools\racecar_ctl.py nav --map live
+python code\Desktop\racecar\tools\racecar_ctl.py run go.py sim_room12.csv
 ```
 
 `run <script> [args]` 把这台机器上的 ROS2 交给 `src/racecar/scripts/` 里那个脚本：`shim` 后端走

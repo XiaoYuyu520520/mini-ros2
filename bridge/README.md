@@ -106,7 +106,7 @@ PowerShell 里用同一个入口要**点源** `windows\ros2.ps1`（`.bat` 影响
 `ros2.bat` 只会打印用法）：
 
 ```powershell
-. E:\DesktopData\app\code\CPU\bridge\windows\ros2.ps1
+. <repo>\bridge\windows\ros2.ps1
 ros2 topic list -t
 ```
 

@@ -8,7 +8,7 @@
 
 ```bat
 powershell -File nav2\ros2_shim\generate.ps1                          :: 用 PATH 上的 python
-powershell -File nav2\ros2_shim\generate.ps1 -Python E:\venvs\py312\Scripts\python.exe
+powershell -File nav2\ros2_shim\generate.ps1 -Python python
 ```
 
 `pymessages/_runtime.py` 是从 `../tools/pymessages_runtime.py` 拷过来的。

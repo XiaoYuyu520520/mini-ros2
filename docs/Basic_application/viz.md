@@ -83,7 +83,7 @@ rviz2
 
 ```powershell
 cd viz
-$env:PATH = "D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin;$env:PATH"
+$env:PATH = "<msys2>\ucrt64\bin;$env:PATH"
 go build -ldflags "-H windowsgui" -o viz.exe .
 ```
 

@@ -1,6 +1,6 @@
 ﻿# tools · 仓库级开发工具
 
-八个工具加两个共用模块，直接跑。**它们是「可复用」的那一类**；一次性的探针、日志、
+九个工具加两个共用模块，直接跑。**它们是「可复用」的那一类**；一次性的探针、日志、
 实测证据一律进 `.scratch/`（那里的规矩见 `.scratch/README.md`）。
 
 依赖上有两条例外，都是这一节末尾那两个 ARM 板工具带来的：`check_cross_platform.py` 要
@@ -14,6 +14,7 @@ SSH 到那台 Ubuntu 机器，`serial_shell.py` / `ssh_board.py` 要 `pyserial` 
 | `check_docs.py` | 文档体检：LF-only、BOM、``` 围栏成对、控制字符 | `python tools\check_docs.py --quiet` |
 | `find_scratch_refs.py` | 列出所有被文档/源码引用的 `.scratch\...` 路径 | `python tools\find_scratch_refs.py --check` |
 | `check_structure.py` | 结构体检：一棵树一张 README、结构图里的目录真的在、文档点名的入口脚本真的在 | `python tools\check_structure.py --list` |
+| `check_local_paths.py` | 发布文档里不得出现开发机的本机路径（某个盘符下的虚拟环境、MSYS2 安装目录、机器人上的检出目录这类）；`03-validation.md` 是实验记录，豁免 | `python tools\check_local_paths.py --quiet` |
 | `check_cross_platform.py` | 一条命令在 Windows 和 Ubuntu 上分别编译 + 测试（12 项检查），跨平台构建入口的守门人 | `python tools\check_cross_platform.py --local` |
 | `serial_shell.py` | 通过串口（COM3, 115200）登录 ARM 板并执行命令；板子还没联网时唯一的入口 | `python tools\serial_shell.py --command "uname -a"` |
 | `ssh_board.py` | 板子联网后走 SSH：跑命令、上下传文件；输出按 UTF-8 字节写，GBK 控制台不乱码 | `python tools\ssh_board.py --run "uname -m"` |
@@ -61,7 +62,7 @@ SSH 到那台 Ubuntu 机器，`serial_shell.py` / `ssh_board.py` 要 `pyserial` 
   构建目录路径。`--list` 会把树名、runner 和路径一起列出来。
   pytest 那棵树**在 Windows 上跑**：Ubuntu 的 venv 里只有 grpc / numpy / protobuf，没有 pytest。
   runner 是用 `sys.executable` 起的，所以本机得用 venv 那个解释器
-  （`E:\venvs\py312\Scripts\python.exe tools\run_ctest.py sim`）；CI 里是先 `pip install pytest`
+  （`python tools\run_ctest.py sim`）；CI 里是先 `pip install pytest`
   再跑，默认的 `python` 会直接 `No module named pytest`（`bridge/docs/04-gaps.md` 第二十三节）。
   三棵 ctest 树（`shim` / `shm` / `bridge`，共 39 条）都带 `TIMEOUT 300`：这些测试等的共享内存
   通道在写者被强杀之后可以让下一个进程永远等下去（同节第二节），有上界才看得见失败。
@@ -90,7 +91,7 @@ SSH 到那台 Ubuntu 机器，`serial_shell.py` / `ssh_board.py` 要 `pyserial` 
   ```
   > python tools\_toolchain.py
   platform : windows
-  toolchain: MSYS2 UCRT64 at D:\WindowsServer2025_1\software\MSYS2
+  toolchain: MSYS2 UCRT64 at <msys2>
   cmake    : D:\...\ucrt64\bin\cmake.exe
   ```
 

@@ -68,8 +68,7 @@ Windows，Windows 上的 **魔改 nav2** 建图、规划，再把 `/cmd_vel` 送
 
 ## 目录结构
 
-顶层就这几样。`C:\Users\Administrator\Desktop\app\code\CPU` 和
-`E:\DesktopData\app\code\CPU` 是同一个目录（前者是链接），两种写法都能用：
+顶层就这几样。下面所有路径都相对 `<repo>`（仓库的检出根目录）：
 
 ```
 CPU/
@@ -207,29 +206,29 @@ Ubuntu 并启动，第 3、4 步分别对应验收标准 1 和 3，5~8 步是 na
 ### 首次跑通
 
 ```bat
-:: C:\Users\Administrator\Desktop\app\code\CPU 是同一个目录的链接，这里用真身
-cd E:\DesktopData\app\code\CPU
+:: 进仓库根目录（下面所有相对路径都相对它）
+cd <repo>
 
 :: 1) 构建 Windows 侧（守护进程 + ros2 CLI），并跑转码自检
-E:\venvs\py312\Scripts\python.exe bridge\scripts\build_bridge.py --test
+python bridge\scripts\build_bridge.py --test
 
 :: 2) 把 Ubuntu 侧推过去并启动仿真小车
-E:\venvs\py312\Scripts\python.exe bridge\scripts\sync_to_ubuntu.py --run
+python bridge\scripts\sync_to_ubuntu.py --run
 
 :: 3) 在 Windows 上用 ROS2（首次会自动扫描、建连、镜像远端话题）
 bridge\windows\ros2.bat topic list -t
 
 :: 4) nav2 建图 + 规划 + 指挥小车
-E:\venvs\py312\Scripts\python.exe bridge\scripts\run_nav2_demo.py --goal auto
+python bridge\scripts\run_nav2_demo.py --goal auto
 
 :: 5) 上游 nav2 服务器本体：先把小车放回原点，再起栈并挑一个可达目标开过去
 ::    （Windows 与 Ubuntu 跑同一份 `run_nav2_stack.py`；cmd 习惯的等价物是 nav2_stack.bat）
 bridge\windows\ros2.bat service call /sim/reset std_srvs/srv/Trigger
-E:\venvs\py312\Scripts\python.exe bridge\scripts\run_nav2_stack.py --goal auto --report goal.json
-E:\venvs\py312\Scripts\python.exe bridge\scripts\run_nav2_stack.py stop
+python bridge\scripts\run_nav2_stack.py --goal auto --report goal.json
+python bridge\scripts\run_nav2_stack.py stop
 :: 5a) 拿存好的图（PGM + YAML）导航：脚本先起 map_server 再起 AMCL，等价于车上的 Run_nav.launch.py map:=FILE
 ::     注意 /map 只许一个写者 —— 守护进程正在镜像 /map 时它会拒绝启动，并打印把 /map 摘出镜像集的那两条命令
-E:\venvs\py312\Scripts\python.exe bridge\scripts\run_nav2_stack.py --map code\Desktop\racecar\map\ai_map001.yaml --goal 1.54,4.23 --timeout 90
+python bridge\scripts\run_nav2_stack.py --map code\Desktop\racecar\map\ai_map001.yaml --goal 1.54,4.23 --timeout 90
 
 :: 5b) 运行期换控制器（FollowPath=RPP / DWBFollowPath / MPPIFollowPath / GracefulFollowPath，栈不必重启）
 bridge\windows\ros2.bat topic pub /controller_selector std_msgs/msg/String data=MPPIFollowPath --once
@@ -247,20 +246,20 @@ nav2\ros2_shim\build\parameter_events_probe.exe --count 5 --timeout 60
 nav2\ros2_shim\build\map_saver_cli.exe -t /map -f C:\maps\office --fmt png
 
 :: 6) 旁路的安全链（速度平滑 + 碰撞监控），可以和上面的栈同时跑
-E:\venvs\py312\Scripts\python.exe bridge\scripts\run_nav2_safety.py
+python bridge\scripts\run_nav2_safety.py
 
 :: 6b) 进链：控制器改发 /cmd_vel_nav，小车听的是 collision_monitor 的输出
-E:\venvs\py312\Scripts\python.exe bridge\scripts\run_nav2_stack.py --safety --goal auto
+python bridge\scripts\run_nav2_stack.py --safety --goal auto
 
 :: 6c) 定位：AMCL 单独起（栈里已经含 AMCL，一般不单起）
-E:\venvs\py312\Scripts\python.exe bridge\scripts\run_amcl_demo.py --duration 60
+python bridge\scripts\run_amcl_demo.py --duration 60
 
 :: 7) 航点链（规划 → 平滑 → 巡航）与旁路的 docking / route（栈先起来）
 nav2\ros2_shim\build\nav2_waypoints.exe --goal auto --count 3
-E:\venvs\py312\Scripts\python.exe bridge\scripts\run_nav2_docking_route.py --duration 60
+python bridge\scripts\run_nav2_docking_route.py --duration 60
 
 :: 8) 四条验收标准（9 条检查）一次跑完
-E:\venvs\py312\Scripts\python.exe bridge\scripts\acceptance_check.py
+python bridge\scripts\acceptance_check.py
 ```
 
 ### PowerShell 里日常用（点源一次）
@@ -273,7 +272,7 @@ PowerShell 侧的对应入口是 `bridge\windows\ros2.ps1`，**点源一次**就
 
 ```powershell
 # 每个窗口点源一次，之后这个窗口里就不用再带路径
-. E:\DesktopData\app\code\CPU\bridge\windows\ros2.ps1
+. <repo>\bridge\windows\ros2.ps1
 
 ros2 topic list -t
 ros2 topic echo /scan --count 3
@@ -282,7 +281,7 @@ ros2 bridge status
 
 * 点源只**导入环境变量**（`bridge_env.bat` 仍是唯一事实源，这里不重复任何取值），不会启动守护进程；
   第一条 `ros2` 命令才会按需启动。冷启动实测 1.6~2.7 s（扫描 → 握手 → 建立持久通道 → 镜像远端话题，大头是 LAN 扫描）。
-* 一行跑完也行，不用点源：`& E:\DesktopData\app\code\CPU\bridge\windows\ros2.ps1 topic list -t`。
+* 一行跑完也行，不用点源：`& <repo>\bridge\windows\ros2.ps1 topic list -t`。
 * 习惯敲 bat、又想拿到上面这套环境：`bridge\windows\ros2_shell.bat`（可以带一个起始目录）会开一个新的 PowerShell 窗口，`ros2.ps1` 已经在里面点源好了。子进程改不了你当前会话的变量，所以「bat 一键拿到完整环境」只有开新窗口这一条路。
 * 改过 `bridge_env.bat` 之后，用 `Import-Ros2Env -Force` 在本窗口重读一次。
 * PowerShell profile 里**没有**任何 ros2 相关的东西：新窗口要么点源一次 `ros2.ps1`，要么用
@@ -319,7 +318,7 @@ pid 记在 `$ROS2_BRIDGE_BUILD/ros2_bridge_daemon.pid`；**发现不看本机**�
 | --- | --- | --- |
 | `bridge_env.bat` | 只设环境变量（PATH、共享内存几何、SDK 配置、日志级别），供别的脚本 `call`；自己不开窗口 | `call bridge\windows\bridge_env.bat` |
 | `ros2.bat` | Windows 上的 `ros2` 命令。首次调用会自动做 LAN 扫描、建立持久连接、把远端话题镜像进共享内存，之后复用已经跑着的守护进程 | `bridge\windows\ros2.bat topic list -t` |
-| `ros2.ps1` | 同一件事的 PowerShell 版本。**点源一次**，本窗口里直接敲 `ros2 topic list -t`；点源只导入环境变量，守护进程仍然按需启动 | `. E:\DesktopData\app\code\CPU\bridge\windows\ros2.ps1` 然后 `ros2 topic list -t` |
+| `ros2.ps1` | 同一件事的 PowerShell 版本。**点源一次**，本窗口里直接敲 `ros2 topic list -t`；点源只导入环境变量，守护进程仍然按需启动 | `. <repo>\bridge\windows\ros2.ps1` 然后 `ros2 topic list -t` |
 | `ros2_shell.bat` | 「bat 找 ps1」：开一个**已经点源好 `ros2.ps1`** 的新 PowerShell 窗口，变量和 `ros2` 函数都在里面；守护进程仍然按需启动 | `ros2_shell.bat` 或 `ros2_shell.bat D:\work` |
 | `ros2_bridge.bat` | 守护进程的 `start` / `run` / `status` / `stop` | `bridge\windows\ros2_bridge.bat status` |
 | `wait_bridge_ready.bat` | 轮询 ready 文件，等守护进程做完第一次扫描（上面几个脚本自己会调用它） | `bridge\windows\wait_bridge_ready.bat` |
@@ -618,11 +617,11 @@ python nav2/shm_transport/build.py --no-test --jobs 6
 
 | 项 | 位置 |
 | --- | --- |
-| Python 虚拟环境 | `E:\venvs\py312`（`& "E:\venvs\py312\Scripts\Activate.ps1"`） |
+| Python 虚拟环境 | 任意一个 3.12 虚拟环境（先激活它的 `Activate.ps1`） |
 | 临时用清华源装包 | `pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple 包名` |
-| MSYS2 UCRT64 | `D:\WindowsServer2025_1\software\MSYS2\ucrt64.exe`（工具链在 `ucrt64\bin`） |
-| tmux | `D:\WindowsServer2025_1\software\psmux-v3.3.6-windows-x64\tmux.exe` |
-| Ubuntu 侧工作目录 | `~/code/CPU`，虚拟环境 `~/code/CPU/.venv` |
+| MSYS2 UCRT64 | `<msys2>\ucrt64.exe`（工具链在 `ucrt64\bin`） |
+| tmux | `tmux.exe`（Windows 上用 psmux 或 MSYS2 的 tmux 包） |
+| Ubuntu 侧工作目录 | `<repo>`，虚拟环境 `<repo>/.venv` |
 
 Windows 侧的一切都是**临时的**：`bridge_env.bat` 只设置当前 cmd 窗口的环境变量（PATH、
 共享内存几何、日志级别、SDK 配置位置），关掉窗口或 `endlocal` 就恢复原样，不写注册表、

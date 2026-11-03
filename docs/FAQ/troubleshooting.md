@@ -92,7 +92,7 @@ ros2 topic pub /demo/chatter std_msgs/msg/String "{data: hello}" -r 1
 **正确做法：点源 `.ps1`**
 
 ```powershell
-. E:\DesktopData\app\code\CPU\start\加载模拟ROS环境变量.ps1
+. <repo>\start\加载模拟ROS环境变量.ps1
 ros2 topic list -t
 ```
 
@@ -259,7 +259,7 @@ Windows 默认定时器粒度 15.6 ms，所以按 `sleep_for(1000/rate)` **毫�
 
 ```powershell
 cd viz
-$env:PATH = "D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin;$env:PATH"
+$env:PATH = "<msys2>\ucrt64\bin;$env:PATH"
 go build -ldflags "-H windowsgui" -o viz.exe .
 ```
 

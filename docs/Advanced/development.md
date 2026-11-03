@@ -207,12 +207,14 @@ python -m pytest bridge\ubuntu\ros2_bridge_sim\tests -q
 ## 7.1.8 收尾清单
 
 1. `python tools\check_docs.py --quiet` 干净。
-2. `python tools\check_structure.py` 干净；加/删过目录就同步根 `README.md` 的「目录结构」和
+2. `python tools\check_local_paths.py` 干净：文档里不许出现开发机的绝对路径，
+   统一写 `<repo>` / `python` / `<msys2>` 这类占位符。
+3. `python tools\check_structure.py` 干净；加/删过目录就同步根 `README.md` 的「目录结构」和
    那棵树的 README。
-3. 动过的树各自构建 + 测试通过（五棵树见上）。
-4. 动了跨机行为 → `python bridge\scripts\acceptance_check.py` 重跑一遍。
-5. 动了 `.scratch/` → `python tools\find_scratch_refs.py --check` 为 0。
-6. 把新证据（日志、地图、报告）放进 `.scratch/`，把能复用的工具放进 `tools/`。
+4. 动过的树各自构建 + 测试通过（五棵树见上）。
+5. 动了跨机行为 → `python bridge\scripts\acceptance_check.py` 重跑一遍。
+6. 动了 `.scratch/` → `python tools\find_scratch_refs.py --check` 为 0。
+7. 把新证据（日志、地图、报告）放进 `.scratch/`，把能复用的工具放进 `tools/`。
 
 <div class="pagenav">
 <div class="prev"><span class="dir">上一页</span><a class="ttl" href="../FAQ/troubleshooting">6.2 故障排查</a></div>

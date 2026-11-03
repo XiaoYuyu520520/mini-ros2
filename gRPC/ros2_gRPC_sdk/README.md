@@ -125,14 +125,14 @@ Python interpreter of your choice (e.g. the project venv):
 
 ```powershell
 # 1. Install dependencies once (gRPC, protobuf, abseil, re2 ...)
-& "D:\WindowsServer2025_1\software\MSYS2\usr\bin\pacman.exe" -S --noconfirm --needed `
+& "<msys2>\usr\bin\pacman.exe" -S --noconfirm --needed `
     mingw-w64-ucrt-x86_64-grpc mingw-w64-ucrt-x86_64-protobuf
 
 # 2. Configure + build
-& "E:\venvs\py312\Scripts\python.exe" scripts/build.py
+& "python" scripts/build.py
 
 # ... with the test run afterwards
-& "E:\venvs\py312\Scripts\python.exe" scripts/build.py --test
+& "python" scripts/build.py --test
 ```
 
 `scripts/build.py` locates the MSYS2 UCRT64 toolchain (`--msys-root`, or
@@ -144,8 +144,8 @@ The underlying cmake invocation it performs is equivalent to:
 
 ```powershell
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release `
-  -DCMAKE_CXX_COMPILER="D:/WindowsServer2025_1/software/MSYS2/ucrt64/bin/g++.exe" `
-  -DCMAKE_PREFIX_PATH="D:/WindowsServer2025_1/software/MSYS2/ucrt64"
+  -DCMAKE_CXX_COMPILER="<msys2>/ucrt64/bin/g++.exe" `
+  -DCMAKE_PREFIX_PATH="<msys2>/ucrt64"
 cmake --build build
 ```
 
@@ -255,7 +255,7 @@ exercised on a single machine.
 
 ```powershell
 # End-to-end test (starts an in-process agent, drives it through the client)
-& "E:\venvs\py312\Scripts\python.exe" scripts/build.py --test
+& "python" scripts/build.py --test
 
 # Full guided demo (run the binary from its per-platform build dir)
 ./build/windows-x86_64/ros2_grpc_sdk_bridge_demo.exe 127.0.0.1:50055
@@ -265,7 +265,7 @@ Separate processes, exactly like the Windows <-> Linux setup - launched and
 stopped by Python, which auto-detects the platform and build directory:
 
 ```powershell
-& "E:\venvs\py312\Scripts\python.exe" scripts/run_local_demo.py
+& "python" scripts/run_local_demo.py
 ```
 
 `run_local_demo.py` starts the agent, waits for the port, runs

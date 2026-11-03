@@ -478,8 +478,8 @@ shim 内部两处和我那份测试），所以它今天不挡任何东西；但
 ```
 python bridge\scripts\sync_to_ubuntu.py --no-venv
 tmux kill-session -t sim
-tmux new-session -d -s sim -c ~/code/CPU/bridge/ubuntu \
-    'exec ~/code/CPU/.venv/bin/python -m ros2_bridge_sim.run_sim --seed 7 --no-console > /tmp/sim.log 2>&1'
+tmux new-session -d -s sim -c <repo>/bridge/ubuntu \
+    'exec <repo>/.venv/bin/python -m ros2_bridge_sim.run_sim --seed 7 --no-console > /tmp/sim.log 2>&1'
 ```
 
 推过去并重启之后，同一条检查 PASS（`drove 0.38 m on a 1 s command, then 0.000 m in the next

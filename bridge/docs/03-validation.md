@@ -1,5 +1,17 @@
 ﻿# 03 · 验收记录
 
+
+> **路径占位符。** 这一页引用的命令行是**当时的实测记录**，逐字保留；但其中的
+> 本机绝对路径统一替换成了占位符，换成你自己的路径即可照着跑：
+>
+> * `<repo>` ＝ 仓库的检出根目录。Windows 侧原本是某个盘符下的
+>   `...\app\code\CPU`，Ubuntu 侧是家目录下的 `code/CPU`；下文所有相对路径
+>   （`bridge/...`、`nav2/...`、`tools/...`）都相对它。
+> * `python` ＝ 该侧虚拟环境里的解释器。Windows 侧是某个盘符下的
+>   `venvs\py312\Scripts\python.exe`，Ubuntu 侧是 `<repo>/.venv/bin/python`。
+> * `<msys2>` ＝ MSYS2 的安装根目录（Windows 侧的编译工具链在那下面）。
+
+
 本文记录验收标准的判定方式与实测证据。操作步骤见 [`02-running.md`](02-running.md)。
 
 下面引用的数字全部来自 `validation/` 里随代码一起提交的报告文件（它们就是原始证据）；
@@ -19,8 +31,8 @@
 ## 一键复现
 
 ```bat
-cd C:\Users\Administrator\Desktop\app\code\CPU
-E:\venvs\py312\Scripts\python.exe bridge\scripts\acceptance_check.py
+cd <repo>
+python bridge\scripts\acceptance_check.py
 ```
 
 最近一次运行（`validation/acceptance-report.json`，2026-09-17T22:16:04+0800 —— 九条）：
@@ -113,7 +125,7 @@ bridge\windows\ros2.bat topic pub /cmd_vel geometry_msgs/msg/Twist linear.x=0.25
 ## 证据 3 · nav2 建图 + 规划 + 移动
 
 ```bat
-E:\venvs\py312\Scripts\python.exe bridge\scripts\run_nav2_demo.py --goal auto --report run.json
+python bridge\scripts\run_nav2_demo.py --goal auto --report run.json
 ```
 
 | 项 | 值 |
@@ -357,7 +369,7 @@ base_footprint`。这不是参数没加载，恰恰相反 —— 它证明值来
 | 位置 | 版本 |
 | --- | --- |
 | Windows | g++ 16.2.0 / cmake 4.4.3（MSYS2 UCRT64）、Python 3.12.0、grpcio 1.83.1、protobuf 7.36.1 |
-| Ubuntu 192.168.1.113 | Ubuntu 24.04.4 LTS、8 核、Python 3.12.3、grpcio 1.83.1、protobuf 7.36.1、numpy 2.5.3（venv 在 `~/code/CPU/.venv`，无 ROS2） |
+| Ubuntu 192.168.1.113 | Ubuntu 24.04.4 LTS、8 核、Python 3.12.3、grpcio 1.83.1、protobuf 7.36.1、numpy 2.5.3（venv 在 `<repo>/.venv`，无 ROS2） |
 
 ## 未覆盖 / 已知限制
 
@@ -2325,7 +2337,7 @@ no coder for 'bmp': this build's Magick++ speaks pgm and png only
 > `-j 8` 基本可用（40 轮里 32 轮干净、30 轮里 22 轮干净），这一页那句「不要用 `ctest -j6` 并行跑」
 > 不再成立。
 
-构建方式是 `E:\venvs\py312\Scripts\python.exe -X utf8 nav2\ros2_shim\build.py`，
+构建方式是 `python -X utf8 nav2\ros2_shim\build.py`，
 日志第一行 `cores 0,1,10,11,12,13 (mask 0x3C03, pinned), jobs 6`。`nav2_map_server`
 的链接行多了 `z`：
 
@@ -2453,7 +2465,7 @@ total pixels           : 223729
 
 ```bat
 nav2\ros2_shim\build\map_server.exe --params-file nav2\ros2_shim\config\nav2_map_server.yaml ^
-    -p yaml_filename:=E:/DesktopData/app/code/CPU/.scratch/slam_live6_png.yaml
+    -p yaml_filename:=<repo>/.scratch/slam_live6_png.yaml
 nav2\ros2_shim\build\map_saver.exe --params-file nav2\ros2_shim\config\nav2_map_server.yaml
 nav2\ros2_shim\build\lifecycle_manager.exe --params-file nav2\ros2_shim\config\nav2_map_server.yaml
 ```
@@ -2560,7 +2572,7 @@ $ ros2.bat param list /map_server
   yaml_filename
 
 $ ros2.bat param get /map_server yaml_filename
-String value is: E:/DesktopData/app/code/CPU/.scratch/slam_live6_png.yaml
+String value is: <repo>/.scratch/slam_live6_png.yaml
 
 $ ros2.bat param describe /map_server yaml_filename
 String parameter 'yaml_filename'
@@ -2585,7 +2597,7 @@ $ ros2.bat param dump /map_server
     topic_name: map
     use_sim_time: false
     warn_on_missing_params: false
-    yaml_filename: 'E:/DesktopData/app/code/CPU/.scratch/slam_live6_png.yaml'
+    yaml_filename: '<repo>/.scratch/slam_live6_png.yaml'
 ```
 
 `param dump` 的形状与 `--params-file` 读的是同一套（YAML 标量该加引号的地方加引号），
@@ -2904,14 +2916,14 @@ bridge\windows\ros2.bat topic pub /cmd_vel geometry_msgs/msg/Twist linear.x=0.25
 ```bat
 .scratch\run_map_saver.bat -t /slam_map -f .scratch\e2e_map_before --fmt pgm
 bridge\windows\ros2.bat service call slam_toolbox/serialize_map ^
-    slam_toolbox/srv/SerializePoseGraph filename=E:/DesktopData/app/code/CPU/.scratch/e2e_map
+    slam_toolbox/srv/SerializePoseGraph filename=<repo>/.scratch/e2e_map
 ```
 
 ```text
 [INFO] [map_io] Received a 322 X 473 map @ 0.05 m/pix
 [INFO] [map_io] Writing map occupancy data to .scratch\e2e_map_before.pgm
 request:
-filename: "E:/DesktopData/app/code/CPU/.scratch/e2e_map"
+filename: "<repo>/.scratch/e2e_map"
 response:
 result: 0 (success)
 ```
@@ -2932,7 +2944,7 @@ result: 0 (success)
 
 ```text
 request:
-filename: "E:/DesktopData/app/code/CPU/.scratch/e2e_map"
+filename: "<repo>/.scratch/e2e_map"
 match_type: 1 (start at first node)
 initial_pose: (0, 0, 0)
 response:
@@ -2945,7 +2957,7 @@ response:
 日志里也分得开。两个解档进程都有
 
 ```text
-Load From File E:/DesktopData/app/code/CPU/.scratch/e2e_map.posegraph
+Load From File <repo>/.scratch/e2e_map.posegraph
 **Finished serializing Dataset**
 ```
 
@@ -3482,7 +3494,7 @@ void check(bool condition, const std::string& what) {
 命令（钉 6 大核，mask `0x3C03`）：
 
 ```
-E:\venvs\py312\Scripts\python.exe -X utf8 .scratch\ctest_stress.py --rounds 10 --jobs 8
+python -X utf8 .scratch\ctest_stress.py --rounds 10 --jobs 8
 ```
 
 | | 复修前（`.scratch\stress_j8.log`） | 复修后（`.scratch\stress_after_fixes.log`） |
@@ -3598,7 +3610,7 @@ $ bridge\windows\ros2.bat node list
 **整轮一起跑**（不只是单跑这一条，验证第六条不会跟前五条打架）：
 
 ```
-E:\venvs\py312\Scripts\python.exe bridge\scripts\acceptance_check.py --report .scratch\acceptance_full.json
+python bridge\scripts\acceptance_check.py --report .scratch\acceptance_full.json
 ```
 
 ```
@@ -3795,7 +3807,7 @@ bridge\windows\ros2_bridge.bat start --mirror /clock --mirror /odom --mirror /sc
 
 rem 节点：<臂> 就是下表第一列
 bridge\windows\slam_demo.bat --mode localization -p base_frame:=base_link ^
-    -p map_file_name:=E:/DesktopData/app/code/CPU/.scratch/slam_persist <臂> --duration 120
+    -p map_file_name:=<repo>/.scratch/slam_persist <臂> --duration 120
 ```
 
 **改之前**（`.scratch\slam_reload_ab.out`，`.scratch\slam_reload_ab.log`）：
@@ -3823,7 +3835,7 @@ bridge\windows\slam_demo.bat --mode localization -p base_frame:=base_link ^
 输出 `.scratch\param_list_probe.out`）：
 
 ```
-[03:24:33] param get map_file_name    -> String value is: E:/DesktopData/app/code/CPU/.scratch/slam_persist
+[03:24:33] param get map_file_name    -> String value is: <repo>/.scratch/slam_persist
 [03:24:33] param get map_start_pose   -> DoubleArray value is: []
 [03:24:34] param get map_start_at_dock-> Boolean value is: false
 [03:24:34] === 同一份列表走 `ros2 param set`（另一条解析路径） ===
@@ -4474,7 +4486,7 @@ stamp: 1789591962.623329900
 level: 20 (INFO)
 name: "rosout_probe"
 msg: "probe line 1 of 12"
-file: "E:/DesktopData/app/code/CPU/nav2/ros2_shim/tests/rosout_probe.cpp" line 54 function: "main"
+file: "<repo>/nav2/ros2_shim/tests/rosout_probe.cpp" line 54 function: "main"
 ---
 stamp: 1789591963.623442000
 level: 30 (WARN)
@@ -4998,7 +5010,7 @@ graph_filepath: "C:/maps/nope.geojson"
 response:
 success: false
 
-$ ... graph_filepath=E:/DesktopData/app/code/CPU/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/graphs/sample_graph.geojson
+$ ... graph_filepath=<repo>/nav2/nav2_extracted/navigation2-1.5.1/nav2_route/graphs/sample_graph.geojson
 response:
 success: true
 
@@ -5924,7 +5936,7 @@ $ python bridge\tests\generate_fixtures.py
 camera_info                      sensor_msgs/msg/CameraInfo                    cdr=   373 shim=   362
 image                            sensor_msgs/msg/Image                         cdr=    83 shim=    73
 ...
-wrote 37 fixtures to E:\DesktopData\app\code\CPU\bridge\tests\fixtures
+wrote 37 fixtures to <repo>\bridge\tests\fixtures
 ```
 
 重跑是幂等的（同样的 37 个、同样的字节）：生成的 `.cdr` 由 `rosbags` 决定，`.shim` 由
@@ -6914,10 +6926,10 @@ for (const rclcpp::Parameter & parameter : source->parameters_snapshot()) {
 `map -> odom` 从第一个 tick 就是错的，nav2 于是照着错的位置把车往反方向带。规则是 reset 在前：
 
 ```bat
-E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py stop
-E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py mirror-all
+python code\Desktop\racecar\tools\racecar_ctl.py stop
+python code\Desktop\racecar\tools\racecar_ctl.py mirror-all
 cmd /c "bridge\windows\ros2.bat service call /sim/reset std_srvs/srv/Trigger"
-E:\venvs\py312\Scripts\python.exe code\Desktop\racecar\tools\racecar_ctl.py nav --map truth_room12
+python code\Desktop\racecar\tools\racecar_ctl.py nav --map truth_room12
 ```
 
 `mirror-all` 那一步是为了在栈起来之前守护进程就在跑，`/sim/reset` 才有对象可调。
@@ -7481,7 +7493,7 @@ PROBE 3 status=6 code=2 poses=0 t=0.047
 
 ### 二、gdb：抛出点是 `operator new`，调用链在解析扩展里
 
-`D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin\gdb.exe` 挂到 `planner_server.exe` 上，
+`<msys2>\ucrt64\bin\gdb.exe` 挂到 `planner_server.exe` 上，
 catchpoint 抓 `__cxa_throw`，第一次抛出时 `bt`：
 
 ```text
@@ -7735,7 +7747,7 @@ shim 侧没有填充，所以是 `54 = 4 + 25 + 25`。
 ```text
 $ python bridge\tests\generate_fixtures.py
 goal_status_array                action_msgs/msg/GoalStatusArray               cdr=    61 shim=    54
-wrote 38 fixtures to E:\DesktopData\app\code\CPU\bridge\tests\fixtures
+wrote 38 fixtures to <repo>\bridge\tests\fixtures
 
 $ bridge\windows\build\bridge_cdr_check.exe bridge\tests\fixtures
 38 fixtures, 114 byte comparisons, 0 failure(s)
@@ -8015,11 +8027,11 @@ $ python tools\check_cross_platform.py --local
 （`print_verdict()`），所以「remote shim: ctest PASS」这句自己看不出跑了多少条。补一次原始输出：
 
 ```text
-$ ssh ubuntu@192.168.1.113 'cd ~/code/CPU && python3 nav2/ros2_shim/build.py --jobs 6 | tail -4 &&
+$ ssh ubuntu@192.168.1.113 'cd <repo> && python3 nav2/ros2_shim/build.py --jobs 6 | tail -4 &&
       ctest --test-dir nav2/ros2_shim/build --output-on-failure | tail -5'
 -- Generating done (0.1s)
--- Build files have been written to: /home/ubuntu/code/CPU/nav2/ros2_shim/build
->>> /usr/bin/cmake --build /home/ubuntu/code/CPU/nav2/ros2_shim/build -- -j 6
+-- Build files have been written to: <repo>/nav2/ros2_shim/build
+>>> /usr/bin/cmake --build <repo>/nav2/ros2_shim/build -- -j 6
 ninja: no work to do.
 33/33 Test #33: shm_transport ...........................   Passed    0.78 sec
 
@@ -8648,7 +8660,7 @@ result=208.92 s  feedbacks=4167  missed_waypoints=[]
 ## 证据 79 · racecar 工作区第一次在 Ubuntu 上 `colcon build`（2026-09-19）
 
 `04-gaps.md` 第二十八节在这之前没有一条在管这件事：那台设备装着 Jazzy，但
-`/opt/ros/jazzy/share` 下 `nav2*` 是 0 个、`slam_toolbox` 没有，`~/code/CPU` 里也从来没有 `code/`
+`/opt/ros/jazzy/share` 下 `nav2*` 是 0 个、`slam_toolbox` 没有，`<repo>` 里也从来没有 `code/`
 这棵树 —— 也就是说「同一份代码两边都编」这句话，**应用层（`code/Desktop/racecar`）一次都没验过**：
 门禁 `tools/check_cross_platform.py` 推的是 `nav2/` `bridge/` `gRPC/` 那几棵树，工作区不在里面
 （这条缺口记成了第二十八节第 18 条）。这一轮把它补上了。
@@ -8668,7 +8680,7 @@ sudo apt-get install -y ros-jazzy-nav2-amcl ros-jazzy-nav2-msgs ros-jazzy-nav2-s
 ### 二、推树：`.scratch/push_racecar.py`
 
 `tar`（排除 `build/ install/ log/ __pycache__`）→ `scp` → 远端解到
-`~/code/CPU/code/Desktop/racecar`。286 个条目、压缩后只有 **0.2 MB** —— 那张 16 MB 的
+`<repo>/code/Desktop/racecar`。286 个条目、压缩后只有 **0.2 MB** —— 那张 16 MB 的
 `maps/ceshi1.pgm` 整片是同一个字节，gzip 之后几乎不占地方；远端核对了它：`16000054` 字节，
 和仓库里逐字节同大小。
 
@@ -8679,7 +8691,7 @@ Starting >>> lslidar_msgs
 Starting >>> nav2_waypoint_cycle
 Starting >>> openslam_gmapping
 --- stderr: openslam_gmapping
-/home/ubuntu/code/CPU/code/Desktop/racecar/src/openslam_gmapping/scanmatcher/scanmatcherprocessor.h:4:10:
+<repo>/code/Desktop/racecar/src/openslam_gmapping/scanmatcher/scanmatcherprocessor.h:4:10:
   fatal error: gmapping/log/sensorlog.h: 没有那个文件或目录
     4 | #include <gmapping/log/sensorlog.h>
 compilation terminated.
@@ -8718,7 +8730,7 @@ Summary: 2 packages finished [3.80s]
 * `install/racecar/share/racecar/`：`cmake config environment hook launch map maps package.* rviz`；
 * `install/racecar/lib/racecar/`：那 17 个航点脚本 + 4 条 CSV（`ai_test.csv` `ai_test1.csv`
   `ai_test2.csv` `sim_room12.csv`）；
-* `ros2 pkg prefix racecar` → `/home/ubuntu/code/CPU/code/Desktop/racecar/install/racecar`；
+* `ros2 pkg prefix racecar` → `<repo>/code/Desktop/racecar/install/racecar`；
 * `python3 -c "import nav2_msgs.action, nav2_simple_commander, std_srvs.srv"` → `imports ok`
   —— 航点脚本 import 的那三个包在 Jazzy 侧真的在（这正是 `package.xml` 里第 76~79 行那三条
   `depend` 的理由）。

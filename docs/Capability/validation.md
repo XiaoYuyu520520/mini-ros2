@@ -34,7 +34,7 @@ title: 5 能力清单 · 验收与实测数据
 ## 5.2.2 一键复现
 
 ```bat
-cd E:\DesktopData\app\code\CPU
+cd <repo>
 python bridge\scripts\acceptance_check.py
 ```
 

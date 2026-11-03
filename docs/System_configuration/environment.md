@@ -37,7 +37,7 @@ call bridge\windows\bridge_env.bat
 ### [Linux]
 
 ```bash
-source ~/code/CPU/bridge/linux/bridge_env.sh
+source <repo>/bridge/linux/bridge_env.sh
 ```
 
 <a id="vars"></a>
@@ -88,7 +88,7 @@ $env:ROS2_BRIDGE_AGENT = '192.168.1.50:50060'
 ```bash
 # Linux
 export ROS2_BRIDGE_AGENT=192.168.1.50:50060
-source ~/code/CPU/bridge/linux/bridge_env.sh
+source <repo>/bridge/linux/bridge_env.sh
 ```
 
 ### 改过文件之后在当前窗口重读

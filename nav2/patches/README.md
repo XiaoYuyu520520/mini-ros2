@@ -67,7 +67,7 @@ test_slam_serialization.cpp`）：建一张非空地图 → `serialize_map` → 
 它必然失败，而不是换个方式通过。
 
 ```bat
-E:\venvs\py312\Scripts\python.exe nav2\ros2_shim\build.py test_slam_serialization
+python nav2\ros2_shim\build.py test_slam_serialization
 nav2\ros2_shim\build\test_slam_serialization.exe
 ```
 
@@ -138,7 +138,7 @@ re-vendor（重新解压上游 zip）会立刻在 configure 阶段停下，而�
 3. 跑一遍：
 
    ```bat
-   E:\venvs\py312\Scripts\python.exe nav2\patches\verify_patch.py --fetch
+   python nav2\patches\verify_patch.py --fetch
    ```
 
    它做三件事：查这三个修改还在不在（和 CMake 同一个问题）、**每处改动是否都有 patch 认领**
@@ -157,7 +157,7 @@ re-vendor（重新解压上游 zip）会立刻在 configure 阶段停下，而�
 
 ```bat
 cd nav2\third_party\slam_toolbox
-set GIT=D:\WindowsServer2025_1\software\MSYS2\usr\bin\git.exe
+set GIT=<msys2>\usr\bin\git.exe
 %GIT% apply -p1 --check ..\..\patches\slam_toolbox-ucrt-binary-archive.patch
 %GIT% apply -p1 --check ..\..\patches\slam_toolbox-thread-shutdown.patch
 %GIT% apply -p1         ..\..\patches\slam_toolbox-ucrt-binary-archive.patch

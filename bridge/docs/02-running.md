@@ -8,9 +8,9 @@
 
 | 位置 | 需要什么 | 检查 |
 | --- | --- | --- |
-| Windows | MSYS2 UCRT64（cmake / ninja / g++ / gRPC / protobuf），默认 `D:\WindowsServer2025_1\software\MSYS2`，**只有构建时需要** | `D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin\cmake.exe --version` |
-| Windows | Python 3.12 虚拟环境 `E:\venvs\py312`（grpcio / protobuf / numpy / pytest / rosbags） | `E:\venvs\py312\Scripts\python.exe -c "import grpc,numpy"` |
-| Ubuntu | Python 3.10+ 与一个虚拟环境；**不需要安装 ROS2** | `~/code/CPU/.venv/bin/python -V` |
+| Windows | MSYS2 UCRT64（cmake / ninja / g++ / gRPC / protobuf），默认 `<msys2>`，**只有构建时需要** | `<msys2>\ucrt64\bin\cmake.exe --version` |
+| Windows | Python 3.12 虚拟环境（grpcio / protobuf / numpy / pytest / rosbags） | `python -c "import grpc,numpy"` |
+| Ubuntu | Python 3.10+ 与一个虚拟环境；**不需要安装 ROS2** | `<repo>/.venv/bin/python -V` |
 | 网络 | Windows 能主动连到 Ubuntu 的 TCP 50051 | `Test-NetConnection 192.168.1.113 -Port 50051` |
 
 MSYS2 装在别处时，所有脚本都接受 `--msys2 <根目录>`，或者先设置
@@ -27,8 +27,8 @@ MSYS2 只提供 gRPC 的 DLL 而无法静态链接，构建时会把它依赖的
 **Windows 侧构建**（守护进程 + `ros2` CLI + 转码自检）：
 
 ```bat
-cd C:\Users\Administrator\Desktop\app\code\CPU
-E:\venvs\py312\Scripts\python.exe bridge\scripts\build_bridge.py --test
+cd <repo>
+python bridge\scripts\build_bridge.py --test
 ```
 
 产物：`bridge\windows\build\ros2_bridge_daemon.exe`、`ros2.exe`、`bridge_cdr_check.exe`。
@@ -36,19 +36,19 @@ E:\venvs\py312\Scripts\python.exe bridge\scripts\build_bridge.py --test
 **把 Ubuntu 侧推过去并启动仿真小车**：
 
 ```bat
-E:\venvs\py312\Scripts\python.exe bridge\scripts\sync_to_ubuntu.py --run
+python bridge\scripts\sync_to_ubuntu.py --run
 ```
 
 `--run` 会在前台跑 `run_sim`；想让它常驻就用控制脚本：
 
 ```bat
-E:\venvs\py312\Scripts\python.exe bridge\scripts\ubuntu_ssh.py --file bridge\scripts\ubuntu_sim_ctl.sh -- start
+python bridge\scripts\ubuntu_ssh.py --file bridge\scripts\ubuntu_sim_ctl.sh -- start
 ```
 
 **nav2 demo** 的构建由 `run_nav2_demo.py` 自动完成（`--build-only` 只构建）：
 
 ```bat
-E:\venvs\py312\Scripts\python.exe bridge\scripts\run_nav2_demo.py --build-only
+python bridge\scripts\run_nav2_demo.py --build-only
 ```
 
 ## 2. 入口一览：十一个 bat + 一个 PowerShell 脚本
@@ -85,7 +85,7 @@ PowerShell 里做同一件事要**点源** —— `.bat` 影响不了 PowerShell
 环境跟着子进程一起走，所以直接跑 `ros2.bat` 只会打印用法）：
 
 ```powershell
-. E:\DesktopData\app\code\CPU\bridge\windows\ros2.ps1
+. <repo>\bridge\windows\ros2.ps1
 ros2 topic list -t
 ros2 topic echo /odom --count 1
 ```
@@ -134,7 +134,7 @@ ros2 topic list -t
 ## 3. 验收 1：在 Windows 上像 ROS2 一样用
 
 ```bat
-cd C:\Users\Administrator\Desktop\app\code\CPU
+cd <repo>
 bridge\windows\ros2.bat topic list -t
 ```
 
@@ -390,7 +390,7 @@ bridge\windows\ros2_bridge.bat start --uplink /cmd_vel --uplink /plan --uplink /
 ```bat
 bridge\windows\nav2_demo.bat --goal auto
 :: 或者走 Python 包装（额外负责构建、起守护进程、导出报告）
-E:\venvs\py312\Scripts\python.exe bridge\scripts\run_nav2_demo.py --goal auto --report run.json
+python bridge\scripts\run_nav2_demo.py --goal auto --report run.json
 ```
 
 流程：订阅 `/map` `/scan` `/odom` → 雷达射线投射维护占据栅格并与静态地图合并 →
@@ -1004,7 +1004,7 @@ nav2\ros2_shim\build\map_dump.exe --topic /map --settle 5 --out C:\maps\back.pgm
 ## 9. 一条命令跑完验收
 
 ```bat
-E:\venvs\py312\Scripts\python.exe bridge\scripts\acceptance_check.py
+python bridge\scripts\acceptance_check.py
 ```
 
 依次执行：冷启动 `topic list -t` → `/scan` 来源检查 → `/scan` 频率 → 上行 `/cmd_vel` →
@@ -1027,7 +1027,7 @@ nav2 demo → SLAM（建图一圈 **+** 存档换进程读回来定位），逐�
 | 变量 | 默认 | 作用 |
 | --- | --- | --- |
 | `ROS2_BRIDGE_CPU_ROOT` | 仓库根 | 别的脚本定位 `gRPC/`、`nav2/` 用 |
-| `ROS2_BRIDGE_MSYS2` | `D:\WindowsServer2025_1\software\MSYS2` | 工具链/gRPC 来源（只在构建时需要；运行时 DLL 已经在 `build\` 里） |
+| `ROS2_BRIDGE_MSYS2` | `<msys2>` | 工具链/gRPC 来源（只在构建时需要；运行时 DLL 已经在 `build\` 里） |
 | `ROS2_BRIDGE_NO_MSYS2_PATH` | 空 | 置 1 时不把 MSYS2 的 `bin` 加进 PATH |
 | `ROS2_BRIDGE_BUILD` | `bridge\windows\build` | 守护进程与 CLI 的构建目录 |
 | `NAV2_SHM_SLOT_COUNT` | 8 | 共享内存环形缓冲的槽数 |
@@ -1117,15 +1117,15 @@ ros2_bridge.bat run   [...]        :: 前台运行，Ctrl+C 停止
 
 ```bat
 :: 把本地的 ros2_bridge_sim 同步过去（tar over ssh，一条命令、保留权限）
-E:\venvs\py312\Scripts\python.exe bridge\scripts\sync_to_ubuntu.py [--run]
+python bridge\scripts\sync_to_ubuntu.py [--run]
 
 :: 在机器人上执行任意 shell（stdin -> bash -s，引号不会被改写）
-E:\venvs\py312\Scripts\python.exe bridge\scripts\ubuntu_ssh.py "tail -n 20 ~/sim.log"
+python bridge\scripts\ubuntu_ssh.py "tail -n 20 ~/sim.log"
 
 :: 起停仿真小车 + gRPC agent
-E:\venvs\py312\Scripts\python.exe bridge\scripts\ubuntu_ssh.py --file bridge\scripts\ubuntu_sim_ctl.sh -- start
-E:\venvs\py312\Scripts\python.exe bridge\scripts\ubuntu_ssh.py --file bridge\scripts\ubuntu_sim_ctl.sh -- status
-E:\venvs\py312\Scripts\python.exe bridge\scripts\ubuntu_ssh.py --file bridge\scripts\ubuntu_sim_ctl.sh -- stop
+python bridge\scripts\ubuntu_ssh.py --file bridge\scripts\ubuntu_sim_ctl.sh -- start
+python bridge\scripts\ubuntu_ssh.py --file bridge\scripts\ubuntu_sim_ctl.sh -- status
+python bridge\scripts\ubuntu_ssh.py --file bridge\scripts\ubuntu_sim_ctl.sh -- stop
 ```
 
 `ubuntu_sim_ctl.sh` 会在 `$HOME/sim.log` 留日志、在 `$HOME/.ros2_bridge_sim.pid` 记 pid；
@@ -1170,16 +1170,16 @@ E:\venvs\py312\Scripts\python.exe bridge\scripts\ubuntu_ssh.py --file bridge\scr
 
 ```bat
 :: CDR <-> 共享内存 的字节级转码自检
-E:\venvs\py312\Scripts\python.exe bridge\scripts\build_bridge.py --test
+python bridge\scripts\build_bridge.py --test
 
 :: Ubuntu 侧仿真/agent/图注册表的单元测试（纯 Python，在 Windows 上就能跑；61 条）
-cd bridge\ubuntu && E:\venvs\py312\Scripts\python.exe -m pytest ros2_bridge_sim\tests -q
+cd bridge\ubuntu && python -m pytest ros2_bridge_sim\tests -q
 
 :: 兼容层 + 魔改 nav2（32 条，清单见 03-validation 的「单元与一致性测试」）
 :: 每条测试自己带一个通道命名空间（CMakeLists.txt 末尾的 ENVIRONMENT_MODIFICATION，
 :: 见证据 20），所以守护进程在跑也照样能跑，不必再手动设 NAV2_SHM_NAMESPACE；
 :: 图注册表也跟着那个命名空间走，所以并发跑也不会互相看见对方的节点
-D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin\ctest.exe --test-dir nav2\ros2_shim\build --output-on-failure
+<msys2>\ucrt64\bin\ctest.exe --test-dir nav2\ros2_shim\build --output-on-failure
 ```
 
 串行跑每次都 32/32（**52.27 s**，32 条那次实测）。29 → 31 的那两条是**补注册**、不是新写的：
@@ -1189,7 +1189,7 @@ D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin\ctest.exe --test-dir nav2\ros2_
 
 ```bat
 :: 50~100 轮的压力循环，每轮的失败用例、耗时和日志都记下来
-E:\venvs\py312\Scripts\python.exe .scratch\ctest_stress.py --rounds 50 --jobs 8
+python .scratch\ctest_stress.py --rounds 50 --jobs 8
 ```
 
 实测的数字：图目录跟着命名空间走之前，`-j 8` 六轮里 **0 轮**干净；之后 40 轮里 32 轮、30 轮里
@@ -1242,15 +1242,15 @@ E:\venvs\py312\Scripts\python.exe .scratch\ctest_stress.py --rounds 50 --jobs 8
 
 ```bat
 :: 桥（已经默认 -j 6 + 钉核，可以加 --target 只编某个目标）
-E:\venvs\py312\Scripts\python.exe bridge\scripts\build_bridge.py --target ros2_bridge_daemon
+python bridge\scripts\build_bridge.py --target ros2_bridge_daemon
 
 :: 兼容层 + 魔改 nav2（三个入口等价，挑一个）
-E:\venvs\py312\Scripts\python.exe nav2\ros2_shim\build.py
-E:\venvs\py312\Scripts\python.exe nav2\ros2_shim\build.py controller_server behavior_server
+python nav2\ros2_shim\build.py
+python nav2\ros2_shim\build.py controller_server behavior_server
 powershell -NoProfile -ExecutionPolicy Bypass -File nav2\ros2_shim\build.ps1
 
 :: gRPC SDK
-E:\venvs\py312\Scripts\python.exe gRPC\ros2_gRPC_sdk\scripts\build.py
+python gRPC\ros2_gRPC_sdk\scripts\build.py
 ```
 
 `nav2\ros2_shim\build.py` 是干活的那一份，`build.ps1` 现在只是它的外壳：`-Msys2` / `-BuildType` /

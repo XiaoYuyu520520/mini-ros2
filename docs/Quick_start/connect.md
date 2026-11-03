@@ -80,7 +80,7 @@ Ubuntu 上其实有**两张互相看不见的 ROS2 图**：
 
 ```bash
 . /opt/ros/jazzy/setup.bash
-cd ~/code/CPU
+cd <repo>
 bash bridge/scripts/ubuntu_ros2_peer.sh start agent
 ```
 
@@ -98,14 +98,14 @@ python3 gRPC/ros2_gRPC_sdk/scripts/build.py --with-ros2
 ### ② 模拟机器人
 
 ```bash
-cd ~/code/CPU
+cd <repo>
 bash bridge/scripts/ubuntu_sim_ctl.sh start          # 默认端口 50051，日志 ~/sim.log
 ```
 
 ### ③ 接线器
 
 ```bash
-cd ~/code/CPU
+cd <repo>
 bash start/connector.sh up -d
 ```
 

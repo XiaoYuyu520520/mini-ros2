@@ -188,12 +188,13 @@ package.py             打发布包
 
 ```bash
 python tools/check_docs.py --quiet        # 文档编码 / 围栏
+python tools/check_local_paths.py         # 文档里没有本机绝对路径
 python tools/check_structure.py           # 目录结构和 README 是否对得上
 python tools/find_scratch_refs.py --check # 证据引用没断
 python nav2/patches/verify_patch.py       # 上游 patch 还在
 ```
 
-四条都过，再跑相关测试树，然后提 PR。
+五条都过，再跑相关测试树，然后提 PR。
 
 ---
 

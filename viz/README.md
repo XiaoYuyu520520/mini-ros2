@@ -21,7 +21,7 @@ go run . -config other.json
 cgo 需要一个 C 编译器，用 MSYS2 UCRT64 的 gcc：
 
 ```powershell
-$env:PATH = "D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin;$env:PATH"
+$env:PATH = "<msys2>\ucrt64\bin;$env:PATH"
 go build -ldflags "-H windowsgui" -o viz.exe .
 ```
 

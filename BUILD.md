@@ -7,9 +7,9 @@
 
 | | Windows | Ubuntu 设备 |
 | --- | --- | --- |
-| 项目根目录 | `E:\DesktopData\app\code\CPU`（`C:\Users\Administrator\Desktop\app\code\CPU` 是同一个目录，前者是它的链接） | `~/code/CPU`（= `/home/ubuntu/code/CPU`） |
-| 进根目录 | `cd /d E:\DesktopData\app\code\CPU`（cmd）/ `cd E:\DesktopData\app\code\CPU`（PowerShell） | `cd ~/code/CPU` |
-| Python | `E:\venvs\py312\Scripts\python.exe`，激活 `& "E:\venvs\py312\Scripts\Activate.ps1"` | `~/code/CPU/.venv/bin/python`（`python3` 也行） |
+| 项目根目录 | 仓库的检出目录（下文写作 `<repo>`） | 仓库的检出目录（也写作 `<repo>`） |
+| 进根目录 | `cd /d <repo>`（cmd）/ `cd <repo>`（PowerShell） | `cd <repo>` |
+| Python | `python`（先激活那个虚拟环境的 <code>Activate.ps1</code>） | `<repo>/.venv/bin/python`（`python3` 也行） |
 | 登录设备 | `ssh -i "<私钥路径>" ubuntu@<设备IP>` | — |
 | 编译工具链 | MSYS2 UCRT64（`tools\_toolchain.py` 解析，`CPU_MSYS2_ROOT` 覆盖）：gcc / cmake / ninja / gRPC / protobuf / yaml-cpp | 系统 apt 包，见 3.3 |
 | 需要装 ROS2 吗 | 不需要 | 兼容层不需要；**`code/Desktop/racecar` 要** —— 它在 Ubuntu 上是
@@ -102,7 +102,7 @@ sudo apt-get install -y build-essential cmake ninja-build zlib1g-dev \
 | 只编建图 / 导航要的两个包 | `colcon build --packages-select racecar nav2_waypoint_cycle --parallel-workers 6` |
 | 指定核心数 | `--parallel-workers N`（仓库策略 6，理由同 3.3） |
 
-那台设备第一次编这个工作区之前，先装 Jazzy 侧的依赖、把树推过去（`~/code/CPU` 里原来没有
+那台设备第一次编这个工作区之前，先装 Jazzy 侧的依赖、把树推过去（`<repo>` 里原来没有
 `code/` 这棵树）：
 
 ```bash
@@ -112,7 +112,7 @@ sudo apt-get install -y ros-jazzy-nav2-amcl ros-jazzy-nav2-msgs \
 # 整树要编 lslidar_driver，它另需这四个：
 sudo apt-get install -y libpcl-dev libpcap-dev \
   ros-jazzy-diagnostic-updater ros-jazzy-pcl-conversions ros-jazzy-pluginlib
-python3 .scratch/push_racecar.py          # 从 Windows 跑：打包 → scp → 解到 ~/code/CPU/code/Desktop/racecar
+python3 .scratch/push_racecar.py          # 从 Windows 跑：打包 → scp → 解到 <repo>/code/Desktop/racecar
 source /opt/ros/jazzy/setup.bash && cd code/Desktop/racecar
 colcon build --parallel-workers 6         # 整树：6 个包
 ```
@@ -140,7 +140,7 @@ colcon build --parallel-workers 6         # 整树：6 个包
 **Windows · PowerShell（点源一次，本窗口常驻）**
 
 ```powershell
-. E:\DesktopData\app\code\CPU\bridge\windows\ros2.ps1
+. <repo>\bridge\windows\ros2.ps1
 ros2 topic list -t
 ```
 
@@ -158,11 +158,11 @@ ros2 topic list -t
 **Ubuntu（`source` 一次，本 shell 常驻）**
 
 ```bash
-source ~/code/CPU/bridge/linux/bridge_env.sh
+source <repo>/bridge/linux/bridge_env.sh
 ros2 topic list -t
 ```
 
-只敲一次、不碰当前 shell：`bash ~/code/CPU/bridge/linux/ros2.sh topic list -t`。
+只敲一次、不碰当前 shell：`bash <repo>/bridge/linux/ros2.sh topic list -t`。
 
 加载进去的是什么（两边同名同值）：
 
@@ -185,17 +185,17 @@ ros2 topic list -t
 ### 5.1 Ubuntu 端启动
 
 ```bash
-bash ~/code/CPU/bridge/scripts/ubuntu_sim_ctl.sh start     # 仿真 + agent，默认 0.0.0.0:50051
-bash ~/code/CPU/bridge/scripts/ubuntu_sim_ctl.sh status    # pid + 端口
-bash ~/code/CPU/bridge/scripts/ubuntu_sim_ctl.sh log 40    # 尾随 ~/sim.log
-bash ~/code/CPU/bridge/scripts/ubuntu_sim_ctl.sh stop
+bash <repo>/bridge/scripts/ubuntu_sim_ctl.sh start     # 仿真 + agent，默认 0.0.0.0:50051
+bash <repo>/bridge/scripts/ubuntu_sim_ctl.sh status    # pid + 端口
+bash <repo>/bridge/scripts/ubuntu_sim_ctl.sh log 40    # 尾随 ~/sim.log
+bash <repo>/bridge/scripts/ubuntu_sim_ctl.sh stop
 ```
 
 `start` 认 `--port N`、`--goal X,Y`（不认识的参数原样转给 `run_sim`）。要交互看世界：
 
 ```bash
-cd ~/code/CPU/bridge/ubuntu
-PYTHONPATH=. ~/code/CPU/.venv/bin/python -m ros2_bridge_sim.run_sim --seed 7 --goal 6,-4
+cd <repo>/bridge/ubuntu
+PYTHONPATH=. <repo>/.venv/bin/python -m ros2_bridge_sim.run_sim --seed 7 --goal 6,-4
 ```
 
 不想用仿真、要用那台机器上**真装的 ROS2**（Jazzy）当 peer：
@@ -306,7 +306,7 @@ bridge\windows\ros2.bat service call /sim/reset std_srvs/srv/Trigger
 守护进程由 `wait_bridge_ready.sh` 自己拉起（`ROS2_BRIDGE_AGENT` 指到本机的 agent）：
 
 ```bash
-cd ~/code/CPU
+cd <repo>
 export ROS2_BRIDGE_AGENT=127.0.0.1:50051          # 仿真就在本机；不设就靠 LAN 自动发现
 
 bash bridge/scripts/ubuntu_sim_ctl.sh start       # 5.1 的仿真 + agent

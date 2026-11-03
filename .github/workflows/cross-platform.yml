@@ -1,4 +1,4 @@
-﻿# Build and test on Windows and Linux, with the same commands a developer runs.
+﻿﻿﻿# Build and test on Windows and Linux, with the same commands a developer runs.
 #
 # The port is only as good as the gate in front of it, and until this file there
 # was none: "both platforms compile" was a table in a document that somebody had
@@ -154,6 +154,7 @@ jobs:
       - name: docs, structure, scratch references and vendored patches
         run: |
           python tools/check_docs.py
+          python tools/check_local_paths.py
           python tools/check_structure.py
           python tools/find_scratch_refs.py --check
           python nav2/patches/verify_patch.py
@@ -283,6 +284,7 @@ jobs:
       - name: docs, structure, scratch references and vendored patches
         run: |
           python3 tools/check_docs.py
+          python3 tools/check_local_paths.py
           python3 tools/check_structure.py
           python3 tools/find_scratch_refs.py --check
           python3 nav2/patches/verify_patch.py

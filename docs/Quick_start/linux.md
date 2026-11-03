@@ -20,7 +20,7 @@ title: 1 快速开始 · Ubuntu 上手
 ## 1.7.1 准备工作
 
 ```bash
-cd ~/code/CPU
+cd <repo>
 ```
 
 如果这台机器还没装依赖，先装：
@@ -32,7 +32,7 @@ sudo apt-get install -y build-essential cmake ninja-build zlib1g-dev \
   libgrpc++-dev libprotobuf-dev protobuf-compiler protobuf-compiler-grpc libyaml-cpp-dev
 ```
 
-Python 虚拟环境（Ubuntu 侧叫 <code>.venv</code>，和 Windows 侧的 <code>E:\venvs\py312</code> 不是同一个）：
+Python 虚拟环境（Ubuntu 侧叫 <code>.venv</code>；Windows 侧是另一个<strong>盘符下的虚拟环境</strong>，两者不是同一个）：
 
 ```bash
 python3 -m venv .venv
@@ -143,14 +143,14 @@ export ROS2_LINK_COLLISION=prefer-real   # 反过来
 ## 1.7.5 加载环境变量
 
 ```bash
-source ~/code/CPU/bridge/linux/bridge_env.sh
+source <repo>/bridge/linux/bridge_env.sh
 ros2 topic list -t
 ```
 
 不想改当前 shell 就一条命令了事：
 
 ```bash
-bash ~/code/CPU/bridge/linux/ros2.sh topic list -t
+bash <repo>/bridge/linux/ros2.sh topic list -t
 ```
 
 Ubuntu 侧的守护进程用四个脚本（和 Windows 的四个入口一一对应）：
@@ -175,7 +175,7 @@ bash bridge/linux/ros2_bridge.sh log 40
 同一份脚本，<code>python</code> 写成 <code>python3</code>、反斜杠换 <code>/</code>：
 
 ```bash
-cd ~/code/CPU
+cd <repo>
 export ROS2_BRIDGE_AGENT=127.0.0.1:50060     # 仿真就在本机；不设就靠 LAN 自动发现
 
 bash bridge/scripts/ubuntu_sim_ctl.sh start

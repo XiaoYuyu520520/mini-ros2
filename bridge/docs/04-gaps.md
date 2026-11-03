@@ -194,7 +194,7 @@ action_type 与 `pointcloud` / `range` 两种 source 一次都没跑过 —— `
 现场：对一个到不了的 goal（`truth_live` 上 `start=(0.79, 0.50, yaw=-0.95)` →
 `goal=(1.00, 1.50, yaw=0)`）反复规划。第一次是正常的失败（~770 ms 走到 `NoValidPath`），
 **第二次起每次 47 ms 抛 `std::bad_alloc`**，planner_server 里成片 `Aborting handle`。
-gdb（`D:\WindowsServer2025_1\software\MSYS2\ucrt64\bin\gdb.exe`，catchpoint 挂 `__cxa_throw`）
+gdb（`<msys2>\ucrt64\bin\gdb.exe`，catchpoint 挂 `__cxa_throw`）
 给出的调用链：
 
 ```text
@@ -600,12 +600,12 @@ rclpy 全量绑定（要重做一遍 Python 生态）、Gazebo/物理仿真（�
 
 ### 三、对端不是 ROS2，而且连测试都跑不起来
 
-`~/code/CPU/.venv` 的 `pip list` 全文：`grpcio 1.83.1`、`numpy 2.5.3`、`pip 26.2.1`、
+`<repo>/.venv` 的 `pip list` 全文：`grpcio 1.83.1`、`numpy 2.5.3`、`pip 26.2.1`、
 `protobuf 7.36.1`、`typing_extensions 4.16.0`。`pytest`、`rosbags`、`rclpy` 都没有，
 `which ros2` 为空，`requirements.txt` 自己也写着「no rclpy, no ROS2 installation」。所以：
 
 - 那 61 条 pytest **只能在 Windows 上跑**（本轮就是这么跑的），在机器人上连收集都起不来。
-- `test_cdr_matches_rosbags.py` 要在仓库里找 `.msg`，而 `~/code/CPU` 下只有 `bridge` 一个目录。
+- `test_cdr_matches_rosbags.py` 要在仓库里找 `.msg`，而 `<repo>` 下只有 `bridge` 一个目录。
 - 文档里 `RclcppBackend` 那一半，**从来没有在真的 ROS2 上编译过**。
 
 ### 四、跨机边界：在活着的全栈上量出来的
@@ -1340,13 +1340,13 @@ Windows 那份代码要防的事（`ros2.bat topic list | more` 会挂到守护�
 
 ```
 $ bash bridge/linux/ros2_bridge.sh status
-[ros2_bridge] daemon not running, log: /home/ubuntu/code/CPU/bridge/windows/build/ros2_bridge_daemon.log
+[ros2_bridge] daemon not running, log: <repo>/bridge/windows/build/ros2_bridge_daemon.log
 graph dir      : /tmp/nav2_shim_graph
 topics         : 0 (0 remote, 0 local)
 ...
 $ ROS2_BRIDGE_AGENT=127.0.0.1:50051 bash bridge/linux/ros2_bridge.sh start
-[ros2_bridge] starting daemon --agent 127.0.0.1:50051 --ready-file /home/ubuntu/code/CPU/bridge/windows/build/ros2_bridge_daemon.ready
-[ros2_bridge] started pid 1652093, log: /home/ubuntu/code/CPU/bridge/windows/build/ros2_bridge_daemon.log
+[ros2_bridge] starting daemon --agent 127.0.0.1:50051 --ready-file <repo>/bridge/windows/build/ros2_bridge_daemon.ready
+[ros2_bridge] started pid 1652093, log: <repo>/bridge/windows/build/ros2_bridge_daemon.log
 $ bash bridge/linux/ros2.sh topic list -t
 /clock [rosgraph_msgs/msg/Clock]
 /cmd_vel [geometry_msgs/msg/Twist]
@@ -1916,7 +1916,7 @@ nav2_msgs/action/Wait time.sec=1` 打出完整 goal / 10 条 feedback / result�
 * **`python tools\run_ctest.py sim` 在本机跑不起来**：它用 `sys.executable` 起 pytest，而本机
   默认的 `python`（不是 venv）里没有 pytest，输出是 `No module named pytest`。CI 里那一步先
   `pip install pytest` 再跑，所以那条路是通的；本机要用
-  `E:\venvs\py312\Scripts\python.exe tools\run_ctest.py sim`（**71 passed**）。这属于
+  `python tools\run_ctest.py sim`（**71 passed**）。这属于
   「同一个入口在不同机器上行为不一致」，和第二十二节第一条（CI）是近亲。
 
 ## 二十四、`Image` / `CameraInfo` 入表（2026-09-17 夜）
