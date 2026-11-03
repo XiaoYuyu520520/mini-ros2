@@ -87,7 +87,8 @@ CPU/
 ├─ code/Desktop/rubblish/    从 racecar 里搬出去的非建图 / 导航部分（底盘启动、
 │                            串口、EKF、摄像头、AI 推理），原样保留、不参与构建
 ├─ nav2/                    ★ Windows 上的 ROS2 兼容层 + 移植进来的 nav2 / slam_toolbox
-├─ tools/                   仓库级开发工具（跑测试、压测、文档体检、证据引用扫描）
+├─ tools/                   仓库级开发工具（跑测试、压测、文档体检、证据引用扫描，
+│                            外加 ARM 板附属工具：串口 shell 与 SSH）
 ├─ .scratch/                历次迭代的实测证据与一次性探针（规矩见 .scratch/README.md）
 ├─ .gitignore               忽略规则：build/ 产物、__pycache__、.scratch/attic、上游 zip
 └─ .gitattributes           换行约定（`* text=auto eol=lf`；`.bat` / `.ps1` 是 CRLF）——

@@ -1,8 +1,11 @@
 ﻿# tools · 仓库级开发工具
 
-六个工具加两个共用模块，都不需要额外依赖，直接跑（只有 `check_cross_platform.py` 要 SSH
-到那台 Ubuntu 机器）。**它们是「可复用」的那一类**；一次性的探针、日志、实测证据一律进
-`.scratch/`（那里的规矩见 `.scratch/README.md`）。
+八个工具加两个共用模块，直接跑。**它们是「可复用」的那一类**；一次性的探针、日志、
+实测证据一律进 `.scratch/`（那里的规矩见 `.scratch/README.md`）。
+
+依赖上有两条例外，都是这一节末尾那两个 ARM 板工具带来的：`check_cross_platform.py` 要
+SSH 到那台 Ubuntu 机器，`serial_shell.py` / `ssh_board.py` 要 `pyserial` 与 `paramiko`。
+其余工具只用标准库。
 
 | 文件 | 干什么 | 例子 |
 | --- | --- | --- |
@@ -12,8 +15,30 @@
 | `find_scratch_refs.py` | 列出所有被文档/源码引用的 `.scratch\...` 路径 | `python tools\find_scratch_refs.py --check` |
 | `check_structure.py` | 结构体检：一棵树一张 README、结构图里的目录真的在、文档点名的入口脚本真的在 | `python tools\check_structure.py --list` |
 | `check_cross_platform.py` | 一条命令在 Windows 和 Ubuntu 上分别编译 + 测试（12 项检查），跨平台构建入口的守门人 | `python tools\check_cross_platform.py --local` |
+| `serial_shell.py` | 通过串口（COM3, 115200）登录 ARM 板并执行命令；板子还没联网时唯一的入口 | `python tools\serial_shell.py --command "uname -a"` |
+| `ssh_board.py` | 板子联网后走 SSH：跑命令、上下传文件；输出按 UTF-8 字节写，GBK 控制台不乱码 | `python tools\ssh_board.py --run "uname -m"` |
 | `_cores.py` | 上面几个共用的「哪 6 个核是大核」检测与绑定 | `python tools\_cores.py` |
 | `_toolchain.py` | 上面几个共用的「这台机器上的 cmake / ninja / g++ / ctest 在哪」 | `python tools\_toolchain.py` |
+
+
+## ARM 板（arm64 真机）的两个附属工具
+
+`serial_shell.py` 与 `ssh_board.py` 是同一个目的的两条路：在 **D-Robotics RDK X5**
+（Ubuntu 22.04 / aarch64）上验证 `mini-ros2-ubuntu22-arm64-*.tar.gz`。
+
+* **`serial_shell.py`** 走 UART。板子还没有网络时只有这条路：登录、看启动日志、告诉它
+  连哪个 Wi-Fi。要注意板子会把收到的每行**回显**一遍，所以脚本给每条命令后面加一个
+  sentinel（`__MINI_ROS2_DONE__`），只取它之后的内容；`nmcli device wifi rescan` 这类
+  会挂住提示符的命令必须单独一次调用，否则后续输入会被吞掉。
+* **`ssh_board.py`** 走 SSH（板子上 `sshd` 默认开着）。两个实现上的坑写在文件头的
+  docstring 里：板子输出的是 UTF-8 而 Windows 控制台是 GBK（所以那个脚本直接把 bytes
+  写进 `stdout.buffer`），以及 `exec_command` 里 `nohup ... &` 起的进程会随通道关闭而死
+  —— 板上要常驻的东西用 `systemd-run --unit=...` 起。
+
+两者都从 `--host` / `--port` / `--user` / `--password` 或环境变量
+（`BOARD_HOST` / `BOARD_PORT` / `BOARD_USER` / `BOARD_PASSWORD`）取参数，换一块板子不用
+改代码。依赖：`pyserial`（串口）与 `paramiko`（SSH），都是纯 Python 包，仓库里其余工具
+不需要它们。
 
 ## 说明
 
