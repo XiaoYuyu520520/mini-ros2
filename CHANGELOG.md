@@ -4,6 +4,26 @@ All notable changes to this project. The format is chronological; the newest
 release is first. Versions before v0.2.4 predate this file — their notes live on
 the GitHub Releases page.
 
+## v0.2.5 — 2026-11-03
+
+### Fixed
+
+* **ARM64 builds and ships.** The arm64 job had been red since the SDK was
+  added. The cause was not the gRPC version: `ros2_bridge_client.hpp` declared
+  `namespace grpc { class Channel; }`, while gRPC 1.30 defines `grpc::Channel`
+  as `typedef grpc_impl::Channel` - a class declaration cannot agree with a
+  typedef, and the headers then failed with "conflicting declaration". The
+  declaration was unnecessary (the `.cpp` includes `<grpcpp/grpcpp.h>` before
+  using it), so it was removed. Windows, Linux x86_64 and Linux ARM64 now all
+  build, test and package from the same tree, and the `continue-on-error` on
+  arm64 is gone.
+* `mini-ros2-linux-arm64-<version>.tar.gz` is part of every release.
+
+### Notes
+
+* The archives are otherwise identical to v0.2.4; this release exists so the
+  ARM64 package and the green arm64 gate are published.
+
 ## v0.2.4 — 2026-11-03
 
 This release ships the correctness work that landed after v0.2.3 plus the
