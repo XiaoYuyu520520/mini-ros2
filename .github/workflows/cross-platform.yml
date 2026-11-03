@@ -1,4 +1,4 @@
-﻿﻿﻿# Build and test on Windows and Linux, with the same commands a developer runs.
+﻿# Build and test on Windows and Linux, with the same commands a developer runs.
 #
 # The port is only as good as the gate in front of it, and until this file there
 # was none: "both platforms compile" was a table in a document that somebody had
