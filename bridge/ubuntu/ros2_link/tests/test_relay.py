@@ -44,7 +44,9 @@ from ros2_bridge_sim.agent import build_server, stop_server  # noqa: E402
 from ros2_bridge_sim.graph import Graph  # noqa: E402
 from ros2_bridge_sim.proto import ros2_bridge_pb2 as pb  # noqa: E402
 from ros2_bridge_sim.proto import ros2_bridge_pb2_grpc as pb_grpc  # noqa: E402
-from ros2_link.relay import Relay, _Upstream  # noqa: E402
+from ros2_link.relay import (  # noqa: E402
+    SUB_BACKOFF_MAX_S, Relay, _Subscription, _Upstream,
+)
 
 TIMEOUT = 5.0
 
@@ -541,6 +543,15 @@ class RelayTest(unittest.TestCase):
         self.assertTrue(all(marker > 6.0 for marker in markers),
                         "the injected message echoed downstream: %r" % markers)
 
+        # The counters are the first piece of the observability work: they
+        # must distinguish data that crossed from data that was an echo.
+        self.assertTrue(_wait_for(
+            lambda: self.relay.stats_snapshot()["global"]["dropped_echo"] >= 1),
+            "the suppressed echo should be counted")
+        snapshot = self.relay.stats_snapshot()
+        self.assertGreaterEqual(snapshot["global"]["merged"], 1)
+        self.assertGreaterEqual(snapshot["topics"]["/scan"]["received"], 1)
+
     def test_a_dead_subscription_is_recreated(self) -> None:
         """A stream that ends must not leave a dead dict entry behind."""
         sim_graph = Graph()
@@ -575,6 +586,9 @@ class RelayTest(unittest.TestCase):
             time.sleep(0.1)
         self.assertTrue(chatter, "no message after the subscription was recreated")
         self.assertEqual(msg.decode(chatter[0].data, msg.STRING)["data"], "after-restart")
+        self.assertGreaterEqual(
+            self.relay.stats_snapshot()["global"]["reconnects"], 1,
+            "a stream rebuild should be counted")
 
     def test_publish_to_an_unreachable_upstream_is_not_reported_as_accepted(self) -> None:
         """A failed send has to say so; ``accepted=True`` is a lie."""
@@ -656,6 +670,173 @@ class RelayTest(unittest.TestCase):
         decoded = msg.decode(real_delivered[0].data, msg.TWIST)
         self.assertAlmostEqual(decoded["linear"]["x"], 0.5, places=5,
                                msg="the configured speed clamp was not applied")
+
+
+class RelayLifecycleTest(unittest.TestCase):
+    """Cases that need a relay object but no running agents."""
+
+    def _bare_relay(self) -> Relay:
+        sim = _Upstream("sim", "127.0.0.1:1")
+        real = _Upstream("real", "127.0.0.1:2")
+        return Relay(sim, real, refresh_s=0.05)
+
+    def test_backoff_grows_when_a_stream_fails_immediately(self) -> None:
+        """The failure counter must not be reset just because an RPC object
+        exists: a stream that dies at once has to climb the ladder."""
+        relay = self._bare_relay()
+
+        class _Failed(grpc.RpcError):
+            def code(self):  # noqa: ANN001
+                return grpc.StatusCode.UNAVAILABLE
+
+        class _FailingStub:
+            def Subscribe(self, request):  # noqa: ANN001
+                def events():
+                    raise _Failed()
+                    yield  # pragma: no cover - makes this a generator
+
+                return events()
+
+        relay.real.stub = _FailingStub()
+        sub = _Subscription(relay.real, "/scan", msg.LASER_SCAN)
+
+        delays = []
+        for _ in range(10):
+            relay._stream_topic(sub)
+            delays.append(sub.retry_at - time.monotonic())
+
+        self.assertEqual(sub.attempt, 10, "each fast failure is one attempt")
+        self.assertGreater(delays[-1], delays[0] * 2,
+                           "the backoff must grow, not restart at the base")
+        self.assertLessEqual(delays[-1], SUB_BACKOFF_MAX_S * 1.5 + 1.0,
+                             "the backoff must stay bounded")
+        self.assertGreaterEqual(relay.stats_snapshot()["global"]["reconnects"], 10)
+
+    def test_a_foreign_origin_id_is_not_deduplicated_by_payload(self) -> None:
+        """Only the fingerprint fallback may compare bytes, and only for an
+        agent that cannot tag provenance at all."""
+        relay = self._bare_relay()
+        payload = _scan_payload(4.2)
+        relay._remember_injection("real", "/scan", payload, "relay-ours:1")
+
+        class _Message:
+            def __init__(self, origin_id, source_id):
+                self.origin_id = origin_id
+                self.source_id = source_id
+                self.data = payload
+
+        # Another relay's message: a foreign id is data, never our echo.
+        self.assertFalse(relay._is_echo(
+            relay.real, "/scan", _Message("other-relay:7", "agent-x")))
+        # A new agent with no origin id proves it can tag and this is not ours.
+        relay._remember_injection("real", "/scan", payload, "relay-ours:2")
+        self.assertFalse(relay._is_echo(
+            relay.real, "/scan", _Message("", "agent-y")))
+        # An old agent has neither field, so the byte fallback still works.
+        relay._remember_injection("real", "/scan", payload, "relay-ours:3")
+        self.assertTrue(relay._is_echo(
+            relay.real, "/scan", _Message("", "")))
+
+
+class RelayGraphSnapshotTest(unittest.TestCase):
+    """The graph a downstream sees is a snapshot, not an append-only log."""
+
+    def setUp(self) -> None:
+        self.servers = []
+        self.relay = None
+
+    def tearDown(self) -> None:
+        if self.relay is not None:
+            self.relay.stop()
+        for server, _agent, _port in self.servers:
+            stop_server(server)
+
+    def _agent(self, graph: Graph):
+        server, agent, port = build_server(graph, "127.0.0.1", 0)
+        server.start()
+        self.servers.append((server, agent, port))
+        return agent, port
+
+    def _relay(self, sim_graph: Graph, real_graph: Graph):
+        _sim_agent, sim_port = self._agent(sim_graph)
+        _real_agent, real_port = self._agent(real_graph)
+        sim = _Upstream("sim", "127.0.0.1:%d" % sim_port)
+        real = _Upstream("real", "127.0.0.1:%d" % real_port)
+        self.relay = Relay(sim, real, refresh_s=0.2)
+        self.relay.start()
+        relay_port = _free_port()
+        self.relay.serve("127.0.0.1", relay_port, "", 0)
+        channel = grpc.insecure_channel("127.0.0.1:%d" % relay_port)
+        self.addCleanup(channel.close)
+        return pb_grpc.Ros2BridgeStub(channel)
+
+    def test_removed_topics_services_and_actions_disappear(self) -> None:
+        sim_graph = Graph()
+        real_graph = Graph()
+        publisher = real_graph.create_publisher("/gone_topic", msg.STRING)
+        real_graph.create_service(
+            "/gone_srv", "std_srvs/srv/Trigger",
+            lambda request: {"success": True, "message": "ok"})
+        real_graph.create_action("/gone_act", "nav2_msgs/action/Spin")
+
+        stub = self._relay(sim_graph, real_graph)
+        self.assertTrue(_wait_for(
+            lambda: {t.name for t in stub.ListTopics(pb.ListTopicsRequest()).topics}
+            >= {"/gone_topic"}))
+        self.assertTrue(_wait_for(
+            lambda: {s.name for s in stub.ListServices(pb.ListServicesRequest()).services}
+            >= {"/gone_srv"}))
+        self.assertTrue(_wait_for(
+            lambda: {a.name for a in stub.ListActions(pb.ListActionsRequest()).actions}
+            >= {"/gone_act"}))
+
+        # A downstream subscriber keeps the graph *topic* alive; the list must
+        # still stop advertising it once the source is gone.
+        stream = stub.Subscribe(pb.SubscribeRequest(topic="/gone_topic", type=msg.STRING))
+        threading.Thread(target=_collect, args=(stream, []), daemon=True).start()
+        self.assertTrue(_wait_for(
+            lambda: (self.relay.graph.get_topic("/gone_topic") or
+                     type("T", (), {"subscriber_count": 0})).subscriber_count >= 1))
+
+        publisher.unadvertise()
+        real_graph.remove_service("/gone_srv")
+        real_graph.remove_action("/gone_act")
+
+        self.assertTrue(_wait_for(
+            lambda: "/gone_topic" not in
+            {t.name for t in stub.ListTopics(pb.ListTopicsRequest()).topics}),
+            "a topic whose publisher exited must leave the merged list")
+        self.assertTrue(_wait_for(
+            lambda: "/gone_srv" not in
+            {s.name for s in stub.ListServices(pb.ListServicesRequest()).services}),
+            "a deleted service must leave the merged list")
+        self.assertTrue(_wait_for(
+            lambda: "/gone_act" not in
+            {a.name for a in stub.ListActions(pb.ListActionsRequest()).actions}),
+            "a deleted action must leave the merged list")
+
+    def test_a_recreated_topic_can_have_a_new_type(self) -> None:
+        sim_graph = Graph()
+        real_graph = Graph()
+        publisher = real_graph.create_publisher("/reborn", msg.STRING)
+        stub = self._relay(sim_graph, real_graph)
+        self.assertTrue(_wait_for(
+            lambda: {t.name for t in stub.ListTopics(pb.ListTopicsRequest()).topics}
+            >= {"/reborn"}))
+
+        publisher.unadvertise()
+        self.assertTrue(_wait_for(
+            lambda: "/reborn" not in
+            {t.name for t in stub.ListTopics(pb.ListTopicsRequest()).topics}))
+        # The relay cancels its stream once the publisher is gone; the agent
+        # then has no endpoint left and drops the topic with its old type.
+        self.assertTrue(_wait_for(lambda: real_graph.get_topic("/reborn") is None),
+                        "the agent should release the topic before it is recreated")
+        real_graph.create_publisher("/reborn", msg.LASER_SCAN)
+        self.assertTrue(_wait_for(
+            lambda: any(t.name == "/reborn" and t.type == msg.LASER_SCAN
+                        for t in stub.ListTopics(pb.ListTopicsRequest()).topics)),
+            "the recreated topic must be advertised with its new type")
 
 
 if __name__ == "__main__":

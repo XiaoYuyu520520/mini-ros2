@@ -110,6 +110,15 @@ SUB_BACKOFF_MAX_S = 30.0
 #: ends later; its next failure starts the backoff over.
 SUB_HEALTHY_AFTER_S = 2.0
 
+#: How often expired echo/provenance entries are swept. Walking those dicts on
+#: every message is fine at 20 Hz and wasteful at 20 kHz (a point cloud plus
+#: two cameras), so the sweep is amortised and the per-message path only looks
+#: at the entry it needs.
+PRUNE_INTERVAL_S = 1.0
+
+#: How often the relay logs its counters when idle.
+STATS_INTERVAL_S = 60.0
+
 #: What to do when both upstreams publish the same topic name.
 #:
 #: ``prefer-sim``  the simulator keeps the plain name (``/scan``) and the real
@@ -332,6 +341,23 @@ class Relay:
         #: trace ids we have already handled, so a message crossing more than
         #: one relay hop is not merged twice.
         self._seen_traces: dict[str, float] = {}
+        self._last_prune = 0.0
+        #: The last topic snapshot per upstream. Comparing it with the next
+        #: one is how a topic that disappeared is unregistered instead of
+        #: lingering in ListTopics forever.
+        self._upstream_topics: dict[str, set[str]] = {"sim": set(), "real": set()}
+        #: The last service/action snapshot per upstream. The merged maps are
+        #: rebuilt from these two, so a deleted service really disappears.
+        self._upstream_services: dict[str, dict[str, str]] = {"sim": {}, "real": {}}
+        self._upstream_actions: dict[str, dict[str, str]] = {"sim": {}, "real": {}}
+        #: Coarse counters, the first half of the observability the next round
+        #: needs: how much crossed, how much was dropped and why.
+        self.stats = {
+            "merged": 0, "dropped_echo": 0, "dropped_trace": 0,
+            "reconnects": 0, "publish_accepted": 0, "publish_failed": 0,
+        }
+        #: merged topic name -> {received, merged, dropped_echo, bytes, last_stamp_ns}
+        self.topic_stats: dict[str, dict[str, int]] = {}
         #: explicit control routing: merged topic -> "sim" | "real"
         self.control_routes = dict(control_routes or {})
         for topic, owner in self.control_routes.items():
@@ -397,7 +423,17 @@ class Relay:
     # -- echo suppression ---------------------------------------------------
 
     def _prune_echo(self, now: float) -> None:
-        """Drop expired injection ids, fingerprints and traces (lock held)."""
+        """Sweep expired provenance at most once per PRUNE_INTERVAL_S.
+
+        The old version walked every dict for every message. That is a real
+        cost once a point cloud, two cameras and several robots share the
+        process, and the sweep does not need to be that precise: an entry that
+        lives an extra second after its deadline is harmless because every
+        lookup also checks the deadline.
+        """
+        if now - self._last_prune < PRUNE_INTERVAL_S:
+            return
+        self._last_prune = now
         for origin_id, deadline in list(self._injections.items()):
             if deadline <= now:
                 del self._injections[origin_id]
@@ -463,7 +499,15 @@ class Relay:
             return False
 
     def _is_echo(self, upstream: "_Upstream", topic: str, message) -> bool:  # noqa: ANN001
-        """Is this upstream message the copy of one the relay just injected?"""
+        """Is this upstream message the copy of one the relay just injected?
+
+        Identity first: an ``origin_id`` is only ours if it is in the
+        injection table, and the agent's ``source_id`` proves the far end can
+        tag echoes at all. The payload hash is a compatibility path for agents
+        older than the provenance fields - two independent publishers that
+        happen to send identical bytes must not be mistaken for each other,
+        which is exactly what a hash-only rule would do.
+        """
         origin_id = getattr(message, "origin_id", "")
         if origin_id:
             with self._lock:
@@ -473,6 +517,14 @@ class Relay:
                 # slot is no longer needed.
                 self._consume_fingerprint(upstream.name, topic, message.data)
                 return True
+            # A foreign origin id: another relay (or another process) sent
+            # this. It is real data, never an echo of ours.
+            return False
+        if getattr(message, "source_id", ""):
+            # A new agent stamps its identity on everything it forwards. No
+            # origin id from such an agent means the message did not come from
+            # an injection, so do not fall back to the hash.
+            return False
         return self._consume_fingerprint(upstream.name, topic, message.data)
 
     def _seen_trace(self, trace_id: str) -> bool:
@@ -487,6 +539,27 @@ class Relay:
             self._seen_traces[trace_id] = now + ECHO_TTL_S
             return False
 
+    def stats_snapshot(self) -> dict:
+        """A consistent copy of the counters, for logs and tests."""
+        with self._lock:
+            return {
+                "counts": dict(self.counts),
+                "global": dict(self.stats),
+                "topics": {name: dict(values) for name, values in self.topic_stats.items()},
+                "subscriptions": {
+                    upstream.name: {
+                        topic: {
+                            "state": sub.state,
+                            "attempt": sub.attempt,
+                            "delivered": sub.delivered,
+                            "last_error": sub.last_error,
+                        }
+                        for topic, sub in upstream.subs.items()
+                    }
+                    for upstream in (self.sim, self.real)
+                },
+            }
+
     # -- the merged graph ---------------------------------------------------
 
     def _publish_merged(self, topic: str, type_name: str, data: bytes, stamp_ns: int,
@@ -495,13 +568,22 @@ class Relay:
         if topic in self.exclude:
             return
         if self._seen_trace(trace_id):
+            with self._lock:
+                self.stats["dropped_trace"] += 1
             return
         try:
             self.graph.publish(topic, type_name, data, stamp_ns=stamp_ns, trace_id=trace_id)
         except Exception as exc:  # noqa: BLE001 - one bad message must not kill the relay
             LOG.warning("cannot merge %s from %s: %s", topic, origin, exc)
             return
-        self.counts["%s->down" % origin] = self.counts.get("%s->down" % origin, 0) + 1
+        with self._lock:
+            self.counts["%s->down" % origin] = self.counts.get("%s->down" % origin, 0) + 1
+            self.stats["merged"] += 1
+            topic_stat = self.topic_stats.setdefault(topic, {
+                "received": 0, "merged": 0, "dropped_echo": 0,
+                "bytes": 0, "last_stamp_ns": 0,
+            })
+            topic_stat["merged"] += 1
 
     def _origin_of(self, topic: str) -> str:
         with self._lock:
@@ -527,20 +609,30 @@ class Relay:
             call = upstream.stub.Subscribe(request)
             sub.call = call
             # The RPC object exists as soon as the call is opened; a failure
-            # surfaces from the iterator below and moves the state to RETRYING.
+            # surfaces from the iterator below. The state is ACTIVE, but the
+            # failure counter is deliberately *not* reset here: a stream that
+            # dies immediately must keep climbing the backoff ladder. Only a
+            # stream that survives SUB_HEALTHY_AFTER_S resets it (in `finally`).
             sub.state = _Subscription.ACTIVE
-            sub.attempt = 0
             for message in call:
                 if self._stop.is_set():
                     return
-                if sub.state == _Subscription.CONNECTING:
-                    sub.state = _Subscription.ACTIVE
-                    sub.attempt = 0
                 sub.delivered += 1
                 upstream_topic = message.topic or sub.topic
-                if self._is_echo(upstream, upstream_topic, message):
-                    continue
                 merged = self._merged_for(upstream.name, upstream_topic)
+                with self._lock:
+                    topic_stat = self.topic_stats.setdefault(merged, {
+                        "received": 0, "merged": 0, "dropped_echo": 0,
+                        "bytes": 0, "last_stamp_ns": 0,
+                    })
+                    topic_stat["received"] += 1
+                    topic_stat["bytes"] += len(message.data)
+                    topic_stat["last_stamp_ns"] = message.stamp_ns
+                if self._is_echo(upstream, upstream_topic, message):
+                    with self._lock:
+                        self.stats["dropped_echo"] += 1
+                        topic_stat["dropped_echo"] += 1
+                    continue
                 self._publish_merged(merged, message.type or sub.type_name,
                                      message.data, message.stamp_ns,
                                      upstream.name, getattr(message, "trace_id", ""))
@@ -569,6 +661,8 @@ class Relay:
             if sub.state != _Subscription.FAILED:
                 sub.state = _Subscription.RETRYING
             sub.retry_at = now + sub.backoff()
+            with self._lock:
+                self.stats["reconnects"] += 1
             LOG.info("subscription on %s/%s ended (%s); retry #%d in %.1fs",
                      upstream.name, sub.topic, sub.last_error or "closed",
                      sub.attempt, sub.retry_at - now)
@@ -630,6 +724,23 @@ class Relay:
 
             upstream.topics = topics
             upstream.all_topics = all_topics
+
+            # Unregister topics this upstream no longer has. Without this the
+            # merged graph kept listing a node's old topics forever: the old
+            # code cancelled the stream but left `_route`/`_counts` in place,
+            # so a restarted node with a different type was shadowed by the
+            # stale entry.
+            current_names = set(topics)
+            with self._lock:
+                removed = self._upstream_topics.get(upstream.name, set()) - current_names
+                for name in removed:
+                    key = (upstream.name, name)
+                    merged = self._stable.pop(key, None)
+                    if merged is not None and self._route.get(merged) == key:
+                        del self._route[merged]
+                        self._counts.pop(merged, None)
+                        self.topic_stats.pop(merged, None)
+                self._upstream_topics[upstream.name] = current_names
 
             # Services and actions are part of the graph too. A merged graph
             # that carried only topics would be half a graph: the downstream
@@ -839,6 +950,8 @@ class Relay:
                 result = "UNAVAILABLE"
             else:
                 result = "REJECTED"
+            with self._lock:
+                self.stats["publish_failed"] += 1
             LOG.warning("cannot publish %s back to %s (%s): %s", topic, owner, result, exc)
             return _PublishOutcome(accepted=False, result=result, error=str(exc))
         except Exception as exc:  # noqa: BLE001
@@ -858,6 +971,8 @@ class Relay:
                 error=response.error or "upstream refused the message")
 
         self.counts["down->%s" % owner] = self.counts.get("down->%s" % owner, 0) + 1
+        with self._lock:
+            self.stats["publish_accepted"] += 1
         result = response.result or "ACCEPTED"
         if result not in ("ACCEPTED", "REJECTED", "UNAVAILABLE", "TIMEOUT"):
             result = "ACCEPTED"
@@ -889,16 +1004,22 @@ class Relay:
         services = {s.name: s.type for s in resp.services if s.name}
         upstream.services = services
         with self._lock:
-            # The simulator's services live under /sim/ and the real ROS2
-            # graph's under their own names, so they rarely collide. When
-            # they do, the real ROS2 graph wins - it is the one whose
-            # implementation is the "real" answer.
-            if upstream.name == "sim":
-                for name, type_name in services.items():
-                    self._services.setdefault(name, (upstream.name, type_name))
-            else:
-                for name, type_name in services.items():
-                    self._services[name] = (upstream.name, type_name)
+            self._upstream_services[upstream.name] = dict(services)
+            self._rebuild_services_locked()
+
+    def _rebuild_services_locked(self) -> None:
+        """Recompute the merged service map from the two snapshots.
+
+        The simulator is the fallback and the real ROS2 graph wins a name
+        collision; both are now *snapshots*, so a service the node stopped
+        advertising disappears instead of being merged forever.
+        """
+        merged: dict[str, tuple[str, str]] = {}
+        for name, type_name in self._upstream_services.get("sim", {}).items():
+            merged.setdefault(name, ("sim", type_name))
+        for name, type_name in self._upstream_services.get("real", {}).items():
+            merged[name] = ("real", type_name)
+        self._services = merged
 
     def _service_route(self, name: str) -> tuple[_Upstream, str] | None:
         """The upstream that serves ``name``, and the name it knows it by."""
@@ -938,12 +1059,17 @@ class Relay:
         actions = {a.name: a.type for a in resp.actions if a.name}
         upstream.actions = actions
         with self._lock:
-            if upstream.name == "sim":
-                for name, type_name in actions.items():
-                    self._actions.setdefault(name, (upstream.name, type_name))
-            else:
-                for name, type_name in actions.items():
-                    self._actions[name] = (upstream.name, type_name)
+            self._upstream_actions[upstream.name] = dict(actions)
+            self._rebuild_actions_locked()
+
+    def _rebuild_actions_locked(self) -> None:
+        """Recompute the merged action map from the two snapshots."""
+        merged: dict[str, tuple[str, str]] = {}
+        for name, type_name in self._upstream_actions.get("sim", {}).items():
+            merged.setdefault(name, ("sim", type_name))
+        for name, type_name in self._upstream_actions.get("real", {}).items():
+            merged[name] = ("real", type_name)
+        self._actions = merged
 
     def _action_route(self, name: str) -> tuple[_Upstream, str] | None:
         with self._lock:
@@ -990,8 +1116,18 @@ class Relay:
 
             def ListTopics(self, request, context):  # noqa: ANN001, N802
                 resp = super().ListTopics(request, context)
+                # Only topics that are still in an upstream snapshot. A
+                # graph topic can outlive its source when it still has a
+                # downstream subscriber, and listing it would make a dead
+                # node look alive.
+                with relay._lock:
+                    active = set(relay._counts)
+                    counts = dict(relay._counts)
+                stale = [topic for topic in resp.topics if topic.name not in active]
+                for topic in stale:
+                    resp.topics.remove(topic)
                 for topic in resp.topics:
-                    type_name, publishers, subscribers = relay._counts.get(
+                    type_name, publishers, subscribers = counts.get(
                         topic.name, (topic.type, 0, 0))
                     topic.type = type_name or topic.type
                     topic.publisher_count = publishers
@@ -1000,8 +1136,12 @@ class Relay:
 
             def GetTopicInfo(self, request, context):  # noqa: ANN001, N802
                 info = super().GetTopicInfo(request, context)
-                type_name, publishers, subscribers = relay._counts.get(
-                    info.name, (info.type, 0, 0))
+                with relay._lock:
+                    entry = relay._counts.get(info.name)
+                if entry is None:
+                    context.abort(grpc.StatusCode.NOT_FOUND,
+                                  "unknown topic %r" % info.name)
+                type_name, publishers, subscribers = entry
                 info.type = type_name or info.type
                 info.publisher_count = publishers
                 info.subscriber_count = subscribers
@@ -1129,7 +1269,18 @@ class Relay:
                         message.goal_id = "%s:%s" % (upstream.name, message.goal_id)
                         yield message
                 except grpc.RpcError as exc:
-                    LOG.debug("action feedback for %s ended: %s", request.goal_id, exc.code())
+                    # A broken feedback stream is not a normal end. Passing
+                    # the status on is what lets the caller tell "the goal
+                    # finished" from "the link died while it was running"; a
+                    # debug log here made both look like success.
+                    if exc.code() == grpc.StatusCode.CANCELLED or relay._stop.is_set():
+                        LOG.debug("action feedback for %s cancelled", request.goal_id)
+                        return
+                    LOG.warning("action feedback for %s failed: %s",
+                                request.goal_id, exc.code())
+                    context.abort(exc.code(),
+                                  "action feedback for %s ended: %s"
+                                  % (request.goal_id, exc.details()))
 
             def GetActionResult(self, request, context):  # noqa: ANN001, N802
                 upstream, real_id = self._goal_route(request.name, request.goal_id)
@@ -1227,7 +1378,15 @@ class Relay:
         self.real.close()
 
     def wait(self) -> None:
+        next_report = time.monotonic() + STATS_INTERVAL_S
         while not self._stop.is_set():
+            if time.monotonic() >= next_report:
+                next_report += STATS_INTERVAL_S
+                snapshot = self.stats_snapshot()
+                LOG.info("relay stats: global=%s topics=%d subscriptions=%s",
+                         snapshot["global"], len(snapshot["topics"]),
+                         {name: len(subs) for name, subs in
+                          snapshot["subscriptions"].items()})
             time.sleep(0.25)
 
 

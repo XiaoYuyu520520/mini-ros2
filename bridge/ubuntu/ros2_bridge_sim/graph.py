@@ -200,7 +200,12 @@ class Graph:
     def action_type(self, name: str) -> str:
         with self._lock:
             action = self._actions.get(name)
-            return action.type if action else ""
+        return action.type if action else ""
+
+    def remove_action(self, name: str) -> None:
+        """Unadvertise an action (the mirror of :meth:`remove_service`)."""
+        with self._lock:
+            self._actions.pop(name, None)
 
     def actions(self) -> list[ActionServer]:
         with self._lock:
