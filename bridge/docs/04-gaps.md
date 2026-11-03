@@ -49,6 +49,11 @@
 4. **指标面**：没有 RPC / GUI 展示，没有端到端延迟与 P95/P99。
 5. **性能基准**：`_prune_echo` 改造没有前后 CPU/延迟对比数据。
 6. **viz 导航动作闭环**：仍是"点地图发 `/goal_pose`"，没有 `navigate_to_pose` 的发送/取消/反馈面板，也没有逐节点诊断面板。
+   顺便记一条本轮发现的精度问题：`viz` 的工具栏叫 "2D Goal Pose"，但发的是
+   `geometry_msgs/msg/PoseStamped` 到 `/goal_pose`（rviz2 里那个名字是
+   `nav2_msgs/action/NavigateToPose` 动作）。`nav2` 的 `bt_navigator` **不订阅**
+   `/goal_pose`，所以从现在起把它当"发布目标点"而不是"发起导航"来读；
+   真正的动作闭环是上面那条待办。
 
 ---
 
