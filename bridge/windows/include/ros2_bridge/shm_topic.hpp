@@ -29,8 +29,14 @@ inline std::string channel_name(const std::string & topic)
   return rclcpp::shim::channel_name(topic);
 }
 
-inline std::uint32_t slot_size_for(const std::string & topic)
+inline std::uint32_t slot_size_for(const std::string & topic, const std::string & type_name = {})
 {
+  // With a type known, it decides: an image topic whose name has no "map" in
+  // it still carries megabytes per sample (see rclcpp/shm_config.hpp). Empty
+  // type keeps the pure name rules, which is what untyped callers get.
+  if (!type_name.empty()) {
+    return rclcpp::shim::slot_size_for_type(type_name, topic);
+  }
   return rclcpp::shim::slot_size_for_topic(topic);
 }
 
@@ -40,11 +46,15 @@ inline std::uint32_t slot_count()
 }
 
 // Creates (or opens, when a node already created it) the channel for a topic.
+// `type_name` is the DDS type string (`sensor_msgs/msg/Image`) when the
+// caller knows it - the daemon does, from the graph - so the channel gets the
+// size the message stream actually needs rather than one its name hints at.
 inline std::shared_ptr<shm_transport::ShmChannel> create_channel(
-  const std::string & topic, std::string * error = nullptr)
+  const std::string & topic, std::string * error = nullptr,
+  const std::string & type_name = {})
 {
   return shm_transport::ShmChannel::create(
-    channel_name(topic), slot_count(), slot_size_for(topic), error);
+    channel_name(topic), slot_count(), slot_size_for(topic, type_name), error);
 }
 
 // Opens an existing channel, e.g. to consume what a local publisher writes.

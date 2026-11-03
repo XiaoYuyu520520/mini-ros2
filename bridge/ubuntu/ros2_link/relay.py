@@ -119,6 +119,61 @@ PRUNE_INTERVAL_S = 1.0
 #: How often the relay logs its counters when idle.
 STATS_INTERVAL_S = 60.0
 
+#: Latency reservoir: the last N accepted samples per scope. 512 samples at
+#: 20 Hz is ~25 s of recent history - long enough for percentiles to mean
+#: something, short enough that a hundred topics cost nothing.
+LATENCY_MAX_SAMPLES = 512
+
+#: A stamp older than this is not a latency (a replayed backlog, a clock that
+#: NTP has not caught up with); a stamp in the future is skew the other way.
+#: Both are counted as unusable instead of poisoning the percentiles.
+LATENCY_STALE_NS = 60 * 10**9
+
+
+class _Latency:
+    """Bounded reservoir of recent one-way delays, in milliseconds.
+
+    ``stamp_ns`` is wall clock at the publishing agent; the delta to the
+    relay's clock at delivery is the link latency. Percentiles are computed
+    from the reservoir on demand - sorting 512 floats is cheaper than
+    maintaining order online, and a snapshot is rare next to a message.
+    """
+
+    __slots__ = ("samples", "stale")
+
+    def __init__(self) -> None:
+        self.samples: deque[float] = deque(maxlen=LATENCY_MAX_SAMPLES)
+        self.stale = 0
+
+    def add(self, now_ns: int, stamp_ns: int) -> bool:
+        if stamp_ns <= 0:
+            self.stale += 1
+            return False
+        delta = now_ns - stamp_ns
+        if delta < 0 or delta > LATENCY_STALE_NS:
+            self.stale += 1
+            return False
+        self.samples.append(delta / 1e6)
+        return True
+
+    def snapshot(self) -> dict:
+        if not self.samples:
+            return {"samples": 0, "stale_stamps": self.stale}
+        ordered = sorted(self.samples)
+
+        def pct(fraction: float) -> float:
+            index = min(len(ordered) - 1, int(len(ordered) * fraction))
+            return round(ordered[index], 3)
+
+        return {
+            "samples": len(ordered),
+            "stale_stamps": self.stale,
+            "p50_ms": pct(0.50),
+            "p95_ms": pct(0.95),
+            "p99_ms": pct(0.99),
+            "max_ms": round(ordered[-1], 3),
+        }
+
 #: What to do when both upstreams publish the same topic name.
 #:
 #: ``prefer-sim``  the simulator keeps the plain name (``/scan``) and the real
@@ -355,9 +410,21 @@ class Relay:
         self.stats = {
             "merged": 0, "dropped_echo": 0, "dropped_trace": 0,
             "reconnects": 0, "publish_accepted": 0, "publish_failed": 0,
+            "merge_errors": 0,
         }
         #: merged topic name -> {received, merged, dropped_echo, bytes, last_stamp_ns}
         self.topic_stats: dict[str, dict[str, int]] = {}
+        #: End-to-end latency, one reservoir per scope. `stamp_ns` is wall
+        #: clock at the publishing agent (`time.time_ns()` in the sim agent),
+        #: so the delta to the relay's own clock is the one-way delay across
+        #: the link - meaningful per upstream, where both ends sit on machines
+        #: whose clocks NTP agrees about, and per topic so a slow lidar does
+        #: not hide behind a fast clock topic. A capped deque bounds the
+        #: memory: percentiles over the last N samples are the distribution
+        #: an operator reasons about, not a growing histogram.
+        self._latency_global = _Latency()
+        self._latency_upstreams = {"sim": _Latency(), "real": _Latency()}
+        self._latency_topics: dict[str, _Latency] = {}
         #: explicit control routing: merged topic -> "sim" | "real"
         self.control_routes = dict(control_routes or {})
         for topic, owner in self.control_routes.items():
@@ -546,6 +613,14 @@ class Relay:
                 "counts": dict(self.counts),
                 "global": dict(self.stats),
                 "topics": {name: dict(values) for name, values in self.topic_stats.items()},
+                "latency": {
+                    "global": self._latency_global.snapshot(),
+                    "upstreams": {name: lat.snapshot()
+                                  for name, lat in self._latency_upstreams.items()},
+                    "topics": {name: lat.snapshot()
+                               for name, lat in self._latency_topics.items()},
+                },
+                "echo_pending": sum(len(queue) for queue in self._echo_keys.values()),
                 "subscriptions": {
                     upstream.name: {
                         topic: {
@@ -575,7 +650,15 @@ class Relay:
             self.graph.publish(topic, type_name, data, stamp_ns=stamp_ns, trace_id=trace_id)
         except Exception as exc:  # noqa: BLE001 - one bad message must not kill the relay
             LOG.warning("cannot merge %s from %s: %s", topic, origin, exc)
+            with self._lock:
+                self.stats["merge_errors"] += 1
+                self.topic_stats.setdefault(topic, {
+                    "received": 0, "merged": 0, "dropped_echo": 0,
+                    "bytes": 0, "last_stamp_ns": 0,
+                })["merge_errors"] = \
+                    self.topic_stats[topic].get("merge_errors", 0) + 1
             return
+        now_ns = time.time_ns()
         with self._lock:
             self.counts["%s->down" % origin] = self.counts.get("%s->down" % origin, 0) + 1
             self.stats["merged"] += 1
@@ -584,6 +667,15 @@ class Relay:
                 "bytes": 0, "last_stamp_ns": 0,
             })
             topic_stat["merged"] += 1
+            # One-way delay across the link, scoped three ways: the whole
+            # relay, the upstream it came from (two machines' clocks are the
+            # only thing that can lie here) and the topic (a slow lidar must
+            # not hide behind a fast clock).
+            self._latency_global.add(now_ns, stamp_ns)
+            upstream_latency = self._latency_upstreams.get(origin)
+            if upstream_latency is not None:
+                upstream_latency.add(now_ns, stamp_ns)
+            self._latency_topics.setdefault(topic, _Latency()).add(now_ns, stamp_ns)
 
     def _origin_of(self, topic: str) -> str:
         with self._lock:
@@ -1383,10 +1475,14 @@ class Relay:
             if time.monotonic() >= next_report:
                 next_report += STATS_INTERVAL_S
                 snapshot = self.stats_snapshot()
-                LOG.info("relay stats: global=%s topics=%d subscriptions=%s",
-                         snapshot["global"], len(snapshot["topics"]),
-                         {name: len(subs) for name, subs in
-                          snapshot["subscriptions"].items()})
+                latency = snapshot["latency"]["global"]
+                LOG.info(
+                    "relay stats: global=%s latency_p95_ms=%s (n=%d) echo_pending=%d "
+                    "topics=%d subscriptions=%s",
+                    snapshot["global"], latency.get("p95_ms"), latency.get("samples", 0),
+                    snapshot["echo_pending"], len(snapshot["topics"]),
+                    {name: len(subs) for name, subs in
+                     snapshot["subscriptions"].items()})
             time.sleep(0.25)
 
 

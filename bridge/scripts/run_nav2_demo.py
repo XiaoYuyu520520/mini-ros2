@@ -48,6 +48,11 @@ def build_environment(msys2_root: Path) -> dict:
     env.setdefault("NAV2_SHM_SLOT_COUNT", "8")
     env.setdefault("NAV2_SHM_SLOT_SIZE", str(2 * 1024 * 1024))
     env.setdefault("NAV2_SHM_LARGE_SLOT_SIZE", str(8 * 1024 * 1024))
+    # Image / point cloud channels are sized by message type, not by
+    # topic name: `/camera/image_raw` is megabytes and says nothing
+    # about a map. 8 MB covers a 1080p RGB8 frame.
+    env.setdefault("NAV2_SHM_IMAGE_SLOT_SIZE", str(8 * 1024 * 1024))
+    env.setdefault("NAV2_SHM_POINTCLOUD_SLOT_SIZE", str(8 * 1024 * 1024))
     env.setdefault("NAV2_SHM_GRAPH_DIR", str(Path(tempfile.gettempdir()) / "nav2_shim_graph"))
     env.setdefault("NAV2_SHM_LOG_LEVEL", "info")
     env.setdefault("ROS2_SHM_GRAPH_DIR", env["NAV2_SHM_GRAPH_DIR"])

@@ -112,6 +112,10 @@ void Writer::writeBytes(const Bytes& value) {
   buffer_.insert(buffer_.end(), value.begin(), value.end());
 }
 
+void Writer::writeRaw(const std::uint8_t* data, std::size_t size) {
+  buffer_.insert(buffer_.end(), data, data + size);
+}
+
 Reader::Reader(const Bytes& data) : Reader(data.data(), data.size()) {}
 
 Reader::Reader(const std::uint8_t* data, std::size_t size)

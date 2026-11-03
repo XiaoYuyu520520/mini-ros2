@@ -42,6 +42,12 @@ ROS2_BRIDGE_CPU_ROOT="$(cd "$ROS2_BRIDGE_LINUX/../.." && pwd)"
 : "${NAV2_SHM_SLOT_COUNT:=8}"
 : "${NAV2_SHM_SLOT_SIZE:=524288}"
 : "${NAV2_SHM_LARGE_SLOT_SIZE:=2097152}"
+# Image and point cloud channels, keyed on the message type (see
+# rclcpp/shm_config.hpp): a 1080p RGB8 image is 6.2 MB, far above the 512 KB
+# default, and its topic name never says "map". Only channels that actually
+# carry such a type pay the memory (8 slots x 8 MB = 64 MB per topic).
+: "${NAV2_SHM_IMAGE_SLOT_SIZE:=8388608}"
+: "${NAV2_SHM_POINTCLOUD_SLOT_SIZE:=8388608}"
 
 # Where the ported nav2 packages are. NAV2_SHIM_SRC answers the ament shim's
 # $(find-pkg-share <pkg>) lookup: the port builds the extracted sources in place
@@ -95,6 +101,7 @@ export PATH
 
 export ROS2_BRIDGE_LINUX ROS2_BRIDGE_CPU_ROOT ROS2_BRIDGE_BUILD \
        NAV2_SHM_SLOT_COUNT NAV2_SHM_SLOT_SIZE NAV2_SHM_LARGE_SLOT_SIZE \
+       NAV2_SHM_IMAGE_SLOT_SIZE NAV2_SHM_POINTCLOUD_SLOT_SIZE \
        NAV2_SHIM_SRC NAV2_SHIM_BT_DIR NAV2_SHM_GRAPH_DIR ROS2_SHM_GRAPH_DIR \
        NAV2_SHM_LOG_LEVEL ROS2_GRPC_SDK_CONFIG_DIR ROS2_BRIDGE_AUTOSTART \
        ROS2_BRIDGE_READY_FILE ROS2_BRIDGE_WAIT_MS ROS2_BRIDGE_LOG \

@@ -1033,6 +1033,8 @@ nav2 demo → SLAM（建图一圈 **+** 存档换进程读回来定位），逐�
 | `NAV2_SHM_SLOT_COUNT` | 8 | 共享内存环形缓冲的槽数 |
 | `NAV2_SHM_SLOT_SIZE` | 2097152 | 普通话题的槽大小（2 MB） |
 | `NAV2_SHM_LARGE_SLOT_SIZE` | 8388608 | 名字含 `map`/`costmap`/`voxel`（但不含 `info`）的话题用 8 MB |
+| `NAV2_SHM_IMAGE_SLOT_SIZE` | 8388608 | **图像类消息**（`sensor_msgs/msg/Image`）的槽大小，按消息类型定，不看话题名 | 
+| `NAV2_SHM_POINTCLOUD_SLOT_SIZE` | 8388608 | **点云类消息**（`sensor_msgs/msg/PointCloud2`）的槽大小，按消息类型定 | 
 | `NAV2_SHM_NAMESPACE` | 空 | 通道名前缀：`test` → `ros2shimtest/scan`，同时给图注册表目录加后缀。用来把互不相干的两套栈分开（测试 vs 活着的桥） |
 | `NAV2_SHM_GRAPH_DIR` | `%TEMP%\nav2_shim_graph` | 图注册表目录（shim 真正读的名字）；设了 `NAV2_SHM_NAMESPACE` 时实际路径是 `<这个值>_<命名空间>` |
 | `ROS2_SHM_GRAPH_DIR` | 同上 | 旧脚本用的别名 |

@@ -35,13 +35,23 @@ class ROS2_GRPC_SDK_API Writer {
   void writeString(const std::string& value);
   void writeBytes(const Bytes& value);
 
+  // Bulk append of `size` raw bytes, no alignment. This is the fast path for
+  // primitive sequences: a caller that has already aligned the stream and
+  // holds host-order little endian data (laser scans, point fields, images)
+  // writes the whole array with one insert instead of one call per element.
+  // Only meaningful when `little_endian()` is true - a big endian writer has
+  // to keep going through the per-element calls, which byte swap.
+  void writeRaw(const std::uint8_t* data, std::size_t size);
+
+  // Padding for the next primitive of `alignment` bytes. Public so the
+  // sequence fast paths above can align once and then stream the array.
+  void align(std::size_t alignment);
+
   const Bytes& data() const { return buffer_; }
   Bytes take() { return std::move(buffer_); }
+  bool little_endian() const { return little_endian_; }
 
  private:
-  void align(std::size_t alignment);
-  void reserve(std::size_t n) { buffer_.resize(buffer_.size() + n); }
-
   Bytes buffer_;
   bool little_endian_;
 };

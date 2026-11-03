@@ -85,6 +85,13 @@ rem nav2 node have to be restarted together after a change.
 if not defined NAV2_SHM_SLOT_COUNT set "NAV2_SHM_SLOT_COUNT=8"
 if not defined NAV2_SHM_SLOT_SIZE set "NAV2_SHM_SLOT_SIZE=524288"
 if not defined NAV2_SHM_LARGE_SLOT_SIZE set "NAV2_SHM_LARGE_SLOT_SIZE=2097152"
+rem Camera and lidar-heavy channels: an image or point cloud publisher gets
+rem these instead of the 512 KB default, keyed on the message type (see
+rem rclcpp/shm_config.hpp). 8 MB covers a 1080p RGB8 image (6.2 MB); a 1 MP
+rem XYRGB point cloud (16 MB) needs the variable raised. Only channels that
+rem actually carry such a type pay the memory.
+if not defined NAV2_SHM_IMAGE_SLOT_SIZE set "NAV2_SHM_IMAGE_SLOT_SIZE=8388608"
+if not defined NAV2_SHM_POINTCLOUD_SLOT_SIZE set "NAV2_SHM_POINTCLOUD_SLOT_SIZE=8388608"
 
 rem Where the ported nav2 packages are. The ament shim resolves
 rem `$(find-pkg-share <pkg>)` - the token nav2's own params file puts in

@@ -838,6 +838,81 @@ class RelayGraphSnapshotTest(unittest.TestCase):
                         for t in stub.ListTopics(pb.ListTopicsRequest()).topics)),
             "the recreated topic must be advertised with its new type")
 
+    def test_the_relay_reports_the_latency_of_what_it_merged(self) -> None:
+        """One-way delay per upstream and per topic, plus the stale stamps.
+
+        The relay is where a link's latency becomes visible: the agent
+        stamps every message with the wall clock at publish time, and the
+        relay knows when it delivered it. Without that, "the robot feels
+        laggy" has no number attached to it.
+        """
+        sim_graph = Graph()
+        real_graph = Graph()
+        sim_graph.create_publisher("/scan", msg.LASER_SCAN)
+        real_graph.create_publisher("/chatter", msg.STRING)
+
+        stub = self._relay(sim_graph, real_graph)
+        self.assertTrue(_wait_for(lambda: sim_graph.get_topic("/scan") is not None),
+                        "the relay should have subscribed to the simulator")
+
+        # A stamp 40 ms in the past: the sample should show up in the
+        # percentiles, roughly that old.
+        sim_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(),
+                          stamp_ns=time.time_ns() - 40 * 10**6)
+        self.assertTrue(
+            _wait_for(lambda: self.relay.stats_snapshot()["latency"]["global"]["samples"] >= 1),
+            "the relay should have recorded a latency sample")
+
+        snapshot = self.relay.stats_snapshot()
+        latency = snapshot["latency"]
+        self.assertGreaterEqual(latency["global"]["samples"], 1)
+        self.assertGreaterEqual(latency["global"]["p50_ms"], 30.0)
+        self.assertLess(latency["global"]["p50_ms"], 5000.0)
+        self.assertIn("p95_ms", latency["global"])
+        self.assertIn("p99_ms", latency["global"])
+        # Per upstream and per topic: the two machines' clocks are the only
+        # thing that can lie about the absolute number.
+        self.assertGreaterEqual(latency["upstreams"]["sim"]["samples"], 1)
+        self.assertGreaterEqual(latency["topics"]["/scan"]["samples"], 1)
+        self.assertGreaterEqual(snapshot["topics"]["/scan"]["merged"], 1)
+
+        # A stamp in the future (clock skew) is not a latency: it is counted
+        # as unusable instead of poisoning the percentiles.
+        sim_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(),
+                          stamp_ns=time.time_ns() + 60 * 10**9)
+        self.assertTrue(
+            _wait_for(lambda: self.relay.stats_snapshot()["latency"]["global"]
+                      ["stale_stamps"] >= 1),
+            "a stamp from the future should be counted as unusable")
+        self.assertLessEqual(self.relay.stats_snapshot()["latency"]["global"]["p50_ms"], 5000.0)
+
+    def test_a_message_the_merged_graph_refuses_is_counted(self) -> None:
+        """A merge that fails is a dropped message, and it has to show up.
+
+        The relay's counters are the only place where "the graph is full"
+        or "the type changed" becomes visible; before, the exception was
+        logged and the message was gone.
+        """
+        sim_graph = Graph()
+        real_graph = Graph()
+        sim_graph.create_publisher("/scan", msg.LASER_SCAN)
+
+        stub = self._relay(sim_graph, real_graph)
+        self.assertTrue(_wait_for(lambda: sim_graph.get_topic("/scan") is not None),
+                        "the relay should have subscribed to the simulator")
+
+        def refuse(*_args, **_kwargs):
+            raise RuntimeError("the graph says no")
+
+        self.relay.graph.publish = refuse
+        sim_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(),
+                          stamp_ns=time.time_ns())
+        self.assertTrue(
+            _wait_for(lambda: self.relay.stats_snapshot()["global"]["merge_errors"] >= 1),
+            "a refused merge should be counted")
+        snapshot = self.relay.stats_snapshot()
+        self.assertGreaterEqual(snapshot["topics"]["/scan"]["merge_errors"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

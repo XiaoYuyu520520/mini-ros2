@@ -4,6 +4,47 @@ All notable changes to this project. The format is chronological; the newest
 release is first. Versions before v0.2.4 predate this file — their notes live on
 the GitHub Releases page.
 
+## Unreleased
+
+### Added
+
+* **Latency and drop counters in the relay.** `ros2_link.relay` now measures the
+  one-way delay of every message it merges - from the publishing agent's wall
+  clock to its own - and reports P50/P95/P99/max per upstream and per topic.
+  A timestamp that cannot be used (more than a minute old, or in the future
+  because the two machines' clocks disagree) is counted as unusable instead of
+  poisoning the percentiles. `stats_snapshot()` also carries `merge_errors`
+  (the graph refused the message) and `echo_pending` (how many echo
+  fingerprints are still queued).
+* **Type-aware shared-memory slots.** An image or point cloud publisher now
+  gets a channel sized for its payload (`NAV2_SHM_IMAGE_SLOT_SIZE`,
+  `NAV2_SHM_POINTCLOUD_SLOT_SIZE`, 8 MB by default) instead of one sized by
+  the topic's name. A 640x480 RGB8 frame is 921,600 bytes and
+  `/camera/image_raw` says nothing about that.
+* `Publisher::oversized_count()` - how many samples did not fit their slot.
+
+### Fixed
+
+* **A message larger than its slot was dropped in silence.** The publish
+  failed, returned `false` and nothing said so, so a camera that "publishes"
+  looked exactly like a topic nobody publishes. The first failure now prints
+  the sample size, the slot size and the variables to raise.
+* `ros2_grpc_sdk::cdr::Writer` had a private `reserve()` that resized the
+  buffer instead of reserving it, and was never called. It is gone; the
+  writer grew `writeRaw()`, `align()` and `little_endian()` instead.
+
+### Changed
+
+* Primitive arrays are encoded with one copy instead of one call per element:
+  a laser scan's two float arrays and an odometry's two 36-element double
+  arrays are the hot path, and the CDR encoder now aligns once and streams the
+  array. The bytes are unchanged - `bridge_cdr_roundtrip` checks them against
+  fixtures produced by `rosbags`, and the shim's own round trip keeps every
+  value.
+* `ros2_shim::serialize()` sizes its buffer before writing it, and
+  `serializeInto()` reuses a caller's buffer, so a publisher that serializes
+  every cycle allocates once instead of once per growth step.
+
 ## v0.2.5 — 2026-11-03
 
 ### Fixed

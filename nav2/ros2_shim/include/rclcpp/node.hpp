@@ -584,7 +584,10 @@ public:
     const std::string & topic_name, const rclcpp::QoS & qos, ExtraT &&...)
   {
     const std::string topic = resolve_topic(topic_name);
-    auto channel = get_or_create_channel(topic, shim::slot_size_for_topic(topic));
+    // The type, not just the name, decides the slot size: an image topic
+    // whose name has no "map" in it still carries megabytes per sample.
+    auto channel = get_or_create_channel(
+      topic, shim::slot_size_for_type(ros2_shim::message_type_name<MessageT>(), topic));
     register_topic(topic, ros2_shim::message_type_name<MessageT>(), "pub");
     return std::make_shared<Publisher<MessageT, Allocator>>(topic, channel, qos);
   }
@@ -602,7 +605,8 @@ public:
     ExtraT &&... extra)
   {
     const std::string topic = resolve_topic(topic_name);
-    const uint32_t slot_size = shim::slot_size_for_topic(topic);
+    const uint32_t slot_size =
+      shim::slot_size_for_type(ros2_shim::message_type_name<MessageT>(), topic);
     auto channel = get_or_create_channel(topic, slot_size);
     auto subscription = std::make_shared<Subscription<MessageT>>(
       topic, channel, qos, std::forward<CallbackT>(callback), slot_size);

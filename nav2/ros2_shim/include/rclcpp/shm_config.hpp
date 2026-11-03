@@ -59,6 +59,35 @@ inline uint32_t large_slot_size()
   return size;
 }
 
+// Image and point cloud channels get their own size, keyed on the message
+// *type* rather than the topic name. The name rules above cannot see an
+// uncompressible fact: a 640x480 RGB8 image is 921,600 bytes of pixels, a
+// 1280x720 one is 2.76 MB, and a `/camera/image_raw` - no "map" anywhere in
+// the name - used to fall into the default slot and every sample above it
+// failed `publish()` silently. 8 MiB covers 1080p RGB8; a 1 MP XYRGB point
+// cloud (16 byte step) is 16 MB and needs the environment variable raised.
+//
+// Memory math, because that is what the large-slot history above is about:
+// the size applies only to channels someone actually opens with such a type
+// (8 slots x 8 MiB = 64 MiB per image topic, the same cost a `/map` channel
+// already carries), never blanket across every topic. Both ends of a bridge
+// read the same variable - publisher and subscriber, shim and daemon - so a
+// channel keeps one layout. An already open channel keeps the layout it was
+// created with, exactly as `large_slot_size()` documents.
+inline uint32_t image_slot_size()
+{
+  static const uint32_t size =
+    static_cast<uint32_t>(env_u64("NAV2_SHM_IMAGE_SLOT_SIZE", 8ull << 20));
+  return size;
+}
+
+inline uint32_t pointcloud_slot_size()
+{
+  static const uint32_t size =
+    static_cast<uint32_t>(env_u64("NAV2_SHM_POINTCLOUD_SLOT_SIZE", 8ull << 20));
+  return size;
+}
+
 // A parameter service carries a name list, a handful of values or a descriptor
 // - never a grid - and each node has twelve channels of them (six services, a
 // request and a response each). At the default slot size those twelve rings
@@ -150,6 +179,45 @@ inline uint32_t slot_size_for_topic(const std::string & topic)
     return large_slot_size();
   }
   return default_slot_size();
+}
+
+// The same question, but asked by a caller that knows the message type - a
+// publisher or subscription in the shim, the bridge daemon mirroring a
+// typed topic. A type is more reliable than a name: `/camera/image_raw` says
+// nothing about how many bytes are coming, and `/scan` says "laser" only to
+// someone who already knows.
+//
+// The mapping is on the DDS type name (`sensor_msgs/msg/Image`), which is
+// what `ros2_shim::message_type_name<MessageT>()` returns and what the graph
+// stores, so the same string sizes both ends. Everything else falls back to
+// the name rules, which keep their `map`/`costmap` sizing for grids and their
+// small sizes for the parameter-shaped names.
+inline uint32_t slot_size_for_type(const std::string & type_name, const std::string & topic)
+{
+  // The small-channel rules still win: nothing sane puts an image on a
+  // parameter service, and the memory math behind those rules - a committed
+  // ring per node process - is the one that hurt before.
+  if (is_parameter_service_name(topic) || topic == "/parameter_events" ||
+    topic == "/rosout" || is_action_status_name(topic))
+  {
+    return slot_size_for_topic(topic);
+  }
+  // A compressed image is a JPEG/PNG blob, normally far below 1 MB; giving it
+  // the full image ring would be 64 MB for a topic whose samples are 50 KB.
+  if (type_name.find("CompressedImage") != std::string::npos) {
+    return default_slot_size();
+  }
+  // Both the modern (`sensor_msgs/msg/Image`) and the legacy
+  // (`sensor_msgs/Image`) spellings end the same way.
+  if (type_name.find("/msg/Image") != std::string::npos ||
+    type_name.find("/Image") != std::string::npos)
+  {
+    return image_slot_size();
+  }
+  if (type_name.find("PointCloud") != std::string::npos) {
+    return pointcloud_slot_size();
+  }
+  return slot_size_for_topic(topic);
 }
 
 // "<topic>" -> "ros2shim<topic>". One flat name space is what makes the bridge

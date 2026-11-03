@@ -942,7 +942,7 @@ private:
     }
 
     std::string error;
-    mirror->channel = ros2_bridge::create_channel(topic.name, &error);
+    mirror->channel = ros2_bridge::create_channel(topic.name, &error, topic.type);
     if (!mirror->channel) {
       std::fprintf(
         stderr, "[bridge] cannot create shared memory for '%s': %s\n", topic.name.c_str(),
@@ -1740,7 +1740,7 @@ private:
         // owner of this topic (it is advertised as remote in the graph) the
         // daemon creates it and keeps the handle, so a single `--once` publish
         // lands whether it happens before or after nav2 shows up.
-        uplink->channel = ros2_bridge::create_channel(uplink->topic, &error);
+        uplink->channel = ros2_bridge::create_channel(uplink->topic, &error, uplink->type);
         if (!uplink->channel) {
           if (!uplink->reported) {
             uplink->reported = true;

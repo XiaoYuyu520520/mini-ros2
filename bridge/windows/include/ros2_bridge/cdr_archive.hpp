@@ -112,14 +112,43 @@ private:
     writer_.writeU16(0);
   }
 
+  // Primitive sequences are the hot path - a laser scan's two float arrays,
+  // an odometry's 36 covariance doubles - and every element used to pay one
+  // virtual-sized `align()` plus one insert. When the stream is little endian
+  // (both this port's targets are) the whole array is one memcpy: after one
+  // `align(sizeof(T))` each element of a primitive sequence is naturally
+  // aligned, exactly as the per-element loop would have left it, and the host
+  // representation of IEEE floats and two's-complement integers *is* the CDR
+  // bytes. Big endian keeps the element loop, which byte swaps per element.
+  //
+  // `std::vector<bool>` is excluded upstream in `is_scalar` and stays on the
+  // element path, where its bit proxies read one byte per element.
+  template<class T>
+  void writeScalarSequence(const T * elements, std::uint32_t count)
+  {
+    constexpr std::size_t width = sizeof(T);
+    if (count == 0) {
+      return;
+    }
+    if constexpr (width == 1) {
+      // One byte primitives carry no alignment at all.
+      writer_.writeRaw(reinterpret_cast<const std::uint8_t *>(elements), count);
+    } else if (writer_.little_endian()) {
+      writer_.align(width);
+      writer_.writeRaw(reinterpret_cast<const std::uint8_t *>(elements), count * width);
+    } else {
+      for (std::uint32_t i = 0; i < count; ++i) {
+        write(elements[i]);
+      }
+    }
+  }
+
   template<class T>
   void write(const std::vector<T> & value)
   {
     writer_.writeU32(static_cast<std::uint32_t>(value.size()));
     if constexpr (detail::is_scalar<T>) {
-      for (const T & element : value) {
-        write(element);
-      }
+      writeScalarSequence(value.data(), static_cast<std::uint32_t>(value.size()));
     } else {
       for (const T & element : value) {
         write(element);
@@ -130,8 +159,12 @@ private:
   template<class T, std::size_t N>
   void write(const std::array<T, N> & value)
   {
-    for (const T & element : value) {
-      write(element);
+    if constexpr (detail::is_scalar<T>) {
+      writeScalarSequence(value.data(), static_cast<std::uint32_t>(N));
+    } else {
+      for (const T & element : value) {
+        write(element);
+      }
     }
   }
 

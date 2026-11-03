@@ -1019,6 +1019,15 @@ target_compile_options(test_rosout PRIVATE
   -include ${CMAKE_CURRENT_SOURCE_DIR}/include/ros2_shim/prelude.hpp)
 target_link_libraries(test_rosout PRIVATE ros2_shim)
 
+# The serialization fast paths (sized buffers, bulk primitive arrays) and the
+# slot sizes a message type decides. Both are invisible when they are wrong:
+# the bytes have to stay the same, and a frame that does not fit its slot is
+# dropped without a word.
+add_executable(test_serialization_bulk tests/serialization_bulk.cpp)
+target_compile_options(test_serialization_bulk PRIVATE
+  -include ${CMAKE_CURRENT_SOURCE_DIR}/include/ros2_shim/prelude.hpp)
+target_link_libraries(test_serialization_bulk PRIVATE ros2_shim)
+
 # `<action>/_action/status`: the seventh channel of an action, the one an
 # application subscribes to instead of blocking on `async_get_result`.
 # `nav2_waypoint_cycle` is why it exists and what it is shaped for.
@@ -1136,6 +1145,7 @@ add_test(NAME ros2_shim_param_args COMMAND test_param_args)
 add_test(NAME ros2_shim_parameter_service COMMAND test_parameter_service)
 add_test(NAME ros2_shim_parameter_events COMMAND test_parameter_events)
 add_test(NAME ros2_shim_rosout COMMAND test_rosout)
+add_test(NAME ros2_shim_serialization_bulk COMMAND test_serialization_bulk)
 add_test(NAME ros2_shim_action_status COMMAND test_action_status)
 add_test(NAME slam_toolbox_eigen_pose_graph_solver COMMAND test_eigen_pose_graph_solver)
 # Full mapping run: synthetic robot + laser -> slam_toolbox -> /map.

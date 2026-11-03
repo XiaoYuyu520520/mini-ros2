@@ -1,6 +1,8 @@
 #ifndef RCLCPP__PUBLISHER_HPP_
 #define RCLCPP__PUBLISHER_HPP_
 
+#include <cstdint>
+#include <cstdio>
 #include <memory>
 #include <string>
 
@@ -54,7 +56,11 @@ public:
   void publish(const MessageT & message)
   {
     const auto bytes = ros2_shim::serialize(message);
-    tracePublish(bytes.size(), channel_->publish(bytes.data(), bytes.size()));
+    const bool ok = channel_->publish(bytes.data(), bytes.size());
+    if (!ok) {
+      notePublishFailed(bytes.size());
+    }
+    tracePublish(bytes.size(), ok);
   }
 
   void publish(std::unique_ptr<MessageT> message)
@@ -65,6 +71,10 @@ public:
   }
 
   const char * get_topic_name() const override {return topic_.c_str();}
+
+  // Samples dropped because they did not fit the slot. `publish()` reports
+  // success per call; this is the total a caller can log at shutdown.
+  uint64_t oversized_count() const {return oversized_;}
 
   // Counted from the shared graph rather than from DDS: nodes register their
   // subscriptions there and the gRPC bridge registers the topics it mirrors in
@@ -117,6 +127,28 @@ protected:
     std::fflush(stderr);
   }
 
+  // A failed publish used to be completely silent: the sample just vanished,
+  // and the one case that actually happens in the field - a message larger
+  // than the channel's slot - looked on every screen exactly like a topic
+  // nobody is publishing. Report the first failure of this publisher at full
+  // volume (the sizes and the two environment variables that fix it) and
+  // keep counting afterwards; the counter is what a long run summarizes.
+  void notePublishFailed(std::size_t size)
+  {
+    ++oversized_;
+    if (oversized_ == 1) {
+      std::fprintf(
+        stderr,
+        "[shim_pub] %s: a %zu byte sample does not fit this channel's slot "
+        "(%u bytes) and was dropped. Raise NAV2_SHM_SLOT_SIZE / "
+        "NAV2_SHM_IMAGE_SLOT_SIZE / NAV2_SHM_LARGE_SLOT_SIZE (publisher and "
+        "subscriber need the same value; restart both ends), and check that "
+        "the subscriber on this topic really opened the same channel.\n",
+        topic_.c_str(), size, channel_ ? channel_->slot_size() : 0u);
+      std::fflush(stderr);
+    }
+  }
+
   bool traceEnabled() const
   {
     const char * filter = std::getenv("NAV2_SHM_PUB_DEBUG");
@@ -125,6 +157,7 @@ protected:
 
   mutable std::size_t traceLastCount_ = ~std::size_t(0);
   mutable std::size_t trace_writes_ = 0;
+  mutable uint64_t oversized_ = 0;
 
   std::string topic_;
   std::shared_ptr<shm_transport::ShmChannel> channel_;
