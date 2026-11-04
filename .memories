@@ -1264,3 +1264,16 @@ git 可执行文件: D:/WindowsServer2025_1/software/MSYS2/usr/bin/git.exe (2.55
   「交换前的缓存副本」，只对**被占用**的文件生效，删掉的记录不复活；20 次连跑 0 失败。
 - 构建陷阱：改 `graph.hpp` 触发 ~400 TU 重编，`-j 3` 约 20 分钟；期间只能轮询，
   不能把系统内存打满。
+
+2026-11-04 真机验证（RDK X5, root@192.168.0.220, root/root, tools/ssh_board.py）：
+- 板上 GitHub 直连 git clone 会 early EOF；走 SFTP（paramiko sftp.put，绝对路径）
+  单传 shm_transport 5 个文件即可本地构建（g++ 11.2.0 = CI arm64 同版）。
+- test_shm 8/8 全过（含跨进程、孤儿通道、慢读者丢弃、广播）。
+- shm_fastpath_bench（Release, -j 3）：64B 0.48 µs / laser 3.1 µs / 900KB 帧 641 µs。
+  ARM 核内存带宽弱，CRC 每字节比 x86 慢约 4 倍（激光 2.0 vs 0.47 µs），
+  但 objdump 确认 **81 条 crc32c 硬件指令**在产物里，getauxval(AT_HWCAP)&HWCAP_CRC32
+  置位（Features 里有 crc32）——硬件路径真实生效。
+- x86 Ubuntu（192.168.0.100）已离线（ping「不可达」+ ARP 无表项），本次跳过；
+  shim/bridge 全量测试在 CI arm64 job 上有等效覆盖。
+- 板上 /opt/mini-ros2/mini-ros2-ubuntu22-arm64-0.2.5.tar.gz 是旧发行包
+  （无 test 二进制）；发布新版时可用 release tag 触发重打包。
