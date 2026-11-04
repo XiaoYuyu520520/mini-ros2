@@ -1130,6 +1130,33 @@ inline void collect(
     // this read; see `read_shared`.
     std::string content;
     if (!detail::read_shared(item.path(), content)) {
+      // The file is held by a writer's swap and the budget ran out. The
+      // copy from before the swap is one version old at worst, and it is
+      // the answer until the swap lands - the reader does not have to wait
+      // for a writer that may be off CPU (04-gaps.md, section 7).
+      //
+      // Only a file that is *held* has an answer here. A file that is gone
+      // was removed on purpose, and keeping its last copy would keep a
+      // node alive that is no longer running.
+      bool changed = true;
+      const auto * held = graph_file_cache().lookup(item.path(), changed);
+      if (held == nullptr || changed) {
+        continue;
+      }
+      for (const auto & entry : held->topics) {
+        merge_topic(topics, entry);
+      }
+      nodes.insert(nodes.end(), held->nodes.begin(), held->nodes.end());
+      if (services != nullptr) {
+        for (const auto & entry : held->services) {
+          merge_service(*services, entry);
+        }
+      }
+      if (actions != nullptr) {
+        for (const auto & entry : held->actions) {
+          merge_action(*actions, entry);
+        }
+      }
       continue;
     }
     std::vector<TopicEntry> file_topics;
