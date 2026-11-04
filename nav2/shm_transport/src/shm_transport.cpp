@@ -117,6 +117,34 @@ bool cpu_has_sse42()
   static const bool present = __builtin_cpu_supports("sse4.2");
   return present;
 }
+#elif defined(__aarch64__)
+// The ARM CRC instructions (`crc32cd`, `crc32cb`) are optional in ARMv8 - the
+// base ISA does not have them, so the compiler refuses the intrinsic unless the
+// function itself asks for the feature. Same shape as the x86 path above: one
+// function with the target attribute, and a runtime check so a single build
+// runs on a core that has them and on one that has not.
+__attribute__((target("+crc")))
+uint32_t crc32c_arm(const uint8_t * p, size_t size, uint32_t c)
+{
+  while (size >= 8) {
+    std::uint64_t chunk;
+    std::memcpy(&chunk, p, sizeof(chunk));
+    c = __crc32cd(c, chunk);
+    p += 8;
+    size -= 8;
+  }
+  while (size > 0) {
+    c = __crc32cb(c, *p++);
+    --size;
+  }
+  return c;
+}
+
+bool cpu_has_crc()
+{
+  static const bool present = __builtin_cpu_supports("crc");
+  return present;
+}
 #endif
 
 
@@ -225,18 +253,9 @@ uint32_t crc32c(const void * data, size_t size)
   }
 #endif
 #if defined(__aarch64__)
-  while (size >= 8) {
-    std::uint64_t chunk;
-    std::memcpy(&chunk, p, sizeof(chunk));
-    c = __crc32cd(c, chunk);
-    p += 8;
-    size -= 8;
+  if (cpu_has_crc()) {
+    return crc32c_arm(p, size, c) ^ 0xFFFFFFFFU;
   }
-  while (size > 0) {
-    c = __crc32cb(c, *p++);
-    --size;
-  }
-  return c ^ 0xFFFFFFFFU;
 #endif
 
   // The slice-by-8 fallback: eight tables of 256 entries, so eight bytes are
