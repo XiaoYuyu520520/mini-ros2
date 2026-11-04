@@ -11,6 +11,11 @@
 
 #if defined(__x86_64__) || defined(_M_X64)
 #  include <nmmintrin.h>
+#elif defined(__aarch64__)
+// The ARM CRC intrinsics (`__crc32cd`, `__crc32cb`) are ACLE, not GCC's
+// builtins: without this header they are undeclared, and the arm64 job fails
+// at the point of use rather than here.
+#  include <arm_acle.h>
 #endif
 
 #ifdef _WIN32
