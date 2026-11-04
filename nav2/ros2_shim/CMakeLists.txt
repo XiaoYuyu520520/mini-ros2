@@ -933,6 +933,21 @@ target_compile_options(test_graph_rewrite_cross_process PRIVATE
   -include ${CMAKE_CURRENT_SOURCE_DIR}/include/ros2_shim/prelude.hpp)
 target_link_libraries(test_graph_rewrite_cross_process PRIVATE ros2_shim)
 
+# The graph's file cache: an unchanged file is served from it, a changed one
+# is re-read. A cache that serves a stale graph would hide a node that is
+# running - the failure this whole file format exists to avoid.
+add_executable(test_graph_cache tests/graph_cache.cpp)
+target_compile_options(test_graph_cache PRIVATE
+  -include ${CMAKE_CURRENT_SOURCE_DIR}/include/ros2_shim/prelude.hpp)
+target_link_libraries(test_graph_cache PRIVATE ros2_shim)
+
+# The measurement behind the cache: how much a refresh costs with and
+# without it. Not a ctest - it is a number, not a gate.
+add_executable(graph_cache_bench tests/graph_cache_bench.cpp)
+target_compile_options(graph_cache_bench PRIVATE
+  -include ${CMAKE_CURRENT_SOURCE_DIR}/include/ros2_shim/prelude.hpp)
+target_link_libraries(graph_cache_bench PRIVATE ros2_shim)
+
 # A node on simulated time has to read the ramp's `/clock` back from `now()`.
 # The wall clock is 2026 and the simulation starts at 0, so a component that
 # pairs `now()` with a stamped message is decades away from it -- which is what
@@ -1138,6 +1153,7 @@ add_test(NAME ros2_shim_plugin_names COMMAND test_plugin_names)
 # is how a service that is being served could read as "not available".
 add_test(NAME ros2_shim_graph_rewrite COMMAND test_graph_rewrite)
 add_test(NAME ros2_shim_graph_rewrite_cross_process COMMAND test_graph_rewrite_cross_process)
+add_test(NAME ros2_shim_graph_cache COMMAND test_graph_cache)
 add_test(NAME ros2_shim_clock COMMAND test_clock)
 add_test(NAME ros2_shim_uuid COMMAND test_uuid)
 add_test(NAME ros2_shim_remap COMMAND test_remap)

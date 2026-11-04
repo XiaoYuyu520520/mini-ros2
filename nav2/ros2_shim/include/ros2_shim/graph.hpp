@@ -36,6 +36,7 @@
 #include <algorithm>
 #include <chrono>
 #include <condition_variable>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -406,6 +407,118 @@ inline unsigned long parse_pid(const std::filesystem::path & path)
   }
   return end == stem.size() ? pid : 0;
 }
+
+
+// ------------------------------------------------------------------ the cache
+// The cache: one parsed file per `<pid>.graph`, keyed on the file's
+// identity.
+//
+// Reading and parsing the same bytes again is the whole cost of a refresh,
+// and a graph file rarely changes between two refreshes - a node rewrites
+// its file when its own graph changes, not on a timer. So the parsed
+// result is kept next to the identity it was parsed from, and a file whose
+// size and modification time are unchanged is not opened at all.
+//
+// The identity is what the OS gives for free: the path, the size and the
+// modification time. A rewrite replaces the file (it is written to a `.tmp`
+// and swapped in), so the modification time changes; the clock granularity
+// is the limit, and the merged view's own 250 ms window is longer than any
+// clock tick that matters here.
+struct GraphFileCache
+{
+  struct Entry
+  {
+    std::uintmax_t size = 0;
+    std::int64_t modified = 0;
+    bool valid = false;
+    std::vector<TopicEntry> topics;
+    std::vector<NodeEntry> nodes;
+    std::vector<ServiceEntry> services;
+    std::vector<ActionEntry> actions;
+  };
+
+  // The identity of one file, as the filesystem reports it.
+  static bool identity_of(
+    const std::filesystem::path & path, std::uintmax_t & size, std::int64_t & modified)
+  {
+    std::error_code error;
+    const auto status = std::filesystem::status(path, error);
+    if (error || !std::filesystem::exists(status)) {
+      return false;
+    }
+    const auto written = std::filesystem::last_write_time(path, error);
+    if (error) {
+      return false;
+    }
+    size = std::filesystem::file_size(path, error);
+    if (error) {
+      return false;
+    }
+    modified = written.time_since_epoch().count();
+    return true;
+  }
+
+  // The parsed contents of `path`, from the cache when the file has not
+  // changed since it was last parsed.
+  const Entry * lookup(
+    const std::filesystem::path & path, bool & changed)
+  {
+    std::uintmax_t size = 0;
+    std::int64_t modified = 0;
+    if (!identity_of(path, size, modified)) {
+      cache_.erase(path.string());
+      changed = true;
+      return nullptr;
+    }
+    auto it = cache_.find(path.string());
+    if (it == cache_.end()) {
+      changed = true;
+      return nullptr;
+    }
+    const Entry & entry = it->second;
+    if (entry.size != size || entry.modified != modified) {
+      changed = true;
+      return nullptr;
+    }
+    changed = false;
+    return &entry;
+  }
+
+  // Stores what a caller just parsed, so the next refresh can skip the file.
+  void store(
+    const std::filesystem::path & path, std::uintmax_t size, std::int64_t modified,
+    std::vector<TopicEntry> topics, std::vector<NodeEntry> nodes,
+    std::vector<ServiceEntry> services, std::vector<ActionEntry> actions)
+  {
+    Entry entry;
+    entry.size = size;
+    entry.modified = modified;
+    entry.valid = true;
+    entry.topics = std::move(topics);
+    entry.nodes = std::move(nodes);
+    entry.services = std::move(services);
+    entry.actions = std::move(actions);
+    cache_[path.string()] = std::move(entry);
+  }
+
+  // Drops a file that is gone (its process died).
+  void forget(const std::filesystem::path & path)
+  {
+    cache_.erase(path.string());
+  }
+
+  // Drops everything - used when the namespace changes under us, and by the
+  // tests that want a cold cache.
+  void clear()
+  {
+    cache_.clear();
+  }
+
+  std::size_t size() const {return cache_.size();}
+
+private:
+  std::map<std::string, Entry> cache_;
+};
 
 }  // namespace detail
 
@@ -859,6 +972,12 @@ private:
   std::vector<ActionEntry> actions_;
 };
 
+inline detail::GraphFileCache & graph_file_cache()
+{
+  static detail::GraphFileCache cache;
+  return cache;
+}
+
 // ------------------------------------------------------------------ reading
 
 inline void merge_topic(std::vector<TopicEntry> & topics, const TopicEntry & incoming)
@@ -969,6 +1088,7 @@ inline void collect(
     if (remove_stale && detail::process_gone(pid)) {
       std::error_code ignored;
       std::filesystem::remove(item.path(), ignored);
+      graph_file_cache().forget(item.path());
       continue;
     }
     // This process' own file is a copy of records that are already here, and a
@@ -979,6 +1099,29 @@ inline void collect(
     if (pid == detail::current_pid()) {
       if (ProcessRegistry * own = ProcessRegistry::existing()) {
         own->merge_own(topics, nodes, services, actions);
+      }
+      continue;
+    }
+
+    // The cache answers for an unchanged file: its identity is checked
+    // before the file is opened, so a refresh of a graph that did not move
+    // costs two stat calls per file instead of a read and a parse.
+    bool changed = true;
+    const auto * cached = graph_file_cache().lookup(item.path(), changed);
+    if (cached != nullptr && !changed) {
+      for (const auto & entry : cached->topics) {
+        merge_topic(topics, entry);
+      }
+      nodes.insert(nodes.end(), cached->nodes.begin(), cached->nodes.end());
+      if (services != nullptr) {
+        for (const auto & entry : cached->services) {
+          merge_service(*services, entry);
+        }
+      }
+      if (actions != nullptr) {
+        for (const auto & entry : cached->actions) {
+          merge_action(*actions, entry);
+        }
       }
       continue;
     }
@@ -1034,6 +1177,15 @@ inline void collect(
     }
     if (!terminated) {
       continue;  // the owner is mid-rewrite
+    }
+    // The parsed contents are cached under the identity they were read at,
+    // so the next refresh can use them without opening the file again.
+    std::uintmax_t cached_size = 0;
+    std::int64_t cached_modified = 0;
+    if (detail::GraphFileCache::identity_of(item.path(), cached_size, cached_modified)) {
+      graph_file_cache().store(
+        item.path(), cached_size, cached_modified, file_topics, file_nodes, file_services,
+        file_actions);
     }
     for (const auto & entry : file_topics) {
       merge_topic(topics, entry);

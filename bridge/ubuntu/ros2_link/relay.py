@@ -134,16 +134,27 @@ class _Latency:
     """Bounded reservoir of recent one-way delays, in milliseconds.
 
     ``stamp_ns`` is wall clock at the publishing agent; the delta to the
-    relay's clock at delivery is the link latency. Percentiles are computed
-    from the reservoir on demand - sorting 512 floats is cheaper than
-    maintaining order online, and a snapshot is rare next to a message.
+    relay's clock at delivery is the link latency.
+
+    The percentiles are kept ready rather than computed on demand. A snapshot
+    asks every topic for its distribution, and sorting a reservoir of 512
+    floats for each of a hundred topics holds the relay's lock for
+    milliseconds - which is milliseconds the message path waits. So the
+    sorted copy is kept next to the reservoir and the percentiles are
+    recomputed only when a new sample landed.
+
+    The reservoir is a ring, so a new sample can be older than the ones
+    already in it; the sorted list drops the values that fell off the end
+    and keeps the same length, which is what keeps the percentiles honest.
     """
 
-    __slots__ = ("samples", "stale")
+    __slots__ = ("samples", "stale", "_sorted", "_dirty")
 
     def __init__(self) -> None:
         self.samples: deque[float] = deque(maxlen=LATENCY_MAX_SAMPLES)
         self.stale = 0
+        self._sorted: list[float] = []
+        self._dirty = False
 
     def add(self, now_ns: int, stamp_ns: int) -> bool:
         if stamp_ns <= 0:
@@ -154,12 +165,17 @@ class _Latency:
             self.stale += 1
             return False
         self.samples.append(delta / 1e6)
+        self._dirty = True
         return True
 
+    # The percentiles, from the sorted copy. Called under the relay's lock,
+    # so it must not sort: the sort happened when the sample arrived.
     def snapshot(self) -> dict:
-        if not self.samples:
+        if self._dirty:
+            self._resort()
+        if not self._sorted:
             return {"samples": 0, "stale_stamps": self.stale}
-        ordered = sorted(self.samples)
+        ordered = self._sorted
 
         def pct(fraction: float) -> float:
             index = min(len(ordered) - 1, int(len(ordered) * fraction))
@@ -173,6 +189,18 @@ class _Latency:
             "p99_ms": pct(0.99),
             "max_ms": round(ordered[-1], 3),
         }
+
+    # Re-sorts the reservoir into the copy the percentiles come from.
+    #
+    # The reservoir is a ring: the sample that fell off the front is the one
+    # missing from the sorted copy, and it is the smallest or the largest
+    # depending on where it sat. Dropping it by value would drop the wrong
+    # one when two samples are equal, so the copy is rebuilt from the
+    # reservoir instead - a sort of 512 floats, but only when a sample
+    # arrived.
+    def _resort(self) -> None:
+        self._sorted = sorted(self.samples)
+        self._dirty = False
 
 #: What to do when both upstreams publish the same topic name.
 #:
