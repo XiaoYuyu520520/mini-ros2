@@ -1,5 +1,9 @@
 #include "ros2_bridge/service_registry.hpp"
 
+// Every registered type's header, generated from the manifest:
+// bridge/tests/registry_manifest.txt.
+#include "ros2_bridge/registry_generated.hpp"
+
 #include <map>
 #include <sstream>
 #include <type_traits>
@@ -770,141 +774,11 @@ ServiceCodec makeService(const char * type)
 const std::map<std::string, ServiceCodec> & registry()
 {
   static const std::map<std::string, ServiceCodec> table = {
-    {"std_srvs/srv/Empty", makeService<std_srvs::srv::Empty>("std_srvs/srv/Empty")},
-    {"std_srvs/srv/Trigger", makeService<std_srvs::srv::Trigger>("std_srvs/srv/Trigger")},
-    {"std_srvs/srv/SetBool", makeService<std_srvs::srv::SetBool>("std_srvs/srv/SetBool")},
-    {"lifecycle_msgs/srv/GetState",
-      makeService<lifecycle_msgs::srv::GetState>("lifecycle_msgs/srv/GetState")},
-    {"lifecycle_msgs/srv/ChangeState",
-      makeService<lifecycle_msgs::srv::ChangeState>("lifecycle_msgs/srv/ChangeState")},
-    {"lifecycle_msgs/srv/GetAvailableTransitions",
-      makeService<lifecycle_msgs::srv::GetAvailableTransitions>(
-        "lifecycle_msgs/srv/GetAvailableTransitions")},
-    {"nav2_msgs/srv/ManageLifecycleNodes",
-      makeService<nav2_msgs::srv::ManageLifecycleNodes>(
-        "nav2_msgs/srv/ManageLifecycleNodes")},
-
-    // The two nav2 services a *robot* serves rather than a server on this
-    // machine, which is the direction the bridge carries services in: the
-    // agent advertises them and the daemon mirrors them here, so
-    // `ros2 service call /sim/set_initial_pose ...` reaches the robot's own
-    // implementation. Anything the robot does not advertise still shows up in
-    // `ros2 service list` - it is the *codec* that has to exist here, and an
-    // unknown type is reported as one rather than half-decoded.
-    {"nav2_msgs/srv/SetInitialPose",
-      makeService<nav2_msgs::srv::SetInitialPose>("nav2_msgs/srv/SetInitialPose")},
-    {"nav2_msgs/srv/Toggle",
-      makeService<nav2_msgs::srv::Toggle>("nav2_msgs/srv/Toggle")},
-
-    // The rest of the nav2 servers' service surface: every costmap answers
-    // four clear services - created by
-    // nav2_costmap_2d/src/clear_costmap_service.cpp:171-244 - and the planner
-    // and the map server add three more that a live stack advertises.
-    // Without these the CLI answers `no codec for service type ...` for the
-    // one call an operator reaches for most often, clearing a costmap.
-    {"nav2_msgs/srv/ClearEntireCostmap",
-      makeService<nav2_msgs::srv::ClearEntireCostmap>(
-        "nav2_msgs/srv/ClearEntireCostmap")},
-    {"nav2_msgs/srv/ClearCostmapAroundRobot",
-      makeService<nav2_msgs::srv::ClearCostmapAroundRobot>(
-        "nav2_msgs/srv/ClearCostmapAroundRobot")},
-    {"nav2_msgs/srv/ClearCostmapExceptRegion",
-      makeService<nav2_msgs::srv::ClearCostmapExceptRegion>(
-        "nav2_msgs/srv/ClearCostmapExceptRegion")},
-    {"nav2_msgs/srv/ClearCostmapAroundPose",
-      makeService<nav2_msgs::srv::ClearCostmapAroundPose>(
-        "nav2_msgs/srv/ClearCostmapAroundPose")},
-
-    // `GetCostmap` answers with a `nav2_msgs/Costmap`, which is the one
-    // response in this table that carries a nested message with a `uint8[]`
-    // inside it; `GetCosts` and `IsPathValid` are the planner's other two
-    // questions.
-    {"nav2_msgs/srv/GetCostmap",
-      makeService<nav2_msgs::srv::GetCostmap>("nav2_msgs/srv/GetCostmap")},
-    {"nav2_msgs/srv/GetCosts",
-      makeService<nav2_msgs::srv::GetCosts>("nav2_msgs/srv/GetCosts")},
-    {"nav2_msgs/srv/IsPathValid",
-      makeService<nav2_msgs::srv::IsPathValid>("nav2_msgs/srv/IsPathValid")},
-
-    // The map server's pair: `LoadMap` reads a YAML into an OccupancyGrid,
-    // `SaveMap` writes the map currently on a topic back out. Both are the
-    // service spelling of what `map_server.exe` / `map_saver_cli.exe` do at
-    // startup and shutdown.
-    {"nav2_msgs/srv/LoadMap",
-      makeService<nav2_msgs::srv::LoadMap>("nav2_msgs/srv/LoadMap")},
-    {"nav2_msgs/srv/SaveMap",
-      makeService<nav2_msgs::srv::SaveMap>("nav2_msgs/srv/SaveMap")},
-    // The last eight of the twenty `nav2_msgs` srv: the collision monitor's
-    // zone pair, the object servers' shape trio, the route server's two, and
-    // the docking server's database reload. All four nodes are this port's own
-    // binaries, so every one of them can be called on a live graph.
-    {"nav2_msgs/srv/AddExclusionZone",
-      makeService<nav2_msgs::srv::AddExclusionZone>("nav2_msgs/srv/AddExclusionZone")},
-    {"nav2_msgs/srv/RemoveExclusionZone",
-      makeService<nav2_msgs::srv::RemoveExclusionZone>(
-        "nav2_msgs/srv/RemoveExclusionZone")},
-    {"nav2_msgs/srv/AddShapes",
-      makeService<nav2_msgs::srv::AddShapes>("nav2_msgs/srv/AddShapes")},
-    {"nav2_msgs/srv/RemoveShapes",
-      makeService<nav2_msgs::srv::RemoveShapes>("nav2_msgs/srv/RemoveShapes")},
-    {"nav2_msgs/srv/GetShapes",
-      makeService<nav2_msgs::srv::GetShapes>("nav2_msgs/srv/GetShapes")},
-    {"nav2_msgs/srv/DynamicEdges",
-      makeService<nav2_msgs::srv::DynamicEdges>("nav2_msgs/srv/DynamicEdges")},
-    {"nav2_msgs/srv/SetRouteGraph",
-      makeService<nav2_msgs::srv::SetRouteGraph>("nav2_msgs/srv/SetRouteGraph")},
-    {"nav2_msgs/srv/ReloadDockDatabase",
-      makeService<nav2_msgs::srv::ReloadDockDatabase>(
-        "nav2_msgs/srv/ReloadDockDatabase")},
-
-    // slam_toolbox's pose graph archive. Unlike the two above these are served
-    // by a node on *this* machine - the ported one creates both services in
-    // setROSInterfaces() (third_party/slam_toolbox/src/slam_toolbox_common.cpp
-    // :459 and :463) - so the request leaves through the shared-memory channel
-    // and the answer comes back the same way, with no daemon in the middle.
-    // The `<name>.posegraph` + `<name>.data` pair written here is what
-    // `-p map_file_name:=<name>` reads back at configure time.
-    {"slam_toolbox/srv/SerializePoseGraph",
-      makeService<slam_toolbox::srv::SerializePoseGraph>(
-        "slam_toolbox/srv/SerializePoseGraph")},
-    {"slam_toolbox/srv/DeserializePoseGraph",
-      makeService<slam_toolbox::srv::DeserializePoseGraph>(
-        "slam_toolbox/srv/DeserializePoseGraph")},
-
-    // The rest of that node's service surface, served the same way - the
-    // codecs here are what make `ros2 service call slam_toolbox/reset ...`
-    // and the eight names beside it reach the ported node over shared
-    // memory: third_party/slam_toolbox/src/slam_toolbox_common.cpp:454-467
-    // (pause, reset), loop_closure_assistant.cpp:54-71 (clear, manual loop
-    // closure, interactive mode), map_saver.cpp:34 (save_map),
-    // merge_maps_kinematic.cpp:50-53 (merge, add submap) and
-    // slam_toolbox_sync.cpp:73 (clear_queue).
-    {"slam_toolbox/srv/AddSubmap",
-      makeService<slam_toolbox::srv::AddSubmap>("slam_toolbox/srv/AddSubmap")},
-    {"slam_toolbox/srv/Clear",
-      makeService<slam_toolbox::srv::Clear>("slam_toolbox/srv/Clear")},
-    {"slam_toolbox/srv/ClearQueue",
-      makeService<slam_toolbox::srv::ClearQueue>("slam_toolbox/srv/ClearQueue")},
-    {"slam_toolbox/srv/LoopClosure",
-      makeService<slam_toolbox::srv::LoopClosure>("slam_toolbox/srv/LoopClosure")},
-    {"slam_toolbox/srv/MergeMaps",
-      makeService<slam_toolbox::srv::MergeMaps>("slam_toolbox/srv/MergeMaps")},
-    {"slam_toolbox/srv/Pause",
-      makeService<slam_toolbox::srv::Pause>("slam_toolbox/srv/Pause")},
-    {"slam_toolbox/srv/Reset",
-      makeService<slam_toolbox::srv::Reset>("slam_toolbox/srv/Reset")},
-    {"slam_toolbox/srv/SaveMap",
-      makeService<slam_toolbox::srv::SaveMap>("slam_toolbox/srv/SaveMap")},
-    {"slam_toolbox/srv/ToggleInteractive",
-      makeService<slam_toolbox::srv::ToggleInteractive>(
-        "slam_toolbox/srv/ToggleInteractive")},
-
-    // `slam_toolbox/dynamic_map` is the one service the node serves under a
-    // nav_msgs type (slam_toolbox_common.cpp:451), so `nav_msgs/srv/GetMap`
-    // belongs beside slam_toolbox's own rather than with the nav2_msgs pair
-    // above: it is the map the node is holding at the moment of the call.
-    {"nav_msgs/srv/GetMap",
-      makeService<nav_msgs::srv::GetMap>("nav_msgs/srv/GetMap")},
+    // Generated from bridge/tests/registry_manifest.txt (see
+    // bridge/tests/generate_registries.py). The pretty printer and the
+    // field setter of a type stay in this file - they are the part that
+    // needs a decision, not a list of names.
+#include "ros2_bridge/registry_srv_table.inc"
   };
   return table;
 }

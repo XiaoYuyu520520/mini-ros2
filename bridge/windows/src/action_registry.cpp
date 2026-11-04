@@ -1,5 +1,9 @@
 #include "ros2_bridge/action_registry.hpp"
 
+// Every registered type's header, generated from the manifest:
+// bridge/tests/registry_manifest.txt.
+#include "ros2_bridge/registry_generated.hpp"
+
 #include <map>
 #include <sstream>
 #include <string>
@@ -672,61 +676,11 @@ ActionCodec makeAction(const char * type)
 const std::map<std::string, ActionCodec> & registry()
 {
   static const std::map<std::string, ActionCodec> table = {
-    {"ros2_bridge_sim/action/Drive",
-      makeAction<ros2_bridge_sim::action::Drive>("ros2_bridge_sim/action/Drive")},
-
-    // The behaviors, in the order nav2_behaviors' own plugin list has them.
-    {"nav2_msgs/action/Spin",
-      makeAction<nav2_msgs::action::Spin>("nav2_msgs/action/Spin")},
-    {"nav2_msgs/action/BackUp",
-      makeAction<nav2_msgs::action::BackUp>("nav2_msgs/action/BackUp")},
-    {"nav2_msgs/action/DriveOnHeading",
-      makeAction<nav2_msgs::action::DriveOnHeading>("nav2_msgs/action/DriveOnHeading")},
-    {"nav2_msgs/action/Wait",
-      makeAction<nav2_msgs::action::Wait>("nav2_msgs/action/Wait")},
-
-    // The navigator and its two halves.
-    {"nav2_msgs/action/NavigateToPose",
-      makeAction<nav2_msgs::action::NavigateToPose>("nav2_msgs/action/NavigateToPose")},
-    {"nav2_msgs/action/ComputePathToPose",
-      makeAction<nav2_msgs::action::ComputePathToPose>(
-        "nav2_msgs/action/ComputePathToPose")},
-    {"nav2_msgs/action/FollowPath",
-      makeAction<nav2_msgs::action::FollowPath>("nav2_msgs/action/FollowPath")},
-    {"nav2_msgs/action/FollowWaypoints",
-      makeAction<nav2_msgs::action::FollowWaypoints>("nav2_msgs/action/FollowWaypoints")},
-    {"nav2_msgs/action/NavigateThroughPoses",
-      makeAction<nav2_msgs::action::NavigateThroughPoses>(
-        "nav2_msgs/action/NavigateThroughPoses")},
-    {"nav2_msgs/action/SmoothPath",
-      makeAction<nav2_msgs::action::SmoothPath>("nav2_msgs/action/SmoothPath")},
-
-    // The second planner entry point (ComputePathThroughPoses) and the route
-    // server's pair. `ComputeAndTrackRoute` and `ComputeRoute` take the same
-    // goal message, so they are two rows over one branch above.
-    {"nav2_msgs/action/ComputePathThroughPoses",
-      makeAction<nav2_msgs::action::ComputePathThroughPoses>(
-        "nav2_msgs/action/ComputePathThroughPoses")},
-    {"nav2_msgs/action/ComputeRoute",
-      makeAction<nav2_msgs::action::ComputeRoute>("nav2_msgs/action/ComputeRoute")},
-    {"nav2_msgs/action/ComputeAndTrackRoute",
-      makeAction<nav2_msgs::action::ComputeAndTrackRoute>(
-        "nav2_msgs/action/ComputeAndTrackRoute")},
-
-    // Docking, object following and teleop.
-    {"nav2_msgs/action/DockRobot",
-      makeAction<nav2_msgs::action::DockRobot>("nav2_msgs/action/DockRobot")},
-    {"nav2_msgs/action/UndockRobot",
-      makeAction<nav2_msgs::action::UndockRobot>("nav2_msgs/action/UndockRobot")},
-    {"nav2_msgs/action/FollowObject",
-      makeAction<nav2_msgs::action::FollowObject>("nav2_msgs/action/FollowObject")},
-    {"nav2_msgs/action/FollowGPSWaypoints",
-      makeAction<nav2_msgs::action::FollowGPSWaypoints>(
-        "nav2_msgs/action/FollowGPSWaypoints")},
-    {"nav2_msgs/action/AssistedTeleop",
-      makeAction<nav2_msgs::action::AssistedTeleop>("nav2_msgs/action/AssistedTeleop")},
-    {"nav2_msgs/action/DummyBehavior",
-      makeAction<nav2_msgs::action::DummyBehavior>("nav2_msgs/action/DummyBehavior")},
+    // Generated from bridge/tests/registry_manifest.txt (see
+    // bridge/tests/generate_registries.py). The pretty printer and the
+    // field setter of a type stay in this file - they are the part that
+    // needs a decision, not a list of names.
+#include "ros2_bridge/registry_action_table.inc"
   };
   return table;
 }

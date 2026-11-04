@@ -163,6 +163,7 @@ jobs:
       - name: docs, structure, scratch references and vendored patches
         run: |
           python tools/check_docs.py
+          python bridge/tests/generate_registries.py --check
           python tools/check_local_paths.py
           python tools/check_structure.py
           python tools/find_scratch_refs.py --check

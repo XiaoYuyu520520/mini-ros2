@@ -1,5 +1,9 @@
 #include "ros2_bridge/type_registry.hpp"
 
+// Every registered type's header, generated from the manifest:
+// bridge/tests/registry_manifest.txt.
+#include "ros2_bridge/registry_generated.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -891,73 +895,11 @@ Codec makeCodec(const char * type)
 const std::map<std::string, Codec> & registry()
 {
   static const std::map<std::string, Codec> table = {
-    {"sensor_msgs/msg/LaserScan", makeCodec<sensor_msgs::msg::LaserScan>("sensor_msgs/msg/LaserScan")},
-    {"sensor_msgs/msg/PointCloud2", makeCodec<sensor_msgs::msg::PointCloud2>("sensor_msgs/msg/PointCloud2")},
-    {"sensor_msgs/msg/Imu", makeCodec<sensor_msgs::msg::Imu>("sensor_msgs/msg/Imu")},
-    // The camera pair. Without these two every image topic on the robot is a
-    // byte count on this side, and SLAM's vision-only plugins have no way in
-    // (04-gaps.md section B).
-    {"sensor_msgs/msg/Image", makeCodec<sensor_msgs::msg::Image>("sensor_msgs/msg/Image")},
-    {"sensor_msgs/msg/CameraInfo",
-      makeCodec<sensor_msgs::msg::CameraInfo>("sensor_msgs/msg/CameraInfo")},
-    {"nav_msgs/msg/Odometry", makeCodec<nav_msgs::msg::Odometry>("nav_msgs/msg/Odometry")},
-    {"nav_msgs/msg/OccupancyGrid", makeCodec<nav_msgs::msg::OccupancyGrid>("nav_msgs/msg/OccupancyGrid")},
-    {"nav_msgs/msg/Path", makeCodec<nav_msgs::msg::Path>("nav_msgs/msg/Path")},
-    {"nav_msgs/msg/MapMetaData", makeCodec<nav_msgs::msg::MapMetaData>("nav_msgs/msg/MapMetaData")},
-    {"geometry_msgs/msg/Twist", makeCodec<geometry_msgs::msg::Twist>("geometry_msgs/msg/Twist")},
-    {"geometry_msgs/msg/TwistStamped", makeCodec<geometry_msgs::msg::TwistStamped>("geometry_msgs/msg/TwistStamped")},
-    {"geometry_msgs/msg/PoseStamped", makeCodec<geometry_msgs::msg::PoseStamped>("geometry_msgs/msg/PoseStamped")},
-    {"geometry_msgs/msg/PoseWithCovarianceStamped",
-      makeCodec<geometry_msgs::msg::PoseWithCovarianceStamped>("geometry_msgs/msg/PoseWithCovarianceStamped")},
-    {"geometry_msgs/msg/PoseArray", makeCodec<geometry_msgs::msg::PoseArray>("geometry_msgs/msg/PoseArray")},
-    {"geometry_msgs/msg/PolygonStamped", makeCodec<geometry_msgs::msg::PolygonStamped>("geometry_msgs/msg/PolygonStamped")},
-    {"tf2_msgs/msg/TFMessage", makeCodec<tf2_msgs::msg::TFMessage>("tf2_msgs/msg/TFMessage")},
-    {"std_msgs/msg/String", makeCodec<std_msgs::msg::String>("std_msgs/msg/String")},
-    {"std_msgs/msg/Bool", makeCodec<std_msgs::msg::Bool>("std_msgs/msg/Bool")},
-    {"rosgraph_msgs/msg/Clock", makeCodec<rosgraph_msgs::msg::Clock>("rosgraph_msgs/msg/Clock")},
-    {"nav2_msgs/msg/Costmap", makeCodec<nav2_msgs::msg::Costmap>("nav2_msgs/msg/Costmap")},
-    {"visualization_msgs/msg/MarkerArray",
-      makeCodec<visualization_msgs::msg::MarkerArray>("visualization_msgs/msg/MarkerArray")},
-    {"geometry_msgs/msg/PointStamped",
-      makeCodec<geometry_msgs::msg::PointStamped>("geometry_msgs/msg/PointStamped")},
-    {"geometry_msgs/msg/Polygon", makeCodec<geometry_msgs::msg::Polygon>("geometry_msgs/msg/Polygon")},
-    {"nav_msgs/msg/Trajectory",
-      makeCodec<nav_msgs::msg::Trajectory>("nav_msgs/msg/Trajectory")},
-    {"std_msgs/msg/Empty", makeCodec<std_msgs::msg::Empty>("std_msgs/msg/Empty")},
-    {"visualization_msgs/msg/Marker",
-      makeCodec<visualization_msgs::msg::Marker>("visualization_msgs/msg/Marker")},
-    {"diagnostic_msgs/msg/DiagnosticArray",
-      makeCodec<diagnostic_msgs::msg::DiagnosticArray>("diagnostic_msgs/msg/DiagnosticArray")},
-    {"rcl_interfaces/msg/Log", makeCodec<rcl_interfaces::msg::Log>("rcl_interfaces/msg/Log")},
-    {"rcl_interfaces/msg/ParameterEvent",
-      makeCodec<rcl_interfaces::msg::ParameterEvent>("rcl_interfaces/msg/ParameterEvent")},
-    {"map_msgs/msg/OccupancyGridUpdate",
-      makeCodec<map_msgs::msg::OccupancyGridUpdate>("map_msgs/msg/OccupancyGridUpdate")},
-    {"nav2_msgs/msg/CostmapUpdate",
-      makeCodec<nav2_msgs::msg::CostmapUpdate>("nav2_msgs/msg/CostmapUpdate")},
-    {"nav2_msgs/msg/CostmapFilterInfo",
-      makeCodec<nav2_msgs::msg::CostmapFilterInfo>("nav2_msgs/msg/CostmapFilterInfo")},
-    {"nav2_msgs/msg/SpeedLimit",
-      makeCodec<nav2_msgs::msg::SpeedLimit>("nav2_msgs/msg/SpeedLimit")},
-    {"nav2_msgs/msg/VoxelGrid", makeCodec<nav2_msgs::msg::VoxelGrid>("nav2_msgs/msg/VoxelGrid")},
-    {"nav2_msgs/msg/ParticleCloud",
-      makeCodec<nav2_msgs::msg::ParticleCloud>("nav2_msgs/msg/ParticleCloud")},
-    {"nav2_msgs/msg/BehaviorTreeLog",
-      makeCodec<nav2_msgs::msg::BehaviorTreeLog>("nav2_msgs/msg/BehaviorTreeLog")},
-    {"nav2_msgs/msg/CriticsStats",
-      makeCodec<nav2_msgs::msg::CriticsStats>("nav2_msgs/msg/CriticsStats")},
-    {"nav2_msgs/msg/TrackingFeedback",
-      makeCodec<nav2_msgs::msg::TrackingFeedback>("nav2_msgs/msg/TrackingFeedback")},
-    {"nav2_msgs/msg/CollisionMonitorState",
-      makeCodec<nav2_msgs::msg::CollisionMonitorState>("nav2_msgs/msg/CollisionMonitorState")},
-    {"dwb_msgs/msg/LocalPlanEvaluation",
-      makeCodec<dwb_msgs::msg::LocalPlanEvaluation>("dwb_msgs/msg/LocalPlanEvaluation")},
-    // `<action>/_action/status`, which the action servers publish and
-    // `waypoint_cycle` subscribes to. Without a codec here it is a byte count
-    // in `ros2 topic echo`, and - because the bridge transcodes only what it
-    // has a codec for - a topic that cannot be mirrored to the peer either.
-    {"action_msgs/msg/GoalStatusArray",
-      makeCodec<action_msgs::msg::GoalStatusArray>("action_msgs/msg/GoalStatusArray")},
+    // Generated from bridge/tests/registry_manifest.txt (see
+    // bridge/tests/generate_registries.py). The pretty printer and the
+    // field setter of a type stay in this file - they are the part that
+    // needs a decision, not a list of names.
+#include "ros2_bridge/registry_msg_table.inc"
   };
   return table;
 }

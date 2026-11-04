@@ -1,0 +1,128 @@
+# The types the bridge's three registries know about.
+#
+# One line per entry: `<kind>\t<ros2 type name>`.
+#
+#   msg      a topic message      -> type_registry.cpp
+#   srv      a service            -> service_registry.cpp
+#   action   an action            -> action_registry.cpp
+#
+# This file is the single source of truth for *which* types the bridge
+# understands. The table of C++ structs, the include list and the ordering
+# are generated from it by `bridge/tests/generate_registries.py`, so adding a
+# type is one line here plus the include the generator writes - not three
+# hand-edited lists that can drift apart.
+#
+# What the generator does NOT generate: the pretty printer (`describe`) and
+# the field setter (`applyFields`) of a type. Those carry decisions a
+# generator cannot make - which fields are worth printing, how a sequence is
+# summarised, what a friendly name for an enum value is - so they stay
+# hand-written in the registry .cpp files, and a type without one falls back
+# to the generic printer and to "no settable field".
+#
+# The order is the order of the table, and it is kept by hand so the
+# generated file diffs cleanly: a new type goes at the end of its group.
+#
+# A type that is not listed here is not transcoded: the bridge passes it
+# over with a warning, and `ros2 topic echo` prints a byte count.
+
+msg	sensor_msgs/msg/LaserScan
+msg	sensor_msgs/msg/PointCloud2
+msg	sensor_msgs/msg/Imu
+msg	sensor_msgs/msg/Image
+msg	sensor_msgs/msg/CameraInfo
+msg	nav_msgs/msg/Odometry
+msg	nav_msgs/msg/OccupancyGrid
+msg	nav_msgs/msg/Path
+msg	nav_msgs/msg/MapMetaData
+msg	geometry_msgs/msg/Twist
+msg	geometry_msgs/msg/TwistStamped
+msg	geometry_msgs/msg/PoseStamped
+msg	geometry_msgs/msg/PoseWithCovarianceStamped
+msg	geometry_msgs/msg/PoseArray
+msg	geometry_msgs/msg/PolygonStamped
+msg	tf2_msgs/msg/TFMessage
+msg	std_msgs/msg/String
+msg	std_msgs/msg/Bool
+msg	rosgraph_msgs/msg/Clock
+msg	nav2_msgs/msg/Costmap
+msg	visualization_msgs/msg/MarkerArray
+msg	geometry_msgs/msg/PointStamped
+msg	geometry_msgs/msg/Polygon
+msg	nav_msgs/msg/Trajectory
+msg	std_msgs/msg/Empty
+msg	visualization_msgs/msg/Marker
+msg	diagnostic_msgs/msg/DiagnosticArray
+msg	rcl_interfaces/msg/Log
+msg	rcl_interfaces/msg/ParameterEvent
+msg	map_msgs/msg/OccupancyGridUpdate
+msg	nav2_msgs/msg/CostmapUpdate
+msg	nav2_msgs/msg/CostmapFilterInfo
+msg	nav2_msgs/msg/SpeedLimit
+msg	nav2_msgs/msg/VoxelGrid
+msg	nav2_msgs/msg/ParticleCloud
+msg	nav2_msgs/msg/BehaviorTreeLog
+msg	nav2_msgs/msg/CriticsStats
+msg	nav2_msgs/msg/TrackingFeedback
+msg	nav2_msgs/msg/CollisionMonitorState
+msg	dwb_msgs/msg/LocalPlanEvaluation
+msg	action_msgs/msg/GoalStatusArray
+
+srv	std_srvs/srv/Empty
+srv	std_srvs/srv/Trigger
+srv	std_srvs/srv/SetBool
+srv	lifecycle_msgs/srv/GetState
+srv	lifecycle_msgs/srv/ChangeState
+srv	lifecycle_msgs/srv/GetAvailableTransitions
+srv	nav2_msgs/srv/ManageLifecycleNodes
+srv	nav2_msgs/srv/SetInitialPose
+srv	nav2_msgs/srv/Toggle
+srv	nav2_msgs/srv/ClearEntireCostmap
+srv	nav2_msgs/srv/ClearCostmapAroundRobot
+srv	nav2_msgs/srv/ClearCostmapExceptRegion
+srv	nav2_msgs/srv/ClearCostmapAroundPose
+srv	nav2_msgs/srv/GetCostmap
+srv	nav2_msgs/srv/GetCosts
+srv	nav2_msgs/srv/IsPathValid
+srv	nav2_msgs/srv/LoadMap
+srv	nav2_msgs/srv/SaveMap
+srv	nav2_msgs/srv/AddExclusionZone
+srv	nav2_msgs/srv/RemoveExclusionZone
+srv	nav2_msgs/srv/AddShapes
+srv	nav2_msgs/srv/RemoveShapes
+srv	nav2_msgs/srv/GetShapes
+srv	nav2_msgs/srv/DynamicEdges
+srv	nav2_msgs/srv/SetRouteGraph
+srv	nav2_msgs/srv/ReloadDockDatabase
+srv	slam_toolbox/srv/SerializePoseGraph
+srv	slam_toolbox/srv/DeserializePoseGraph
+srv	slam_toolbox/srv/AddSubmap
+srv	slam_toolbox/srv/Clear
+srv	slam_toolbox/srv/ClearQueue
+srv	slam_toolbox/srv/LoopClosure
+srv	slam_toolbox/srv/MergeMaps
+srv	slam_toolbox/srv/Pause
+srv	slam_toolbox/srv/Reset
+srv	slam_toolbox/srv/SaveMap
+srv	slam_toolbox/srv/ToggleInteractive
+srv	nav_msgs/srv/GetMap
+
+action	ros2_bridge_sim/action/Drive
+action	nav2_msgs/action/Spin
+action	nav2_msgs/action/BackUp
+action	nav2_msgs/action/DriveOnHeading
+action	nav2_msgs/action/Wait
+action	nav2_msgs/action/NavigateToPose
+action	nav2_msgs/action/ComputePathToPose
+action	nav2_msgs/action/FollowPath
+action	nav2_msgs/action/FollowWaypoints
+action	nav2_msgs/action/NavigateThroughPoses
+action	nav2_msgs/action/SmoothPath
+action	nav2_msgs/action/ComputePathThroughPoses
+action	nav2_msgs/action/ComputeRoute
+action	nav2_msgs/action/ComputeAndTrackRoute
+action	nav2_msgs/action/DockRobot
+action	nav2_msgs/action/UndockRobot
+action	nav2_msgs/action/FollowObject
+action	nav2_msgs/action/FollowGPSWaypoints
+action	nav2_msgs/action/AssistedTeleop
+action	nav2_msgs/action/DummyBehavior
