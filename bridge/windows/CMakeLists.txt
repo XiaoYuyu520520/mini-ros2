@@ -140,7 +140,12 @@ endif()
 add_library(ros2_bridge STATIC
   src/type_registry.cpp
   src/service_registry.cpp
-  src/action_registry.cpp)
+  src/action_registry.cpp
+  src/daemon_options.cpp
+  src/topic_mirror.cpp
+  src/service_proxy.cpp
+  src/action_proxy.cpp
+  src/uplink_forwarder.cpp)
 target_include_directories(ros2_bridge PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${ROS2_BRIDGE_SHIM_ROOT}/generated/include
