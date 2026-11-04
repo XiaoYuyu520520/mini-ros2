@@ -16,6 +16,13 @@
 // builtins: without this header they are undeclared, and the arm64 job fails
 // at the point of use rather than here.
 #  include <arm_acle.h>
+// Which CPU the binary landed on is answered by the kernel's aux vector, not
+// by `__builtin_cpu_supports`: that builtin only knows x86 feature names, and
+// on aarch64 it is not even declared.
+#  include <sys/auxv.h>
+#  ifndef HWCAP_CRC32
+#    define HWCAP_CRC32 (1 << 7)
+#  endif
 #endif
 
 #ifdef _WIN32
@@ -142,7 +149,7 @@ uint32_t crc32c_arm(const uint8_t * p, size_t size, uint32_t c)
 
 bool cpu_has_crc()
 {
-  static const bool present = __builtin_cpu_supports("crc");
+  static const bool present = (getauxval(AT_HWCAP) & HWCAP_CRC32) != 0;
   return present;
 }
 #endif
