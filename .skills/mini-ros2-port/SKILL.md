@@ -127,6 +127,20 @@ shim 与守护进程走同一规则（`create_channel(topic, error, type)`）。
 本机快所以过，Linux CI 慢所以挂（2026-11-04 实测）。
 正确条件是订阅自己的状态：`relay.sim.subs["/scan"].state == "ACTIVE"`。
 
+### 7. 平台专用 intrinsic 要连头文件一起加
+
+aarch64 的 `__crc32cd` / `__crc32cb` 是 **ACLE** intrinsic，不是 GCC builtin：
+`<arm_acle.h>` 不 include 就是"未声明"，而 x86 那半边因为有 `<nmmintrin.h>`
+编得过。结果是 Windows 和 linux-x86_64 全绿、arm64 在**用到的行**报错。
+加平台 intrinsic 时，`#if` 分支里连头文件一起写，三个 job 全过才算完。
+
+### 8. 门禁能过不代表三平台都编得过
+
+`214f202` 本地 `-j 3` 全绿、Windows CI 全绿，arm64 job 挂在 `shm_transport.cpp`
+的一行 intrinsic 上。**只有 arm64 job 会编 aarch64 分支**——本机（Windows）、
+x86_64、arm64 是三条不同的编译路径。改 `#if defined(__aarch64__)` 里的东西必须
+等 arm64 job 绿了再往下走。
+
 ## 加一个跨机消息类型（6 步）
 
 1. `nav2\ros2_shim\generate.ps1` 生成结构体（生成物在 `generated/`，不要手改）

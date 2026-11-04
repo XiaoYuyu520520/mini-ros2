@@ -8,42 +8,55 @@ the GitHub Releases page.
 
 ### Added
 
-* **Latency and drop counters in the relay.** `ros2_link.relay` now measures the
-  one-way delay of every message it merges - from the publishing agent's wall
-  clock to its own - and reports P50/P95/P99/max per upstream and per topic.
-  A timestamp that cannot be used (more than a minute old, or in the future
-  because the two machines' clocks disagree) is counted as unusable instead of
-  poisoning the percentiles. `stats_snapshot()` also carries `merge_errors`
-  (the graph refused the message) and `echo_pending` (how many echo
-  fingerprints are still queued).
-* **Type-aware shared-memory slots.** An image or point cloud publisher now
-  gets a channel sized for its payload (`NAV2_SHM_IMAGE_SLOT_SIZE`,
-  `NAV2_SHM_POINTCLOUD_SLOT_SIZE`, 8 MB by default) instead of one sized by
-  the topic's name. A 640x480 RGB8 frame is 921,600 bytes and
-  `/camera/image_raw` says nothing about that.
-* `Publisher::oversized_count()` - how many samples did not fit their slot.
+* **The bridge's registry tables are generated.** `bridge/tests/registry_manifest.txt`
+  is now the only place a topic message, a service or an action is named. A
+  generator resolves every entry against the shim's *generated* headers - the
+  same headers a nav2 node compiles against, so a type that does not exist on
+  this side cannot be registered by accident - and writes the include list and
+  the three tables. `--check` fails when the checked-in files no longer match
+  the manifest, and it runs in both cross-platform jobs and in the release
+  workflow. The pretty printer and the field setter stay hand-written: which
+  fields of a `LaserScan` are worth printing is a decision, not a list.
+* **The graph registry caches parsed files** (`graph.hpp`). Reading the graph
+  meant opening and parsing every `<pid>.graph` on the machine, and a graph
+  rarely changes between two refreshes. Measured with ten files and 207
+  topics: 1.494 ms -> 0.299 ms per read, 5x.
+* **The relay keeps its percentiles ready** instead of sorting on demand, so a
+  snapshot no longer holds its lock through a hundred sorts: 0.549 ms -> 0.191
+  ms at a hundred topics.
+* **The shared memory's checksum is hardware-accelerated**: CRC32C with the
+  SSE4.2 / ARM CRC instruction, chosen at runtime, with a slice-by-8 fallback.
+* Two benchmarks, because the numbers decided the work:
+  `nav2/shm_transport/tests/shm_fastpath_bench.cpp` (what a publish costs, split
+  into the copy, the checksum and the rest) and
+  `nav2/ros2_shim/tests/graph_cache_bench.cpp` (what the graph cache saves).
 
 ### Fixed
 
-* **A message larger than its slot was dropped in silence.** The publish
-  failed, returned `false` and nothing said so, so a camera that "publishes"
-  looked exactly like a topic nobody publishes. The first failure now prints
-  the sample size, the slot size and the variables to raise.
-* `ros2_grpc_sdk::cdr::Writer` had a private `reserve()` that resized the
-  buffer instead of reserving it, and was never called. It is gone; the
-  writer grew `writeRaw()`, `align()` and `little_endian()` instead.
+* **The shared memory slot's checksum was never checked.** The field was
+  written on every publish and the reader never compared it - 94% of a laser
+  scan's publish time for a value nobody read. The reader now checks it, and a
+  slot that does not match is counted as dropped instead of handed over as if
+  it were whole.
+* **A held graph file no longer reads as an unreadable one.** The reader waits
+  a second for a writer's swap and then gave up, which under an oversubscribed
+  machine reported a running process as invisible (`04-gaps.md`, section 7).
+  It now falls back to the copy from before the swap - one version old at
+  worst - and only for a file that is *held*; a removed record still
+  disappears.
+* The arm64 build of the CRC32C path needs `<arm_acle.h>`: `__crc32cd` and
+  `__crc32cb` are ACLE intrinsics, not GCC builtins.
 
 ### Changed
 
-* Primitive arrays are encoded with one copy instead of one call per element:
-  a laser scan's two float arrays and an odometry's two 36-element double
-  arrays are the hot path, and the CDR encoder now aligns once and streams the
-  array. The bytes are unchanged - `bridge_cdr_roundtrip` checks them against
-  fixtures produced by `rosbags`, and the shim's own round trip keeps every
-  value.
-* `ros2_shim::serialize()` sizes its buffer before writing it, and
-  `serializeInto()` reuses a caller's buffer, so a publisher that serializes
-  every cycle allocates once instead of once per growth step.
+* **The bridge daemon is five modules instead of one 1984-line class**:
+  `daemon_options` (the command line and the log), `topic_mirror` (remote to
+  local), `service_proxy` and `action_proxy` (the robot's services and actions,
+  answered here), `uplink_forwarder` (this machine's topics on their way out).
+  The daemon keeps what crosses them: the one gRPC connection, the peer, the
+  options, the ready file and the report. Each module has its own lock for the
+  state it owns, and they sit in the include tree rather than an anonymous
+  namespace so a test can link them.
 
 ## v0.2.5 — 2026-11-03
 

@@ -1237,3 +1237,30 @@ git 可执行文件: D:/WindowsServer2025_1/software/MSYS2/usr/bin/git.exe (2.55
 - 修复2：daemon syncTopics 回收 agent 不再广播的话题（否则 ready 文件不再生成，ros2.bat 每次多等 30s）（bridge_daemon.cpp）。
 - 经验：Wi-Fi 链路 ~8-10Mbps，400KB@10Hz 会把所有流拖死，属带宽上限；daemon 日志的 report 块间隔默认 5s，但跨会话/旋转会把块计数弄脏，测速率要用相邻块中位数。
 - shell 陷阱：ssh 里 pkill -f 的模式若出现在命令行里会杀掉自己的 bash；ssh 后台进程要 setsid+重定向；Windows bash 里 cmd 需要 //c，MSYS 会把 /xxx 参数转成路径（MSYS2_ARG_CONV_EXCL=* 或去斜杠）。
+
+2026-11-04 静态审查清单 P0/P1/P2 收官（b52eb71..8ceb0f1）：
+- P0-A 序列化：shim `serialized_size_of` + `serializeInto` + 标量数组 memcpy；
+  Twist 0.039->0.025 µs、Odometry 0.105->0.043、LaserScan 7.199->0.068（106x）。
+- P0-B 类型感知槽位：`slot_size_for_type()` 给 Image/PointCloud2 8 MiB 槽；
+  修前 640x480 RGB8 = 921600 B 撞 512 KB 槽被静默丢弃。
+- P0-C relay 时延：`_Latency` 有界 deque + P50/P95/P99，stats 带三层次。
+- P1-1 注册表生成：`bridge/tests/registry_manifest.txt` + `generate_registries.py --check`，
+  三个 job 与 release 都跑门禁；bridge 7/7、CDR fixture 逐字节不变。
+- P1-2 图缓存：`GraphFileCache` 按 path+size+mtime；10 文件 207 话题 1.494->0.299 ms（5x）。
+- P1-3 快照：percentile 缓存，100 话题 0.549->0.191 ms（2.9x）。实测合并 2.2 µs/msg，
+  锁不是瓶颈（~1.5 ms 间隔是 GIL）。
+- P1-4 daemon 拆分：1984 行 -> 5 模块（options/topic_mirror/service_proxy/action_proxy/
+  uplink_forwarder），共享唯一 gRPC 连接；`--help` / `--once` 行为不变。
+- P2 SHM 快路径：`shm_fastpath_bench.cpp` 拆帐证明 CRC 占 LaserScan 94%、900KB 帧 93%，
+  且读侧从不校验。换 CRC32C（x86 SSE4.2 / aarch64 CRC 扩展 / slice-by-8 兜底），
+  读侧真校验 + dropped_count；相机帧 1295->124.7 µs（10.4x）、激光 8.14->0.56 µs。
+
+两个只有 CI 才暴露的问题（都踩了）：
+- **arm64 分支没人编**：`__crc32cd`/`__crc32cb` 是 ACLE intrinsic，不 include
+  `<arm_acle.h>` 就未声明；Windows 和 x86_64 全绿、arm64 job 挂。改 `#if __aarch64__`
+  必须等 arm64 job 绿。
+- **图读者被写者挡住**：`read_shared` 1 s 预算用完就报 not openable
+  （`04-gaps.md` 第 7 节的既有形状，不是缓存引入）。按文档建议让读者回退到
+  「交换前的缓存副本」，只对**被占用**的文件生效，删掉的记录不复活；20 次连跑 0 失败。
+- 构建陷阱：改 `graph.hpp` 触发 ~400 TU 重编，`-j 3` 约 20 分钟；期间只能轮询，
+  不能把系统内存打满。
