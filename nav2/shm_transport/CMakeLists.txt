@@ -58,6 +58,12 @@ endif()
 add_executable(test_shm tests/test_shm.cpp)
 target_link_libraries(test_shm PRIVATE shm_transport)
 
+# The measurement behind the transport's numbers: what a publish costs, split
+# into the copy, the CRC and the rest (the lock and the wake-up). Not a ctest -
+# it is a number, not a gate.
+add_executable(shm_fastpath_bench tests/shm_fastpath_bench.cpp)
+target_link_libraries(shm_fastpath_bench PRIVATE shm_transport)
+
 enable_testing()
 add_test(NAME shm_transport COMMAND test_shm)
 

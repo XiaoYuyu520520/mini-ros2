@@ -9,6 +9,13 @@
 namespace shm_transport
 {
 
+// The checksum of a slot's payload.
+//
+// Exported so the fast-path benchmark can measure what the transport really
+// computes - a second copy of the algorithm would drift from the one the
+// transport uses, and the benchmark would then measure something nobody pays.
+uint32_t crc32c(const void * data, size_t size);
+
 // Broadcast shared-memory channel.
 //
 // One writer publishes variable length byte blobs into a ring of fixed size
