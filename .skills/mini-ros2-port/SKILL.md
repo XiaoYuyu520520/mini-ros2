@@ -178,9 +178,10 @@ x86_64、arm64 是三条不同的编译路径。改 `#if defined(__aarch64__)` �
 - **别在 Windows 上改 Linux-only 的代码而不编**：`waitpid` 这类 POSIX 符号在
   Windows 分支里编不到，问题只在 CI 上暴露
 - **本机编 Go 要指 MSYS2 的 gcc**：系统默认 `gcc` 是 Cygwin 的，cgo 会报
-  "don't use the cygwin compiler"：
-  `cd viz && CC=D:/WindowsServer2025_1/software/MSYS2/ucrt64/bin/gcc.exe go test ./...`
-  （路径由 `python tools/_toolchain.py` 打印）
+  "don't use the cygwin compiler"。用 `python tools\_toolchain.py` 打印的
+  UCRT64 目录下的 `gcc.exe` 作 `CC`：
+  `cd viz && CC=<UCRT64>/bin/gcc.exe go test ./...`
+  （`<UCRT64>` 由 `tools\_toolchain.py` 给出；CI 上没有这个问题，Linux 用系统 gcc）
 - **Windows 上给子进程接管道要接对方向**：父进程留的是「子进程 stdin 的写端」与
   「子进程 stdout 的读端」，并用 `SetHandleInformation` 标成 non-inheritable；
   `CreateProcessA` 返回 BOOL，进程句柄在 `PROCESS_INFORMATION.hProcess`。
