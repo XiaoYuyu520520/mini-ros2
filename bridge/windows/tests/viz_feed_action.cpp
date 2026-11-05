@@ -37,6 +37,7 @@
 #include <io.h>
 #include <process.h>
 #else
+#include <poll.h>
 #include <unistd.h>
 #include <sys/wait.h>
 #endif
@@ -261,14 +262,28 @@ public:
     }
     pid_ = fork();
     if (pid_ == 0) {
-      dup2(in_pipe[0], STDIN_FILENO);
-      dup2(out_pipe[1], STDOUT_FILENO);
-      close(in_pipe[0]);
-      close(in_pipe[1]);
-      close(out_pipe[0]);
-      close(out_pipe[1]);
+      // The child's stdin is the read end of the first pipe, its stdout the
+      // write end of the second. `dup2` first, then close the originals -
+      // but only the ones that are not the standard descriptors themselves:
+      // a pipe end that happens to *be* fd 1 would be closed by the plain
+      // `close` below, and the child would lose its stdout.
+      if (in_pipe[0] != STDIN_FILENO) {
+        dup2(in_pipe[0], STDIN_FILENO);
+        close(in_pipe[0]);
+      }
+      if (out_pipe[1] != STDOUT_FILENO) {
+        dup2(out_pipe[1], STDOUT_FILENO);
+        close(out_pipe[1]);
+      }
+      if (in_pipe[1] > STDERR_FILENO) {close(in_pipe[1]);}
+      if (out_pipe[0] > STDERR_FILENO) {close(out_pipe[0]);}
       execl(executable.c_str(), executable.c_str(), nullptr);
       _exit(127);
+    }
+    if (pid_ < 0) {
+      std::printf("  FAIL cannot fork\n");
+      ++g_failures;
+      return;
     }
     close(in_pipe[0]);
     close(out_pipe[1]);
@@ -292,8 +307,23 @@ public:
     if (output_read_ != nullptr) {CloseHandle(output_read_);}
 #else
     if (pid_ > 0) {
+      // SIGTERM first, then SIGKILL: a child that ignores SIGTERM must not
+      // leave the test hanging in `waitpid` until ctest's own timeout.
       kill(pid_, SIGTERM);
-      waitpid(pid_, nullptr, 0);
+      for (int i = 0; i < 20; ++i) {
+        int status = 0;
+        const pid_t done = waitpid(pid_, &status, WNOHANG);
+        if (done == pid_ || done < 0) {
+          pid_ = -1;
+          break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      }
+      if (pid_ > 0) {
+        kill(pid_, SIGKILL);
+        waitpid(pid_, nullptr, 0);
+        pid_ = -1;
+      }
     }
     if (input_ >= 0) {close(input_);}
     if (output_read_ >= 0) {close(output_read_);}
@@ -397,7 +427,16 @@ private:
     const auto deadline = std::chrono::steady_clock::now() +
       std::chrono::milliseconds(timeout_ms);
     while (got < size) {
+      const auto now = std::chrono::steady_clock::now();
+      if (now >= deadline) {
+        return false;
+      }
+      const int remaining_ms = static_cast<int>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(deadline - now).count()) + 1;
 #ifdef _WIN32
+      // The Windows pipe read is blocking; the ctest timeout is the only
+      // backstop there. The Linux side polls, which is what keeps a dead
+      // child from hanging the whole test.
       DWORD read = 0;
       if (!ReadFile(output_read_, data + got, static_cast<DWORD>(size - got), &read, nullptr)) {
         return false;
@@ -407,15 +446,25 @@ private:
       }
       got += read;
 #else
+      struct pollfd waiter{};
+      waiter.fd = output_read_;
+      waiter.events = POLLIN;
+      const int ready = poll(&waiter, 1, remaining_ms);
+      if (ready == 0) {
+        return false;  // the budget ran out
+      }
+      if (ready < 0) {
+        return false;  // a real error, or EINTR we do not retry
+      }
       const ssize_t read = ::read(output_read_, data + got, size - got);
-      if (read <= 0) {
+      if (read == 0) {
+        return false;  // the child closed its end: it is gone
+      }
+      if (read < 0) {
         return false;
       }
       got += static_cast<std::size_t>(read);
 #endif
-      if (std::chrono::steady_clock::now() >= deadline) {
-        return false;
-      }
     }
     return true;
   }
@@ -451,31 +500,32 @@ int main(int argc, char ** argv)
 
     json reply;
     check(sidecar.wait_reply(1, reply), "the sidecar answers hello");
-    check(reply.value("ok", false), "hello succeeded");
+    check(reply.is_object() && reply.value("ok", false), "hello succeeded");
 
     sidecar.send(json{{"op", "navigate_to_pose"}, {"id", 2},
       {"x", 2.5}, {"y", 1.8}, {"yaw", 0.5}, {"frame", "map"}});
     check(sidecar.wait_reply(2, reply), "the sidecar answers navigate_to_pose");
-    check(reply.value("ok", false), "the goal was accepted for sending");
-    const auto goal_id = reply["result"].value("goal_id", 0ULL);
+    check(reply.is_object() && reply.value("ok", false), "the goal was accepted for sending");
+    const auto goal_id =
+      reply.is_object() && reply.contains("result") ? reply["result"].value("goal_id", 0ULL) : 0ULL;
     check(goal_id != 0, "the goal got an id");
 
     json status;
     check(sidecar.wait_event("goal_status", status), "a goal_status event arrives");
     check(
-      status["data"].value("state", "") == "accepted",
+      status.value("data", json::object()).value("state", "") == "accepted",
       "the goal_status event says the goal was accepted");
 
     json feedback;
     check(sidecar.wait_event("goal_feedback", feedback), "a goal_feedback event arrives");
-    const std::string text = feedback["data"].value("text", "");
+    const std::string text = feedback.value("data", json::object()).value("text", "");
     check(text.find("distance_remaining") != std::string::npos,
       "the feedback carries the remaining distance");
 
     json result;
     check(sidecar.wait_event("goal_result", result), "a goal_result event arrives");
     check(
-      result["data"].value("state", "") == "succeeded",
+      result.value("data", json::object()).value("state", "") == "succeeded",
       "the goal_result event says the goal succeeded");
     check(result.value("goal_id", 0ULL) == goal_id, "the result belongs to the goal");
 
@@ -501,12 +551,15 @@ int main(int argc, char ** argv)
 
     sidecar.send(json{{"op", "cancel_goal"}, {"id", 3}});
     check(sidecar.wait_reply(3, reply), "the sidecar answers cancel_goal");
-    check(reply["result"].value("cancelled", false), "the cancel was accepted");
+    check(
+      reply.is_object() && reply.contains("result") &&
+      reply["result"].value("cancelled", false),
+      "the cancel was accepted");
 
     json result;
     check(sidecar.wait_event("goal_result", result), "the canceled goal ends");
     check(
-      result["data"].value("state", "") == "canceled",
+      result.value("data", json::object()).value("state", "") == "canceled",
       "the goal ended as canceled");
     check(navigator.cancels() == 1, "the server saw the cancel");
   }
