@@ -74,6 +74,7 @@
 #include "rclcpp/precise_wait.hpp"
 
 #include "ros2_bridge/action_registry.hpp"
+#include "ros2_bridge/hz_stats.hpp"
 #include "ros2_bridge/service_registry.hpp"
 #include "ros2_bridge/shm_topic.hpp"
 #include "ros2_bridge/type_registry.hpp"
@@ -549,19 +550,13 @@ int cmdTopicHz(int argc, char ** argv)
     first = false;
     last = now;
     if (!intervals.empty()) {
-      double sum = 0;
-      double minimum = intervals.front();
-      double maximum = intervals.front();
-      for (double value : intervals) {
-        sum += value;
-        minimum = std::min(minimum, value);
-        maximum = std::max(maximum, value);
+      const ros2_bridge::HzStats stats = ros2_bridge::computeHzStats(intervals);
+      if (stats.valid) {
+        std::printf(
+          "average rate: %.3f\n\tmin: %.3f max: %.3f std dev: %.3f window: %zu\n",
+          stats.average_rate, stats.min_rate, stats.max_rate, stats.std_dev, stats.count);
+        std::fflush(stdout);
       }
-      const double average = sum / static_cast<double>(intervals.size());
-      std::printf(
-        "average rate: %.3f\n\tmin: %.3f max: %.3f std dev: %.3f window: %zu\n",
-        1.0 / average, 1.0 / maximum, 1.0 / minimum, 0.0, intervals.size());
-      std::fflush(stdout);
     }
   }
   return 0;

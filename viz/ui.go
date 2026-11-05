@@ -108,6 +108,35 @@ type shell struct {
 	notify       func(string, error)
 	announce     func(string, error)
 	feed         *feedController
+	// navPanel is the navigation panel: the goal, its state and its
+	// feedback. It is nil until the window is built.
+	navPanel *navPanel
+}
+
+// goalAction is the action a click on the map starts: the name, the type and
+// the frame, all three out of the configuration. The default is
+// nav2's `navigate_to_pose`, which is the action the `bt_navigator` serves.
+func (s *shell) goalAction() (action string, typeName string, frame string) {
+	action = "/navigate_to_pose"
+	typeName = "nav2_msgs/action/NavigateToPose"
+	frame = "map"
+	tool, ok := s.cfg.Tools["goal"]
+	if !ok {
+		return
+	}
+	if tool.Action != "" {
+		action = tool.Action
+		if !strings.HasPrefix(action, "/") {
+			action = "/" + action
+		}
+	}
+	if tool.Type != "" {
+		typeName = tool.Type
+	}
+	if tool.Frame != "" {
+		frame = tool.Frame
+	}
+	return
 }
 
 // sortedTopicNames is the list order the panel shows: stable, so a reload does
@@ -293,7 +322,7 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 		// part of clicking the display, or the fields would update behind a
 		// closed flap.
 		if sh.accordion != nil {
-			sh.accordion.Open(1)
+			sh.accordion.Open(2)
 			sh.accordion.Refresh()
 		}
 	}
@@ -736,14 +765,22 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	// --- panel ------------------------------------------------------------
 	// rviz's order: the displays are at the top, the properties of the
 	// selected display right below them, then the other sections.
+	//
+	// The navigation panel sits above the displays: it is what the user
+	// looks at while a goal runs, and it is the only part of the window
+	// that shows whether the robot is actually moving.
+	nav := newNavPanel(sh)
+	sh.navPanel = nav
+
 	accordion := widget.NewAccordion(
+		widget.NewAccordionItem(tr("Navigation", "导航"), nav.container()),
 		widget.NewAccordionItem(tr("Displays", "显示"), displays),
 		widget.NewAccordionItem(tr("Properties", "属性"), properties),
 		widget.NewAccordionItem(tr("View", "视图"), viewPanel),
 		widget.NewAccordionItem(tr("Connection", "连接"), connection),
 	)
 	accordion.Open(0)
-	accordion.Open(1)
+	accordion.Open(2)
 	sh.accordion = accordion
 
 	// The panel is on the left and the viewport fills the rest, the way
@@ -1015,6 +1052,11 @@ func buildUI(a fyne.App, w fyne.Window, cfg *Config, cfgPath string) *shell {
 	sh.feed = newFeedController(v, scene, func() Config { return sh.cfg }, sidecarLabel, frameLabel)
 	sh.feed.onConnected = func() {
 		go func() { sh.fetchGraph(nil) }()
+	}
+	// The navigation panel is the only part of the window that shows how a
+	// goal ended, so it is the one that reads the action events.
+	sh.feed.onGoalEvent = func(event Event) {
+		nav.onEvent(event)
 	}
 	sh.feed.start()
 	w.SetCloseIntercept(func() {
@@ -1428,7 +1470,19 @@ func (s *shell) setTopicEnabled(name string, on bool) {
 // from the configuration (`tools.goal_topic` and `tools.initial_pose`), and
 // the frame is the tool's own - a goal belongs in the map frame even when the
 // view is showing another one.
+//
+// "2D Goal Pose" starts a real NavigateToPose action through the navigation
+// panel: publishing a PoseStamped on `/goal_pose` does not move the robot by
+// itself, because nav2's `bt_navigator` only acts on the action. The topic
+// publish is still there for a setup that watches `/goal_pose`, but the click
+// that is meant to drive the robot goes through the action.
 func (s *shell) publishTool(mode toolMode, x, y, yaw float64) {
+	if mode == toolGoal {
+		if s.navPanel != nil {
+			s.navPanel.sendGoal(x, y, yaw)
+			return
+		}
+	}
 	key := "goal_topic"
 	if mode == toolPose {
 		key = "initial_pose"

@@ -54,7 +54,9 @@ func TestClickingADisplaySelectsIt(t *testing.T) {
 	if sh.selectedDisplay != "/scan" {
 		t.Fatalf("clicking the row selected %q, want /scan", sh.selectedDisplay)
 	}
-	if len(sh.accordion.Items) < 2 || !sh.accordion.Items[1].Open {
+	// The properties section is the third item: Navigation, Displays,
+	// Properties, ...
+	if len(sh.accordion.Items) < 3 || !sh.accordion.Items[2].Open {
 		t.Fatal("the properties section was not opened")
 	}
 }

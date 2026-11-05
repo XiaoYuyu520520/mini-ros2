@@ -33,9 +33,12 @@ python gRPC\ros2_gRPC_sdk\scripts\build.py
 # 测试：五棵树，每棵一个入口
 python tools\run_ctest.py shim      # nav2 兼容层（32 条）
 python tools\run_ctest.py shm       # 共享内存传输（1 条）
-python tools\run_ctest.py bridge    # 桥 + CLI（6 条）
+python tools\run_ctest.py bridge    # 桥 + CLI（9 条）
 python tools\run_ctest.py grpc      # 通信 SDK（4 条）
-python tools\run_ctest.py sim       # 仿真器 pytest（71 条）
+python tools\run_ctest.py sim       # 仿真器 + relay pytest（103 条）
+
+# 可视化那棵树是 Go，自带门禁
+cd viz && go vet ./... && go test ./...
 
 # 门禁（改完必跑）
 python tools\check_docs.py --quiet
@@ -174,3 +177,11 @@ x86_64、arm64 是三条不同的编译路径。改 `#if defined(__aarch64__)` �
   提交前用 `git grep --cached -l 'github_pat_'` 扫一遍
 - **别在 Windows 上改 Linux-only 的代码而不编**：`waitpid` 这类 POSIX 符号在
   Windows 分支里编不到，问题只在 CI 上暴露
+- **本机编 Go 要指 MSYS2 的 gcc**：系统默认 `gcc` 是 Cygwin 的，cgo 会报
+  "don't use the cygwin compiler"：
+  `cd viz && CC=D:/WindowsServer2025_1/software/MSYS2/ucrt64/bin/gcc.exe go test ./...`
+  （路径由 `python tools/_toolchain.py` 打印）
+- **Windows 上给子进程接管道要接对方向**：父进程留的是「子进程 stdin 的写端」与
+  「子进程 stdout 的读端」，并用 `SetHandleInformation` 标成 non-inheritable；
+  `CreateProcessA` 返回 BOOL，进程句柄在 `PROCESS_INFORMATION.hProcess`。
+  方向接反的表现是父进程永远读不到子进程的第一帧

@@ -48,12 +48,19 @@
 3. **30 分钟双源长跑**：同名话题隔离只有消息级测试，没有长时段 soak。
 4. **指标面**：没有 RPC / GUI 展示，没有端到端延迟与 P95/P99。
 5. **性能基准**：`_prune_echo` 改造没有前后 CPU/延迟对比数据。
-6. **viz 导航动作闭环**：仍是"点地图发 `/goal_pose`"，没有 `navigate_to_pose` 的发送/取消/反馈面板，也没有逐节点诊断面板。
-   顺便记一条本轮发现的精度问题：`viz` 的工具栏叫 "2D Goal Pose"，但发的是
-   `geometry_msgs/msg/PoseStamped` 到 `/goal_pose`（rviz2 里那个名字是
-   `nav2_msgs/action/NavigateToPose` 动作）。`nav2` 的 `bt_navigator` **不订阅**
-   `/goal_pose`，所以从现在起把它当"发布目标点"而不是"发起导航"来读；
-   真正的动作闭环是上面那条待办。
+6. ~~**viz 导航动作闭环**~~ **2026-11-05 已修**：`viz` 的「2D Goal Pose」现在发的是真正的
+   `nav2_msgs/action/NavigateToPose` action（边车 `viz_feed` 内实现与 `ros2 action send_goal`
+   同一套共享内存 action 协议；接受 / 反馈 / 结果 / 中途取消都收到），左侧新增「导航」面板显示
+   目标位置、执行状态、剩余距离与反馈。原 `/goal_pose` 话题发布仍保留在 `tools.goal_topic`，
+   但**不再等同于执行导航**——`bt_navigator` 不订阅 `/goal_pose`。见 `viz/ui_nav.go`、
+   `bridge/windows/tools/viz_feed.cpp` 的 `sendNavigateGoal`/`followGoal`、测试
+   `viz/ui_nav_test.go`。
+
+  本轮同时处理：`ros2 topic hz` 的 `std dev` 一直是 `0.0`（现按标准差实算，见
+   `bridge/windows/include/ros2_bridge/hz_stats.hpp` 与 `tests/hz_stats.cpp`）；
+   `run_nav2_stack.py` 的半成功启动（改成带阶段与回滚的状态机，见
+   `bridge/ubuntu/ros2_bridge_sim/tests/test_nav2_stack_states.py`）；以及 README/FAQ/
+   shm_transport 里几处与源码不一致的文档。
 
 ---
 

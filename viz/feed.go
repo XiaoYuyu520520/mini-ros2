@@ -69,6 +69,10 @@ type Event struct {
 	Frames     []string
 	Message    string
 	FixedFrame string
+	// Action events (`goal_status` / `goal_feedback` / `goal_result`) carry the
+	// action name and the goal id they belong to.
+	Action string
+	GoalID uint64
 }
 
 type callResult struct {
@@ -248,11 +252,14 @@ func parseEvent(payload []byte) Event {
 		Frames     []string        `json:"frames"`
 		Message    string          `json:"message"`
 		FixedFrame string          `json:"fixed_frame"`
+		Action     string          `json:"action"`
+		GoalID     uint64          `json:"goal_id"`
 	}
 	_ = json.Unmarshal(payload, &raw)
 	return Event{
 		Name: raw.Event, Topic: raw.Topic, Kind: raw.Kind, Data: raw.Data,
 		Frames: raw.Frames, Message: raw.Message, FixedFrame: raw.FixedFrame,
+		Action: raw.Action, GoalID: raw.GoalID,
 	}
 }
 
@@ -368,6 +375,25 @@ func (f *Feed) PublishPose(
 
 func (f *Feed) Topics(ctx context.Context) (json.RawMessage, error) {
 	return f.Call(ctx, "topics", nil)
+}
+
+// SendGoal starts one NavigateToPose goal. The sidecar answers as soon as the
+// goal is on the wire; the acceptance, the feedback and the result arrive
+// later as `goal_status` / `goal_feedback` / `goal_result` events.
+func (f *Feed) SendGoal(
+	ctx context.Context, action, typeName, frame string, x, y, yaw float64,
+) error {
+	_, err := f.Call(ctx, "navigate_to_pose", map[string]any{
+		"action": action, "type": typeName, "frame": frame,
+		"x": x, "y": y, "yaw": yaw,
+	})
+	return err
+}
+
+// CancelGoal cancels the goal the sidecar is following, if there is one.
+func (f *Feed) CancelGoal(ctx context.Context) error {
+	_, err := f.Call(ctx, "cancel_goal", nil)
+	return err
 }
 
 // PublishPoint is rviz's Publish Point tool: one PointStamped on the topic the

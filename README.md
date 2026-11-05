@@ -25,7 +25,7 @@
   <a href="https://github.com/XiaoYuyu520520/mini-ros2/releases"><img src="https://img.shields.io/github/v/release/XiaoYuyu520520/mini-ros2?label=release" alt="release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/XiaoYuyu520520/mini-ros2" alt="license"></a>
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Ubuntu-blue" alt="platform">
-  <img src="https://img.shields.io/badge/C%2B%2B-17-blue" alt="c++17">
+  <img src="https://img.shields.io/badge/C%2B%2B-20-blue" alt="c++20">
 </p>
 
 目标：Ubuntu 上的机器人（本仓库自带一个 Python 仿真小车 + 雷达）通过 gRPC 把话题送到

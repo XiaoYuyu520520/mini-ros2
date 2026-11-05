@@ -28,6 +28,8 @@
 //   {"op":"set_fixed_frame","frame":...}
 //   {"op":"publish_pose","topic":...}    -> /goal_pose or /initialpose
 //   {"op":"publish_point","topic":...}   -> /clicked_point
+//   {"op":"navigate_to_pose","x":...}    -> a NavigateToPose goal (action)
+//   {"op":"cancel_goal"}                 -> cancel the running goal
 //   {"op":"shutdown"}
 //
 // A shim channel has exactly one writer, and this process holds the write end
@@ -83,6 +85,7 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
 #include "map_msgs/msg/occupancy_grid_update.hpp"
+#include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "nav2_msgs/msg/costmap.hpp"
 #include "nav2_msgs/msg/costmap_update.hpp"
 #include "nav_msgs/msg/occupancy_grid.hpp"
@@ -90,6 +93,7 @@
 #include "nav_msgs/msg/path.hpp"
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "ros2_bridge/action_registry.hpp"
 #include "ros2_bridge/shm_topic.hpp"
 #include "ros2_shim/graph.hpp"
 #include "ros2_shim/serialization.hpp"
@@ -509,6 +513,7 @@ public:
   {
     g_running.store(false);
     hub_.stop();
+    if (goal_thread_.joinable()) {goal_thread_.join();}
     if (spin_thread_.joinable()) {spin_thread_.join();}
     if (writer_thread_.joinable()) {writer_thread_.join();}
     if (frames_thread_.joinable()) {frames_thread_.join();}
@@ -589,6 +594,10 @@ public:
         respond(id, publishPose(command));
       } else if (op == "publish_point") {
         respond(id, publishPoint(command));
+      } else if (op == "navigate_to_pose") {
+        respond(id, sendNavigateGoal(command));
+      } else if (op == "cancel_goal") {
+        respond(id, cancelGoal());
       } else if (op == "shutdown") {
         respond(id, true);
         g_running.store(false);
@@ -1513,6 +1522,299 @@ public:
     return {{"topic", topic}, {"type", type}, {"x", x}, {"y", y}, {"z", z}};
   }
 
+  // --------------------------------------------------------------- actions
+  //
+  // The GUI used to publish a goal and stop there: a PoseStamped on
+  // `/goal_pose`, which nav2's `bt_navigator` does not act on by itself. The
+  // only way to make the robot move was to run `ros2 action send_goal`
+  // elsewhere, and the GUI had no idea how the goal ended.
+  //
+  // This is the other half of that: the same action protocol `ros2 action
+  // send_goal` speaks, on the same six shared-memory channels. The goal goes
+  // out on `<name>/_goal` with a goal id in front of it, the server answers on
+  // `<name>/_goal_ack`, the feedback arrives on `<name>/_feedback` and the
+  // result on `<name>/_result`. A client on this machine cannot tell the two
+  // routes apart, which is the point: the GUI now talks to the action the way
+  // any other ROS2 client does.
+  //
+  // The goal id is a per-process counter, so two goals from this process can
+  // never collide, and a goal id only has to be unique among the callers of
+  // one action.
+
+  // Sends a NavigateToPose goal and returns as soon as it is on the wire. The
+  // answer to it - accepted, feedback, the final result - arrives later as
+  // `goal_status` / `goal_feedback` / `goal_result` events.
+  json sendNavigateGoal(const json & command)
+  {
+    const std::string action = command.value("action", "/navigate_to_pose");
+    const std::string type = command.value("type", "nav2_msgs/action/NavigateToPose");
+    const std::string frame = command.value("frame", "map");
+    const double x = command.value("x", 0.0);
+    const double y = command.value("y", 0.0);
+    const double yaw = command.value("yaw", 0.0);
+    const std::string behaviorTree = command.value("behavior_tree", "");
+
+    const ros2_bridge::ActionCodec * codec = ros2_bridge::find_action_codec(type);
+    if (codec == nullptr) {
+      throw std::runtime_error("no codec for action type '" + type + "'");
+    }
+
+    // The goal is built as a struct, not as a field assignment list: the GUI
+    // knows the pose, and spelling it out as `pose.position.x=...` would be a
+    // second spelling of the same thing.
+    nav2_msgs::action::NavigateToPose::Goal goal{};
+    goal.pose.header.stamp = node_->now().to_message();
+    goal.pose.header.frame_id = frame;
+    goal.pose.pose.position.x = x;
+    goal.pose.pose.position.y = y;
+    const Quat orientation = fromYaw(yaw);
+    goal.pose.pose.orientation.x = orientation.x;
+    goal.pose.pose.orientation.y = orientation.y;
+    goal.pose.pose.orientation.z = orientation.z;
+    goal.pose.pose.orientation.w = orientation.w;
+    if (!behaviorTree.empty()) {
+      goal.behavior_tree = behaviorTree;
+    }
+    const std::vector<std::uint8_t> payload = ros2_shim::serialize(goal);
+
+    std::string error;
+    auto goals = ros2_bridge::open_or_create_action_channel(action, "goal", &error);
+    auto acks = ros2_bridge::open_or_create_action_channel(action, "goal_ack", &error);
+    auto feedbacks = ros2_bridge::open_or_create_action_channel(action, "feedback", &error);
+    auto results = ros2_bridge::open_or_create_action_channel(action, "result", &error);
+    auto cancels = ros2_bridge::open_or_create_action_channel(action, "cancel", &error);
+    auto cancel_acks = ros2_bridge::open_or_create_action_channel(action, "cancel_ack", &error);
+    if (!goals || !acks || !feedbacks || !results || !cancels || !cancel_acks) {
+      throw std::runtime_error("cannot open the channels of '" + action + "': " + error);
+    }
+
+    // Every answer ring keeps what an earlier run left in it, and goal ids
+    // start at one in every process: reading from the tail would hand this
+    // goal the previous caller's answer.
+    acks->seek_to_latest();
+    feedbacks->seek_to_latest();
+    results->seek_to_latest();
+    cancel_acks->seek_to_latest();
+
+    const std::uint64_t id = nextGoalId();
+    std::vector<std::uint8_t> out(sizeof(id) + payload.size());
+    std::memcpy(out.data(), &id, sizeof(id));
+    if (!payload.empty()) {
+      std::memcpy(out.data() + sizeof(id), payload.data(), payload.size());
+    }
+    if (!goals->publish(out.data(), out.size())) {
+      throw std::runtime_error("the goal does not fit the '" + action + "/_goal' slot");
+    }
+
+    // One goal at a time in the GUI: a second one would leave the first
+    // running with nobody watching it, and the panel can only show one.
+    std::lock_guard<std::mutex> lock(goal_mutex_);
+    if (goal_id_ != 0 && goal_running_.load()) {
+      throw std::runtime_error("a goal is already running (id " + std::to_string(goal_id_) +
+        ") - cancel it first");
+    }
+    goal_id_ = id;
+    goal_action_ = action;
+    goal_running_.store(true);
+    if (goal_thread_.joinable()) {
+      goal_thread_.join();
+    }
+    goal_thread_ = std::thread([this, id, action] {followGoal(id, action);});
+
+    return {
+      {"goal_id", id},
+      {"action", action},
+      {"type", type},
+      {"frame", frame},
+      {"x", x},
+      {"y", y},
+      {"yaw", yaw},
+    };
+  }
+
+  // Cancels the running goal. The answer comes back on the cancel-ack
+  // channel; a rejected cancel is reported as such rather than as a success.
+  json cancelGoal()
+  {
+    std::uint64_t id = 0;
+    std::string action;
+    {
+      std::lock_guard<std::mutex> lock(goal_mutex_);
+      if (!goal_running_.load()) {
+        return {{"cancelled", false}, {"reason", "no goal is running"}};
+      }
+      id = goal_id_;
+      action = goal_action_;
+    }
+
+    std::string error;
+    auto cancels = ros2_bridge::open_or_create_action_channel(action, "cancel", &error);
+    auto cancel_acks = ros2_bridge::open_or_create_action_channel(action, "cancel_ack", &error);
+    if (!cancels || !cancel_acks) {
+      throw std::runtime_error("cannot open the cancel channels of '" + action + "': " + error);
+    }
+    cancel_acks->seek_to_latest();
+    std::vector<std::uint8_t> out(sizeof(id));
+    std::memcpy(out.data(), &id, sizeof(id));
+    if (!cancels->publish(out.data(), out.size())) {
+      throw std::runtime_error("the cancel does not fit the '" + action + "/_cancel' slot");
+    }
+
+    // Five seconds is the same budget `ros2 action cancel` gives the answer.
+    std::vector<std::uint8_t> buffer(cancel_acks->slot_size());
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+    while (g_running.load()) {
+      std::size_t size = 0;
+      if (cancel_acks->subscribe(buffer.data(), buffer.size(), &size, 100)) {
+        if (size < sizeof(id)) {
+          continue;
+        }
+        std::uint64_t correlation = 0;
+        std::memcpy(&correlation, buffer.data(), sizeof(correlation));
+        if (correlation != id) {
+          continue;
+        }
+        const bool accepted = size > sizeof(id) && buffer[sizeof(id)] != 0;
+        return {{"cancelled", accepted}, {"goal_id", id}, {"action", action}};
+      }
+      if (std::chrono::steady_clock::now() >= deadline) {
+        return {
+          {"cancelled", false},
+          {"goal_id", id},
+          {"reason", "no answer within 5 s - nothing served '" + action + "'"},
+        };
+      }
+    }
+    return {{"cancelled", false}, {"goal_id", id}, {"reason", "the sidecar is shutting down"}};
+  }
+
+  // Watches one goal: the acceptance, then the feedback, then the result.
+  // It is a thread of its own because a goal takes as long as it takes and the
+  // GUI must keep drawing while it runs.
+  void followGoal(std::uint64_t id, const std::string & action)
+  {
+    const ros2_bridge::ActionCodec * codec =
+      ros2_bridge::find_action_codec("nav2_msgs/action/NavigateToPose");
+    std::string error;
+    auto acks = ros2_bridge::open_or_create_action_channel(action, "goal_ack", &error);
+    auto feedbacks = ros2_bridge::open_or_create_action_channel(action, "feedback", &error);
+    auto results = ros2_bridge::open_or_create_action_channel(action, "result", &error);
+    if (!acks || !feedbacks || !results) {
+      emitGoalEvent("goal_status", action, id, json{{"state", "error"},
+        {"message", "cannot open the channels: " + error}});
+      finishGoal();
+      return;
+    }
+
+    std::vector<std::uint8_t> buffer(results->slot_size());
+    bool accepted = false;
+
+    // The acceptance first, so a rejected goal is reported as such instead of
+    // being waited out.
+    const auto accept_deadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
+    while (g_running.load()) {
+      std::size_t size = 0;
+      if (acks->subscribe(buffer.data(), buffer.size(), &size, 100)) {
+        if (size < sizeof(id)) {
+          continue;
+        }
+        std::uint64_t correlation = 0;
+        std::memcpy(&correlation, buffer.data(), sizeof(correlation));
+        if (correlation != id) {
+          continue;
+        }
+        accepted = size > sizeof(id) && buffer[sizeof(id)] != 0;
+        break;
+      }
+      if (std::chrono::steady_clock::now() >= accept_deadline) {
+        break;
+      }
+    }
+
+    if (!accepted) {
+      emitGoalEvent("goal_status", action, id,
+        json{{"state", "rejected"}, {"message", "no action server accepted the goal within 10 s"}});
+      finishGoal();
+      return;
+    }
+    emitGoalEvent("goal_status", action, id, json{{"state", "accepted"}});
+
+    // The feedback and the result come on their own rings; both are polled
+    // because the shim's channels have no callback.
+    while (g_running.load()) {
+      std::size_t size = 0;
+      if (feedbacks->subscribe(buffer.data(), buffer.size(), &size, 50)) {
+        if (size > sizeof(id)) {
+          std::uint64_t correlation = 0;
+          std::memcpy(&correlation, buffer.data(), sizeof(correlation));
+          if (correlation == id) {
+            const std::vector<std::uint8_t> payload(
+              buffer.begin() + sizeof(correlation), buffer.begin() + size);
+            json data = json::object();
+            if (codec != nullptr) {
+              data["text"] = codec->describe_feedback(payload);
+            }
+            emitGoalEvent("goal_feedback", action, id, data);
+          }
+        }
+      }
+      if (results->subscribe(buffer.data(), buffer.size(), &size, 50)) {
+        if (size > sizeof(id)) {
+          std::uint64_t correlation = 0;
+          std::memcpy(&correlation, buffer.data(), sizeof(correlation));
+          if (correlation == id) {
+            const std::uint8_t code = buffer[sizeof(id)];
+            const std::vector<std::uint8_t> payload(
+              buffer.begin() + sizeof(id) + 1, buffer.begin() + size);
+            json data = json{{"code", static_cast<int>(code)},
+              {"state", resultState(code)}};
+            if (codec != nullptr) {
+              data["text"] = codec->describe_result(payload);
+            }
+            emitGoalEvent("goal_result", action, id, data);
+            finishGoal();
+            return;
+          }
+        }
+      }
+    }
+    emitGoalEvent("goal_status", action, id,
+      json{{"state", "stopped"}, {"message", "the sidecar stopped before the goal ended"}});
+    finishGoal();
+  }
+
+  void finishGoal()
+  {
+    std::lock_guard<std::mutex> lock(goal_mutex_);
+    goal_running_.store(false);
+  }
+
+  static std::string resultState(std::uint8_t code)
+  {
+    switch (code) {
+      case 1: return "succeeded";
+      case 2: return "aborted";
+      case 3: return "canceled";
+      default: return "unknown";
+    }
+  }
+
+  void emitGoalEvent(
+    const std::string & name, const std::string & action, std::uint64_t id, const json & data)
+  {
+    json event;
+    event["event"] = name;
+    event["action"] = action;
+    event["goal_id"] = id;
+    event["data"] = data;
+    out_.json(event);
+  }
+
+  std::uint64_t nextGoalId()
+  {
+    return ++goal_counter_;
+  }
+
   // ---------------------------------------------------------------- threads
   void spinLoop()
   {
@@ -1567,6 +1869,14 @@ public:
   std::shared_ptr<tf2_ros::TransformListener> listener_;
   std::mutex pubs_mutex_;
   std::map<std::string, std::shared_ptr<shm_transport::ShmChannel>> tool_channels_;
+
+  // The one goal the GUI follows at a time.
+  std::mutex goal_mutex_;
+  std::uint64_t goal_counter_ = 0;
+  std::uint64_t goal_id_ = 0;
+  std::string goal_action_;
+  std::atomic<bool> goal_running_{false};
+  std::thread goal_thread_;
 
   mutable std::mutex fixed_mutex_;
   std::string fixed_frame_ = "map";

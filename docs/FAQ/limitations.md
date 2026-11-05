@@ -29,7 +29,10 @@ title: 6 常见问题 · 功能限制与缺口
 3. **nav2 上游还差 7 个包**（`nav2_theta_star_planner`、`nav2_constrained_smoother`、
    `nav2_following`、`nav2_loopback_sim`、`nav2_system_tests`、`nav2_rviz_plugins`、
    `nav2_simple_commander`）；SLAM 侧只差 `merge_maps_kinematic.exe` 的**合并语义**这一件。
-4. **兼容层没有 rclpy、rosbag2、launch / launch_ros**。
+4. **兼容层有一份**部分**的 rclpy**（`nav2/ros2_shim/python/rclpy`：`init` / `Node` /
+   `create_publisher` / `create_subscription` / `ActionClient` / `spin`），`shim_run.py`
+   会把 vendored 的 `nav2_simple_commander` 挂到导入路径上；但它**不等于**完整 rclpy，
+   没有 rosbag2、没有 launch / launch_ros。
 5. **工程化那一层（CI / 安装包）** 不挡功能，挡的是「别人能不能复现」。
 
 ## 6.1.2 nav2：上游 46 个包，还缺 7 个
@@ -53,7 +56,7 @@ title: 6 常见问题 · 功能限制与缺口
 | 边 | 说明 |
 | --- | --- |
 | **一个通道一个写者** | `viz` 的边车自己持有 `/goal_pose` 与 `/initialpose` 的写端；再对同一通道跑 `ros2 topic pub` 会互相截断环形缓冲 |
-| **v1 只发话题，不走 action** | 目标点走 `/goal_pose` 话题（nav2 的 `bt_navigator` 订阅它），所以没有进度反馈与中途取消 |
+| **GUI 现在能走 action 了** | 「2D Goal Pose」发的是真正的 `NavigateToPose` action（与 `ros2 action send_goal` 同一套共享内存 action 协议），导航面板显示接受 / 反馈 / 结果，并能中途取消。**但 GUI 本身不订阅 `/goal_pose`**：nav2 的 `bt_navigator` 也不会因为收到这个普通话题就自动执行导航 | 用 `/goal_pose` 话题驱动机器人的老办法**不再等价于**执行导航任务；要走 action |
 | **只画这几类图层** | 地图 / 扫描 / 路径 / 位姿 / Marker / 代价地图 / 点云。URDF、3D 模型没有 |
 | **点云只有 2D 俯视** | `PointCloud2` 读 x / y / z / intensity，按高度上色画成俯视图；带 RGB 或法线的点云不画颜色 |
 | **代价地图不分层合成** | 每个话题一层，按加入顺序叠；没有 nav2 那种「多层合成一个 master」 |
@@ -74,7 +77,7 @@ title: 6 常见问题 · 功能限制与缺口
 
 | 缺口 | 现状 | 缺了会有什么后果 |
 | --- | --- | --- |
-| **rclpy** | 没有 Python 绑定。`python/pymessages` 与 `py_interop` 是 ctypes + 生成的消息类，**不是 rclpy** | 依赖 rclpy 的东西全都用不了：`nav2_simple_commander`、上游 `nav2_system_tests`、任何「写个脚本节点」的用法 |
+| **rclpy** | **有一部分**：`nav2/ros2_shim/python/rclpy` 实现了 `init` / `shutdown` / `Node` / `create_publisher` / `create_subscription` / `ActionClient` / `spin` / `spin_once` / `spin_until_future_complete` 等接口；`shim_run.py` 还会把 vendored 的 `nav2_simple_commander` 加进导入路径 | **不是完整的 rclpy**：接口覆盖不全，行为与上游也有出入。依赖完整 rclpy 的东西仍然用不了：上游 `nav2_system_tests`、以及任何「照着上游 rclpy 文档写」的脚本 |
 | **rosbag2** | 完全没有 | 不能录、不能放；复现一次跑只能重跑一遍。跨机时也没有「在 Windows 录 Ubuntu 的话题」这条路 |
 | **launch / launch_ros** | 没有。启动靠 `bridge\windows\*.bat` 与 `bridge/scripts/run_*.py` | 上游的 `launch` 文件用不了（连带 remap、参数覆写、条件启动那一套语法）；换一个组合就要写 / 改一个 bat |
 | **image_transport** | 只有 `point_cloud_transport` 的桩；没有 `image_transport` | `sensor_msgs/Image` 这类相机话题没有传输层，也没有压缩插件 |

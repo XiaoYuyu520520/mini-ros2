@@ -39,7 +39,7 @@ title: 3 基础应用开发 · Windows 可视化
 | **按话题添加** | 添加对话框默认「按话题」，选话题后自动推断显示类型，无需先选类型 |
 | **工作区记忆** | 显示列表、属性、视图中心/缩放、添加弹窗模式自动保存，下次打开原样恢复 |
 | **面板可折叠** | 左侧面板右上角 ‹ 收起成窄条，窄条上的 › 展开；工具栏 ☰ 与 F9 同样可以 |
-| **发目标点** | 2D Goal Pose：点一下是位置，拖一下是朝向，发 `/goal_pose` |
+| **发目标点** | 2D Goal Pose：点一下是位置，拖一下是朝向，发一个 `NavigateToPose` **action**（导航面板显示状态、反馈与结果，可取消） |
 | **设初始位姿** | 2D Pose Estimate：发 `/initialpose`，协方差用 rviz 的 0.25 / 0.25 / 0.0685 |
 | **看 Marker** | `visualization_msgs/msg/Marker` 与 `MarkerArray`：箭头、线段、点、方块（rviz 那套 marker 类型） |
 | **看代价地图** | `nav2_msgs/msg/Costmap` 与 `CostmapUpdate`：按调色板叠加在地图上，支持增量更新 |
@@ -105,13 +105,24 @@ python bridge\scripts\build_bridge.py --jobs 1
 
 | 操作 | 结果 |
 | --- | --- |
-| 点工具栏「2D Goal Pose」按钮，再点视口 | 发 `/goal_pose`（`geometry_msgs/msg/PoseStamped`） |
+| 点工具栏「2D Goal Pose」按钮，再点视口 | 发 `NavigateToPose` action（`nav2_msgs/action/NavigateToPose`），导航面板显示接受 / 执行中 / 成功等状态 |
 | 拖动代替点击 | 朝向 = 拖动方向；拖动距离小于 15 cm 时朝向为 0 |
 | 点工具栏「2D Pose Estimate」按钮，再点视口 | 发 `/initialpose`（`geometry_msgs/msg/PoseWithCovarianceStamped`） |
 | 工具栏「移动视角」 | 拖动平移；滚轮缩放；再次点击取消工具 |
 | 工具栏「选择」 | 点击画面解析出该点属于哪个显示，左侧列表选中它并画准星 |
 | 工具栏「发布点」 | 点击发布 `geometry_msgs/msg/PointStamped` 到 `/clicked_point` |
 | **Esc** | 取消当前工具 |
+
+<div class="callout">
+<span class="label">目标点走 action，不走话题</span>
+<p>「2D Goal Pose」发的是真正的 <code>NavigateToPose</code> action，与
+<code>ros2 action send_goal /navigate_to_pose</code> 同一套共享内存 action 协议；
+左侧「导航」面板显示目标位置、执行状态、剩余距离与反馈，并可中途取消。</p>
+<p>nav2 的 <code>bt_navigator</code> <strong>不会</strong>因为收到一个普通的
+<code>/goal_pose</code> 话题就执行导航，所以这个工具不再用话题驱动机器人。配置里的
+<code>tools.goal_topic</code>（<code>/goal_pose</code> 话题）仍然保留，给那些自己订阅
+<code>/goal_pose</code> 的旧设置用，但它<strong>不</strong>等同于「执行导航任务」。</p>
+</div>
 
 <div class="callout warn">
 <span class="label">一个通道只能有一个写者</span>
@@ -368,8 +379,10 @@ ros2 topic echo /qos_probe/map --once --timeout 15
 * 发 `/tf_static`（`map -> laser`）、`/map`（20×20 占用栅格）、`/scan`、`/plan`、
   `/amcl_pose` 之后，窗口里出现：地图占用边框 32861 个像素、扫描点 27 个、
   路径 520 个、机器人位姿 6316 个（按各自的颜色数出来的）
-* 真点工具栏「2D Goal Pose」/「2D Pose Estimate」→ 点视口 → `/goal_pose` 与 `/initialpose` 都被独立的
+* 真点工具栏「2D Pose Estimate」→ 点视口 → `/initialpose` 被独立的
   `ros2 topic echo` 收到（frame_id、x/y、四元数都对）
+* 真点工具栏「2D Goal Pose」→ 点视口 → `ros2 action list` 看得见
+  `/navigate_to_pose`，导航面板依次显示「目标已接受」「执行中」与最终结果
 * 真 ROS2（Jazzy）对端：best_effort 的 `/qos_probe/scan` 与 transient_local 的
   `/qos_probe/map` 都收到；把 sensor 改回 reliable 的负对照里扫描一条也收不到
 

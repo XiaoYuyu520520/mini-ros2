@@ -130,9 +130,14 @@ subscribe() → memcpy 出槽       拷贝3 slot→读者缓冲
 **跨进程 ≈ 同进程** —— 这是「共享内存本来就不为进程边界付钱」的最好证据。
 
 <div class="callout note">
-<span class="label">下一步的优化点</span>
-<p>真正值得优化的是 <code>WriteArchive</code> <strong>逐字段 <code>push_back</code> 且不
-<code>reserve</code></strong>，大消息会反复扩容 + 拷贝；加 size 预估 + <code>reserve()</code> 是下一步。</p>
+<span class="label">序列化已经做过优化（别再当待办）</span>
+<p>序列化<strong>不再</strong>是逐字段 <code>push_back</code> 且不 <code>reserve</code>。现在
+<code>serialize()</code> 先用 <code>serialized_size_of()</code> 数一遍字节数，再 <code>reserve()</code>
+定容一次写入；<code>serializeInto(message, buffer)</code> 复用调用方缓冲区。标量数组（图像行、点云
+字段、点列表）走一次 <code>align</code> + 一次 <code>memcpy</code>，不再逐元素 <code>insert</code>。
+实测（同进程、-O2、20 万次）：Twist 0.039→0.025 µs，Odometry 0.105→0.043 µs，
+LaserScan 7.199→0.068 µs；复用缓冲再快约 1.5~1.7 倍。细节见 <code>.memories</code> 的
+「性能三项」一节。</p>
 </div>
 
 <div class="pagenav">

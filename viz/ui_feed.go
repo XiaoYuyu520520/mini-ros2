@@ -35,6 +35,10 @@ type feedController struct {
 	// be filled without the user pressing Refresh first.
 	onConnected func()
 
+	// onGoalEvent receives the action events (`goal_status`, `goal_feedback`,
+	// `goal_result`). The navigation panel sets it.
+	onGoalEvent func(Event)
+
 	closing atomic.Bool
 	done    chan struct{}
 }
@@ -207,6 +211,12 @@ func (c *feedController) consume(feed *Feed) {
 				dirty = true
 			case "frames":
 				c.scene.SetFrames(event.Frames)
+			case "goal_status", "goal_feedback", "goal_result":
+				// The action events belong to the navigation panel; the
+				// controller only forwards them.
+				if c.onGoalEvent != nil {
+					c.onGoalEvent(event)
+				}
 			case "error":
 				c.scene.SetError(event.Topic, event.Message)
 				c.setStatus(fmt.Sprintf("sidecar: %s: %s", event.Topic, event.Message))
@@ -338,6 +348,30 @@ func (c *feedController) publishPoint(
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	return feed.PublishPoint(ctx, topic, typeName, frame, x, y, z)
+}
+
+// SendGoal starts a NavigateToPose goal through the running sidecar.
+func (c *feedController) SendGoal(
+	ctx context.Context, action, typeName, frame string, x, y, yaw float64,
+) error {
+	c.mu.Lock()
+	feed := c.feed
+	c.mu.Unlock()
+	if feed == nil {
+		return fmt.Errorf("sidecar is not running")
+	}
+	return feed.SendGoal(ctx, action, typeName, frame, x, y, yaw)
+}
+
+// CancelGoal cancels the goal the sidecar is following.
+func (c *feedController) CancelGoal(ctx context.Context) error {
+	c.mu.Lock()
+	feed := c.feed
+	c.mu.Unlock()
+	if feed == nil {
+		return fmt.Errorf("sidecar is not running")
+	}
+	return feed.CancelGoal(ctx)
 }
 
 // rateSnapshot is the per-topic frame count of the current second, for the

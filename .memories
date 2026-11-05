@@ -6,6 +6,54 @@
 约定与根 `README.md` 一致：`.md` 用 **LF** 换行 + **UTF-8 BOM**；
 `.bat` 用 **CRLF**；`.sh` 用 **LF**。
 
+### Phase 1 正确性：hz 标准差、GUI action 闭环、启动状态机、文档（2026-11-05）
+
+这一轮按 review 的 P0 清单做了 Phase 1（正确性），全部本地编译 + 测试过。
+
+* **`ros2 topic hz` 的 `std dev` 一直是 `0.0`**：`ros2_cli.cpp` 收集了 intervals、
+  算了均值与极值，标准差却写成字面量 `0.0`。抽成头文件
+  `bridge/windows/include/ros2_bridge/hz_stats.hpp` 的 `computeHzStats()`（总体标准差，
+  除数是 N；零/非有限 interval 跳过；空窗口 `valid=false` 不除零），CLI 只用结果。
+  测试 `bridge/windows/tests/hz_stats.cpp`（固定周期=0、抖动=0.01、停顿后恢复、
+  空窗口、零间隔）25 项；CMake 里 `bridge_hz_stats`。
+* **GUI「2D Goal Pose」原来只发 `/goal_pose` 话题，不会导航**：nav2 的 `bt_navigator`
+  只吃 `NavigateToPose` action，不吃这个话题。现在边车 `viz_feed.cpp` 直接实现
+  action 客户端（与 `ros2 action send_goal` 同一套：`<name>/_goal` id + goal、
+  `_goal_ack`、`_feedback`、`_result`（id + 结果码字节 + 载荷）、`_cancel`、`_cancel_ack`），
+  新增 op `navigate_to_pose` / `cancel_goal`；`followGoal()` 线程异步发 `goal_status` /
+  `goal_feedback` / `goal_result` 事件。Go 侧新增 `viz/ui_nav.go`（导航面板：目标/状态/
+  剩余距离/反馈/取消），`feed.go` 的 `Event` 加 `Action`/`GoalID`，`feed.SendGoal`/
+  `CancelGoal`。**关键坑**：`feed.Events` 的 parser 会丢弃没有 id 的帧，而 action 事件
+  是 `event` 帧、没有 id —— 已经在 `parseEvent` 里带上 action/goal_id。
+  `publishTool(toolGoal)` 改走 `navPanel.sendGoal`；`/goal_pose` 话题发布保留在
+  `tools.goal_topic`，但不再等同导航。
+  **测试**：`bridge/windows/tests/viz_feed_action.cpp` 用真实 `viz_feed.exe` 子进程 +
+  `FakeNavigator` 共享内存假服务器，端到端验 goal→accepted→feedback→result 与 cancel，
+  22 项，已进 ctest（依赖 `viz_feed` target，用 `$<TARGET_FILE:viz_feed>` 传路径）。
+  **Windows 管道坑**：子进程要两条 pipe（stdin 一条、stdout 一条），父进程保留的是
+  stdin 的写端与 stdout 的读端、标记 non-inheritable；一开始两条都反了，导致父进程读不到
+  hello。`CreateProcessA` 返回 BOOL，进程句柄在 `PROCESS_INFORMATION.hProcess`。
+* **`run_nav2_stack.py` 的半成功启动**：原来 `wait_for_active` 超时（status==2）只打 warning
+  继续跑 goal，且失败后不清理残留进程（部分节点起着、goal 照发）。现在加了 `Startup`
+  状态机：`preconditions → map → localization → servers → activate → [safety] → ready`，
+  每阶段 `enter()` 打日志；`record()` 记本 run 起的节点；任何阶段失败抛 `StartupFailure`，
+  `rollback()` 逆序 `kill_nodes` 后返回 1；`ready` 阶段用 `action_server_ready()`
+  （`ros2 action list` 里真有 `/navigate_to_pose`）才算就绪，**只有 READY 才发 goal**。
+  测试 `bridge/ubuntu/ros2_bridge_sim/tests/test_nav2_stack_states.py`（回滚逆序、空回滚、
+  阶段跟踪、action_server_ready 正负、goal 未就绪不跑）6 项。
+* **文档与源码不一致（已修）**：根 `README.md` 徽章 C++17→C++20（CMake 是 20）；
+  `docs/FAQ/limitations.md` 里「没有 rclpy / nav2_simple_commander」改为「有部分 rclpy
+  （`nav2/ros2_shim/python/rclpy`）+ vendored simple_commander」；「bt_navigator 订阅
+  `/goal_pose`」改正为「GUI 现在走 action，`/goal_pose` 话题不触发导航」；
+  `docs/Architecture/shm_transport.md` 的「WriteArchive 没有 reserve」改为已实现的
+  `serializeInto`/`reserved_size_of` + 实测数字；`bridge/docs/04-gaps.md` 把本轮修复补进
+  「仍然没做」清单的对应条目。
+* **本地验证**：bridge ctest 9/9（新增 `bridge_hz_stats`、`bridge_viz_feed_action`）；
+  viz `go vet` + `go test` 全过（新增 `ui_nav_test.go`；`display_rows_test.go` 因 accordion
+  多了「导航」项，Properties 从 index 1 变 index 2）；pytest `bridge/ubuntu` 103 通过。
+  Go 在本机要用 MSYS2 的 gcc（`CC=D:/WindowsServer2025_1/software/MSYS2/ucrt64/bin/gcc.exe`），
+  系统默认 gcc 是 Cygwin 的，cgo 编不过。
+
 ### 性能三项：CDR 批量、按类型分槽、relay 时延（2026-11-04）
 
 * **CDR `Writer::reserve()` 是个坑**：头文件里私有 `reserve(n)` 实际调用

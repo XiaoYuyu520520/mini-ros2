@@ -164,6 +164,62 @@ class Usage(Exception):
     """Bad command line, reported the way argparse would report it."""
 
 
+class StartupFailure(Exception):
+    """A startup stage that did not come up.
+
+    The stage name is what the caller has to be told: "the stack did not
+    start" is not a diagnosis, "the lifecycle manager could not activate
+    bt_navigator" is. The logs are named after the stage as well, so the
+    message and the files point at the same thing.
+    """
+
+    def __init__(self, stage: str, detail: str = ""):
+        super().__init__(stage)
+        self.stage = stage
+        self.detail = detail
+
+
+class Startup:
+    """The stages a bringup goes through, and the cleanup that undoes it.
+
+    The point of this object is the rollback. Before, a bringup that failed
+    half way left its processes running: some nodes up, the rest not, and the
+    goal command ran anyway against a stack that was not there. Now every
+    process this bringup started is recorded, and a failure anywhere takes
+    them down again before the error is reported.
+
+    The stages are in the order they depend on each other:
+
+        preconditions -> map -> localization -> servers -> activate -> ready
+
+    ``ready`` is the only state a navigation goal may be sent from.
+    """
+
+    def __init__(self):
+        self.stage = "preconditions"
+        self.started = []      # node names this bringup started
+        self.log_dir = None
+
+    def enter(self, stage: str) -> None:
+        self.stage = stage
+        print("[nav2_stack] stage: %s" % stage, flush=True)
+
+    def record(self, name: str) -> None:
+        self.started.append(name)
+
+    def rollback(self) -> None:
+        """Take down everything this bringup started.
+
+        The manager goes first, for the same reason `stop` does it first: it
+        would otherwise try to reconfigure servers that are disappearing.
+        """
+        if not self.started:
+            return
+        print("[nav2_stack] rolling back the %d node(s) this run started"
+              % len(self.started), file=sys.stderr)
+        bp.kill_nodes(list(reversed(self.started)), note="[nav2_stack] cleaning up")
+
+
 def parse_options(argv):
     """The cmd twin's option loop, over a Python argument list.
 
@@ -366,6 +422,28 @@ def start_map_server(env, log_dir, params_args, duration_args, map_file) -> int:
     return 0
 
 
+def action_server_ready(env: dict, name: str, steps: int = 10) -> bool:
+    """Is *name* a server right now?
+
+    The lifecycle manager says a node is ACTIVE, but an action is only usable
+    when somebody serves it: `bt_navigator` publishes `/navigate_to_pose`
+    when it activates, and the goal is written onto that action's channel. A
+    stack whose navigator came up but whose action did not would take the goal
+    and never answer it, which the caller sees as a goal that ran until its
+    timeout.
+
+    So the last stage of a bringup asks the graph, not the lifecycle log.
+    """
+    for _ in range(steps):
+        done = bp.ros2(["action", "list"], env, capture=True)
+        for line in (done.stdout or "").splitlines():
+            fields = line.split()
+            if fields and fields[0] == name:
+                return True
+        time.sleep(1.0)
+    return False
+
+
 def stop_hint() -> str:
     return "%s bridge/scripts/run_nav2_stack.py stop" % bp.PYTHON
 
@@ -405,104 +483,157 @@ def main(argv) -> int:
     except ValueError:
         wait_ms = 90000
 
+    startup = Startup()
+
     # A stack left over from an earlier run would keep its topics and its
     # lifecycle state, and the new manager would then talk to two nodes of the
     # same name. Start from nothing.
     bp.kill_nodes(STOP_NAMES)
 
-    # /scan, /map, /tf and /clock have to be in shared memory before the
-    # servers activate, so start the daemon when it is down and wait for its
-    # first sync.
-    if bp.wait_bridge_ready(env) != 0:
-        return 1
+    try:
+        # --- stage 1: preconditions -------------------------------------
+        # /scan, /map, /tf and /clock have to be in shared memory before the
+        # servers activate, so start the daemon when it is down and wait for
+        # its first sync. This is also where a daemon that cannot be reached,
+        # or a params file that vanished between check_files and now, is
+        # caught - before anything is spawned.
+        startup.enter("preconditions")
+        if bp.wait_bridge_ready(env) != 0:
+            raise StartupFailure(
+                "preconditions",
+                "the bridge daemon did not answer; run `bridge\\windows\\ros2_bridge.bat"
+                " status` (or the Linux twin) and see its log")
 
-    log_dir.mkdir(parents=True, exist_ok=True)
-    bp.clear_logs(log_dir)
-    print("[nav2_stack] logs: %s" % log_dir, flush=True)
+        log_dir.mkdir(parents=True, exist_ok=True)
+        bp.clear_logs(log_dir)
+        startup.log_dir = log_dir
+        print("[nav2_stack] logs: %s" % log_dir, flush=True)
 
-    # The overrides go last when they are wanted, so a `-p` naming something
-    # both files set stays theirs - which is the point of a file that exists to
-    # adapt an upstream one. `--no-overrides` drops them entirely.
-    params_args = ["--params-file", str(params_yaml)]
-    if overrides:
-        params_args += ["--params-file", str(bp.OVERRIDES_YAML)]
-    duration_args = [] if duration in ("0", "") else ["--duration", str(duration)]
+        # The overrides go last when they are wanted, so a `-p` naming
+        # something both files set stays theirs - which is the point of a file
+        # that exists to adapt an upstream one. `--no-overrides` drops them.
+        params_args = ["--params-file", str(params_yaml)]
+        if overrides:
+            params_args += ["--params-file", str(bp.OVERRIDES_YAML)]
+        duration_args = [] if duration in ("0", "") else ["--duration", str(duration)]
 
-    if map_file:
-        # /map has one writer. The peer's map mirrored in and map_server's file
-        # are two maps in one channel, and the one the costmaps localise against
-        # is whichever wrote last - so a run that brings its own map needs the
-        # mirror off, exactly like a mapping run. Refusing here is before
-        # anything has been started, which is the only cheap moment to refuse.
-        if "/map" in mirrored_topics(env):
-            print("[nav2_stack] the daemon is mirroring /map from the peer, and --map"
-                  " makes map_server its writer", file=sys.stderr)
-            print("[nav2_stack] two writers on one topic are two maps in one channel;"
-                  " restart the daemon without it:", file=sys.stderr)
-            print("[nav2_stack]   %s" % unmirror_hint(), file=sys.stderr)
-            return 2
-        if start_map_server(env, log_dir, params_args, duration_args, map_file) != 0:
-            return 1
+        # --- stage 2: the map (--map only) ------------------------------
+        if map_file:
+            startup.enter("map")
+            # /map has one writer. The peer's map mirrored in and map_server's
+            # file are two maps in one channel, and the one the costmaps
+            # localise against is whichever wrote last - so a run that brings
+            # its own map needs the mirror off, exactly like a mapping run.
+            if "/map" in mirrored_topics(env):
+                raise StartupFailure(
+                    "map",
+                    "the daemon is mirroring /map from the peer, and --map makes"
+                    " map_server its writer; restart the daemon without it:  "
+                    + unmirror_hint())
+            if start_map_server(env, log_dir, params_args, duration_args,
+                               map_file) != 0:
+                raise StartupFailure(
+                    "map",
+                    "map_server did not reach ACTIVE; see %s"
+                    % (log_dir / "map_server.log"))
+            startup.record("map_server")
 
-    if amcl:
-        print("[nav2_stack] starting amcl_bridge_node  (map -> odom)", flush=True)
-        bp.spawn(bp.exe("amcl_bridge_node"),
-                 params_args + duration_args
-                 + ["-p", "base_frame_id:=base_link", "-p", "laser_max_range:=12.0",
-                    "-p", "save_pose_rate:=0.0", "-p", "first_map_only:=true",
-                    "--initial-pose-from-odom"],
-                 env, log_dir, "amcl_bridge_node")
+        # --- stage 3: localization --------------------------------------
+        if amcl:
+            startup.enter("localization")
+            print("[nav2_stack] starting amcl_bridge_node  (map -> odom)", flush=True)
+            bp.spawn(bp.exe("amcl_bridge_node"),
+                     params_args + duration_args
+                     + ["-p", "base_frame_id:=base_link", "-p",
+                        "laser_max_range:=12.0", "-p", "save_pose_rate:=0.0",
+                        "-p", "first_map_only:=true",
+                        "--initial-pose-from-odom"],
+                     env, log_dir, "amcl_bridge_node")
+            startup.record("amcl_bridge_node")
 
-    remap = ["-r", "cmd_vel:=cmd_vel_nav"] if safety else []
-    print("[nav2_stack] starting %s" % ", ".join(SERVER_NODES), flush=True)
-    for name in SERVER_NODES:
-        extra = remap if (safety and name in CMD_VEL_WRITERS) else []
-        _, log_path = bp.spawn(bp.exe(name), params_args + duration_args + extra,
-                               env, log_dir, name)
-        print("[nav2_stack]   %s -> %s" % (name, log_path), flush=True)
+        # --- stage 4: the servers ---------------------------------------
+        startup.enter("servers")
+        remap = ["-r", "cmd_vel:=cmd_vel_nav"] if safety else []
+        print("[nav2_stack] starting %s" % ", ".join(SERVER_NODES), flush=True)
+        for name in SERVER_NODES:
+            extra = remap if (safety and name in CMD_VEL_WRITERS) else []
+            _, log_path = bp.spawn(bp.exe(name), params_args + duration_args + extra,
+                                   env, log_dir, name)
+            startup.record(name)
+            print("[nav2_stack]   %s -> %s" % (name, log_path), flush=True)
 
-    # The manager polls for each node's services, so the servers need a moment
-    # to announce themselves; a cold start of four 20 Hz servers plus two
-    # costmaps is the slowest thing here and it is not worth racing.
-    print("[nav2_stack] starting lifecycle_manager", flush=True)
-    time.sleep(4.0)
-    _, manager_log = bp.spawn(bp.exe("lifecycle_manager"),
-                              params_args + duration_args,
-                              env, log_dir, "lifecycle_manager")
+        # --- stage 5: activation ----------------------------------------
+        startup.enter("activate")
+        # The manager polls for each node's services, so the servers need a
+        # moment to announce themselves; a cold start of four 20 Hz servers
+        # plus two costmaps is the slowest thing here and it is not worth
+        # racing.
+        print("[nav2_stack] starting lifecycle_manager", flush=True)
+        time.sleep(4.0)
+        _, manager_log = bp.spawn(bp.exe("lifecycle_manager"),
+                                  params_args + duration_args,
+                                  env, log_dir, "lifecycle_manager")
+        startup.record("lifecycle_manager")
 
-    status = wait_for_active(log_dir, wait_ms)
-    if status == 1:
-        print("[nav2_stack] the lifecycle manager could not bring the stack up", file=sys.stderr)
-        for line in bp.tail(manager_log, 4000).splitlines():
-            if "Failed" in line or "ERROR" in line:
-                print(line, file=sys.stderr)
-        print("[nav2_stack] node logs: %s" % log_dir, file=sys.stderr)
-        print("[nav2_stack] stop the leftovers with:  %s" % stop_hint(), file=sys.stderr)
-        return 1
-    if status == 2:
-        print("[nav2_stack] warning: the stack did not report itself active within %d ms"
-              % wait_ms, file=sys.stderr)
-        print("[nav2_stack] see %s" % manager_log, file=sys.stderr)
-    else:
+        status = wait_for_active(log_dir, wait_ms)
+        if status == 1:
+            details = [line for line in bp.tail(manager_log, 4000).splitlines()
+                       if "Failed" in line or "ERROR" in line]
+            raise StartupFailure(
+                "activate",
+                "the lifecycle manager could not bring the stack up:\n  "
+                + "\n  ".join(details or ["see %s" % manager_log]))
+        if status == 2:
+            # A bringup that did not finish is a failure, not a warning: a
+            # goal sent at a half-active stack hangs until its timeout, and
+            # the half-started nodes are what the next run has to clean up.
+            raise StartupFailure(
+                "activate",
+                "the stack did not report itself active within %d ms; see %s"
+                % (wait_ms, manager_log))
         print("[nav2_stack] %s are active" % ", ".join(SERVER_NODES), flush=True)
 
-    # The two --safety nodes go up last, on purpose: the manager has activated
-    # the controller and the behavior server by now, so nothing is going to
-    # publish on /cmd_vel_nav - or read /cmd_vel - that is not part of the
-    # chain, and the smoother's first input is a command the finished stack
-    # produced.
-    if safety and start_safety(env, log_dir, params_args, duration_args,
-                              safety_params) != 0:
-        return 1
+        # --- stage 6: the command chain (--safety) ----------------------
+        if safety:
+            startup.enter("safety")
+            if start_safety(env, log_dir, params_args, duration_args,
+                            safety_params) != 0:
+                raise StartupFailure(
+                    "safety",
+                    "the --safety nodes did not reach ACTIVE; see %s and %s"
+                    % (log_dir / "velocity_smoother.log",
+                       log_dir / "collision_monitor.log"))
+            for name in SAFETY_NODES:
+                startup.record(name)
 
-    # A goal sent in the first second after activation can be lost: the shim's
-    # action channels are per-process shared-memory rings, and a request written
-    # while a server is still attaching to its channels is seen by nobody. What
-    # that looks like is not an error - bt_navigator accepts the goal, the tree
-    # ticks, and no /cmd_vel ever comes out, because the compute_path_to_pose
-    # request the tree sent was never answered, so the goal runs until the
-    # caller's timeout. Four seconds of patience is cheap next to a 25 s bringup.
-    time.sleep(4.0)
+        # --- stage 7: ready ---------------------------------------------
+        # A goal sent in the first second after activation can be lost: the
+        # shim's action channels are per-process shared-memory rings, and a
+        # request written while a server is still attaching to its channels is
+        # seen by nobody. What that looks like is not an error - bt_navigator
+        # accepts the goal, the tree ticks, and no /cmd_vel ever comes out,
+        # because the compute_path_to_pose request the tree sent was never
+        # answered, so the goal runs until the caller's timeout. Four seconds
+        # of patience is cheap next to a 25 s bringup.
+        time.sleep(4.0)
+        if not action_server_ready(env, "navigate_to_pose"):
+            raise StartupFailure(
+                "ready",
+                "the stack is active but /navigate_to_pose is not a server; a goal"
+                " would hang until its timeout")
+        startup.enter("ready")
+        print("[nav2_stack] READY: /navigate_to_pose is served", flush=True)
+    except StartupFailure as failure:
+        print("[nav2_stack] startup failed at stage '%s'" % failure.stage,
+              file=sys.stderr)
+        if failure.detail:
+            print("[nav2_stack]   %s" % failure.detail, file=sys.stderr)
+        if startup.log_dir is not None:
+            print("[nav2_stack] node logs: %s" % startup.log_dir, file=sys.stderr)
+        # Nothing half-started is left behind: the goal command below is only
+        # reached from the READY state.
+        startup.rollback()
+        return 1
 
     if not goal_args:
         print("[nav2_stack] the stack is running; stop it with:  %s" % stop_hint(), flush=True)

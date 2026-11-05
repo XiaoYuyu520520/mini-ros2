@@ -249,6 +249,31 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tests/cli_values.cpp)
   add_test(NAME bridge_cli_values COMMAND bridge_cli_values)
 endif()
 
+# The numbers `ros2 topic hz` prints. The command used to write the standard
+# deviation as a literal 0.0, so a jittery publisher looked perfectly regular;
+# the computation is in a header of its own precisely so that it can be
+# tested without a running stack.
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tests/hz_stats.cpp)
+  add_executable(bridge_hz_stats tests/hz_stats.cpp)
+  target_link_libraries(bridge_hz_stats PRIVATE ros2_bridge)
+  add_test(NAME bridge_hz_stats COMMAND bridge_hz_stats)
+endif()
+
+# The sidecar's navigation action, end to end: the real `viz_feed` binary
+# driven over its own stdin/stdout protocol, with a stand-in action server on
+# the other side of shared memory. This is what proves that the GUI's "2D Goal
+# Pose" really sends a NavigateToPose action and really hears the answer -
+# the whole point of the panel that shows the feedback.
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tests/viz_feed_action.cpp)
+  add_executable(bridge_viz_feed_action tests/viz_feed_action.cpp)
+  target_link_libraries(bridge_viz_feed_action PRIVATE ros2_bridge)
+  target_include_directories(bridge_viz_feed_action PRIVATE
+    ${ROS2_BRIDGE_SHIM_ROOT}/../third_party/include)
+  add_dependencies(bridge_viz_feed_action viz_feed)
+  add_test(NAME bridge_viz_feed_action
+    COMMAND bridge_viz_feed_action $<TARGET_FILE:viz_feed>)
+endif()
+
 # The contract between this tree and the shim's channels, as
 # `ros2_bridge/shm_topic.hpp` states it: the names, the slot sizes, and a
 # publish/drain round trip through two handles. No daemon, no network and
