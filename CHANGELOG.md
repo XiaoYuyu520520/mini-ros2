@@ -4,7 +4,12 @@ All notable changes to this project. The format is chronological; the newest
 release is first. Versions before v0.2.4 predate this file — their notes live on
 the GitHub Releases page.
 
-## Unreleased
+## v0.2.6 — unreleased (the tag publishes it)
+
+A packaging release: the beginner path on the documentation site was checked
+page by page against the code and the archives, and everything it disagreed
+with is fixed here. **The v0.2.5 archives stay on their release page and are
+still missing the SLAM server** (see below); v0.2.6 is the one to download.
 
 ### Fixed
 
@@ -18,8 +23,9 @@ the GitHub Releases page.
   file did not exist. The quick start's dependency section now says plainly
   that an archive needs only Python and a venv, and that `apt` is for a
   source build.
-* **`start/connector.sh` finds the repo instead of assuming `~/code/CPU`.**
-  The root is the script's own parent directory; `CPU_ROOT` still overrides.
+* **`start/connector.sh` finds the repo instead of assuming the developer's
+  home checkout.** The root is the script's own parent directory; `CPU_ROOT`
+  still overrides.
 * **The shipped scripts no longer name one developer's checkout.**
   `start/加载模拟ROS环境变量.ps1`, `bridge/windows/ros2.ps1` and `ros2_shell.bat`
   used to carry an absolute path copied from a shell; the placeholders are

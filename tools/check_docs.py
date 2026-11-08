@@ -54,12 +54,15 @@ def find_docs(root: Path, include_scratch: bool) -> list[Path]:
     return out
 
 
-def check(path: Path) -> tuple[list[str], list[str]]:
-    """Return (errors, warnings) for one file."""
+def check_bytes(raw: bytes) -> tuple[list[str], list[str]]:
+    """Return (errors, warnings) for the raw bytes of one `.md`.
+
+    This is the single implementation of the policy; `check()` reads a file and
+    hands the bytes here, and `tools/hooks/check_md_write.py` hands the bytes an
+    edit *would* produce, so the hook and the lint can never disagree.
+    """
     errors: list[str] = []
     warnings: list[str] = []
-    raw = path.read_bytes()
-
     if raw.count(b"\r"):
         errors.append("%d CR byte(s) -- .md here is LF-only" % raw.count(b"\r"))
     bom = raw[:3] == b"\xef\xbb\xbf"
@@ -74,6 +77,11 @@ def check(path: Path) -> tuple[list[str], list[str]]:
     if fences % 2:
         errors.append("odd number of ``` fences (%d) -- the rest of the file is inside one" % fences)
     return errors, warnings
+
+
+def check(path: Path) -> tuple[list[str], list[str]]:
+    """Return (errors, warnings) for one file."""
+    return check_bytes(path.read_bytes())
 
 
 def main() -> int:

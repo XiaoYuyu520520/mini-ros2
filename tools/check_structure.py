@@ -63,6 +63,7 @@ REQUIRED_READMES = [
     "nav2/slam_toolbox_port",
     "nav2/third_party",
     "tools",
+    "tools/hooks",
 ]
 
 # The entry points the docs and the CI actually invoke. The point is not that

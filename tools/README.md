@@ -14,6 +14,7 @@ SSH 到那台 Ubuntu 机器，`serial_shell.py` / `ssh_board.py` 要 `pyserial` 
 | `check_docs.py` | 文档体检：LF-only、BOM、``` 围栏成对、控制字符 | `python tools\check_docs.py --quiet` |
 | `find_scratch_refs.py` | 列出所有被文档/源码引用的 `.scratch\...` 路径 | `python tools\find_scratch_refs.py --check` |
 | `check_structure.py` | 结构体检：一棵树一张 README、结构图里的目录真的在、文档点名的入口脚本真的在 | `python tools\check_structure.py --list` |
+| `hooks/check_md_write.py` | Claude Code 的 `PreToolUse` 钩子：`.md` 的修改会先按 `check_docs.py` 的规矩判一遍，会写坏的直接拒绝 | `echo '{"tool_name":"Edit","tool_input":{"file_path":"docs/index.md"}}' \| python tools\hooks\check_md_write.py` |
 | `check_local_paths.py` | 发布文档里不得出现开发机的本机路径（某个盘符下的虚拟环境、MSYS2 安装目录、机器人上的检出目录这类）；`03-validation.md` 是实验记录，豁免 | `python tools\check_local_paths.py --quiet` |
 | `check_cross_platform.py` | 一条命令在 Windows 和 Ubuntu 上分别编译 + 测试（12 项检查），跨平台构建入口的守门人 | `python tools\check_cross_platform.py --local` |
 | `serial_shell.py` | 通过串口（COM3, 115200）登录 ARM 板并执行命令；板子还没联网时唯一的入口 | `python tools\serial_shell.py --command "uname -a"` |
