@@ -4,6 +4,20 @@ All notable changes to this project. The format is chronological; the newest
 release is first. Versions before v0.2.4 predate this file — their notes live on
 the GitHub Releases page.
 
+## Unreleased
+
+### Fixed
+
+* **The relay tests no longer publish into a subscription that is not attached
+  yet.** Three tests in `test_relay.py` published one message as soon as the
+  relay reported its stream `ACTIVE`, waited for the counter it should have
+  bumped, and failed when the simulator had not registered its subscriber
+  in that instant -- a race that only shows on a loaded runner (one of five
+  concurrent pytest runs failed locally; the tag's cross-platform job failed
+  it while the release's own pytest step, on a quieter runner, passed). They
+  now keep publishing until the counter moves, the same pattern the collision
+  test in that file already used.
+
 ## v0.2.6 — 2026-11-09
 
 The release after v0.2.5 settled what the performance round and the first

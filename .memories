@@ -6,6 +6,28 @@
 约定与根 `README.md` 一致：`.md` 用 **LF** 换行 + **UTF-8 BOM**；
 `.bat` 用 **CRLF**；`.sh` 用 **LF**。
 
+### v0.2.6 发布：tag 触发的 CI 与主分支 CI 是两次独立的跑法（2026-11-09）
+
+* **v0.2.6 已发布**（tag = `0686cee`，三平台 build 全绿，release job 发布了
+  `mini-ros2-{windows-x86_64,linux-x86_64,ubuntu22-arm64}-0.2.6` + `SHA256SUMS.txt`）。
+  CHANGELOG 里之前停留在 `## Unreleased` 的性能轮条目（注册表生成、图缓存、CRC32C、
+  daemon 拆分）随 v0.2.6 一起发布。
+* **tag push 会同时触发 `release.yml` 和 `cross-platform.yml`**（后者没有 tags 过滤）。
+  两者各自跑全套构建 + 测试：tag 那一次 `cross-platform` 的 linux x86_64 在
+  「simulator pytest tree」失败，而同一提交在主分支的 `cross-platform` 三平台全过、
+  release 自己的 pytest 步骤（同样跑 `tools/run_ctest.py sim`）也过。所以失败是负载相关，
+  不是提交相关。
+* **失败是测试自己的竞态**：`test_relay.py` 里三处「relay 的流刚报 ACTIVE 就发**一条**
+  消息再等计数器」，而 `Graph.publish` 只投递给已注册的订阅者；ACTIVE 比仿真侧
+  `create_subscription` 早一个瞬间，负载高时那一条就没人接。本地 5 路并发 pytest
+  必现（5 次里挂 1 次），修复后 3 轮 × 5 路并发 15/15 通过；变异验证（把阈值改成
+  `>= 999`）能红。写法照抄同文件碰撞测试的「持续发布直到计数器动」。
+* **取不到作业日志**：`/actions/jobs/<id>/logs` 要 admin 权限，`github.com` 的作业页面
+  和 release 资产 CDN（`release-assets.githubusercontent.com`）在这台机器上连不上，
+  release 资产只能用 API 看元数据。定位靠「同一提交另一条流水线」+ 本地复现。
+* CI 收尾：推送修复后主分支 `cross-platform` 应为绿；tag 那条历史记录保持红（tag 不动），
+  Release 内容不受影响。
+
 ### 文档站新手路径复审：会误导人的几处，和发布包的两处缺件（2026-11-08）
 
 按「新手从下载到第一次导航」逐页走了一遍 GitHub Pages（21 页），每条命令、路径、数字

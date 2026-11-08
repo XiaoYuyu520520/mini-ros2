@@ -524,8 +524,13 @@ class RelayTest(unittest.TestCase):
         )
 
         # Warm up: proves the subscription really is established upstream.
-        real_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(3.0))
-        self.assertTrue(_wait_for(lambda: len(received) >= 1))
+        # Published until one arrives - the stream reports itself up a moment
+        # before the simulator registered its subscriber.
+        deadline = time.monotonic() + TIMEOUT
+        while time.monotonic() < deadline and not received:
+            real_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(3.0))
+            _wait_for(lambda: len(received) >= 1, timeout=0.2)
+        self.assertTrue(received, "the warm-up message never arrived")
         received.clear()
 
         resp = stub.Publish(pb.PublishRequest(
@@ -862,11 +867,19 @@ class RelayGraphSnapshotTest(unittest.TestCase):
             "the relay should have subscribed to the simulator")
 
         # A stamp 40 ms in the past: the sample should show up in the
-        # percentiles, roughly that old.
-        sim_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(),
-                          stamp_ns=time.time_ns() - 40 * 10**6)
+        # percentiles, roughly that old. Published until it is counted - the
+        # relay's state says ACTIVE a moment before the simulator registered
+        # the subscriber that carries the message over, and a message in that
+        # gap has nobody to go to (see the collision test above).
+        deadline = time.monotonic() + TIMEOUT
+        while time.monotonic() < deadline:
+            sim_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(),
+                              stamp_ns=time.time_ns() - 40 * 10**6)
+            if self.relay.stats_snapshot()["latency"]["global"]["samples"] >= 1:
+                break
+            time.sleep(0.02)
         self.assertTrue(
-            _wait_for(lambda: self.relay.stats_snapshot()["latency"]["global"]["samples"] >= 1),
+            self.relay.stats_snapshot()["latency"]["global"]["samples"] >= 1,
             "the relay should have recorded a latency sample")
 
         snapshot = self.relay.stats_snapshot()
@@ -883,12 +896,17 @@ class RelayGraphSnapshotTest(unittest.TestCase):
         self.assertGreaterEqual(snapshot["topics"]["/scan"]["merged"], 1)
 
         # A stamp in the future (clock skew) is not a latency: it is counted
-        # as unusable instead of poisoning the percentiles.
-        sim_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(),
-                          stamp_ns=time.time_ns() + 60 * 10**9)
+        # as unusable instead of poisoning the percentiles. Same
+        # publish-until-counted race as above.
+        deadline = time.monotonic() + TIMEOUT
+        while time.monotonic() < deadline:
+            sim_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(),
+                              stamp_ns=time.time_ns() + 60 * 10**9)
+            if self.relay.stats_snapshot()["latency"]["global"]["stale_stamps"] >= 1:
+                break
+            time.sleep(0.02)
         self.assertTrue(
-            _wait_for(lambda: self.relay.stats_snapshot()["latency"]["global"]
-                      ["stale_stamps"] >= 1),
+            self.relay.stats_snapshot()["latency"]["global"]["stale_stamps"] >= 1,
             "a stamp from the future should be counted as unusable")
         self.assertLessEqual(self.relay.stats_snapshot()["latency"]["global"]["p50_ms"], 5000.0)
 
@@ -917,10 +935,20 @@ class RelayGraphSnapshotTest(unittest.TestCase):
             raise RuntimeError("the graph says no")
 
         self.relay.graph.publish = refuse
-        sim_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(),
-                          stamp_ns=time.time_ns())
+        # Keep publishing until the refusal is counted. The relay's own
+        # subscription state says "ACTIVE" a moment before the simulator has
+        # registered the subscriber that carries the message over, and a
+        # message published in that gap has nobody to go to - the same race
+        # the collision test above publishes through.
+        deadline = time.monotonic() + TIMEOUT
+        while time.monotonic() < deadline:
+            sim_graph.publish("/scan", msg.LASER_SCAN, _scan_payload(),
+                              stamp_ns=time.time_ns())
+            if self.relay.stats_snapshot()["global"]["merge_errors"] >= 1:
+                break
+            time.sleep(0.02)
         self.assertTrue(
-            _wait_for(lambda: self.relay.stats_snapshot()["global"]["merge_errors"] >= 1),
+            self.relay.stats_snapshot()["global"]["merge_errors"] >= 1,
             "a refused merge should be counted")
         snapshot = self.relay.stats_snapshot()
         self.assertGreaterEqual(snapshot["topics"]["/scan"]["merge_errors"], 1)
