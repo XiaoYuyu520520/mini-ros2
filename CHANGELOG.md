@@ -6,6 +6,39 @@ the GitHub Releases page.
 
 ## Unreleased
 
+### Fixed
+
+* **The Windows archive now carries the SLAM server.** `run_slam_demo.py` launches
+  `nav2/ros2_shim/build/slam_toolbox_port/slam_bridge_node`, and `package.py`
+  only collected `build/` one level deep, so SLAM was source-build-only in
+  every archive. It is packaged now (the other node flavours stay selectable
+  through `NAV2_SLAM_EXE` and stay out of the archive).
+* **The Linux archive carries `start/requirements-ubuntu.txt`.** The
+  connector's message on a missing interpreter already pointed at it; the
+  file did not exist. The quick start's dependency section now says plainly
+  that an archive needs only Python and a venv, and that `apt` is for a
+  source build.
+* **`start/connector.sh` finds the repo instead of assuming `~/code/CPU`.**
+  The root is the script's own parent directory; `CPU_ROOT` still overrides.
+* **The shipped scripts no longer name one developer's checkout.**
+  `start/加载模拟ROS环境变量.ps1`, `bridge/windows/ros2.ps1` and `ros2_shell.bat`
+  used to carry an absolute path copied from a shell; the placeholders are
+  `<repo>` now. `tools/check_local_paths.py` scans those scripts too, so the
+  next leak is caught before packaging.
+
+### Changed
+
+* **The documentation site's beginner path was reviewed end to end.** The
+  pages that disagreed with the code now say what the code does:
+  navigation is the `NavigateToPose` action and `/goal_pose` is an upstream
+  side path; cross-machine runs must set `ROS2_BRIDGE_AGENT` (the LAN scan
+  only looks at 50051, the connector serves 50060) and the variable keeps
+  an earlier value across a re-dot-source; the 30 s budget is a wait that
+  ends with a warning, not a hang; the simulator's default world is 12 m.
+  Quick-start pages are numbered 1.2 / 1.3 / 1.4 to match the table of
+  contents, the sidebar lists 3.5 (the visualiser), and the test-tree counts,
+  environment-variable table and slot-size rule match the source again.
+
 ### Added
 
 * **The bridge's registry tables are generated.** `bridge/tests/registry_manifest.txt`

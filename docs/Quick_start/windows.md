@@ -3,7 +3,7 @@ layout: default
 title: 1 快速开始 · Windows 上手
 ---
 
-# 1.6 Windows 上手
+# 1.2 Windows 上手
 
 <div class="overview">
 <div class="label">本页总览</div>
@@ -21,10 +21,19 @@ title: 1 快速开始 · Windows 上手
 
 <a id="download"></a>
 
-## 1.6.1 下载与解压
+## 1.2.1 下载与解压
 
 去 <a href="https://github.com/XiaoYuyu520520/mini-ros2/releases">Releases</a> 下载
 <code>mini-ros2-windows-x86_64-&lt;版本&gt;.zip</code>，解压到任意目录。
+
+<div class="callout note">
+<span class="label">解压出来是乱码 / 找不到文件？</span>
+<p>包里有两个中文名的脚本（<code>start/加载模拟ROS环境变量.ps1</code>、
+<code>start/Windows被连接服务进程.ps1</code>）。系统语言<strong>不是中文</strong>的 Windows
+上，资源管理器的「全部解压缩」可能把文件名解成乱码，脚本就找不到了。
+这时改用 PowerShell 解压：</p>
+<pre><code>Expand-Archive -Path .\mini-ros2-windows-x86_64-&lt;版本&gt;.zip -DestinationPath .</code></pre>
+</div>
 
 <div class="callout note">
 <span class="label">注意</span>
@@ -37,20 +46,28 @@ title: 1 快速开始 · Windows 上手
 
 ```
 mini-ros2/
-├─ start/          一键入口：加载环境变量、起连接器、起 Windows 守护进程
-├─ bridge/         Windows 守护进程 + ros2 命令行 + Ubuntu 仿真 + 文档
-├─ nav2/           共享内存 ROS2 兼容层 + 移植的 nav2
-├─ gRPC/           跨机通信 SDK
-├─ code/           小车的建图 + 导航工作区
-├─ tools/          仓库工具：跑测试、文档体检、结构检查
-└─ package.py      打发布包
+├─ start/          一键入口：加载环境变量（Linux 包里还有接线器 connector.sh）
+├─ bridge/         Windows 守护进程 + ros2 命令行 + Ubuntu 仿真/中继的脚本
+├─ nav2/           兼容层 + nav2 服务器与工具
+├─ gRPC/           跨机通信 SDK（真 ROS2 对端的 agent）
+├─ viz/            可视化，命令名 rviz2
+├─ README.md       目标、结构、怎么用（完整树在源码仓库里）
+├─ GETTING_STARTED.md  新手入口
+└─ BUILD.md        编译 / 启动 / 停止速查（从源码构建才用得上）
 ```
+
+<div class="callout note">
+<span class="label">发布包和源码仓库不一样</span>
+<p>上面的树是<strong>发布包</strong>里的：<code>code/</code>（小车工作区）、<code>tools/</code>、
+<code>docs/</code> 和 <code>package.py</code> 只在<strong>源码仓库</strong>里有，
+打包时被有意留在包外 —— 运行用不到它们。</p>
+</div>
 
 Windows 包**不需要 MSYS2、不需要 ROS2** —— 运行时的 88 个 DLL 已经跟在 exe 旁边了。
 
 <a id="env"></a>
 
-## 1.6.2 加载环境变量（PowerShell）
+## 1.2.2 加载环境变量（PowerShell）
 
 <div class="callout warn">
 <span class="label">重要</span>
@@ -166,7 +183,7 @@ SDK 配置、日志级别。关掉窗口就恢复原样 —— 不写注册表�
 
 <a id="verify"></a>
 
-## 1.6.3 验证：两个终端，一个发、一个收
+## 1.2.3 验证：两个终端，一个发、一个收
 
 环境加载好之后，最快的验证不是看变量，而是**自己发一条话题、自己收一条**。
 两个 PowerShell 窗口各点源一次即可 —— 不需要机器人，也不需要 Ubuntu。
@@ -247,7 +264,7 @@ ros2 topic hz /demo/chatter  # 约 1 Hz，持续打印，Ctrl+C 停
 
 <a id="connect"></a>
 
-## 1.6.4 连上机器人
+## 1.2.4 连上机器人
 
 <div class="overview">
 <div class="label">前置条件</div>
@@ -297,7 +314,7 @@ $env:ROS2_BRIDGE_WAIT_MS = '1500'
 
 <a id="mission"></a>
 
-## 1.6.5 跑通第一个导航任务
+## 1.2.5 跑通第一个导航任务
 
 ### 第一步：把小车放回原点
 
@@ -344,7 +361,7 @@ python .\bridge\scripts\run_nav2_stack.py --goal auto --report goal.json
 python .\bridge\scripts\run_nav2_stack.py stop
 ```
 
-## 1.6.6 下一步
+## 1.2.6 下一步
 
 | 想做的事 | 去哪一页 |
 | --- | --- |

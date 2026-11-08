@@ -1,6 +1,6 @@
 ﻿# 加载模拟ROS环境变量.ps1 - 加载模拟 ROS2 环境（PowerShell 版）
 #
-#     . E:\DesktopData\app\code\CPU\start\加载模拟ROS环境变量.ps1
+#     . <repo>\start\加载模拟ROS环境变量.ps1
 #     ros2 topic list -t
 #
 # 为什么 PowerShell 要单独一个文件
@@ -35,8 +35,8 @@
 #   ROS2_BRIDGE_AGENT     守护进程连谁      默认 127.0.0.1:50060
 #
 # 跨机：先设 ROS2_BRIDGE_AGENT 再点源
-#   $env:ROS2_BRIDGE_AGENT = '192.168.1.113:50060'
-#   . E:\DesktopData\app\code\CPU\start\加载模拟ROS环境变量.ps1
+#   $env:ROS2_BRIDGE_AGENT = '192.168.1.50:50060'
+#   . <repo>\start\加载模拟ROS环境变量.ps1
 
 # --- 定位仓库根 -------------------------------------------------------------
 $StartDir = Split-Path -Parent $MyInvocation.MyCommand.Path

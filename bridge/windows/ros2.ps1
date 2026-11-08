@@ -1,13 +1,13 @@
 ﻿# ros2.ps1 - the PowerShell way in: keep the bridge environment in this window and
 # get a `ros2` command that behaves like the one in the docs.
 #
-#     . E:\DesktopData\app\code\CPU\bridge\windows\ros2.ps1    # once per window
+#     . <repo>\bridge\windows\ros2.ps1    # once per window
 #     ros2 topic list -t
 #     ros2 topic echo /scan --count 3
 #
 # or one shot, without dot-sourcing first:
 #
-#     & E:\DesktopData\app\code\CPU\bridge\windows\ros2.ps1 topic list -t
+#     & <repo>\bridge\windows\ros2.ps1 topic list -t
 #
 # There is also ros2_shell.bat, which is this file for people who would rather
 # type a bat: a bat cannot set variables in the PowerShell session that called it,

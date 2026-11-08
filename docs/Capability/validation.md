@@ -177,13 +177,14 @@ python bridge\scripts\run_nav2_demo.py --goal auto --report run.json
 
 | 树 | 命令 | 用例数 |
 | --- | --- | --- |
-| `nav2\ros2_shim` | `python nav2\ros2_shim\build.py` 然后 `python tools\run_ctest.py shim` | 32 |
+| `nav2\ros2_shim` | `python nav2\ros2_shim\build.py` 然后 `python tools\run_ctest.py shim` | 34 |
 | `nav2\shm_transport` | `python tools\run_ctest.py shm` | 1 |
-| `bridge\windows` | `python bridge\scripts\build_bridge.py --test` | 6 |
-| `gRPC\ros2_gRPC_sdk` | `python gRPC\ros2_gRPC_sdk\scripts\build.py --test` | 4 |
-| `bridge\ubuntu\ros2_bridge_sim\tests` | `python -m pytest bridge\ubuntu\ros2_bridge_sim\tests -q` | 71 |
+| `bridge\windows` | `python bridge\scripts\build_bridge.py --test` | 8 |
+| `gRPC\ros2_gRPC_sdk` | `python gRPC\ros2_gRPC_sdk\scripts\build.py --test` | 4（Windows 上另有一条 `actions_rclcpp`，要真 ROS2 编出来的 SDK） |
+| `bridge\ubuntu`（`sim` + `link` 两棵 pytest） | `python -m pytest bridge\ubuntu -q`（或 `python tools\run_ctest.py sim`） | 103 |
 
 * pytest 这棵**在 Windows 上跑**：Ubuntu 的 venv 里只有 grpc / numpy / protobuf，没有 pytest。
+* 用例数按树统计（`add_test` 的条数 / `pytest --collect-only`），新增用例时顺手更新这张表。
 * `shim` 树里的用例各自带一个 `NAV2_SHM_NAMESPACE=ctest_<用例名>`，所以守护进程开着也不会和
   镜像进来的机器人抢同一条共享内存通道。
 

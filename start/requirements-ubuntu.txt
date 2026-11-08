@@ -1,0 +1,11 @@
+# Ubuntu 侧（仿真小车 + 接线器）的 Python 依赖，Ubuntu 24.04 / Python 3.12。
+#
+#   python3 -m venv .venv            # 放在仓库根：接线器默认找 <repo>/.venv/bin/python
+#   source .venv/bin/activate
+#   pip install -r start/requirements-ubuntu.txt
+#
+# 只需要这几个包，不需要 ROS2，也不需要 rclpy。下限来自仓库里签入的
+# gRPC / protobuf 桩（由 grpcio-tools 1.83.1 / libprotoc 7.35.1 生成）。
+grpcio>=1.83.1
+protobuf>=7.35.1
+numpy>=1.24

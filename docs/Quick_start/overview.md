@@ -15,7 +15,7 @@ title: 1 快速开始 · 概述
 </ul>
 </div>
 
-## 1.1 项目简介
+## 项目简介
 
 mini-ros2 让你**在 Windows 上像在 Linux 一样使用 ROS2 和 nav2**，不需要安装 ROS2，也不需要 DDS。
 
@@ -32,7 +32,7 @@ Ubuntu（真 ROS2 + 仿真）                          Windows
   小车移动  <────────────────────gRPC───────────────────  <───────────────共享内存─────────────┘
 ```
 
-## 1.2 能做什么
+## 能做什么
 
 | 能力 | 状态 |
 | --- | --- |
@@ -44,7 +44,7 @@ Ubuntu（真 ROS2 + 仿真）                          Windows
 | 运行期调参（参数服务 + `ros2 param`） | ✅ 对着正在跑的节点读写 |
 | Windows 编译 + 打包成一键运行的文件 | ✅ CI 自动出 Windows / Linux 两个包 |
 
-## 1.3 不能做什么
+## 不能做什么
 
 <div class="callout note">
 <span class="label">注意</span>
@@ -70,7 +70,7 @@ Ubuntu（真 ROS2 + 仿真）                          Windows
 <a href="../FAQ/limitations">功能限制与缺口</a>。</p>
 </div>
 
-## 1.4 支持的平台
+## 支持的平台
 
 | 平台 | 说明 |
 | --- | --- |
@@ -87,13 +87,13 @@ Ubuntu（真 ROS2 + 仿真）                          Windows
 | **从源码编译** | Python 3.12、CMake、Ninja、一个 C++20 编译器。Windows 上推荐 MSYS2 UCRT64；Linux 上 `apt install` 见 <a href="../Advanced/development">开发指南</a> |
 | **和机器人通信** | 两台机器在同一个局域网，Ubuntu 侧能 SSH |
 
-## 1.5 接下来
+## 接下来
 
-* 在 Windows 上跑起来 → <a href="windows">1.6 Windows 上手</a>
-* 在 Ubuntu 上跑起来 → <a href="linux">1.7 Ubuntu 上手</a>
-* 已经编译好了，只想连机器人 → <a href="connect">1.8 连接机器人</a>
+* 在 Windows 上跑起来 → <a href="windows">1.2 Windows 上手</a>
+* 在 Ubuntu 上跑起来 → <a href="linux">1.3 Ubuntu 上手</a>
+* 已经编译好了，只想连机器人 → <a href="connect">1.4 连接机器人</a>
 
 <div class="pagenav">
 <div class="prev"><span class="dir">上一页</span><span class="ttl">—</span></div>
-<div class="next"><span class="dir">下一页</span><a class="ttl" href="windows">1.6 Windows 上手</a></div>
+<div class="next"><span class="dir">下一页</span><a class="ttl" href="windows">1.2 Windows 上手</a></div>
 </div>

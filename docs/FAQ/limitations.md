@@ -184,6 +184,6 @@ title: 6 常见问题 · 功能限制与缺口
 性价比最低）。
 
 <div class="pagenav">
-<div class="prev"><span class="dir">上一页</span><a class="ttl" href="../Capability/validation">5.2 验收与实测数据</a></div>
+<div class="prev"><span class="dir">上一页</span><a class="ttl" href="../Basic_application/viz">3.5 Windows 可视化</a></div>
 <div class="next"><span class="dir">下一页</span><a class="ttl" href="troubleshooting">6.2 故障排查</a></div>
 </div>

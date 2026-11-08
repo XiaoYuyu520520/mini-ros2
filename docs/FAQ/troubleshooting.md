@@ -20,20 +20,22 @@ title: 6 常见问题 · 故障排查
 ## 6.2.1 先看状态
 
 ```powershell
-ros2 bridge status                     :: 只读图，不触发等待
-bridge\windows\ros2_bridge.bat status  :: 守护进程状态 + 日志路径
+ros2 bridge status                     # 只读图，不触发等待
+bridge\windows\ros2_bridge.bat status  # 守护进程状态 + 日志路径
 ```
 
 <div class="callout warn">
 <span class="label">重要</span>
-<p>在只有一台机器、没连 Ubuntu 的时候，<code>ros2 topic list</code> 会<strong>自动拉起守护进程</strong>
-并等它完成第一次同步，默认预算 30 s。本机没 Ubuntu 也没中继时，50060 端口没人监听 →
-它会一直等到预算耗尽，工具调用就挂在那里。</p>
-<p>本机验证时<strong>一律先关掉自动拉起</strong>：</p>
+<p>在只有一台机器、没连 Ubuntu 的时候，<code>ros2</code> 的每条命令都会<strong>先自动拉起守护进程</strong>
+并等它完成第一次同步，<strong>最多等 30 s</strong>。本机没 Ubuntu 也没中继时，50060 端口没人监听 →
+这 30 s 等满，命令才带着本机话题继续跑（最后一行是 <code>no ready file after 30000 ms; running the command anyway</code>）。</p>
+<p><strong>本机验证</strong>（快速开始里的「两个终端发 / 收」）时<strong>一律先关掉自动拉起</strong>，
+不等那 30 s；<strong>连机器人时反而不能关</strong>——关了就不会自动起守护进程，要先手动
+<code>ros2_bridge.bat start</code>。<code>$env:</code> 只在当前窗口有效，开新窗口要重设。</p>
 </div>
 
 ```powershell
-$env:ROS2_BRIDGE_AUTOSTART = '0'    # 不要顺手拉守护进程
+$env:ROS2_BRIDGE_AUTOSTART = '0'    # 本机验证：不要顺手拉守护进程
 $env:ROS2_BRIDGE_WAIT_MS = '1500'   # 真要等就给个小的
 ```
 
@@ -64,7 +66,7 @@ Get-ChildItem -Path .\start, .\bridge -Recurse -Filter *.ps1 -ErrorAction Silent
   Unblock-File
 ```
 
-详见 <a href="../Quick_start/windows">1.6.2 加载环境变量（PowerShell）</a>。
+详见 <a href="../Quick_start/windows">1.2.2 加载环境变量（PowerShell）</a>。
 
 ### 「ros2: 找不到接受自变量 'topic' 的位置参数」
 
@@ -115,11 +117,14 @@ ros2 topic list -t
 **① Ubuntu 侧起了吗？** 顺序反了 Windows 会扫不到。先
 `bash bridge/scripts/ubuntu_sim_ctl.sh status` 或 `bash start/connector.sh status`。
 
-**② 发现默认不看本机。** 守护进程和 agent 在同一台机器上时必须给地址：
+**② 地址对不对？看点源横幅。** 守护进程连谁，由点源那一刻 `ROS2_BRIDGE_AGENT` 的值决定：
 
-```powershell
-$env:ROS2_BRIDGE_AGENT = '127.0.0.1:50060'
-```
+* 跨机必须**点源之前**设好 `$env:ROS2_BRIDGE_AGENT = '<ubuntu-ip>:50060'`；
+* 脚本只在变量**为空**时才填默认值（`127.0.0.1:50060`）—— 同一个窗口里先点过一次源、
+  之后才改地址，**再点源不会生效**，旧地址被保留。换地址就开个新窗口，或者点源后看
+  `[sim-env] ROS2_BRIDGE_AGENT = ...` 这一行是不是你要的值；
+* 守护进程和 agent 在同一台机器上时必须显式给回环地址：
+  `$env:ROS2_BRIDGE_AGENT = '127.0.0.1:50060'`。
 
 **③ 等的是就绪文件，不是固定 sleep。** 冷启动实测 1.3–2.8 s；超过预算还没好，看守护进程日志：
 
@@ -255,7 +260,8 @@ Windows 默认定时器粒度 15.6 ms，所以按 `sleep_for(1000/rate)` **毫�
 
 ### 输入 `rviz2` 没有窗口
 
-`rviz2.bat` 找的是 `viz\viz.exe`。没编译过就什么都没有：
+`rviz2.bat` 找的是 `viz\viz.exe`。**Windows 发布包里自带它**；只有从源码检出、还没编译过时，
+它才不存在：
 
 ```powershell
 cd viz
@@ -280,13 +286,23 @@ go build -ldflags "-H windowsgui" -o viz.exe .
 `NAV2_SHM_NAMESPACE`，否则两边各看各的图。窗口与边车的 namespace 可以在
 `config.json` 的 `transport.namespace` 里改。
 
-### 发了目标点，车不动
+### 「发了目标点，车不动」
 
-1. `ros2 topic echo /goal_pose --count 1` —— 有没有消息？没有就是 viewer 与边车
-   的问题（有消息说明已经发出去了）；
-2. 有消息但车不动：`nav2` 栈没起，或者目标点在地图外。`bt_navigator` 订阅的是
-   `goal_pose` 话题，**不是** `NavigateToPose` action；
-3. 别同时对 `/goal_pose` 跑 `ros2 topic pub` —— 一个通道只能有一个写者。
+这是**可视化**那一侧的问题，先按这个顺序看：
+
+1. `ros2 topic echo /navigate_to_pose/_action/status --count 1` —— 有没有 `ACCEPTED`？
+   没有就是 GUI / 边车没把 action 发出去（导航面板上会直接显示错误）；
+2. 发出去但车不动：`nav2` 栈没起，或者目标点在地图外；`ros2 service call /sim/reset std_srvs/srv/Trigger`
+   之后再试一次（见上面「outside bounds」一条）；
+3. `viz` 的边车持有 `NavigateToPose` action 与 `/goal_pose` / `/initialpose` 的写端：别同时对
+   这些通道跑 `ros2 topic pub` / `ros2 action send_goal`，一个通道只能有一个写者。
+
+<div class="callout note">
+<span class="label">关于 /goal_pose</span>
+<p>导航一律走 <code>NavigateToPose</code> action（GUI、<code>ros2 action send_goal</code>、<code>nav2_goal.exe</code>
+都一样）。上游 <code>bt_navigator</code> 里确实还有一条订阅 <code>/goal_pose</code> 的旁路，但本项目不依赖它，
+也不要拿它当「发目标」的入口 —— 见 <a href="../Basic_application/viz">3.5 可视化</a>。</p>
+</div>
 
 ### 还没定位 / 没有证据的
 

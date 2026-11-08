@@ -25,7 +25,7 @@ title: 4 架构说明 · 总体架构
 | 子项目 | 路径 | 角色 |
 | --- | --- | --- |
 | **胶水层** | `bridge/` | Windows 守护进程、`ros2` CLI、Ubuntu 仿真小车、跨机中继、入口脚本、验收文档 |
-| **通信 SDK** | `gRPC/ros2_gRPC_sdk/` | gRPC 协议定义、客户端 / 服务端库、LAN 发现、CDR 编解码 |
+| **通信 SDK** | `gRPC/ros2_gRPC_sdk/` | gRPC 协议定义（服务 `ros2bridge.Ros2Bridge`）、客户端 / 服务端库、LAN 发现、CDR 编解码 |
 | **兼容层 + 魔改 nav2** | `nav2/ros2_shim/` | 在 Windows 上造出 `rclcpp` / `rclcpp_action` / `tf2` 等接口，**原地编译上游 nav2 1.5.1** |
 
 外加两块支撑：
@@ -53,7 +53,7 @@ Ubuntu（真 ROS2 + 仿真）                          Windows
 
 ## 4.1.3 第一层：gRPC 跨机传输
 
-协议在 `proto/ros2_bridge.proto`，服务 `ros2bridge.Ros2Bridge` 共 14 个 RPC：
+协议在 `gRPC/ros2_gRPC_sdk/proto/ros2_bridge.proto`，服务 `ros2bridge.Ros2Bridge` 共 14 个 RPC：
 
 | RPC | 类型 | 用途 |
 | --- | --- | --- |
@@ -135,7 +135,7 @@ Ubuntu（真 ROS2 + 仿真）                          Windows
 </div>
 
 上游 nav2 1.5.1 的源码放在 `nav2/nav2_extracted/navigation2-1.5.1/`，由
-`nav2/ros2_shim/CMakeLists.txt:96` 起的 `nav2_package_sources()` **原地 glob 编译**：
+`nav2/ros2_shim/CMakeLists.txt:112` 起的 `nav2_package_sources()` **原地 glob 编译**：
 它 glob 每个包的 `src/**.cpp` 与 `plugins/**.cpp`，自动丢掉自带 `main()` 的文件
 （那些位置交给 `apps/`），并为每个编译单元注入垫片。
 
@@ -166,7 +166,7 @@ Ubuntu（真 ROS2 + 仿真）                          Windows
 
 ## 4.1.7 Ubuntu 侧：仿真与中继
 
-**仿真**（`bridge/ubuntu/ros2_bridge_sim/`，纯 Python）：24 m × 24 m 静态地图（0.05 m 栅格）、
+**仿真**（`bridge/ubuntu/ros2_bridge_sim/`，纯 Python）：12 m × 12 m 静态地图（0.05 m 栅格）、
 矩形障碍、360 线射线雷达、差速运动积分。发布 `/odom` `/scan` `/tf` `/tf_static` `/map` `/clock`，
 订阅 `/cmd_vel`。**没有任何动力学与传感器噪声模型** —— 确定性，同种子同命令可复现。
 

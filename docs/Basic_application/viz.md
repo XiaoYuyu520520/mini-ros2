@@ -419,3 +419,8 @@ ros2 topic echo /qos_probe/map --once --timeout 15
 
 代码与协议在仓库的 `viz/` 目录里，细节见那里的
 [README](https://github.com/XiaoYuyu520520/mini-ros2/blob/main/viz/README.md)。
+
+<div class="pagenav">
+<div class="prev"><span class="dir">上一页</span><a class="ttl" href="map">3.4 地图存取</a></div>
+<div class="next"><span class="dir">下一页</span><a class="ttl" href="../Architecture/overview">4.1 总体架构</a></div>
+</div>

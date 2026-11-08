@@ -27,7 +27,7 @@ title: 2 系统配置 · 共享内存几何配置
 | 通道名 | `ros2shim` + 话题名（可选前缀 `NAV2_SHM_NAMESPACE`） |
 | 拓扑 | **单写者 + 多读者**，读者各自持有游标 |
 | 落后太多 | 丢最旧的消息（`dropped` 计数） |
-| 槽大小选择 | 名字含 `map`/`costmap`/`voxel` 的用大槽；含 `info` 的按小尺寸算 |
+| 槽大小选择 | **类型优先**：`Image` / `PointCloud2` 用 8 MB 槽，`CompressedImage` 用普通槽；名字规则兜底 —— 含 `map`/`costmap`/`voxel` 的用大槽，`/parameter_events` / `/rosout` / action status / 参数服务这些小通道按小尺寸算（小通道规则优先于类型，一个误挂的 `Image` 不会占 64 MB） |
 
 「单写者」是硬约定，不是性能取舍：守护进程镜像 `/scan` 时，本机就不能再有另一个进程发 `/scan`。
 
@@ -51,6 +51,8 @@ title: 2 系统配置 · 共享内存几何配置
 | --- | --- | --- |
 | `NAV2_SHM_SLOT_SIZE` | `524288`（512 KB） | 普通话题 |
 | `NAV2_SHM_LARGE_SLOT_SIZE` | `2097152`（2 MB） | `map`/`costmap`/`voxel` |
+| `NAV2_SHM_IMAGE_SLOT_SIZE` | `8388608`（8 MB） | `sensor_msgs/msg/Image` |
+| `NAV2_SHM_POINTCLOUD_SLOT_SIZE` | `8388608`（8 MB） | `sensor_msgs/msg/PointCloud2` |
 | `NAV2_SHM_SLOT_COUNT` | `8` | 每条通道 |
 
 实测最大消息是 `/global_costmap/costmap` 的 **528 KB**（不是 8 MB），所以 2 MB 大槽对它有 4 倍余量；
@@ -72,7 +74,7 @@ title: 2 系统配置 · 共享内存几何配置
 | `/parameter_events` | 固定 256 KB | 参数事件的长度不受控 |
 | `/rosout` | 固定 256 KB | `Log` 的 `msg` 长度不受控 |
 
-它们不受上面那条「按名字判断大小」的规则影响 —— 走默认小槽会把消息截断。
+它们不走「按名字判断大小」那条规则 —— 走默认小槽会把消息截断。
 
 <a id="restart"></a>
 

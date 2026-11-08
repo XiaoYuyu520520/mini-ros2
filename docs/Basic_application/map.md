@@ -122,5 +122,5 @@ python bridge\scripts\run_nav2_stack.py --map code\Desktop\racecar\map\ai_map001
 
 <div class="pagenav">
 <div class="prev"><span class="dir">上一页</span><a class="ttl" href="slam">3.3 SLAM 建图</a></div>
-<div class="next"><span class="dir">下一页</span><a class="ttl" href="../Architecture/overview">4.1 总体架构</a></div>
+<div class="next"><span class="dir">下一页</span><a class="ttl" href="viz">3.5 Windows 可视化</a></div>
 </div>

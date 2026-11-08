@@ -34,6 +34,9 @@ SKIP_DIRS = {".git", ".pytest_cache", "__pycache__", "build", "third_party",
 #: The paths that must not appear. Each is written so that the check works on
 #: both spellings (backslash and slash) without a regex.
 BACKSLASH = chr(92)
+#: `/home/<user>` on its own is deliberately *not* listed: it is every Ubuntu
+#: user's home, and `ubuntu_ros2_setup.sh` legitimately names `/home/ubuntu`.
+#: The leaked shape was the specific checkout path inside it.
 PATTERNS = [
     "E:" + BACKSLASH + "venvs",
     "E:/venvs",
@@ -43,6 +46,25 @@ PATTERNS = [
     "~/code/CPU",
     "/home/ubuntu/code/CPU",
 ]
+
+#: Scripts ship inside the archives exactly like the Markdown does, so a path
+#: copied out of one developer's shell belongs in the same report. For scripts
+#: the toolchain prefix and the virtualenv are *legitimate* defaults - both
+#: are overridable and both are documented - but the checkout root and the
+#: user's home directory are not.
+SCRIPT_PATTERNS = [
+    "E:" + BACKSLASH + "DesktopData" + BACKSLASH + "app" + BACKSLASH + "code" + BACKSLASH + "CPU",
+    "E:/DesktopData/app/code/CPU",
+    "C:" + BACKSLASH + "Users" + BACKSLASH + "Administrator",
+    "~/code/CPU",
+]
+
+#: The scripts that end up in an archive: `start/` and the two `bridge/`
+#: halves. `bridge/scripts/` is the operator toolbox - it is packaged too, but
+#: its `.py` files carry toolchain defaults, so only the shell scripts there
+#: are scanned.
+SCRIPT_SUFFIXES = (".ps1", ".bat", ".sh")
+SCRIPT_DIRS = ("start", "bridge/windows", "bridge/linux", "bridge/scripts")
 
 #: Files that may name the real paths, because they are the ones that explain
 #: the placeholders. Every entry needs a reason.
@@ -57,9 +79,17 @@ def find_docs(root: Path) -> list[Path]:
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS)
         for name in sorted(filenames):
-            if name.lower().endswith(".md"):
+            if name.lower().endswith((".md",) + SCRIPT_SUFFIXES):
                 out.append(Path(dirpath) / name)
     return out
+
+
+def _is_script(relative: Path) -> bool:
+    """A shell / PowerShell entry point that travels in an archive."""
+    if relative.suffix.lower() not in SCRIPT_SUFFIXES:
+        return False
+    parts = relative.as_posix().split("/")
+    return len(parts) > 1 and "/".join(parts[:2]) in SCRIPT_DIRS
 
 
 def main() -> int:
@@ -91,12 +121,16 @@ def main() -> int:
         # docs: they are untracked and never published.
         if relative.name.startswith("session-") and relative.parent == Path("."):
             continue
+        is_script = _is_script(relative)
+        if not is_script and relative.suffix.lower() != ".md":
+            continue
         if key in EXEMPTIONS:
             continue
+        patterns = SCRIPT_PATTERNS if is_script else PATTERNS
         body = path.read_bytes().decode("utf-8", "replace")
         hits = []
         for number, line in enumerate(body.split("\n"), 1):
-            for pattern in PATTERNS:
+            for pattern in patterns:
                 if pattern in line:
                     hits.append((number, pattern, line.strip()))
                     break

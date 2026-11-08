@@ -55,7 +55,8 @@ nav2\ros2_shim\build\map_server.exe --params-file nav2\ros2_shim\config\nav2_map
         -p yaml_filename:=C:\maps\office.yaml
 ```
 
-或者用 racecar 的封装（Windows 与 Ubuntu 同一份）：
+或者用 racecar 的封装（Windows 与 Ubuntu 同一份；`code/` 只在**源码仓库**里，发布包不含它，
+用发布包时请用上面的 `map_saver_cli.exe`）：
 
 ```bat
 python code\Desktop\racecar\tools\racecar_ctl.py save-map -f ai_map001
@@ -85,7 +86,8 @@ python code\Desktop\racecar\tools\racecar_ctl.py nav --map ai_map001 --goal auto
 所以这三个值要降到 <code>0.1</code>：
 
 ```yaml
-# code/Desktop/racecar/src/racecar/config/slam_toolbox.yaml
+# code/Desktop/racecar/src/racecar/config/slam_toolbox.yaml（只在源码仓库里；
+# 发布包里用 slam_demo.bat -p minimum_travel_distance:=0.1 这类命令行参数覆盖）
 minimum_travel_distance: 0.1
 minimum_travel_heading: 0.1
 minimum_time_interval: 0.1

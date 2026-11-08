@@ -4,8 +4,9 @@
 The archive holds what actually *runs*, not everything the build produced:
 
   * the nav2 servers and the tools nav2 needs (`apps/` becomes the binaries;
-    the `test_*` / `*_probe` / `bench_*` programs are development scaffolding
-    and would roughly double the archive for nothing);
+    the SLAM server from `slam_toolbox_port/`; the `test_*` / `*_probe` /
+    `bench_*` programs are development scaffolding and would roughly double
+    the archive for nothing);
   * the bridge daemon and `ros2.exe`;
   * the real-ROS2 agent (`ros2_grpc_sdk_agent`) for the peer machine;
   * the config the stack reads at startup, including the few files it pulls
@@ -98,6 +99,16 @@ NAV2_TOOLS = (
     "tf_listener_probe",
 )
 
+#: The SLAM side is built one level deeper (`slam_toolbox_port/`), so it needs
+#: its own entry here: `run_slam_demo.py` and the acceptance suite launch
+#: exactly this binary by name, and the archive has to carry it or SLAM is
+#: source-build-only. The other node flavours (`async_` / `sync_` /
+#: `localization_` / `merge_maps_kinematic`) are alternatives a developer
+#: selects with `NAV2_SLAM_EXE`; they stay out of the archive to keep it lean.
+SLAM_BINARIES = (
+    "slam_bridge_node",
+)
+
 #: Things a user runs by hand on the Windows side.
 BRIDGE_BINARIES = (
     "ros2",
@@ -142,6 +153,9 @@ START_WINDOWS = (
 START_LINUX = (
     "connector.sh",
     "加载模拟ROS环境变量.sh",
+    # The connector's message on a missing interpreter points here, and the
+    # Python that comes with the machine has no grpc/numpy.
+    "requirements-ubuntu.txt",
 )
 
 #: What the stack reads at startup. `nav2_extracted` is 96 MB of source of
@@ -219,6 +233,9 @@ def collect(platform: str, args: argparse.Namespace) -> list[tuple[Path, str]]:
     # -- binaries ------------------------------------------------------------
     for name in NAV2_SERVERS + NAV2_TOOLS:
         add_file(shim_build / (name + exe), "nav2/ros2_shim/build/" + name + exe)
+    for name in SLAM_BINARIES:
+        add_file(shim_build / "slam_toolbox_port" / (name + exe),
+                 "nav2/ros2_shim/build/slam_toolbox_port/" + name + exe)
     if args.with_tests:
         for path in _iter_tree(shim_build):
             if path.name.startswith(("test_", "bench_")) and path.suffix == exe:

@@ -52,19 +52,31 @@ source <repo>/bridge/linux/bridge_env.sh
 | `NAV2_SHM_SLOT_COUNT` | 每条通道的槽数 | `8` |
 | `NAV2_SHM_SLOT_SIZE` | 普通话题的槽大小 | `524288`（512 KB） |
 | `NAV2_SHM_LARGE_SLOT_SIZE` | `map`/`costmap` 类话题的槽大小 | `2097152`（2 MB） |
+| `NAV2_SHM_IMAGE_SLOT_SIZE` | `sensor_msgs/msg/Image` 的槽大小 | `8388608`（8 MB） |
+| `NAV2_SHM_POINTCLOUD_SLOT_SIZE` | `sensor_msgs/msg/PointCloud2` 的槽大小 | `8388608`（8 MB） |
 | `NAV2_SHM_LOG_LEVEL` | 兼容层日志级别 | `warn` |
 | `NAV2_SHM_NAMESPACE` | 通道名前缀，用来隔离两套栈 | 空 |
 | `NAV2_SHIM_BT_DIR` | 行为树 XML 目录 | `nav2/ros2_shim/config/bt` |
 | `ROS2_GRPC_SDK_CONFIG_DIR` | SDK 发现配置目录 | `gRPC/ros2_gRPC_sdk/config` |
-| `ROS2_BRIDGE_AGENT` | 守护进程连哪个 agent | 空（= 自动发现） |
+| `ROS2_BRIDGE_AGENT` | 守护进程连哪个 agent | `bridge_env` 里为空（= 自动发现）；点源 `start/加载模拟ROS环境变量.ps1` 后是 `127.0.0.1:50060` |
 | `ROS2_BRIDGE_AUTOSTART` | `ros2` 命令要不要自动拉守护进程 | `1` |
 | `ROS2_BRIDGE_WAIT_MS` | 等首次同步的预算 | `30000` |
 | `ROS2_BRIDGE_READY_FILE` | 就绪文件路径 | `%TEMP%\nav2_bridge.ready` |
-| `ROS2_BRIDGE_LOG_DIR` | 守护进程日志目录 | `%TEMP%\nav2_bridge` |
+| `ROS2_BRIDGE_LOG` | 守护进程的日志文件 | `<build>\ros2_bridge_daemon.log` |
 | `ROS2_LINK_SIM_PORT` | 仿真 agent 端口 | `50051` |
 | `ROS2_LINK_REAL_PORT` | 真 ROS2 agent 端口 | `50111` |
 | `ROS2_LINK_PORT` | 中继对外端口 | `50060` |
 | `ROS2_LINK_COLLISION` | 同名话题谁保住原名 | `prefer-sim` |
+
+<div class="callout warn">
+<span class="label">重要</span>
+<p><strong>变量只在这个窗口里存在，而且「已经设过」就盖不回去。</strong>
+<code>bridge_env.bat</code> 与点源脚本都用的是 <code>if not defined</code> 这种写法：
+同一个窗口里先点了一次源、之后才改 <code>ROS2_BRIDGE_AGENT</code>，
+<strong>再点源不会生效</strong> —— 旧地址被保留下来。改地址就开个新窗口，
+或者点源之后看一眼横幅里的
+<code>[sim-env] ROS2_BRIDGE_AGENT = ...</code> 是不是你要的值。</p>
+</div>
 
 <a id="modify"></a>
 
@@ -128,6 +140,6 @@ cmd /v:on /c 'call bridge\windows\bridge_env.bat >nul & echo !ROS2_BRIDGE_AGENT!
 ```
 
 <div class="pagenav">
-<div class="prev"><span class="dir">上一页</span><a class="ttl" href="../Quick_start/connect">1.8 连接机器人</a></div>
+<div class="prev"><span class="dir">上一页</span><a class="ttl" href="../Quick_start/connect">1.4 连接机器人</a></div>
 <div class="next"><span class="dir">下一页</span><a class="ttl" href="network">2.2 网络与端口配置</a></div>
 </div>

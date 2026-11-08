@@ -64,16 +64,16 @@ $env:BIG6_NO_PIN = "1"                  # 只检测不绑定（按需）
 
 | 树 | 怎么跑 | 用例数 |
 | --- | --- | --- |
-| `nav2\ros2_shim` | `python nav2\ros2_shim\build.py` 然后 `python tools\run_ctest.py shim` | 32 |
+| `nav2\ros2_shim` | `python nav2\ros2_shim\build.py` 然后 `python tools\run_ctest.py shim` | 34 |
 | `nav2\shm_transport` | `python tools\run_ctest.py shm` | 1 |
-| `bridge\windows` | `python bridge\scripts\build_bridge.py --test` | 6 |
-| `gRPC\ros2_gRPC_sdk` | `python gRPC\ros2_gRPC_sdk\scripts\build.py --test` | 4 |
-| `bridge\ubuntu\ros2_bridge_sim\tests` | `python -m pytest bridge\ubuntu\ros2_bridge_sim\tests -q` | 71 |
+| `bridge\windows` | `python bridge\scripts\build_bridge.py --test` | 8 |
+| `gRPC\ros2_gRPC_sdk` | `python gRPC\ros2_gRPC_sdk\scripts\build.py --test` | 4（Windows 上另有一条 `actions_rclcpp`，要真 ROS2 编出来的 SDK） |
+| `bridge\ubuntu`（`sim` + `link` 两棵 pytest） | `python -m pytest bridge\ubuntu -q`（或 `python tools\run_ctest.py sim`） | 103 |
 
 ### 铁律三：不改上游 nav2 源码
 
 上游 nav2 1.5.1 的源码放在 `nav2/nav2_extracted/navigation2-1.5.1/`，兼容层**直接从这里
-编译**（`nav2/ros2_shim/CMakeLists.txt:96` 起的 `nav2_package_sources()`：glob 每个包的
+编译**（`nav2/ros2_shim/CMakeLists.txt:112` 起的 `nav2_package_sources()`：glob 每个包的
 `src/**.cpp` 与 `plugins/**.cpp`，自动丢掉自带 `main()` 的文件，每个编译单元被
 `-include prelude.hpp` 强制注入一层垫片）。
 
@@ -139,7 +139,7 @@ bridge\windows\build\bridge_cdr_check.exe
 
 ```powershell
 python tools\run_ctest.py bridge
-python -m pytest bridge\ubuntu\ros2_bridge_sim\tests -q
+python -m pytest bridge\ubuntu -q           :: 仿真 + 中继两棵树
 ```
 
 <a id="ctest"></a>

@@ -44,8 +44,14 @@
 # ---------------------------------------------------------------------------
 set -euo pipefail
 
-ROOT="${CPU_ROOT:-$HOME/code/CPU}"
-# 本仓库在 Ubuntu 上的位置（也允许 CPU_ROOT 直接指到 bridge/ubuntu 那一层）
+# 仓库根：优先按**脚本自己的位置**推（`start/` 的上一级），这样从哪解压
+# 都能用；CPU_ROOT 只是给「模拟包与接线器不在同一棵树」时留的覆盖口。
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="${CPU_ROOT:-$(dirname "$SCRIPT_DIR")}"
+# CPU_ROOT 允许直接指到 bridge/ubuntu 那一层 —— 归一回它的上一级。
+if [ ! -d "$ROOT/bridge/ubuntu" ] && [ -d "$ROOT/ros2_bridge_sim" ]; then
+  ROOT="$(dirname "$(cd "$ROOT" && pwd)")"
+fi
 SIM_DIR="$ROOT/bridge/ubuntu"
 PY="${ROS2_LINK_PY:-$ROOT/.venv/bin/python}"
 

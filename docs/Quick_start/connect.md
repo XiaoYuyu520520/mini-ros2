@@ -3,7 +3,7 @@ layout: default
 title: 1 快速开始 · 连接机器人
 ---
 
-# 1.8 连接机器人
+# 1.4 连接机器人
 
 <div class="overview">
 <div class="label">本页总览</div>
@@ -22,7 +22,7 @@ title: 1 快速开始 · 连接机器人
 
 <a id="topo"></a>
 
-## 1.8.1 目标与拓扑
+## 1.4.1 目标与拓扑
 
 Ubuntu 上其实有**两张互相看不见的 ROS2 图**：
 
@@ -60,7 +60,7 @@ Ubuntu 上其实有**两张互相看不见的 ROS2 图**：
 
 <a id="order"></a>
 
-## 1.8.2 启动顺序
+## 1.4.2 启动顺序
 
 <div class="callout warn">
 <span class="label">重要</span>
@@ -139,7 +139,7 @@ ros2 topic list -t
 
 <a id="relay"></a>
 
-## 1.8.3 为什么需要接线器（以及同名话题怎么办）
+## 1.4.3 为什么需要接线器（以及同名话题怎么办）
 
 * **两个 agent 不共享图。** 真 ROS2 agent 和仿真 agent 说得是同一种协议，但各自维护自己的
   图；接线器同时订阅两边、向下游（Windows）发布，图就合并了。
@@ -151,11 +151,11 @@ ros2 topic list -t
 
 <a id="addr"></a>
 
-## 1.8.4 地址与端口在哪配
+## 1.4.4 地址与端口在哪配
 
 | 要改什么 | 在哪 | 怎么改 |
 | --- | --- | --- |
-| 守护进程连谁 | 环境变量 `ROS2_BRIDGE_AGENT` | 点源**之前**设 `$env:ROS2_BRIDGE_AGENT = '192.168.1.50:50060'`；或 `ros2_bridge.bat start --agent host:port`。**不设就自动发现**（LAN 扫描，只扫 50051） |
+| 守护进程连谁 | 环境变量 `ROS2_BRIDGE_AGENT` | 点源**之前**设 `$env:ROS2_BRIDGE_AGENT = '192.168.1.50:50060'`；或 `ros2_bridge.bat start --agent host:port`。不设时点源脚本会填 `127.0.0.1:50060`（本机中继）。**自动发现不可靠**：LAN 扫描只扫 `50051`（仿真 agent 的口），而接线器对外是 `50060`，跨机时几乎一定扫不到，请显式给地址 |
 | 真 ROS2 agent 的端口 | `ROS2_PEER_PORT`（`ubuntu_ros2_peer.sh`） | 默认 50111 |
 | 仿真 agent 的端口 | `ubuntu_sim_ctl.sh start --port N` | 默认 50051 |
 | 接线器的三个口 | `ROS2_LINK_SIM_PORT` / `ROS2_LINK_REAL_PORT` / `ROS2_LINK_PORT` | 默认 50051 / 50111 / 50060 |
@@ -165,19 +165,22 @@ ros2 topic list -t
 
 <a id="check"></a>
 
-## 1.8.5 连上之后看什么
+## 1.4.5 连上之后看什么
 
 ```powershell
 ros2 topic list -t
 ```
 
-只起仿真（没接真 ROS2）时是 7 条：
+只起仿真（没接真 ROS2）时是 7 条远端的 `/clock` `/cmd_vel` `/map` `/odom` `/scan` `/tf` `/tf_static`
+（按字母序），另外 Windows 侧自己的节点（守护进程、CLI）各发一条本机的 `/rosout`
+（`rcl_interfaces/msg/Log`），所以列表里通常还能看到它：
 
 ```
 /clock [rosgraph_msgs/msg/Clock]
 /cmd_vel [geometry_msgs/msg/Twist]
 /map [nav_msgs/msg/OccupancyGrid]
 /odom [nav_msgs/msg/Odometry]
+/rosout [rcl_interfaces/msg/Log]
 /scan [sensor_msgs/msg/LaserScan]
 /tf [tf2_msgs/msg/TFMessage]
 /tf_static [tf2_msgs/msg/TFMessage]
@@ -215,7 +218,7 @@ ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.2}}" --once
 
 <a id="fail"></a>
 
-## 1.8.6 连不上怎么查
+## 1.4.6 连不上怎么查
 
 按这个顺序：
 
@@ -266,7 +269,7 @@ Test-NetConnection <ubuntu-ip> -Port 50060
 
 <a id="loop"></a>
 
-## 1.8.7 跨机还是回环
+## 1.4.7 跨机还是回环
 
 中继的设计让<strong>同一份配置在本机和跨机之间只差一个地址</strong>：
 
@@ -281,6 +284,6 @@ $env:ROS2_BRIDGE_AGENT = '192.168.1.50:50060'
 ```
 
 <div class="pagenav">
-<div class="prev"><span class="dir">上一页</span><a class="ttl" href="linux">1.7 Ubuntu 上手</a></div>
+<div class="prev"><span class="dir">上一页</span><a class="ttl" href="linux">1.3 Ubuntu 上手</a></div>
 <div class="next"><span class="dir">下一页</span><a class="ttl" href="../System_configuration/environment">2.1 环境变量配置</a></div>
 </div>

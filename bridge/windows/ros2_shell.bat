@@ -5,7 +5,7 @@ rem
 rem This is the handover between the two halves of the Windows side. A .bat
 rem cannot set variables in the PowerShell session that called it: cmd runs as a
 rem child process and takes its environment with it when it exits, which is why
-rem   E:\...\bridge\windows\ros2.bat
+rem   <repo>\bridge\windows\ros2.bat
 rem typed in PowerShell only printed the usage. So this script does the one
 rem thing a bat *can* do - hand the job to ros2.ps1 and let it prepare a window:
 rem
@@ -17,7 +17,7 @@ rem     * the bridge daemon still starts on demand, on the first `ros2` command.
 rem
 rem For the window you are already sitting in, dot-source ros2.ps1 yourself:
 rem
-rem     . E:\DesktopData\app\code\CPU\bridge\windows\ros2.ps1
+rem     . <repo>\bridge\windows\ros2.ps1
 rem
 rem In cmd.exe nothing needs preparing - `ros2.bat topic list -t` carries its own
 rem environment - so this script is only interesting from PowerShell.

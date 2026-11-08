@@ -3,7 +3,7 @@ layout: default
 title: 1 快速开始 · Ubuntu 上手
 ---
 
-# 1.7 Ubuntu 上手
+# 1.3 Ubuntu 上手
 
 <div class="overview">
 <div class="label">本页总览</div>
@@ -17,13 +17,22 @@ title: 1 快速开始 · Ubuntu 上手
 </ul>
 </div>
 
-## 1.7.1 准备工作
+## 1.3.1 准备工作
 
 ```bash
 cd <repo>
 ```
 
-如果这台机器还没装依赖，先装：
+<div class="callout note">
+<span class="label">发布包还是源码仓库？</span>
+<p><strong>用 <code>mini-ros2-linux-x86_64-*.tar.gz</code> 发布包</strong>的话，
+下面 apt 那一大段和「从源码编译」都不用管：包里已经有编好的程序，
+只需要 Python 3 和一个 venv。start 脚本同样在 <code>start/</code> 下；
+包里的 <code>start/requirements-ubuntu.txt</code> 是仿真与接线器要的 Python 包。</p>
+<p><strong>从源码仓库构建</strong>才需要下面两段。</p>
+</div>
+
+源码构建先装编译依赖：
 
 ```bash
 sudo apt-get install -y build-essential cmake ninja-build zlib1g-dev \
@@ -32,19 +41,20 @@ sudo apt-get install -y build-essential cmake ninja-build zlib1g-dev \
   libgrpc++-dev libprotobuf-dev protobuf-compiler protobuf-compiler-grpc libyaml-cpp-dev
 ```
 
-Python 虚拟环境（Ubuntu 侧叫 <code>.venv</code>；Windows 侧是另一个<strong>盘符下的虚拟环境</strong>，两者不是同一个）：
+Python 虚拟环境，**放在仓库根**（接线器默认找 `<repo>/.venv/bin/python`，
+Windows 侧是另一个环境，两者不是同一个）：
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r bridge/ubuntu/ros2_bridge_sim/requirements.txt
+pip install -r start/requirements-ubuntu.txt
 ```
 
 <a id="sim"></a>
 
-## 1.7.2 起仿真小车
+## 1.3.2 起仿真小车
 
-本仓库自带一个纯 Python 的仿真小车（24 m × 24 m 静态地图 + 360 线雷达 + 差速运动学），
+本仓库自带一个纯 Python 的仿真小车（12 m × 12 m 静态地图 + 360 线雷达 + 差速运动学），
 扮演真实机器人。启动脚本在 tmux 会话 <code>sim</code> 里跑它：
 
 ```bash
@@ -77,7 +87,7 @@ PYTHONPATH=. ../.venv/bin/python -m ros2_bridge_sim.run_sim --seed 7 --goal 6,-4
 
 <a id="real"></a>
 
-## 1.7.3 用真装的 ROS2 当对端
+## 1.3.3 用真装的 ROS2 当对端
 
 Ubuntu 上如果已经装了 ROS2 Jazzy，可以让<strong>真的 ROS2 图</strong>当对端：
 
@@ -102,7 +112,7 @@ bash bridge/scripts/ubuntu_ros2_peer.sh status
 
 <a id="relay"></a>
 
-## 1.7.4 起中继（合并两张图）
+## 1.3.4 起中继（合并两张图）
 
 <div class="callout note">
 <span class="label">为什么需要中继</span>
@@ -119,6 +129,9 @@ bash start/connector.sh status     # 看状态
 bash start/connector.sh check      # 只验证两端 agent 是否活着
 bash start/connector.sh down       # 停
 ```
+
+接线器**按脚本自己的位置**找仓库（`start/` 的上一级），所以从哪儿解压都能跑；
+真要指到别的树，用 `CPU_ROOT=<repo>` 覆盖。
 
 端口约定（都可用环境变量改）：
 
@@ -140,7 +153,7 @@ export ROS2_LINK_COLLISION=prefer-real   # 反过来
 
 <a id="env"></a>
 
-## 1.7.5 加载环境变量
+## 1.3.5 加载环境变量
 
 ```bash
 source <repo>/bridge/linux/bridge_env.sh
@@ -170,7 +183,7 @@ bash bridge/linux/ros2_bridge.sh log 40
 <code>/odom</code>、<code>/map</code>。<code>/cmd_vel</code> 反过来一样。</p>
 </div>
 
-## 1.7.6 在 Ubuntu 上跑 nav2
+## 1.3.6 在 Ubuntu 上跑 nav2
 
 同一份脚本，<code>python</code> 写成 <code>python3</code>、反斜杠换 <code>/</code>：
 
@@ -189,7 +202,7 @@ python3 bridge/scripts/run_nav2_stack.py stop
 实测（2026-09-18，设备 8 核）：栈 25 s 报到 active，<code>--goal auto</code> **SUCCEEDED**
 （<code>/cmd_vel</code> 119 条、<code>/plan</code> 6 条、从 (0,0) 走到 (2.35, 0.03)，2.35 m）。
 
-## 1.7.7 从 Windows 操作这台机器
+## 1.3.7 从 Windows 操作这台机器
 
 ```bash
 python bridge/scripts/ubuntu_ssh.py "tail -n 20 ~/sim.log"                             # 跑任意 shell
@@ -198,6 +211,6 @@ python bridge/scripts/sync_to_ubuntu.py --run                                   
 ```
 
 <div class="pagenav">
-<div class="prev"><span class="dir">上一页</span><a class="ttl" href="windows">1.6 Windows 上手</a></div>
-<div class="next"><span class="dir">下一页</span><a class="ttl" href="connect">1.8 连接机器人</a></div>
+<div class="prev"><span class="dir">上一页</span><a class="ttl" href="windows">1.2 Windows 上手</a></div>
+<div class="next"><span class="dir">下一页</span><a class="ttl" href="connect">1.4 连接机器人</a></div>
 </div>
