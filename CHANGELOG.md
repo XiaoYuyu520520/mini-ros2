@@ -4,12 +4,14 @@ All notable changes to this project. The format is chronological; the newest
 release is first. Versions before v0.2.4 predate this file — their notes live on
 the GitHub Releases page.
 
-## v0.2.6 — unreleased (the tag publishes it)
+## v0.2.6 — 2026-11-09
 
-A packaging release: the beginner path on the documentation site was checked
-page by page against the code and the archives, and everything it disagreed
-with is fixed here. **The v0.2.5 archives stay on their release page and are
-still missing the SLAM server** (see below); v0.2.6 is the one to download.
+The release after v0.2.5 settled what the performance round and the first
+review pass left behind: the bridge daemon split into its modules, the
+generated registry tables, the hardware-accelerated checksum that is now
+actually checked - and, on the packaging side, an archives set that works on
+a machine that did not build it. **The v0.2.5 archives are still on their
+release page and still miss the SLAM server**; v0.2.6 is the one to download.
 
 ### Fixed
 
@@ -31,6 +33,19 @@ still missing the SLAM server** (see below); v0.2.6 is the one to download.
   used to carry an absolute path copied from a shell; the placeholders are
   `<repo>` now. `tools/check_local_paths.py` scans those scripts too, so the
   next leak is caught before packaging.
+* **The shared memory slot's checksum was never checked.** The field was
+  written on every publish and the reader never compared it - 94% of a laser
+  scan's publish time for a value nobody read. The reader now checks it, and a
+  slot that does not match is counted as dropped instead of handed over as if
+  it were whole.
+* **A held graph file no longer reads as an unreadable one.** The reader waits
+  a second for a writer's swap and then gave up, which under an oversubscribed
+  machine reported a running process as invisible (`04-gaps.md`, section 7).
+  It now falls back to the copy from before the swap - one version old at
+  worst - and only for a file that is *held*; a removed record still
+  disappears.
+* The arm64 build of the CRC32C path needs `<arm_acle.h>`: `__crc32cd` and
+  `__crc32cb` are ACLE intrinsics, not GCC builtins.
 
 ### Changed
 
@@ -44,6 +59,14 @@ still missing the SLAM server** (see below); v0.2.6 is the one to download.
   Quick-start pages are numbered 1.2 / 1.3 / 1.4 to match the table of
   contents, the sidebar lists 3.5 (the visualiser), and the test-tree counts,
   environment-variable table and slot-size rule match the source again.
+* **The bridge daemon is five modules instead of one 1984-line class**:
+  `daemon_options` (the command line and the log), `topic_mirror` (remote to
+  local), `service_proxy` and `action_proxy` (the robot's services and actions,
+  answered here), `uplink_forwarder` (this machine's topics on their way out).
+  The daemon keeps what crosses them: the one gRPC connection, the peer, the
+  options, the ready file and the report. Each module has its own lock for the
+  state it owns, and they sit in the include tree rather than an anonymous
+  namespace so a test can link them.
 
 ### Added
 
@@ -69,33 +92,6 @@ still missing the SLAM server** (see below); v0.2.6 is the one to download.
   `nav2/shm_transport/tests/shm_fastpath_bench.cpp` (what a publish costs, split
   into the copy, the checksum and the rest) and
   `nav2/ros2_shim/tests/graph_cache_bench.cpp` (what the graph cache saves).
-
-### Fixed
-
-* **The shared memory slot's checksum was never checked.** The field was
-  written on every publish and the reader never compared it - 94% of a laser
-  scan's publish time for a value nobody read. The reader now checks it, and a
-  slot that does not match is counted as dropped instead of handed over as if
-  it were whole.
-* **A held graph file no longer reads as an unreadable one.** The reader waits
-  a second for a writer's swap and then gave up, which under an oversubscribed
-  machine reported a running process as invisible (`04-gaps.md`, section 7).
-  It now falls back to the copy from before the swap - one version old at
-  worst - and only for a file that is *held*; a removed record still
-  disappears.
-* The arm64 build of the CRC32C path needs `<arm_acle.h>`: `__crc32cd` and
-  `__crc32cb` are ACLE intrinsics, not GCC builtins.
-
-### Changed
-
-* **The bridge daemon is five modules instead of one 1984-line class**:
-  `daemon_options` (the command line and the log), `topic_mirror` (remote to
-  local), `service_proxy` and `action_proxy` (the robot's services and actions,
-  answered here), `uplink_forwarder` (this machine's topics on their way out).
-  The daemon keeps what crosses them: the one gRPC connection, the peer, the
-  options, the ready file and the report. Each module has its own lock for the
-  state it owns, and they sit in the include tree rather than an anonymous
-  namespace so a test can link them.
 
 ## v0.2.5 — 2026-11-03
 
